@@ -1,8 +1,8 @@
 {
-  "name": "@acme/ui",
-  "version": "0.0.0",
+  "name": "@inspatial/kit",
+  "version": "0.0.1",
   "sideEffects": false,
-  "license": "MIT",
+  "license": "Apache-2.0",
   "exports": {
     "./button": {
       "types": "./src/button.tsx",
