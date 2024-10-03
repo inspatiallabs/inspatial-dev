@@ -1,4 +1,4 @@
-# 🚀 Contributing to Our Awesome Project
+# 🚀 Contributing to InSpatial Core
 
 First off, thank you for considering contributing to InSpatial! It's people like you that make this project such a great tool. 🎉
 

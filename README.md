@@ -7,8 +7,8 @@ _Powering the Future of Spatial Computing_
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Core](https://img.shields.io/badge/core-inspatial.dev-brightgreen.svg)](https://www.inspatial.dev)
-[![App](https://img.shields.io/badge/app-inspatial.app-orange.svg)](https://www.inspatial.app)
-[![Cloud](https://img.shields.io/badge/cloud-inspatial.cloud-purple.svg)](https://www.inspatial.cloud)
+[![App](https://img.shields.io/badge/app-inspatial.app-purple.svg)](https://www.inspatial.app)
+[![Cloud](https://img.shields.io/badge/cloud-inspatial.cloud-yellow.svg)](https://www.inspatial.cloud)
 [![Store](https://img.shields.io/badge/store-inspatial.store-red.svg)](https://www.inspatial.store)
 
 </div>
@@ -168,8 +168,6 @@ InSpatial Core is released under the Apache 2.0 License. See the [LICENSE](LICEN
   <a href="https://www.inspatial.app">Start Building with InSpatial</a>
 </div>
 
----
-
-# InSpatial
-
 _Reality is your canvas_
+
+---
