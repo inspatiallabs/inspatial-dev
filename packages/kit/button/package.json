@@ -1,42 +1,37 @@
 {
-  "name": "@inspatial/kit",
+  "name": "@inspatial/kit-button",
   "version": "0.0.0",
   "sideEffects": false,
   "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
-    },
-    "./button": {
-      "types": "./dist/button.d.ts",
-      "import": "./dist/button.mjs",
-      "require": "./dist/button.js"
     }
   },
-  "files": [
-    "src/**",
-    "dist/**"
-  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "test": "vitest",
     "lint": "eslint . --max-warnings 0",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "@inspatial/kit-button": "workspace:*",
     "@types/react": "^18.2.61",
-    "@types/react-dom": "^18.2.19",
     "eslint": "^8.57.0",
+    "@repo/typescript-config": "workspace:*",
+    "react": "^18.2.0 || ^19.0.0",
+    "vitest": "2.1.1",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   },
-  "dependencies": {
-    "react": "^18.2.0"
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0"
   },
   "publishConfig": {
     "access": "public"

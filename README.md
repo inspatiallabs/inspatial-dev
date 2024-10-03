@@ -168,6 +168,7 @@ InSpatial Core is released under the Apache 2.0 License. See the [LICENSE](LICEN
   <a href="https://www.inspatial.app">Start Building with InSpatial</a>
 </div>
 
+<div align="center">
 _Reality is your canvas_
-
+</div>
 ---
