@@ -150,6 +150,11 @@ To begin your journey with InSpatial Core, visit our comprehensive documentation
 
 ---
 
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
+
 ## 🚀 Release Channels
 
 Choose the release channel that best fits your needs:
@@ -160,13 +165,6 @@ Choose the release channel that best fits your needs:
 | 🟡 **Preview** | Usable early access                   | `npm install @inspatial/core@preview` |
 | 🔴 **Canary**  | Latest features, potentially unstable | `npm install @inspatial/core@canary`  |
 
-### 🛠️ Quick Install Guide
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
 
 ---
 
