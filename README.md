@@ -3,7 +3,7 @@
 
 # InSpatial Core
 
-_Powering the Future of Spatial Computing_
+_Reality is your canvas_
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Core](https://img.shields.io/badge/core-inspatial.dev-brightgreen.svg)](https://www.inspatial.dev)
@@ -17,7 +17,7 @@ _Powering the Future of Spatial Computing_
 
 ## 🌟 Welcome to InSpatial Core
 
-InSpatial Core is the beating heart of the InSpatial platform, providing a comprehensive suite of tools and frameworks for building cutting-edge spatial computing applications. Our mission is to empower developers to create immersive, cross-platform experiences that seamlessly blend the digital and physical worlds.
+InSpatial Core is a comprehensive suite of tools and frameworks for building cutting-edge spatial computing applications. Our mission is to empower you to create immersive, cross-platform experiences that seamlessly blend all dimensions of reality. 
 
 ---
 
@@ -150,6 +150,20 @@ To begin your journey with InSpatial Core, visit our comprehensive documentation
 
 ---
 
+## 🚀 Release Channels
+
+Choose the release channel that best fits your needs:
+
+| Channel        | Description                           | Installation                          |
+| -------------- | ------------------------------------- | ------------------------------------- |
+| 🟢 **Stable**  | Production-ready release              | `npm install @inspatial/core`         |
+| 🟡 **Preview** | Usable early access                   | `npm install @inspatial/core@preview` |
+| 🔴 **Canary**  | Latest features, potentially unstable | `npm install @inspatial/core@canary`  |
+
+### 🛠️ Quick Install Guide
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
@@ -167,8 +181,3 @@ InSpatial Core is released under the Apache 2.0 License. See the [LICENSE](LICEN
   <br>
   <a href="https://www.inspatial.app">Start Building with InSpatial</a>
 </div>
-
-<div align="center">
-_Reality is your canvas_
-</div>
----

@@ -36,12 +36,24 @@ First off, thank you for considering contributing to InSpatial! It's people like
 ## 🎨 Style Guide
 
 - Use TypeScript for all code
-- Follow functional and declarative programming patterns 
+- Follow functional and declarative programming patterns
 - Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`)
 - Structure files: exported component, subcomponents, helpers, static content, types
 - Use [InSpatial Kit](https://kit.inspatial.dev/) for components and styling
 - Implement responsive design using a desktop-first approach
 - Use Framer Motion for animations and transitions
+
+## 🚀 Release Channels
+
+Choose the release channel that best fits your needs:
+
+| Channel        | Description                           | Installation                          |
+| -------------- | ------------------------------------- | ------------------------------------- |
+| 🟢 **Stable**  | Production-ready release              | `npm install @inspatial/core`         |
+| 🟡 **Preview** | Usable early access                   | `npm install @inspatial/core@preview` |
+| 🔴 **Canary**  | Latest features, potentially unstable | `npm install @inspatial/core@canary`  |
+
+### 🛠️ Quick Install Guide
 
 ## 🏆 Recognition
 

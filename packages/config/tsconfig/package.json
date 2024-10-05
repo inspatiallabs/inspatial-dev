@@ -1,0 +1,10 @@
+{
+  "name": "@inspatial/tsconfig",
+  "version": "0.0.1",
+  "main": "index.js",
+  "private": true,
+  "files": [
+    "base.json",
+    "react-library.json"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Next.js",
+  "display": "Inspatial App",
   "extends": "./base.json",
   "compilerOptions": {
     "allowJs": true,
@@ -12,6 +12,10 @@
     "module": "esnext",
     "noEmit": true,
     "resolveJsonModule": true,
-    "target": "es5"
-  }
+    "target": "es5",
+    "skipLibCheck": true,
+    "strict": true,
+  },
+  "include": ["src", "next-env.d.ts"],
+  "exclude": ["node_modules"]
 }

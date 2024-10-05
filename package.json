@@ -28,10 +28,18 @@
     "native"
   ],
   "workspaces": [
-    "packages/*"
+    "apps/*",
+    "packages/config/*",
+    "packages/core/*",
+    "packages/kit/*",
+    "packages/xr/*",
+    "packages/ecs/*",
+    "packages/run/*",
+    "packages/utilities/*"
   ],
   "scripts": {
     "build": "turbo run build",
+    "build:fresh": "turbo run build --force",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",

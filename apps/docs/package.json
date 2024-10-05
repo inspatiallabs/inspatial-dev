@@ -11,12 +11,13 @@
     "lint": "eslint ./stories/*.stories.tsx --max-warnings 0"
   },
   "dependencies": {
-    "@inspatial/kit": "workspace:*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@inspatial/kit": "workspace:*"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
+    "@inspatial/tsconfig": "workspace:*",
+    "@inspatial/eslint-config": "workspace:*",
     "@storybook/addon-actions": "^8.2.6",
     "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-links": "^8.2.6",
@@ -26,7 +27,6 @@
     "eslint": "^8.57.0",
     "serve": "^14.2.1",
     "storybook": "^8.2.6",
-    "@repo/typescript-config": "workspace:*",
     "typescript": "^5.3.3",
     "vite": "^5.1.4"
   }
