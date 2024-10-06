@@ -2,7 +2,7 @@
   "name": "@inspatial/kit",
   "version": "0.0.0",
   "sideEffects": false,
-  "license": "MIT",
+  "license": "Apache-2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -13,12 +13,12 @@
       "require": "./dist/index.js"
     }
   },
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "lint": "eslint . --max-warnings 0",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
-  },
+"scripts": {
+  "build": "tsup src/index.ts --format cjs,esm --dts",
+  "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+  "lint": "eslint . --max-warnings 0",
+  "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+},
   "devDependencies": {
     "@inspatial/eslint-config": "workspace:*",
     "@inspatial/tsconfig": "workspace:*",
