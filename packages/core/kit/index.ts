@@ -1,5 +1,5 @@
-export * from "./button/src";
-// export * from './typography/src';
-// export * from './structure/src';
+export * from "./button";
+// export * from './typography';
+// export * from './structure';
 
 // Export other components as needed
