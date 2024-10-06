@@ -25,20 +25,48 @@ jobs:
         with:
           version: 8
 
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Debug info
+        run: |
+          echo "Node version: $(node -v)"
+          echo "pnpm version: $(pnpm -v)"
+          echo "TypeScript version: $(npx tsc --version)"
+          echo "Current directory structure:"
+          ls -R
+          echo "tsconfig.json content:"
+          cat packages/core/kit/tsconfig.json
+          echo "package.json content:"
+          cat packages/core/kit/package.json
+
+      - name: Build
+        run: pnpm run build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         with:
-          # This expects you to have a script called release which does a build for your packages and calls changeset publish
           publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # Uncomment the following step if you want to send a Slack notification on publish
       # - name: Send a Slack notification if a publish happens
       #   if: steps.changesets.outputs.published == 'true'
-      #   # You can do something when a publish happens.
       #   run: my-slack-bot send-notification --message "A new version of ${GITHUB_REPOSITORY} was published!"
