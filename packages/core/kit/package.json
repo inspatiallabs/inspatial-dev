@@ -5,13 +5,13 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
+      "types": "./index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup index.ts --format cjs,esm --dts",
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
