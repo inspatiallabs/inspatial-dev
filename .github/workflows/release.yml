@@ -12,6 +12,13 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
+      - name: Check NPM Token
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+            npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Checkout Repo
         uses: actions/checkout@v4
 
