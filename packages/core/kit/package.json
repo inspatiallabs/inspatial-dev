@@ -2,52 +2,19 @@
   "name": "@inspatial/kit",
   "version": "0.0.0",
   "sideEffects": false,
-  "license": "Apache-2.0",
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "types": "./index.d.ts",
+  "license": "MIT",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./src/index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
-    },
-    "./button": {
-      "types": "./dist/button/index.d.ts",
-      "import": "./dist/button/index.mjs",
-      "require": "./dist/button/index.js"
-    },
-    "./structure": {
-      "types": "./dist/structure/index.d.ts",
-      "import": "./dist/structure/index.mjs",
-      "require": "./dist/structure/index.js"
-    },
-    "./ornament": {
-      "types": "./dist/ornament/index.d.ts",
-      "import": "./dist/ornament/index.mjs",
-      "require": "./dist/ornament/index.js"
-    },
-    "./presentation": {
-      "types": "./dist/presentation/index.d.ts",
-      "import": "./dist/presentation/index.mjs",
-      "require": "./dist/presentation/index.js"
     }
   },
-  "files": [
-    "dist/**",
-    "button",
-    "structure",
-    "ornament",
-    "presentation"
-  ],
   "scripts": {
-    "build": "tsup index.ts --format cjs,esm --dts",
+    "build": "tsup",
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "pub:preview": "pnpm publish --no-git-checks --access public --tag preview",
-    "pub:canary": "pnpm publish --no-git-checks --access public --tag canary",
-    "pub:stable": "pnpm publish --access public"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
     "@inspatial/eslint-config": "workspace:*",
@@ -55,7 +22,7 @@
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
     "eslint": "^8.57.0",
-    "tsup": "^8.0.2",
+    "tsup": "^8.3.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {

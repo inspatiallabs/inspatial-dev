@@ -7,10 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@inspatial/kit": path.resolve(__dirname, "../../packages/core/kit"),
-      "@inspatial/kit-button": path.resolve(
-        __dirname,
-        "../../packages/core/kit/button"
-      ),
+      
     },
   },
 });

@@ -6,6 +6,7 @@ node_modules
 *.log
 .next
 dist
+*.bundled_*.mjs
 dist-ssr
 *.local
 .env

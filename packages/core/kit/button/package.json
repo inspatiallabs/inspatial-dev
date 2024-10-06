@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/kit-button",
   "description": "InSpatial kit Button",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "sideEffects": false,
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -24,8 +24,8 @@
     "src/**"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "test": "vitest",
     "lint": "eslint . --max-warnings 0",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"

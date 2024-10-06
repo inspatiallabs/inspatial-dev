@@ -25,13 +25,6 @@ const config = {
             find: "@inspatial/kit",
             replacement: resolve(__dirname, "../../../packages/core/kit/"),
           },
-          {
-            find: "@inspatial/kit-button",
-            replacement: resolve(
-              __dirname,
-              "../../../packages/core/kit/button"
-            ),
-          },
         ],
       },
     };
