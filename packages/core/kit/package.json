@@ -11,12 +11,17 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./button": {
+      "types": "./dist/button/index.d.ts",
+      "import": "./dist/button/index.mjs",
+      "require": "./dist/button/index.js"
     }
   },
 "scripts": {
-  "build": "tsup src/index.ts --format cjs,esm --dts",
   "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
-  "lint": "eslint . --max-warnings 0",
+  "build": "tsup src/index.ts --format cjs,esm --dts",
+  "lint": "eslint \"src/**/*.ts*\"",
   "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
 },
   "devDependencies": {

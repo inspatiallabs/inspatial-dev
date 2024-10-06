@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@inspatial/kit';
+import { Button } from '@inspatial/kit/button';
 
 
 const meta: Meta<typeof Button> = {
