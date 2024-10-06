@@ -5,7 +5,7 @@ export interface ButtonProps
   children: React.ReactNode;
 }
 
-export default function Button({ children, ...other }: ButtonProps): React.JSX.Element {
+export function Button({ children, ...other }: ButtonProps): React.JSX.Element {
   return (
     <button type="button" {...other}>
       {children}
@@ -14,3 +14,5 @@ export default function Button({ children, ...other }: ButtonProps): React.JSX.E
 }
 
 Button.displayName = "Button";
+
+export default Button;

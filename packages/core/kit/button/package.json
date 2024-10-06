@@ -30,7 +30,6 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
-    "glob": "^11.0.0",
     "@inspatial/eslint-config": "workspace:*",
     "@inspatial/tsconfig": "workspace:*",
     "@types/react": "^18.3.11",
