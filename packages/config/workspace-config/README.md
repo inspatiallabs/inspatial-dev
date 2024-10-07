@@ -15,9 +15,9 @@ _Reality is your canvas_
 
 ---
 
-## 🌟 Welcome to InSpatial Core Workspace Config 
+## 🌟 Welcome to InSpatial Core Workspace Config
 
-This package is purely used to standardize the configuration of workspaces in our monorepo. It is not intended for direct use in applications. 
+This package is purely used to standardize the configuration of workspaces in our monorepo. It is not intended for direct use in applications.
 
 ## 🌟 Features
 
@@ -26,79 +26,78 @@ This package is purely used to standardize the configuration of workspaces in ou
 - 🎨 Consistent styling across workspaces
 - 🔗 Seamless integration with Inspatial's ecosystem
 
-
 ---
 
 ## 🛠️ Usage
-
 
 <!-- <div align="center">
   <img src="https://your-image-url.com/inspatial-kit.png" alt="InSpatial Kit" width="150"/>
 </div> -->
 
-
 To use this base configuration in your workspace:
 
-- Import the base config in your workspace's configuration file: 
+- Import the base config in your workspace's configuration file:
 - Copy the `turbo gen workspace` command below to extend the configuration to your workspace
 - Make sure to replace `replace-me` with your desired workspace name
 - By default, the workspace will be created in the `packages` directory
--   **NOTE:** You can change the destination directory by modifying the `--destination` flag e.g `turbo gen workspace --name replace-me --copy packages/config/workspace-config --destination packages/other-directory`
+- **NOTE:** You can change the destination directory by modifying the `--destination` flag e.g `turbo gen workspace --name replace-me --copy packages/config/workspace-config --destination packages/other-directory`
 - when you enter the command, you will prompted with the following:
- 
- ## 🪜 Step by Step Guide 
 
+## 🪜 Step by Step Guide
 
 - ? What type of workspace should be added?
   app
-> package
+
+  > package
 
 - ? Which workspace should "your-replaced-name" start from? (Use arrow keys)
   packages
-    @inspatial/eslint-config
-    @inspatial/tsconfig
-    @inspatial/tailwind-config
+  @inspatial/eslint-config
+  @inspatial/tsconfig
+  @inspatial/tailwind-config
+
   > @inspatial/workspace-config
-    @inspatial/kit
-    @inspatial/utils
+  > @inspatial/kit
+  > @inspatial/utils
 
 - make sure to select `@inspatial/workspace-config` as the base workspace
 
-- Add workspace dependencies to "hooks"? (Y/n) 
+- Add workspace dependencies to "hooks"? (Y/n)
 - ? Which packages should be added as dependencies to "hooks? (Press <space> to select, <a> to toggle  
-all, <i> to invert selection, and <enter> to proceed)
- packages
- ( )   @inspatial/eslint-config
- ( )   @inspatial/tsconfig
- ( )   @inspatial/tailwind-config
- ( )   @inspatial/workspace-config
- (*)   @inspatial/kit
->(*)   @inspatial/utils
+  all, <i> to invert selection, and <enter> to proceed)
+  packages
+  ( ) @inspatial/eslint-config
+  ( ) @inspatial/tsconfig
+  ( ) @inspatial/tailwind-config
+  ( ) @inspatial/workspace-config
+  (\*) @inspatial/kit
 
-- ? Which packages should be added as devDependencies to "hooks? (Press <space> to select, <a> to      
-toggle all, <i> to invert selection, and <enter> to proceed)
- packages
->(*)   @inspatial/eslint-config
- (*)   @inspatial/tsconfig
- (*)   @inspatial/tailwind-config
- ( )   @inspatial/workspace-config
- ( )   @inspatial/kit
- ( )   @inspatial/utils
+  > (\*) @inspatial/utils
 
- - ? Which packages should be added as peerDependencies to "hooks? (Press <space> to select, <a> to     
-toggle all, <i> to invert selection, and <enter> to proceed)
- packages
->( )   @inspatial/eslint-config
- ( )   @inspatial/tsconfig
- ( )   @inspatial/workspace-config
- ( )   @inspatial/kit
- ( )   @inspatial/kit-button
- ( )   @inspatial/utils
+- ? Which packages should be added as devDependencies to "hooks? (Press <space> to select, <a> to  
+  toggle all, <i> to invert selection, and <enter> to proceed)
+  packages
 
-- >>> Success! Created hooks at "your-destination-path"
-- Finally navigate to your workspace and run `pnpm install` to install the dependencies 
+  > (_) @inspatial/eslint-config
+  > (_) @inspatial/tsconfig
+  > (\*) @inspatial/tailwind-config
+  > ( ) @inspatial/workspace-config
+  > ( ) @inspatial/kit
+  > ( ) @inspatial/utils
 
+- ? Which packages should be added as peerDependencies to "hooks? (Press <space> to select, <a> to  
+  toggle all, <i> to invert selection, and <enter> to proceed)
+  packages
 
+  > ( ) @inspatial/eslint-config
+  > ( ) @inspatial/tsconfig
+  > ( ) @inspatial/workspace-config
+  > ( ) @inspatial/kit
+  > ( ) @inspatial/kit-button
+  > ( ) @inspatial/utils
+
+- > > > Success! Created hooks at "your-destination-path"
+- Finally navigate to your workspace and run `pnpm install` to install the dependencies
 
 #### Extend the InSpatial Base Workspace Config:
 
@@ -127,7 +126,6 @@ Choose the release channel that best fits your needs:
 | 🟢 **Stable**  | Production-ready release              | `npm install @inspatial/core`         |
 | 🟡 **Preview** | Usable early access                   | `npm install @inspatial/core@preview` |
 | 🔴 **Canary**  | Latest features, potentially unstable | `npm install @inspatial/core@canary`  |
-
 
 ---
 
