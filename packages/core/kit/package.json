@@ -37,7 +37,8 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "@inspatial/kit-button": "workspace:*"
   },
   "publishConfig": {
     "access": "public"
