@@ -1,35 +1,27 @@
 {
   "name": "@inspatial/docs",
   "version": "0.0.1",
-  "type": "module",
   "private": true,
-  "license": "Apache-2.0",
   "scripts": {
-    "dev": "storybook dev -p 6006",
-    "build": "storybook build --docs",
-    "preview-storybook": "serve storybook-static",
-    "clean": "rm -rf .turbo && rm -rf node_modules",
-    "lint": "eslint ./stories/*.stories.tsx --max-warnings 0"
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@inspatial/kit": "workspace:*",
-    "@inspatial/kit-button": "workspace:*"
+    "next": "14.2.6",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@inspatial/tsconfig": "workspace:*",
     "@inspatial/eslint-config": "workspace:*",
-    "@storybook/addon-actions": "^8.2.6",
-    "@storybook/addon-essentials": "^8.2.6",
-    "@storybook/addon-links": "^8.2.6",
-    "@storybook/react": "^8.2.6",
-    "@storybook/react-vite": "^8.2.6",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.57.0",
-    "serve": "^14.2.1",
-    "storybook": "^8.2.6",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4"
+    "@inspatial/tsconfig": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.6",
+    "typescript": "^5"
   }
 }
