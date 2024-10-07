@@ -51,14 +51,15 @@ To use this base configuration in your workspace:
   > package
 
 - ? Which workspace should "your-replaced-name" start from? (Use arrow keys)
-  packages
+
+  ```
   @inspatial/eslint-config
   @inspatial/tsconfig
   @inspatial/tailwind-config
-
   > @inspatial/workspace-config
-  > @inspatial/kit
-  > @inspatial/utils
+  @inspatial/kit
+  @inspatial/utils
+  ```
 
 - make sure to select `@inspatial/workspace-config` as the base workspace
 
@@ -66,44 +67,52 @@ To use this base configuration in your workspace:
 - ? Which packages should be added as dependencies to "hooks? (Press <space> to select, <a> to toggle  
   all, <i> to invert selection, and <enter> to proceed)
   packages
+
+  ```
   ( ) @inspatial/eslint-config
   ( ) @inspatial/tsconfig
   ( ) @inspatial/tailwind-config
   ( ) @inspatial/workspace-config
-  (\*) @inspatial/kit
-
-  > (\*) @inspatial/utils
+  (*) @inspatial/kit
+  (*) @inspatial/utils
+  ```
 
 - ? Which packages should be added as devDependencies to "hooks? (Press <space> to select, <a> to  
   toggle all, <i> to invert selection, and <enter> to proceed)
   packages
 
-  > (_) @inspatial/eslint-config
-  > (_) @inspatial/tsconfig
-  > (\*) @inspatial/tailwind-config
+  ```
+  > ( ) @inspatial/eslint-config
+  > ( ) @inspatial/tsconfig
+  > (*) @inspatial/tailwind-config
   > ( ) @inspatial/workspace-config
   > ( ) @inspatial/kit
   > ( ) @inspatial/utils
+  ```
 
 - ? Which packages should be added as peerDependencies to "hooks? (Press <space> to select, <a> to  
   toggle all, <i> to invert selection, and <enter> to proceed)
   packages
 
+  ```
   > ( ) @inspatial/eslint-config
   > ( ) @inspatial/tsconfig
   > ( ) @inspatial/workspace-config
   > ( ) @inspatial/kit
   > ( ) @inspatial/kit-button
-  > ( ) @inspatial/utils
+  > (*) @inspatial/utils
+  ```
 
-- > > > Success! Created hooks at "your-destination-path"
+> > > Success! Created hooks at "your-destination-path"
+
+````
 - Finally navigate to your workspace and run `pnpm install` to install the dependencies
 
 #### Extend the InSpatial Base Workspace Config:
 
 ```bash
 turbo gen workspace --name replace-me --copy packages/config/workspace-config --destination packages/replace-me
-```
+````
 
 ---
 
