@@ -1,4 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
+import { clsx } from "clsx";
+import type * as Clsx from "clsx";
 import { twMerge } from "tailwind-merge";
 
 //#region input
@@ -17,32 +18,30 @@ export function kit(...inputs: ClassValue[]) {
 /*##############################################(GENERAL-KIT-UTILITY)##############################################*/
 
 /*************************************(Types)*************************************/
-type ClassDictionary = Record<string, boolean | undefined>;
-type ClassArray = ClassValue[];
-type ClassValue = string | ClassDictionary | ClassArray | undefined | null;
 
+type ClassValue = Clsx.ClassValue;
 
 /*************************************(Functions)*************************************/
 function toVal(mix: ClassValue): string {
-  let str = '';
+  let str = "";
 
-  if (typeof mix === 'string' || typeof mix === 'number') {
+  if (typeof mix === "string" || typeof mix === "number") {
     str += mix;
-  } else if (typeof mix === 'object') {
+  } else if (typeof mix === "object") {
     if (Array.isArray(mix)) {
-        for (const item of mix) {
-            if (item) {
-              const val = toVal(item);
-              if (val) {
-                str && (str += ' ');
-                str += val;
-              }
-            }
+      for (const item of mix) {
+        if (item) {
+          const val = toVal(item);
+          if (val) {
+            str && (str += " ");
+            str += val;
+          }
         }
+      }
     } else {
       for (const k in mix) {
         if (mix[k]) {
-          str && (str += ' ');
+          str && (str += " ");
           str += k;
         }
       }
@@ -59,13 +58,16 @@ function toVal(mix: ClassValue): string {
  */
 
 export function cKit(...args: ClassValue[]): string {
-  let i = 0, tmp, x, str = '';
+  let i = 0,
+    tmp,
+    x,
+    str = "";
   while (i < args.length) {
     if ((tmp = args[i++])) {
-        if ((x = toVal(tmp))) {
-          str && (str += ' ');
-          str += x;
-        }
+      if ((x = toVal(tmp))) {
+        str && (str += " ");
+        str += x;
+      }
     }
   }
   return str;

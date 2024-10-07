@@ -17,6 +17,7 @@
   "devDependencies": {
     "@inspatial/eslint-config": "workspace:*",
     "@inspatial/tsconfig": "workspace:*",
+    "@inspatial/util": "workspace:^",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
