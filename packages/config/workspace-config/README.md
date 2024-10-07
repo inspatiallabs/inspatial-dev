@@ -45,12 +45,12 @@ To use this base configuration in your workspace:
 
 ## 🪜 Step by Step Guide
 
-- ? What type of workspace should be added?
-  app
+  1. ? What type of workspace should be added?
+    app
 
   > package
 
-- ? Which workspace should "your-replaced-name" start from? (Use arrow keys)
+  2. ? Which workspace should "your-replaced-name" start from? (Use arrow keys)
 
   ```
   @inspatial/eslint-config
@@ -61,12 +61,12 @@ To use this base configuration in your workspace:
   @inspatial/utils
   ```
 
-- make sure to select `@inspatial/workspace-config` as the base workspace
+  3. make sure to select `@inspatial/workspace-config` as the base workspace
 
-- Add workspace dependencies to "hooks"? (Y/n)
-- ? Which packages should be added as dependencies to "hooks? (Press <space> to select, <a> to toggle  
-  all, <i> to invert selection, and <enter> to proceed)
-  packages
+  4. Add workspace dependencies to "hooks"? (Y/n)
+  5. ? Which packages should be added as dependencies to "hooks? (Press <space> to select, <a> to toggle  
+    all, <i> to invert selection, and <enter> to proceed)
+    packages
 
   ```
   ( ) @inspatial/eslint-config
@@ -77,9 +77,9 @@ To use this base configuration in your workspace:
   (*) @inspatial/utils
   ```
 
-- ? Which packages should be added as devDependencies to "hooks? (Press <space> to select, <a> to  
-  toggle all, <i> to invert selection, and <enter> to proceed)
-  packages
+  6. ? Which packages should be added as devDependencies to "hooks? (Press <space> to select, <a> to  
+    toggle all, <i> to invert selection, and <enter> to proceed)
+    packages
 
   ```
   > ( ) @inspatial/eslint-config
@@ -90,9 +90,9 @@ To use this base configuration in your workspace:
   > ( ) @inspatial/utils
   ```
 
-- ? Which packages should be added as peerDependencies to "hooks? (Press <space> to select, <a> to  
-  toggle all, <i> to invert selection, and <enter> to proceed)
-  packages
+  7. ? Which packages should be added as peerDependencies to "hooks? (Press <space> to select, <a> to  
+    toggle all, <i> to invert selection, and <enter> to proceed)
+    packages
 
   ```
   > ( ) @inspatial/eslint-config
@@ -103,11 +103,11 @@ To use this base configuration in your workspace:
   > (*) @inspatial/utils
   ```
 
-```
-🎉>>> Success! Created hooks at "your-destination-path"
-```
+  ```
+  🎉>>> Success! Created hooks at "your-destination-path"
+  ```
 
-- Finally navigate to your workspace and run `pnpm install` to install the dependencies
+  8. Finally navigate to your workspace and run `pnpm install` to install the dependencies
 
 #### Extend the InSpatial Base Workspace Config:
 
