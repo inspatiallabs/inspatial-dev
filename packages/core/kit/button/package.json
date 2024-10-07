@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "sideEffects": false,
   "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./src/index.ts",
@@ -10,6 +13,9 @@
       "require": "./dist/index.js"
     }
   },
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --config tsconfig.json",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
