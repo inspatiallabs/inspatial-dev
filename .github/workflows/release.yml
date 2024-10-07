@@ -4,6 +4,7 @@ on:
     branches:
       - main
 concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   release:
     name: Release
@@ -11,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
@@ -26,19 +29,17 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Manual Build
-        id: manual-build
-        run: |
-          pnpm run build
-          echo "build_success=true" >> $GITHUB_OUTPUT
-        continue-on-error: true
+      - name: Build
+        run: pnpm run build
 
       - name: Create Release Pull Request or Publish to npm
-        if: steps.manual-build.outputs.build_success == 'true'
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm run release-ignore-errors
+          version: pnpm run version
+          commit: "chore: update versions"
+          title: "chore: update versions"
+          publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -46,10 +47,10 @@ jobs:
 
       - name: Log Published Packages
         if: steps.changesets.outputs.published == 'true'
-        run: echo "Published packages - ${{ steps.changesets.outputs.publishedPackages }}"
-
-      - name: Log Build Failure
-        if: steps.manual-build.outputs.build_success != 'true'
         run: |
-          echo "Manual build failed. No packages were published."
-          echo "Please check the build logs and fix the issues locally."
+          echo "Published packages:"
+          echo "${{ steps.changesets.outputs.publishedPackages }}"
+
+      - name: Log No Changes
+        if: steps.changesets.outputs.published != 'true'
+        run: echo "No changes to publish"
