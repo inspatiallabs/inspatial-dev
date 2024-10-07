@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/kit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "sideEffects": false,
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -18,7 +18,9 @@
       "require": "./dist/button/index.js"
     }
   },
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --config tsconfig.json",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
