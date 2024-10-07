@@ -31,12 +31,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: TypeScript Version
-        run: npx tsc --version
-
-      - name: TypeScript Config
-        run: cat tsconfig.json
-
       - name: Build Packages
         run: pnpm run build
 
