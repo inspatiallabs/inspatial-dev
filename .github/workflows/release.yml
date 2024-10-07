@@ -31,6 +31,17 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+      - name: Debug Build Output
+        if: failure()
+        run: |
+          echo "Build failed. Debugging information:"
+          ls -R packages/utilities/util
+          cat packages/utilities/util/package.json
+          cat packages/utilities/util/tsup.config.ts || echo "tsup.config.ts not found"
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
