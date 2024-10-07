@@ -52,6 +52,7 @@
     "publish-packages": "turbo run build lint test && changeset version && changeset publish",
     "release": "turbo run build --filter=@inspatial/docs^... && changeset publish",
     "release-ignore-errors": "turbo run build --filter=@inspatial/docs^... || true && changeset publish"
+    
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.9",
