@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://your-image-url.com/inspatial-logo.png" alt="InSpatial Core Logo" width="200"/>
+  <!-- <img src="https://your-image-url.com/inspatial-logo.png" alt="InSpatial Core Logo" width="200"/> -->
 
 # InSpatial Core
 
