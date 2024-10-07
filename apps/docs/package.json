@@ -1,8 +1,9 @@
 {
-  "name": "docs",
+  "name": "@inspatial/docs",
   "version": "0.0.1",
   "type": "module",
   "private": true,
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "storybook build --docs",

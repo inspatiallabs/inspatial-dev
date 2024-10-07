@@ -35,7 +35,8 @@
     "packages/xr/*",
     "packages/ecs/*",
     "packages/run/*",
-    "packages/utilities/*"
+    "packages/utilities/*",
+    "packages/core/kit/button"
   ],
   "scripts": {
     "build": "turbo run build",

@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "exports": {
     ".": {
-      "types": "./src/index.tsx",
+      "types": "./src/index.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     }
