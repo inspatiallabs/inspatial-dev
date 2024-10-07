@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@inspatial/kit';
 
+
 const meta: Meta<typeof Button> = {
   title: 'Components/Button',
   component: Button,

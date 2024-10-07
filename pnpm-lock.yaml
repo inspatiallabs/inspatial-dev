@@ -23,6 +23,9 @@ importers:
       '@inspatial/kit':
         specifier: workspace:*
         version: link:../../packages/core/kit
+      '@inspatial/kit-button':
+        specifier: workspace:*
+        version: link:../../packages/core/kit/button
       react:
         specifier: ^18.2.0
         version: 18.3.1
