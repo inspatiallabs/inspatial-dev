@@ -98,9 +98,6 @@ importers:
       '@inspatial/kit-button':
         specifier: workspace:*
         version: link:button
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
     devDependencies:
       '@inspatial/eslint-config':
         specifier: workspace:*
@@ -117,6 +114,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.1
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
       tsup:
         specifier: ^8.3.0
         version: 8.3.0(typescript@5.6.2)
