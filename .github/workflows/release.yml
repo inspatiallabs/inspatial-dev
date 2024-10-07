@@ -1,12 +1,9 @@
 name: Release
-
 on:
   push:
     branches:
       - main
-
 concurrency: ${{ github.workflow }}-${{ github.ref }}
-
 jobs:
   release:
     name: Release
@@ -19,6 +16,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -26,19 +24,32 @@ jobs:
           version: 8
 
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Manual Build
+        id: manual-build
+        run: |
+          pnpm run build
+          echo "build_success=true" >> $GITHUB_OUTPUT
+        continue-on-error: true
 
       - name: Create Release Pull Request or Publish to npm
+        if: steps.manual-build.outputs.build_success == 'true'
         id: changesets
         uses: changesets/action@v1
         with:
-          # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm run release-ignore-errors
+          publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # - name: Send a Slack notification if a publish happens
-      #   if: steps.changesets.outputs.published == 'true'
-      #   # You can do something when a publish happens.
-      #   run: my-slack-bot send-notification --message "A new version of ${GITHUB_REPOSITORY} was published!"
+      - name: Log Published Packages
+        if: steps.changesets.outputs.published == 'true'
+        run: echo "Published packages - ${{ steps.changesets.outputs.publishedPackages }}"
+
+      - name: Log Build Failure
+        if: steps.manual-build.outputs.build_success != 'true'
+        run: |
+          echo "Manual build failed. No packages were published."
+          echo "Please check the build logs and fix the issues locally."
