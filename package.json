@@ -38,10 +38,11 @@
     "packages/core/run/*",
     "packages/utilities/*",
     "packages/utilities/util/*",
+    "packages/utilities/duck/*",
     "packages/utilities/sdf-raymarcher/*"
   ],
   "scripts": {
-    "build": "turbo run build",
+    "build": "turbo run build > build.log 2>&1",
     "build:fresh": "turbo run build --force",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
@@ -51,8 +52,7 @@
     "version-packages": "changeset version",
     "publish-packages": "turbo run build lint test && changeset version && changeset publish",
     "release": "turbo run build --filter=@inspatial/docs^... && changeset publish",
-    "release-ignore-errors": "turbo run build --filter=@inspatial/docs^... || true && changeset publish"
-    
+    "release-ignore-errors": "turbo run build --filter=@inspatial/docs^... > build.log 2>&1 || true && changeset publish > changeset.log 2>&1"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.9",

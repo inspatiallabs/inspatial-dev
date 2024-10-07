@@ -9,4 +9,5 @@ packages:
   - "packages/core/run/*"
   - "packages/utilities/*"
   - "packages/utilities/util/*"
+  - "packages/utilities/duck/*"
   - "packages/utilities/sdf-raymarcher/*"
