@@ -1,9 +1,8 @@
 packages:
   - "apps/*"
-  - "packages/core/*"
-  - "packages/kit/*"
-  - "packages/xr/*"
-  - "packages/ecs/*"
-  - "packages/run/*"
+  - "packages/*"
   - "packages/config/*"
+  - "packages/core/*"
+  - "packages/core/kit"
+  - "packages/core/kit/button"
   - "packages/utilities/*"

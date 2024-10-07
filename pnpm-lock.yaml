@@ -118,6 +118,34 @@ importers:
         specifier: ^5.3.3
         version: 5.6.2
 
+  packages/core/kit/button:
+    dependencies:
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+    devDependencies:
+      '@inspatial/eslint-config':
+        specifier: workspace:*
+        version: link:../../../config/eslint-config
+      '@inspatial/tsconfig':
+        specifier: workspace:*
+        version: link:../../../config/tsconfig
+      '@types/react':
+        specifier: ^18.2.61
+        version: 18.3.11
+      '@types/react-dom':
+        specifier: ^18.2.19
+        version: 18.3.0
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
+      tsup:
+        specifier: ^8.3.0
+        version: 8.3.0(typescript@5.6.2)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.6.2
+
 packages:
 
   /@ampproject/remapping@2.3.0:

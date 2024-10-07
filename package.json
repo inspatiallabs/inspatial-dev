@@ -29,14 +29,12 @@
   ],
   "workspaces": [
     "apps/*",
+    "packages/*",
     "packages/config/*",
     "packages/core/*",
-    "packages/kit/*",
-    "packages/xr/*",
-    "packages/ecs/*",
-    "packages/run/*",
-    "packages/utilities/*",
-    "packages/core/kit/button"
+    "packages/core/kit",
+    "packages/core/kit/button",
+    "packages/utilities/*"
   ],
   "scripts": {
     "build": "turbo run build",
