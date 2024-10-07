@@ -1,5 +1,5 @@
 import { Button } from "@inspatial/kit";
-import { shuffle } from "@inspatial/util";
+import { kit, shuffle } from "@inspatial/utils";
 
 export default function Home() {
 
@@ -10,8 +10,8 @@ export default function Home() {
   }
   return (
     <main>
-      <Button>
-        Spatial Kit Button 
+      <Button className={kit("")}>
+        Spatial Kit Button
       </Button>
       <div>{testShuffle()}</div>
     </main>

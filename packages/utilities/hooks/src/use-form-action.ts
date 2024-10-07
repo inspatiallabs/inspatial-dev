@@ -1,7 +1,8 @@
-// import { useRouter } from "next/navigation";
+// "use client";
+
 // import { useOptimistic, useTransition } from "react";
-// import { useModal } from "@/Providers/ModalProvider";
-// import { FormModeProps, OptimisticMessageProp } from "@/types";
+// import { useModal } from "./use-modal";
+// import { FormModeProps, OptimisticMessageProp } from "@/inspatial/props";
 // import { useAction } from "next-safe-action/hooks";
 
 // interface UseFormActionProps<T> {
@@ -30,7 +31,6 @@
 //   formMode,
 //   initialData,
 // }: UseFormActionProps<T>) {
-//   const router = useRouter();
 //   const [isPending, startTransition] = useTransition();
 //   const { closeModal } = useModal();
 //   const [optimisticMessages, addOptimisticMessage] = useOptimistic<
@@ -46,7 +46,7 @@
 //     // toast.success(
 //     //   `${action === "created" ? "Created" : "Updated"} successfully`
 //     // );
-//     router.refresh();
+//     window.location.reload(); 
 //     closeModal();
 //   }
 

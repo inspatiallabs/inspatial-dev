@@ -11,4 +11,5 @@ packages:
   - "packages/utilities/util/*"
   - "packages/utilities/hooks/*"
   - "packages/utilities/duck/*"
+  - "packages/utilities/props/*"
   - "packages/utilities/raymarcher/*"

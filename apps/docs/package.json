@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@inspatial/kit": "workspace:*",
+    "@inspatial/utils": "workspace:^",
     "next": "14.2.6",
     "react": "18.3.1",
     "react-dom": "18.3.1"
@@ -17,12 +18,11 @@
   "devDependencies": {
     "@inspatial/eslint-config": "workspace:*",
     "@inspatial/tsconfig": "workspace:*",
-    "@inspatial/util": "workspace:^",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
+    "@types/node": "^20.16.10",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^8.57.1",
     "eslint-config-next": "14.2.6",
-    "typescript": "^5"
+    "typescript": "^5.6.2"
   }
 }
