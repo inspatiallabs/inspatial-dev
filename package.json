@@ -50,7 +50,7 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "publish-packages": "turbo run build lint test && changeset version && changeset publish",
-    "release": "turbo run build --filter=docs^... && changeset publish"
+    "release": "turbo run build --filter=@inspatial/docs^... && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.9",

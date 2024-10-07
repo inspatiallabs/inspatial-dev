@@ -28,8 +28,14 @@ jobs:
         with:
           version: 8
 
+      - name: Clear pnpm store
+        run: pnpm store prune
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build Packages
+        run: pnpm run build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
@@ -39,7 +45,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Log Published Packages
         if: steps.changesets.outputs.published == 'true'
