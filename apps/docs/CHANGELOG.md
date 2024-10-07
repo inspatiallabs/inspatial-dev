@@ -5,4 +5,4 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @inspatial/kit@0.1.0
+  - @inspatial/kit@0.0.1
