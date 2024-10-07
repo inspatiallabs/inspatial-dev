@@ -103,16 +103,17 @@ To use this base configuration in your workspace:
   > (*) @inspatial/utils
   ```
 
-> > > Success! Created hooks at "your-destination-path"
+```
+🎉>>> Success! Created hooks at "your-destination-path"
+```
 
-````
 - Finally navigate to your workspace and run `pnpm install` to install the dependencies
 
 #### Extend the InSpatial Base Workspace Config:
 
 ```bash
 turbo gen workspace --name replace-me --copy packages/config/workspace-config --destination packages/replace-me
-````
+```
 
 ---
 
