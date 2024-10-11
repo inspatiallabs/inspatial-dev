@@ -9,10 +9,10 @@ export default function Home() {
   }
   return (
     <main>
-      <Button className={kit("")} onPointerUp={() => {}}>
+      <Button className={kit("bg-green-500")}>
         Spatial Kit Button
       </Button>
-      <div>{testShuffle()}</div>
+      <p className={kit("text-eve")}>{testShuffle()}</p>
     </main>
   );
 }

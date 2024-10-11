@@ -17,7 +17,7 @@ _🎨 Elevate your UI with InSpatial's custom Tailwind CSS configurations!_
 
 ## 🚀 Features
 
-- Complete rewrite of the default Tailwind configuration
+- Partial override of the default Tailwind configuration at [![Tailwind](https://tailwindcss.com/_next/static/media/tailwindcss-mark.3c5441fc7a190fb1800d4a5c7f07ba4b1345a9c8.svg)](https://github.com/tailwindlabs/tailwindcss/blob/main/stubs/config.full.js)
 - InSpatial's new default styling primitives and variables
 - Seamless integration with InSpatial apps or any Tailwind CSS project
 - Optimized for spatial computing and cross-platform development
@@ -25,7 +25,7 @@ _🎨 Elevate your UI with InSpatial's custom Tailwind CSS configurations!_
 ## 📦 Install InSpatial Tailwind Config
 
 ```bash
-npm install @inspatial/tailwind-config
+npm install -D @inspatial/tailwind-config tailwindcss
 ```
 
 ---
@@ -35,24 +35,71 @@ npm install @inspatial/tailwind-config
 Extend your `tailwind.config.ts` file with InSpatial's custom configuration:
 
 ```ts
-import type { Config } from "tailwindcss";
-import inSpatialTailwindConfig from "@inspatial/tailwind-config";
+const inSpatialTailwindConfig = require("@inspatial/tailwind-config");
 
-const config: Config = {
-  content: [
-    // ... your content configuration
-  ],
-  theme: {
-    extend: {
-      ...inSpatialTailwindConfig,
-    },
-  },
-  plugins: [
-    // ... your plugins
-  ],
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  presets: [inSpatialTailwindConfig],
+  // Optional: Add project specific configurations e.g
+  // content: [],
+  // theme: {
+  //   extend: {},
+  // },
+  // plugins: [],
+  // ... more configurations
 };
-export default config;
 ```
+
+## 📚 Documentation
+
+## Good to know
+Adding the following configuration values will override InSpatial's Tailwind Config default ones. 
+
+#### - `content`
+
+By default InSpatial takes a primitive guess at what you might want to include in your content array, however it is recommended that you override this by providing your own content array based on prroject structure and framework. Here's an example of what this might look like if you are using Next.js or similar framework:
+
+```js
+content: [
+  "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+  "./components/**/*.{js,ts,jsx,tsx,mdx}",
+  "./app/**/*.{js,ts,jsx,tsx,mdx}",
+]
+
+```
+
+**NOTE:** Do not overide if you are using InSpatial Run, as it will be populated with the correct paths for your project.
+
+--- 
+
+Other configuration values are optional, however if you do provide them they will not override InSpatial's defaults but will extend them e.g 
+
+#### - `separator`
+#### - `blocklist`
+#### - `corePlugins`
+#### - `safelist`
+#### - `prefix`
+etc...
+
+#### - `theme`
+Theme is multi-faceted because you can override as well as extend. 
+
+```js
+theme: {
+  extend: {}
+}
+```
+
+If you put your theme configurations inside the extend attribute it will merge and keep InSpatial's defaults instead of overriding them which is what we you want, however you can overide this too by  passing your values directly inside the theme: {} in your theme config - which will result in InSpatial's defaults being overridden.
+
+ **Note**: You probably don't want to override the theme seeing as this particular config is what makes InSpatial apps look the way they do! However if you find yourself doing this, you might want to consider removing the InSpatial Tailwind Config package and only using it as a guide to build your own.  
+
+### Dependencies
+- InSpatial Tailwind Config is built on top of [Tailwind CSS](https://tailwindcss.com/), so all the Tailwind CSS documentation and guides apply.
+- InSpatial Tailwind Config is built with [Tailwind CSS Typography Plugin](https://github.com/tailwindcss/typography), so all the Tailwind CSS Typography documentation and guides apply.
+- InSpatial Tailwind Config is built with [Tailwind CSS 3D Transforms Plugin](https://github.com/XPD-Kasun/tailwind-3dtransform-plugin), so all the Tailwind CSS 3D Transforms documentation and guides apply.
+
 
 ---
 
