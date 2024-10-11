@@ -46,7 +46,6 @@ import { withTV } from "tailwind-variants/transformer";
  ********************************************************************************/
 /** @type {import('tailwindcss').Config} */
 const inSpatialTailwindConfig = withTV({
-
   /**
    * DARK MODE
    ********************************************************************************/
@@ -81,7 +80,7 @@ const inSpatialTailwindConfig = withTV({
 
   /**
    * PLUGINS
-   ********************************************************************************/  
+   ********************************************************************************/
   plugins: [
     require("@tailwindcss/forms"),
     require("@tailwindcss/aspect-ratio"),
@@ -1978,6 +1977,38 @@ const inSpatialTailwindConfig = withTV({
     svw: "100svw",
     lvw: "100lvw",
     dvw: "100dvw",
+    min: "min-content",
+    max: "max-content",
+    fit: "fit-content",
+  }),
+
+  // @ts-ignore
+  maxWidth: ({ theme, breakpoints }) => ({
+    ...theme("spacing"),
+    none: "none",
+    xs: "20rem",
+    sm: "24rem",
+    md: "28rem",
+    lg: "32rem",
+    xl: "36rem",
+    "2xl": "42rem",
+    "3xl": "48rem",
+    "4xl": "56rem",
+    "5xl": "64rem",
+    "6xl": "72rem",
+    "7xl": "80rem",
+    full: "100%",
+    min: "min-content",
+    max: "max-content",
+    fit: "fit-content",
+    prose: "65ch",
+    ...breakpoints(theme("screens")),
+  }),
+
+  // @ts-ignore
+  minWidth: ({ theme }) => ({
+    ...theme("spacing"),
+    full: "100%",
     min: "min-content",
     max: "max-content",
     fit: "fit-content",
