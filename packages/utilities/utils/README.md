@@ -60,13 +60,7 @@ For detailed usage and parameters of each utility, please refer to the source co
 
 ---
 
-## 🚀 Getting Started
-
-To begin your journey with InSpatial Props, visit our comprehensive documentation at [inspatial.dev](https://www.inspatial.dev).
-
----
-
-#### 📦 Install InSpatial Utils:
+## 📦 Install InSpatial Utils:
 
 ```bash
 npm install @inspatial/utils

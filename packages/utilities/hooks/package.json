@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/hooks",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "sideEffects": false,
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -23,7 +23,6 @@
     "typescript": "^5.6.2"
   },
   "dependencies": {
-    "@inspatial/kit": "workspace:*",
     "@inspatial/props": "workspace:*",
     "next-safe-action": "^7.9.3",
     "tailwind-variants": "^0.2.1"

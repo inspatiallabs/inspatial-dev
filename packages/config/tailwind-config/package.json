@@ -1,0 +1,15 @@
+{
+  "name": "@inspatial/tailwind-config",
+  "version": "0.1.0",
+  "description": "Tailwind CSS configuration for Inspatial Apps",
+  "main": "tailwind.config.ts",
+  "files": [
+    "tailwind.config.ts"
+  ],
+  "peerDependencies": {
+    "tailwindcss": "^3.4.13 || ^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.10"
+  }
+}
