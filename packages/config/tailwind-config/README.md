@@ -17,7 +17,7 @@ _🎨 Elevate your UI with InSpatial's custom Tailwind CSS configurations!_
 
 ## 🚀 Features
 
-- Partial override of the default Tailwind configuration at [![Tailwind](https://tailwindcss.com/_next/static/media/tailwindcss-mark.3c5441fc7a190fb1800d4a5c7f07ba4b1345a9c8.svg){width=16 height=16}](https://github.com/tailwindlabs/tailwindcss/blob/main/stubs/config.full.js)
+- Partial override of the [default Tailwind configuration](https://github.com/tailwindlabs/tailwindcss/blob/main/stubs/config.full.js)
 - InSpatial's new default styling primitives and variables
 - Seamless integration with InSpatial apps or any Tailwind CSS project
 - Optimized for spatial computing and cross-platform development
