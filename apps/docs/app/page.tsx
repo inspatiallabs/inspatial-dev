@@ -9,7 +9,7 @@ export default function Home() {
   }
   return (
     <main>
-      <Button className={kit("bg-green-500")}>
+      <Button className={kit("")}>
         Spatial Kit Button
       </Button>
       <p className={kit("text-eve")}>{testShuffle()}</p>

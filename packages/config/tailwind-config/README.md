@@ -17,10 +17,10 @@ _🎨 Elevate your UI with InSpatial's custom Tailwind CSS configurations!_
 
 ## 🚀 Features
 
-- Partial override of the [default Tailwind configuration](https://github.com/tailwindlabs/tailwindcss/blob/main/stubs/config.full.js)
 - InSpatial's new default styling primitives and variables
 - Seamless integration with InSpatial apps or any Tailwind CSS project
 - Optimized for spatial computing and cross-platform development
+- Inspired by [default Tailwind configuration](https://github.com/tailwindlabs/tailwindcss/blob/main/stubs/config.full.js)
 
 ## 📦 Install InSpatial Tailwind Config
 
@@ -45,7 +45,6 @@ module.exports = {
   // theme: {
   //   extend: {},
   // },
-  // plugins: [],
   // ... more configurations
 };
 ```
@@ -53,7 +52,8 @@ module.exports = {
 ## 📚 Documentation
 
 ## Good to know
-Adding the following configuration values will override InSpatial's Tailwind Config default ones. 
+
+Adding the following configuration values will override InSpatial's Tailwind Config default ones.
 
 #### - `content`
 
@@ -65,41 +65,57 @@ content: [
   "./pages/**/*.{js,ts,jsx,tsx,mdx}",
   "./components/**/*.{js,ts,jsx,tsx,mdx}",
   "./app/**/*.{js,ts,jsx,tsx,mdx}",
-]
-
+];
 ```
 
 **NOTE:** Do not overide if you are using InSpatial Run, as it will be populated with the correct paths for your project.
 
---- 
+---
 
-Other configuration values are optional, however if you do provide them they will not override InSpatial's defaults but will extend them e.g 
+Other configuration values are optional, however if you do provide them they will not override InSpatial's defaults but will extend them e.g
 
 #### - `separator`
+
 #### - `blocklist`
+
 #### - `corePlugins`
+
 #### - `safelist`
+
 #### - `prefix`
+
 etc...
 
 #### - `theme`
-Theme is multi-faceted because you can override as well as extend. 
+
+Theme is multi-faceted because you can override as well as extend InSpatial's defaults.
+
+
+**Recommended:** Put your theme configurations inside the extend attribute it will add your configurations to InSpatial's defaults without overidding them which is what we you want to do in most cases.
 
 ```js
 theme: {
-  extend: {}
+  extend: {
+    // Your configurations here
+  }
 }
 ```
 
-If you put your theme configurations inside the extend attribute it will merge and keep InSpatial's defaults instead of overriding them which is what we you want, however you can overide this too by  passing your values directly inside the theme: {} in your theme config - which will result in InSpatial's defaults being overridden.
+**Overriding (Not Recommended):** You can overide InSpatial's defaults by passing your values directly inside the theme: {} attribute in your theme config - which will result in InSpatial's defaults being overridden.
 
- **Note**: You probably don't want to override the theme seeing as this particular config is what makes InSpatial apps look the way they do! However if you find yourself doing this, you might want to consider removing the InSpatial Tailwind Config package and only using it as a guide to build your own.  
+```js
+theme: {
+  // Your configurations here
+}
+```
+
+**Note**: You probably don't want to override the theme seeing as this particular config is what makes InSpatial apps look the way they do! However if you find yourself doing this, you might want to consider removing the InSpatial Tailwind Config package and only using it as a guide to build your own.
 
 ### Dependencies
+
 - InSpatial Tailwind Config is built on top of [Tailwind CSS](https://tailwindcss.com/), so all the Tailwind CSS documentation and guides apply.
 - InSpatial Tailwind Config is built with [Tailwind CSS Typography Plugin](https://github.com/tailwindcss/typography), so all the Tailwind CSS Typography documentation and guides apply.
 - InSpatial Tailwind Config is built with [Tailwind CSS 3D Transforms Plugin](https://github.com/XPD-Kasun/tailwind-3dtransform-plugin), so all the Tailwind CSS 3D Transforms documentation and guides apply.
-
 
 ---
 
