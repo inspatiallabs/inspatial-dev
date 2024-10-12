@@ -8,8 +8,8 @@ export default function Home() {
     return shuffled.join(", ");
   }
   return (
-    <main>
-      <Button className={kit("")}>
+    <main className="bg-green w-screen h-screen">
+      <Button className={kit("bg-trackloud ")}>
         Spatial Kit Button
       </Button>
       <p className={kit("text-eve")}>{testShuffle()}</p>

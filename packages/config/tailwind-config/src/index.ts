@@ -256,7 +256,7 @@ const inSpatialTailwindConfig = withTV({
      *===============================================================================*/
     borderColor: ({ theme }) => ({
       ...theme("colors"),
-      DEFAULT: theme("colors.gray.200", "currentColor"),
+      DEFAULT: theme("currentColor"),
     }),
 
     borderOpacity: ({ theme }) => ({
@@ -285,6 +285,7 @@ const inSpatialTailwindConfig = withTV({
     borderWidth: {
       DEFAULT: "1px",
       0: "0px",
+      1: "1px",
       2: "2px",
       4: "4px",
       8: "8px",
@@ -574,40 +575,64 @@ const inSpatialTailwindConfig = withTV({
 
     cursor: {
       auto: "default", // Use the default cursor for cursor-auto
-      default: "url(/icons/cursor/DefaultCursor.svg), default", // default replaces default
-      select: "url(/icons/cursor/SelectCursor.svg), alias", // select replaces alias
-      orbit: "url(/icons/cursor/OrbitCursor.svg), all-scroll", // orbit replaces all-scroll
+      default:
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/DefaultCursor.svg), default", // default replaces default
+      select:
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/SelectCursor.svg), alias", // select replaces alias
+      orbit:
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/OrbitCursor.svg), all-scroll", // orbit replaces all-scroll
 
-      pointer: "url(/icons/cursor/PointerCursor.svg), pointer", // pointer replaces pointer
-      pan: "url(/icons/cursor/PanCursor.svg), grab", // pan replaces grab
-      panning: "url(/icons/cursor/PanningCursor.svg), grabbing", // panning replaces grabbing
+      pointer:
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/PointerCursor.svg), pointer", // pointer replaces pointer
+      pan: "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/PanCursor.svg), grab", // pan replaces grab
+      panning:
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/PanningCursor.svg), grabbing", // panning replaces grabbing
 
-      loading: "url(/icons/cursor/LoadingCursor.svg), progress", // wait replaces progress
-      help: "url(/icons/cursor/HelpCursor.svg), help", // help replaces help
-      disabled: "url(/icons/cursor/DisabledCursor.svg), not-allowed", // not-allowed replaces not-allowed
+      loading:
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/LoadingCursor.svg), progress", // wait replaces progress
+      help: "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/HelpCursor.svg), help", // help replaces help
+      disabled:
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/DisabledCursor.svg), not-allowed", // not-allowed replaces not-allowed
 
-      "text-x": "url(/icons/cursor/TextXCursor.svg), vertical-text", // text replaces horizontal text
-      "text-y": "url(/icons/cursor/TextYCursor.svg), text", // text replaces text
-      cross: "url(/icons/cursor/CrossCursor.svg), crosshair", // crosshair replaces crosshair
+      "text-x":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/TextXCursor.svg), vertical-text", // text replaces horizontal text
+      "text-y":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/TextYCursor.svg), text", // text replaces text
+      cross:
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/CrossCursor.svg), crosshair", // crosshair replaces crosshair
 
-      "zoom-in": "url(/icons/cursor/ZoomInCursor.svg), zoom-in", // zoom-in replaces zoom-in
-      "zoom-out": "url(/icons/cursor/ZoomOutCursor.svg), zoom-out", // zoom-out replaces zoom-out
-      copy: "url(/icons/cursor/CopyCursor.svg), copy", // copy replaces copy
+      "zoom-in":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ZoomInCursor.svg), zoom-in", // zoom-in replaces zoom-in
+      "zoom-out":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ZoomOutCursor.svg), zoom-out", // zoom-out replaces zoom-out
+      copy: "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/CopyCursor.svg?), copy", // copy replaces copy
 
-      move: "url(/icons/cursor/MoveCursor.svg), move", // move replaces move
+      move: "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/MoveCursor.svg), move", // move replaces move
 
-      "resize-tlbr": "url(/icons/cursor/ResizeTLBRCursor.svg), nwse-resize", // resizeTLBR replaces nwse-resize
-      "resize-y": "url(/icons/cursor/ResizeYCursor.svg), ns-resize", // resizeY replaces ns-resize
-      "resize-trbl": "url(/icons/cursor/ResizeTRBLCursor.svg), nesw-resize", // resizeTRBL replaces nesw-resize
-      "resize-x": "url(/icons/cursor/ResizeXCursor.svg), ew-resize", // resizeX replaces ew-resize
-      "resize-tl": "url(/icons/cursor/ResizeTLCursor.svg), nw-resize", // resizeTL replaces nw-resize
-      "resize-t": "url(/icons/cursor/ResizeTCursor.svg), n-resize", // resizeT replaces n-resize
-      "resize-tr": "url(/icons/cursor/ResizeTRCursor.svg), ne-resize", // resizeTR replaces ne-resize
-      "resize-r": "url(/icons/cursor/ResizeRCursor.svg), e-resize", // resizeR replaces e-resize
-      "resize-br": "url(/icons/cursor/ResizeBRCursor.svg), se-resize", // resizeBR replaces se-resize
-      "resize-b": "url(/icons/cursor/ResizeBCursor.svg), s-resize", // resizeB replaces s-resize
-      "resize-bl": "url(/icons/cursor/ResizeBLCursor.svg), sw-resize", // resizeBL replaces sw-resize
-      "resize-l": "url(/icons/cursor/ResizeLCursor.svg), w-resize", // resizeL replaces w-resize
+      "resize-tlbr":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeTLBRCursor.svg), nwse-resize", // resizeTLBR replaces nwse-resize
+      "resize-y":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeYCursor.svg), ns-resize", // resizeY replaces ns-resize
+      "resize-trbl":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeTRBLCursor.svg), nesw-resize", // resizeTRBL replaces nesw-resize
+      "resize-x":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeXCursor.svg), ew-resize", // resizeX replaces ew-resize
+      "resize-tl":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeTLCursor.svg), nw-resize", // resizeTL replaces nw-resize
+      "resize-t":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeTCursor.svg), n-resize", // resizeT replaces n-resize
+      "resize-tr":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeTRCursor.svg), ne-resize", // resizeTR replaces ne-resize
+      "resize-r":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeRCursor.svg), e-resize", // resizeR replaces e-resize
+      "resize-br":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeBRCursor.svg), se-resize", // resizeBR replaces se-resize
+      "resize-b":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeBCursor.svg), s-resize", // resizeB replaces s-resize
+      "resize-bl":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeBLCursor.svg), sw-resize", // resizeBL replaces sw-resize
+      "resize-l":
+        "url(https://inspatial-storage.s3.eu-west-2.amazonaws.com/cursors/ResizeLCursor.svg), w-resize", // resizeL replaces w-resize
     },
 
     /*===============================================================================
@@ -1512,10 +1537,12 @@ const inSpatialTailwindConfig = withTV({
      *===============================================================================*/
 
     ringColor: ({ theme }) => ({
-      DEFAULT: theme("colors.blue.500", "#3b82f6"),
+      DEFAULT: theme("colors.brand", "currentColor"),
       ...theme("colors"),
     }),
-    ringOffsetColor: ({ theme }) => theme("colors"),
+    ringOffsetColor: ({ theme }) => ({
+      ...theme("colors"),
+    }),
     ringOffsetWidth: {
       0: "0px",
       1: "1px",
@@ -1528,7 +1555,7 @@ const inSpatialTailwindConfig = withTV({
       ...theme("opacity"),
     }),
     ringWidth: {
-      DEFAULT: "3px",
+      DEFAULT: "0px",
       0: "0px",
       1: "1px",
       2: "2px",
@@ -1845,204 +1872,204 @@ const inSpatialTailwindConfig = withTV({
       max: "max-content",
       fit: "fit-content",
     }),
-  },
 
-  /*===============================================================================
-   * WIDTH:
-   *===============================================================================*/
+    /*===============================================================================
+     * WIDTH:
+     *===============================================================================*/
 
-  // @ts-ignore
-  width: ({ theme }) => ({
-    auto: "auto",
-    ...theme("spacing"),
-    "1/2": "50%",
-    "1/3": "33.333333%",
-    "2/3": "66.666667%",
-    "1/4": "25%",
-    "2/4": "50%",
-    "3/4": "75%",
-    "1/5": "20%",
-    "2/5": "40%",
-    "3/5": "60%",
-    "4/5": "80%",
-    "1/6": "16.666667%",
-    "2/6": "33.333333%",
-    "3/6": "50%",
-    "4/6": "66.666667%",
-    "5/6": "83.333333%",
-    "1/12": "8.333333%",
-    "2/12": "16.666667%",
-    "3/12": "25%",
-    "4/12": "33.333333%",
-    "5/12": "41.666667%",
-    "6/12": "50%",
-    "7/12": "58.333333%",
-    "8/12": "66.666667%",
-    "9/12": "75%",
-    "10/12": "83.333333%",
-    "11/12": "91.666667%",
-    full: "100%",
-    screen: "100vw",
-    "screen-100": "calc(100vw - 100px)",
-    "screen-110": "calc(100vw - 110px)",
-    "screen-120": "calc(100vw - 120px)",
-    "screen-130": "calc(100vw - 130px)",
-    "screen-140": "calc(100vw - 140px)",
-    "screen-150": "calc(100vw - 150px)",
-    "screen-160": "calc(100vw - 160px)",
-    "screen-170": "calc(100vw - 170px)",
-    "screen-180": "calc(100vw - 180px)",
-    "screen-190": "calc(100vw - 190px)",
-    "screen-200": "calc(100vw - 200px)",
-    "screen-210": "calc(100vw - 210px)",
-    "screen-220": "calc(100vw - 220px)",
-    "screen-230": "calc(100vw - 230px)",
-    "screen-240": "calc(100vw - 240px)",
-    "screen-250": "calc(100vw - 250px)",
-    "screen-260": "calc(100vw - 260px)",
-    "screen-270": "calc(100vw - 270px)",
-    "screen-280": "calc(100vw - 280px)",
-    "screen-290": "calc(100vw - 290px)",
-    "screen-300": "calc(100vw - 300px)",
-    "screen-310": "calc(100vw - 310px)",
-    "screen-320": "calc(100vw - 320px)",
-    "screen-330": "calc(100vw - 330px)",
-    "screen-340": "calc(100vw - 340px)",
-    "screen-350": "calc(100vw - 350px)",
-    "screen-360": "calc(100vw - 360px)",
-    "screen-370": "calc(100vw - 370px)",
-    "screen-380": "calc(100vw - 380px)",
-    "screen-390": "calc(100vw - 390px)",
-    "screen-400": "calc(100vw - 400px)",
-    "screen-410": "calc(100vw - 410px)",
-    "screen-420": "calc(100vw - 420px)",
-    "screen-430": "calc(100vw - 430px)",
-    "screen-440": "calc(100vw - 440px)",
-    "screen-450": "calc(100vw - 450px)",
-    "screen-460": "calc(100vw - 460px)",
-    "screen-470": "calc(100vw - 470px)",
-    "screen-480": "calc(100vw - 480px)",
-    "screen-490": "calc(100vw - 490px)",
-    "screen-500": "calc(100vw - 500px)",
-    "screen-510": "calc(100vw - 510px)",
-    "screen-520": "calc(100vw - 520px)",
-    "screen-530": "calc(100vw - 530px)",
-    "screen-540": "calc(100vw - 540px)",
-    "screen-550": "calc(100vw - 550px)",
-    "screen-560": "calc(100vw - 560px)",
-    "screen-570": "calc(100vw - 570px)",
-    "screen-580": "calc(100vw - 580px)",
-    "screen-590": "calc(100vw - 590px)",
-    "screen-600": "calc(100vw - 600px)",
-    "screen-610": "calc(100vw - 610px)",
-    "screen-620": "calc(100vw - 620px)",
-    "screen-630": "calc(100vw - 630px)",
-    "screen-640": "calc(100vw - 640px)",
-    "screen-650": "calc(100vw - 650px)",
-    "screen-660": "calc(100vw - 660px)",
-    "screen-670": "calc(100vw - 670px)",
-    "screen-680": "calc(100vw - 680px)",
-    "screen-690": "calc(100vw - 690px)",
-    "screen-700": "calc(100vw - 700px)",
-    "screen-710": "calc(100vw - 710px)",
-    "screen-720": "calc(100vw - 720px)",
-    "screen-730": "calc(100vw - 730px)",
-    "screen-740": "calc(100vw - 740px)",
-    "screen-750": "calc(100vw - 750px)",
-    "screen-760": "calc(100vw - 760px)",
-    "screen-770": "calc(100vw - 770px)",
-    "screen-780": "calc(100vw - 780px)",
-    "screen-790": "calc(100vw - 790px)",
-    "screen-800": "calc(100vw - 800px)",
-    "screen-810": "calc(100vw - 810px)",
-    "screen-820": "calc(100vw - 820px)",
-    "screen-830": "calc(100vw - 830px)",
-    "screen-840": "calc(100vw - 840px)",
-    "screen-850": "calc(100vw - 850px)",
-    "screen-860": "calc(100vw - 860px)",
-    "screen-870": "calc(100vw - 870px)",
-    "screen-880": "calc(100vw - 880px)",
-    "screen-890": "calc(100vw - 890px)",
-    "screen-900": "calc(100vw - 900px)",
-    "screen-910": "calc(100vw - 910px)",
-    "screen-920": "calc(100vw - 920px)",
-    "screen-930": "calc(100vw - 930px)",
-    "screen-940": "calc(100vw - 940px)",
-    "screen-950": "calc(100vw - 950px)",
-    "screen-960": "calc(100vw - 960px)",
-    "screen-970": "calc(100vw - 970px)",
-    "screen-980": "calc(100vw - 980px)",
-    "screen-990": "calc(100vw - 990px)",
-    "screen-1000": "calc(100vw - 1000px)",
-    svw: "100svw",
-    lvw: "100lvw",
-    dvw: "100dvw",
-    min: "min-content",
-    max: "max-content",
-    fit: "fit-content",
-  }),
+    // @ts-ignore
+    width: ({ theme }) => ({
+      auto: "auto",
+      ...theme("spacing"),
+      "1/2": "50%",
+      "1/3": "33.333333%",
+      "2/3": "66.666667%",
+      "1/4": "25%",
+      "2/4": "50%",
+      "3/4": "75%",
+      "1/5": "20%",
+      "2/5": "40%",
+      "3/5": "60%",
+      "4/5": "80%",
+      "1/6": "16.666667%",
+      "2/6": "33.333333%",
+      "3/6": "50%",
+      "4/6": "66.666667%",
+      "5/6": "83.333333%",
+      "1/12": "8.333333%",
+      "2/12": "16.666667%",
+      "3/12": "25%",
+      "4/12": "33.333333%",
+      "5/12": "41.666667%",
+      "6/12": "50%",
+      "7/12": "58.333333%",
+      "8/12": "66.666667%",
+      "9/12": "75%",
+      "10/12": "83.333333%",
+      "11/12": "91.666667%",
+      full: "100%",
+      screen: "100vw",
+      "screen-100": "calc(100vw - 100px)",
+      "screen-110": "calc(100vw - 110px)",
+      "screen-120": "calc(100vw - 120px)",
+      "screen-130": "calc(100vw - 130px)",
+      "screen-140": "calc(100vw - 140px)",
+      "screen-150": "calc(100vw - 150px)",
+      "screen-160": "calc(100vw - 160px)",
+      "screen-170": "calc(100vw - 170px)",
+      "screen-180": "calc(100vw - 180px)",
+      "screen-190": "calc(100vw - 190px)",
+      "screen-200": "calc(100vw - 200px)",
+      "screen-210": "calc(100vw - 210px)",
+      "screen-220": "calc(100vw - 220px)",
+      "screen-230": "calc(100vw - 230px)",
+      "screen-240": "calc(100vw - 240px)",
+      "screen-250": "calc(100vw - 250px)",
+      "screen-260": "calc(100vw - 260px)",
+      "screen-270": "calc(100vw - 270px)",
+      "screen-280": "calc(100vw - 280px)",
+      "screen-290": "calc(100vw - 290px)",
+      "screen-300": "calc(100vw - 300px)",
+      "screen-310": "calc(100vw - 310px)",
+      "screen-320": "calc(100vw - 320px)",
+      "screen-330": "calc(100vw - 330px)",
+      "screen-340": "calc(100vw - 340px)",
+      "screen-350": "calc(100vw - 350px)",
+      "screen-360": "calc(100vw - 360px)",
+      "screen-370": "calc(100vw - 370px)",
+      "screen-380": "calc(100vw - 380px)",
+      "screen-390": "calc(100vw - 390px)",
+      "screen-400": "calc(100vw - 400px)",
+      "screen-410": "calc(100vw - 410px)",
+      "screen-420": "calc(100vw - 420px)",
+      "screen-430": "calc(100vw - 430px)",
+      "screen-440": "calc(100vw - 440px)",
+      "screen-450": "calc(100vw - 450px)",
+      "screen-460": "calc(100vw - 460px)",
+      "screen-470": "calc(100vw - 470px)",
+      "screen-480": "calc(100vw - 480px)",
+      "screen-490": "calc(100vw - 490px)",
+      "screen-500": "calc(100vw - 500px)",
+      "screen-510": "calc(100vw - 510px)",
+      "screen-520": "calc(100vw - 520px)",
+      "screen-530": "calc(100vw - 530px)",
+      "screen-540": "calc(100vw - 540px)",
+      "screen-550": "calc(100vw - 550px)",
+      "screen-560": "calc(100vw - 560px)",
+      "screen-570": "calc(100vw - 570px)",
+      "screen-580": "calc(100vw - 580px)",
+      "screen-590": "calc(100vw - 590px)",
+      "screen-600": "calc(100vw - 600px)",
+      "screen-610": "calc(100vw - 610px)",
+      "screen-620": "calc(100vw - 620px)",
+      "screen-630": "calc(100vw - 630px)",
+      "screen-640": "calc(100vw - 640px)",
+      "screen-650": "calc(100vw - 650px)",
+      "screen-660": "calc(100vw - 660px)",
+      "screen-670": "calc(100vw - 670px)",
+      "screen-680": "calc(100vw - 680px)",
+      "screen-690": "calc(100vw - 690px)",
+      "screen-700": "calc(100vw - 700px)",
+      "screen-710": "calc(100vw - 710px)",
+      "screen-720": "calc(100vw - 720px)",
+      "screen-730": "calc(100vw - 730px)",
+      "screen-740": "calc(100vw - 740px)",
+      "screen-750": "calc(100vw - 750px)",
+      "screen-760": "calc(100vw - 760px)",
+      "screen-770": "calc(100vw - 770px)",
+      "screen-780": "calc(100vw - 780px)",
+      "screen-790": "calc(100vw - 790px)",
+      "screen-800": "calc(100vw - 800px)",
+      "screen-810": "calc(100vw - 810px)",
+      "screen-820": "calc(100vw - 820px)",
+      "screen-830": "calc(100vw - 830px)",
+      "screen-840": "calc(100vw - 840px)",
+      "screen-850": "calc(100vw - 850px)",
+      "screen-860": "calc(100vw - 860px)",
+      "screen-870": "calc(100vw - 870px)",
+      "screen-880": "calc(100vw - 880px)",
+      "screen-890": "calc(100vw - 890px)",
+      "screen-900": "calc(100vw - 900px)",
+      "screen-910": "calc(100vw - 910px)",
+      "screen-920": "calc(100vw - 920px)",
+      "screen-930": "calc(100vw - 930px)",
+      "screen-940": "calc(100vw - 940px)",
+      "screen-950": "calc(100vw - 950px)",
+      "screen-960": "calc(100vw - 960px)",
+      "screen-970": "calc(100vw - 970px)",
+      "screen-980": "calc(100vw - 980px)",
+      "screen-990": "calc(100vw - 990px)",
+      "screen-1000": "calc(100vw - 1000px)",
+      svw: "100svw",
+      lvw: "100lvw",
+      dvw: "100dvw",
+      min: "min-content",
+      max: "max-content",
+      fit: "fit-content",
+    }),
 
-  // @ts-ignore
-  maxWidth: ({ theme, breakpoints }) => ({
-    ...theme("spacing"),
-    none: "none",
-    xs: "20rem",
-    sm: "24rem",
-    md: "28rem",
-    lg: "32rem",
-    xl: "36rem",
-    "2xl": "42rem",
-    "3xl": "48rem",
-    "4xl": "56rem",
-    "5xl": "64rem",
-    "6xl": "72rem",
-    "7xl": "80rem",
-    full: "100%",
-    min: "min-content",
-    max: "max-content",
-    fit: "fit-content",
-    prose: "65ch",
-    ...breakpoints(theme("screens")),
-  }),
+    // @ts-ignore
+    maxWidth: ({ theme, breakpoints }) => ({
+      ...theme("spacing"),
+      none: "none",
+      xs: "20rem",
+      sm: "24rem",
+      md: "28rem",
+      lg: "32rem",
+      xl: "36rem",
+      "2xl": "42rem",
+      "3xl": "48rem",
+      "4xl": "56rem",
+      "5xl": "64rem",
+      "6xl": "72rem",
+      "7xl": "80rem",
+      full: "100%",
+      min: "min-content",
+      max: "max-content",
+      fit: "fit-content",
+      prose: "65ch",
+      ...breakpoints(theme("screens")),
+    }),
 
-  // @ts-ignore
-  minWidth: ({ theme }) => ({
-    ...theme("spacing"),
-    full: "100%",
-    min: "min-content",
-    max: "max-content",
-    fit: "fit-content",
-  }),
+    // @ts-ignore
+    minWidth: ({ theme }) => ({
+      ...theme("spacing"),
+      full: "100%",
+      min: "min-content",
+      max: "max-content",
+      fit: "fit-content",
+    }),
 
-  /*===============================================================================
-   * WILL CHANGE:
-   *===============================================================================*/
+    /*===============================================================================
+     * WILL CHANGE:
+     *===============================================================================*/
 
-  willChange: {
-    auto: "auto",
-    scroll: "scroll-position",
-    contents: "contents",
-    transform: "transform",
-  },
+    willChange: {
+      auto: "auto",
+      scroll: "scroll-position",
+      contents: "contents",
+      transform: "transform",
+    },
 
-  /*===============================================================================
-   * Z-INDEX:
-   *===============================================================================*/
+    /*===============================================================================
+     * Z-INDEX:
+     *===============================================================================*/
 
-  zIndex: {
-    auto: "auto",
-    0: "0",
-    10: "10",
-    20: "20",
-    30: "30",
-    40: "40",
-    50: "50",
-    60: "60",
-    70: "70",
-    80: "80",
-    90: "90",
-    100: "100",
-    1000: "1000",
+    zIndex: {
+      auto: "auto",
+      0: "0",
+      10: "10",
+      20: "20",
+      30: "30",
+      40: "40",
+      50: "50",
+      60: "60",
+      70: "70",
+      80: "80",
+      90: "90",
+      100: "100",
+      1000: "1000",
+    },
   },
 });
 

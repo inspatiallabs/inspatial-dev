@@ -32,7 +32,7 @@
 
 
   * {
-    @apply font-zebrawood;
+    @apply font-zebrawood cursor-default;
   }
 
   body {
