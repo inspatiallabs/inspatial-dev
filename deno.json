@@ -1,0 +1,77 @@
+{
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatiallabs.com",
+  "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+  "description": "InSpatial Core",
+  "workspace": [
+    "./apps/*",
+    "./apps/templates/*",
+    "./apps/extensions/*",
+    "./packages/*",
+    "./packages/config/*",
+    "./packages/core/*",
+    "./packages/core/dev/*",
+    "./packages/core/dev/cli/*",
+    "./packages/core/dev/kit/*",
+    "./packages/core/dev/xr/*",
+    "./packages/core/dev/run/*",
+    "./packages/core/dev/iss/*",
+    "./packages/core/dev/ecs/*",
+    "./packages/core/dev/icon/*",
+    "./packages/core/dev/dnd/*",
+    "./packages/core/dev/node/*",
+    "./packages/core/dev/a11y/*",
+    "./packages/core/dev/i18n/*",
+    "./packages/core/cloud/*",
+    "./packages/core/cloud/kv/*",
+    "./packages/core/cloud/cms/*",
+    "./packages/core/cloud/db/*",
+    "./packages/core/cloud/orm/*",
+    "./packages/core/cloud/auth/*",
+    "./packages/core/cloud/vault/*",
+    "./packages/utilities/*",
+    "./packages/utilities/util/*",
+    "./packages/utilities/hooks/*",
+    "./packages/utilities/props/*",
+    "./packages/utilities/raymarcher/*"
+  ],
+  "tasks": {
+    "test": "deno test --allow-read --allow-write --allow-net --allow-env",
+    "lint": "deno lint",
+    "fmt": "deno fmt",
+    "check": "deno check **/*.ts",
+    "clean": "rm -rf node_modules && rm -rf deno.lock && rm -rf dist"
+  },
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "deno.ns",
+      "dom.asynciterable",
+      "deno.unstable",
+      "deno.worker",
+      "deno.window"
+    ],
+    "allowJs": false
+  },
+  "unstable": ["cron", "kv", "webgpu", "byonm"],
+  "nodeModulesDir": "auto",
+  "fmt": {
+    "semiColons": false,
+    "singleQuote": false,
+    "proseWrap": "preserve",
+    "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mdx"]
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"],
+      "include": ["no-unused-vars", "no-explicit-any", "ban-untagged-todo"],
+      "exclude": ["no-sloppy-imports", "no-unused-vars"]
+    }
+  },
+  "imports": {
+    "@stylexjs/stylex": "npm:@stylexjs/stylex@^0.9.3"
+  }
+}

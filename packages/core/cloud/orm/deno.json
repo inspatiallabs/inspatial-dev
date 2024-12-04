@@ -1,0 +1,17 @@
+{
+  "name": "@inspatial/orm",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatial.cloud/orm",
+  "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+  "description": "InSpatial ORM",
+  "keywords": ["orm", "object-relational-mapping"],
+  "imports": {
+    "orange-orm": "npm:orange-orm@^4.4.2"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "@inspatial/run",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatial.run",
+  "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+  "description": "InSpatial Run",
+  "keywords": [
+    "inspatial",
+    "spatial",
+    "xr",
+    "webxr",
+    "webgpu",
+    "openXR",
+    "ar",
+    "vr",
+    "augmented-reality",
+    "virtual-reality",
+    "spatial-computing",
+    "visionOS",
+    "visionPro",
+    "horizonOS",
+    "meta-quest",
+    "metaverse",
+    "native",
+    "runtime",
+    "framework"
+  ],
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.0",
+    "hono": "npm:hono@^4.6.12",
+    "react": "npm:react@^19.0.0-rc.1",
+    "react-dom": "npm:react-dom@^19.0.0-rc.1",
+    "vinxi": "npm:vinxi@^0.5.0"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "tasks": {
+    "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
+  },
+  "publish": {
+    "exclude": [
+      ".github",
+      ".vscode",
+      "examples",
+      "fixtures",
+      "**/*.test.ts",
+      "test_deps.ts"
+    ]
+  }
+}

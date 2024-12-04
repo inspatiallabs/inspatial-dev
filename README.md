@@ -6,7 +6,7 @@
 _Reality is your canvas_
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Core](https://img.shields.io/badge/core-inspatial.dev-brightgreen.svg)](https://www.inspatial.dev)
+[![Core](https://img.shields.io/badge/dev-inspatial.dev-brightgreen.svg)](https://www.inspatial.dev)
 [![App](https://img.shields.io/badge/app-inspatial.app-purple.svg)](https://www.inspatial.app)
 [![Cloud](https://img.shields.io/badge/cloud-inspatial.cloud-yellow.svg)](https://www.inspatial.cloud)
 [![Store](https://img.shields.io/badge/store-inspatial.store-red.svg)](https://www.inspatial.store)
@@ -17,11 +17,11 @@ _Reality is your canvas_
 
 ## 🌟 Welcome to InSpatial Core
 
-InSpatial Core is a comprehensive suite of tools and frameworks for building cutting-edge spatial computing applications. Our mission is to empower you to create immersive, cross-platform experiences that seamlessly blend all dimensions of reality. 
+InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building cutting-edge universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that seamlessly blend all dimensions of reality. 
 
 ---
 
-## 🧰 Core Pipeline
+## 🧰 Dev Pipeline
 
 ### 1. InSpatial Kit
 
@@ -29,22 +29,42 @@ InSpatial Core is a comprehensive suite of tools and frameworks for building cut
   <img src="https://your-image-url.com/inspatial-kit.png" alt="InSpatial Kit" width="150"/>
 </div> -->
 
-A universal UI library for crafting stunning user interfaces across multiple dimensions:
+A universal UI library for crafting stunning user interfaces across multiple platforms and environments:
 
 - 🖥️ Traditional 2D environments (Web, Desktop, Mobile)
 - 🥽 3D spatial computing (AR/MR/VR)
 
 **Key Features:**
 
+- Seamless transitions between DOM, GPU, & Native
+- Natural Language Input & Context Awareness
+- Universal UI renderer (XR, Progressive [web], Native [iOS, Android, HorizonOS, VisionOS])
+- Composable and Recursive Component System
+- Variant System
+- Themeability & Theme Controls
+- Built In Skeletal system
+- Built in Haptic Feedback and Sound System.
+- Full Figma Kit and Integration 
+- Tailwind and Yoga Support
+- Multipurpose driven (Game UI, OS, Web, Mobile and XR)
+- Fully customizable pre-styled headless components
+- Fully Typed
+- Built in Typography, Icon, InMoji & Illustration system
+- Layout System
+- No CLS (Cumulative Layout Shift's)
+- Smooth Transitions & Built in motion & effects (Clamp Support)
+- Aria and Internationalization (i18n)/Auto-translate Support
+- Built in state-management (cookie, local x session storage)
+- Built in realtime and optimistic updates
+- Command Shortcuts Support e.g trigger Search, cancel dialog etc...
 - Responsive design system
-- Customizable components
-- Accessibility-first approach
-- Seamless transitions between 2D and 3D
+- Cursor Trails
+
 
 #### Install the InSpatial KIT:
 
 ```bash
-npm install @inspatial/kit
+deno install @inspatial/kit
 ```
 
 ---
@@ -72,7 +92,7 @@ A progressive and native cross-platform AR/MR/VR renderer:
 #### Install the InSpatial XR:
 
 ```bash
-npm install @inspatial/xr
+deno install @inspatial/xr
 ```
 
 ---
@@ -83,7 +103,7 @@ npm install @inspatial/xr
   <img src="https://your-image-url.com/inspatial-run.png" alt="InSpatial Run" width="150"/>
 </div> -->
 
-A cross-platform runtime and framework for building InSpatial apps:
+A cross-platform framework runtime for building InSpatial apps:
 
 - 🌍 Web applications
 - 🍎 iOS native apps
@@ -102,7 +122,7 @@ A cross-platform runtime and framework for building InSpatial apps:
 #### Install the InSpatial Run:
 
 ```bash
-npm install @inspatial/run
+deno install @inspatial/run
 ```
 
 ---
@@ -128,14 +148,46 @@ An Entity Component System architecture for building scalable and performant app
 #### Install the InSpatial ECS:
 
 ```bash
-npm install @inspatial/ecs
+deno install @inspatial/ecs
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started with InSpatial Dev
 
-To begin your journey with InSpatial Core, visit our comprehensive documentation at [inspatial.dev](https://www.inspatial.dev).
+To begin your journey with InSpatial Dev, visit our comprehensive documentation at [inspatial.dev](https://www.inspatial.dev).
+
+
+---
+
+## 🧰 Cloud Pipeline
+
+### 1. InSpatial KV
+
+A powerful, type-safe key-value store built with schema validation at compile time and utility functions for seamless data management optimized for Spatial and Universal Apps
+
+**Key Features:**
+
+- 📦 Type-safe key-value operations with schema validation
+- 🔒 Built-in schema validation at compile time
+- 🚀 High-performance operations built on Deno KV
+- 🧩 Utility functions for common operations
+- 🛠️ Flexible and extensible architecture
+- 💪 Full TypeScript support
+
+
+#### Install the InSpatial KV:
+
+```bash
+deno install @inspatial/kv
+```
+
+---
+
+## 🚀 Getting Started with InSpatial Cloud
+
+To begin your journey with InSpatial Cloud, visit our comprehensive documentation at [inspatial.cloud](https://www.inspatial.cloud).
+
 
 ---
 
@@ -143,10 +195,10 @@ To begin your journey with InSpatial Core, visit our comprehensive documentation
 
 | InSpatial | Description                          | Link                                           |
 | --------- | ------------------------------------ | ---------------------------------------------- |
-| 📚 Core   | API, Infrastructure and SDK          | [inspatial.dev](https://www.inspatial.dev)     |
+| 📚 Dev   | API, Infrastructure and SDK          | [inspatial.dev](https://www.inspatial.dev)     |
 | 🏗️ App    | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.app)     |
-| ☁️ Cloud  | Deploy and scale your InSpatial apps | [inspatial.cloud](https://www.inspatial.cloud) |
-| 🛍️ Store  | Discover and download InSpatial apps | [inspatial.store](https://www.inspatial.store) |
+| ☁️ Cloud  | Backend APIs and SDKs | [inspatial.cloud](https://www.inspatial.cloud) |
+| 🛍️ Store  | Deploy and discover InSpatial apps | [inspatial.store](https://www.inspatial.store) |
 
 ---
 
@@ -154,17 +206,6 @@ To begin your journey with InSpatial Core, visit our comprehensive documentation
 ## 🤝 Contributing
 
 We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
-
-## 🚀 Release Channels
-
-Choose the release channel that best fits your needs:
-
-| Channel        | Description                           | Installation                          |
-| -------------- | ------------------------------------- | ------------------------------------- |
-| 🟢 **Stable**  | Production-ready release              | `npm install @inspatial/core`         |
-| 🟡 **Preview** | Usable early access                   | `npm install @inspatial/core@preview` |
-| 🔴 **Canary**  | Latest features, potentially unstable | `npm install @inspatial/core@canary`  |
-
 
 ---
 
@@ -179,3 +220,4 @@ InSpatial Core is released under the Apache 2.0 License. See the [LICENSE](LICEN
   <br>
   <a href="https://www.inspatial.app">Start Building with InSpatial</a>
 </div>
+

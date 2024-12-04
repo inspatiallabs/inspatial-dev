@@ -1,0 +1,15 @@
+{
+  "name": "@inspatial/kv",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatial.kv",
+  "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+  "description": "InSpatial KV",
+  "keywords": ["kv", "key-value"],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "unstable": ["kv"]
+}
