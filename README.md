@@ -55,18 +55,19 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
   </a>
  </div>
 
- | Package        | Description    | Install     | Link 
-| -------------- | ------------------------------------- | ----------------------------------- |
-| **XR**  | XR Renderer | `deno install @inspatial/xr`        |  [inspatial.xr](https://www.inspatial.xr) |
-| **Kit** | User Interface | `deno install @inspatial/kit`        |  [inspatial.dev/kit](https://www.inspatial.dev/kit) |
-| **Run**  | Framework Runtime | `deno install @inspatial/run`  |  [inspatial.run](https://www.inspatial.run) |
-| **ECS**  | Entity Component System | `deno install @inspatial/ecs`  |  [inspatial.dev/ecs](https://www.inspatial.dev/ecs) |
-| **ISS**  | InSpatial Style Sheet | `deno install @inspatial/iss`  |  [inspatial.dev/iss](https://www.inspatial.dev/iss) |
-| **CLI**  | Command Line Interface | `deno install @inspatial/cli`  |  [inspatial.dev/cli](https://www.inspatial.dev/cli) |
-| **Util**  | Utility Functions | `deno install @inspatial/util`  |  [inspatial.dev/util](https://www.inspatial.dev/util) |
-| **VFX**  | Visual Effects | `deno install @inspatial/vfx`  |  [inspatial.dev/vfx](https://www.inspatial.dev/vfx) |
-| **Icon**  | Iconography | `deno install @inspatial/icon`  |  [inspatial.dev/icon](https://www.inspatial.dev/icon) |
-| **InMoji**  | InMoji | `deno install @inspatial/inmoji`  |  [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) |
+| Package | Description | Install | Link |
+|---------|------------|----------|-------|
+| **XR** | XR Renderer | `deno install @inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) |
+| **Kit** | User Interface | `deno install @inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) |
+| **Run** | Framework Runtime | `deno install @inspatial/run` | [inspatial.run](https://www.inspatial.run) |
+| **ECS** | Entity Component System | `deno install @inspatial/ecs` | [inspatial.dev/ecs](https://www.inspatial.dev/ecs) |
+| **ISS** | InSpatial Style Sheet | `deno install @inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) |
+| **CLI** | Command Line Interface | `deno install @inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) |
+| **Util** | Utility Functions | `deno install @inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) |
+| **VFX** | Visual Effects | `deno install @inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) |
+| **Icon** | Iconography | `deno install @inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) |
+| **InMoji** | InMoji | `deno install @inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) |
+
 
 ---
 
