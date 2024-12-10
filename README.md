@@ -13,13 +13,11 @@
     </a>
 </p>
 
-<br>
+_Reality is your canvas_
 
 <h3 align="center">
   inSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
 </h3>
-
-_Reality is your canvas_
 
 <p align="center">
   <a href="https://www.inspatial.dev">
