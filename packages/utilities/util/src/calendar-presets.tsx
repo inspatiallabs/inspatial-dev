@@ -17,7 +17,6 @@ import {
   startOfMonth,
   startOfYear,
 } from "date-fns";
-import { DateRange } from "react-day-picker";
 
 /*##############################################(CALENDER-UTILITY)##############################################*/
 // A flexible and reusable calender and appointment utility function that can be used
@@ -26,6 +25,11 @@ import { DateRange } from "react-day-picker";
 // @Status: (Preview) - Not tested
 
 /***********************************(Types)***********************************/
+export type DateRange = {
+  from: Date | undefined;
+  to?: Date | undefined;
+};
+
 export interface GenericCalendarAppointment {
   start: Date | string;
   [key: string]: any;

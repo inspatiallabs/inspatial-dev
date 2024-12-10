@@ -5,7 +5,7 @@
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
   },
   "imports": {
-    "react": "npm:react@^19.0.0-rc.1",
+    "react": "npm:react@^19.0.0",
     "tailwind-variants": "npm:tailwind-variants@^0.2.1"
   },
   "exports": {

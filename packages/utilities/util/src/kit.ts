@@ -9,6 +9,7 @@ import { twMerge } from "tailwind-merge";
 
 /**
  * Combines Tailwind CSS classes, handling conflicts and merging them smartly.
+ * Use for tailwind classes.
  * @example  className={kit(`bg-surface text-primary`, className)}
  */
 export function kit(...inputs: ClassValue[]) {

@@ -6,8 +6,8 @@
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
   },
   "imports": {
-    "react": "npm:react@^19.0.0-rc.1",
-    "react-dom": "npm:react-dom@^19.0.0-rc.1",
+    "react": "npm:react@^19.0.0",
+    "react-dom": "npm:react-dom@^19.0.0",
     "next-safe-action": "npm:next-safe-action@^7.9.3",
     "tailwind-variants": "npm:tailwind-variants@^0.2.1",
     "@inspatial/props": "jsr:@inspatial/props@^0.0.1"

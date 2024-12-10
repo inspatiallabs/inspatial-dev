@@ -17,7 +17,7 @@ _Reality is your canvas_
 
 ## 🌟 Welcome to InSpatial Core
 
-InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building cutting-edge universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that seamlessly blend all dimensions of reality. 
+InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere.
 
 ---
 

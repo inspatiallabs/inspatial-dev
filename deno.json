@@ -26,6 +26,7 @@
     "./packages/core/dev/i18n/*",
     "./packages/core/cloud/*",
     "./packages/core/cloud/kv/*",
+    "./packages/core/cloud/infetch/*",
     "./packages/core/cloud/cms/*",
     "./packages/core/cloud/db/*",
     "./packages/core/cloud/orm/*",
@@ -56,7 +57,7 @@
     ],
     "allowJs": false
   },
-  "unstable": ["cron", "kv", "webgpu", "byonm"],
+  "unstable": ["cron", "kv", "webgpu", "byonm", "http"],
   "nodeModulesDir": "auto",
   "fmt": {
     "semiColons": false,
@@ -67,11 +68,8 @@
   "lint": {
     "rules": {
       "tags": ["recommended"],
-      "include": ["no-unused-vars", "no-explicit-any", "ban-untagged-todo"],
+      "include": ["no-unused-vars", "ban-untagged-todo"],
       "exclude": ["no-sloppy-imports", "no-unused-vars"]
     }
-  },
-  "imports": {
-    "@stylexjs/stylex": "npm:@stylexjs/stylex@^0.9.3"
   }
 }

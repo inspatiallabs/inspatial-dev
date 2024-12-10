@@ -1,6 +1,6 @@
 # 🚀 Contributing to InSpatial Core
 
-First off, thank you for considering contributing to InSpatial! It's people like you that make this project such a great tool. 🎉
+First off, thank you for considering contributing to InSpatial! It's people like you that make open source such a great medium for collaboration and innovation 🎉
 
 ## 🌟 How Can I Contribute?
 
@@ -22,7 +22,7 @@ First off, thank you for considering contributing to InSpatial! It's people like
 2. **Follow our coding conventions** - Check our style guide below.
 3. **Make sure your code lints** - Run `deno run lint` before submitting.
 4. **Write meaningful commit messages** - Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
-5. **Include tests** - New features and bug fixes should include tests.
+5. **Include tests** - New features and bug fixes should include tests. - use `deno test` to run tests do not use external test runners.
 
 ## 💻 Development Setup
 
@@ -30,8 +30,11 @@ First off, thank you for considering contributing to InSpatial! It's people like
 2. Run `deno install` to install dependencies
 3. Create a branch for your changes
 4. Make your changes
-5. Run tests with `deno test`
-6. Push your branch and submit a pull request
+5. Run tests with `deno test` 
+6. Highlight the core package you are changing in your commit message e.g. `fix(core): fix bug in @inspatial/kit package`
+7. Push your branch and submit a pull request
+
+Read [Deno's JSR documentation](https://jsr.io/docs) for best practices for contributing to a package.
 
 ## 🎨 Style Guide
 

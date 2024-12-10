@@ -1,7 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { useModal } from "./use-modal";
+import { useModal } from "./use-modal.tsx";
 import { FormModeProps, OptimisticMessageProp } from "@inspatial/props";
 import { useAction } from "next-safe-action/hooks";
 

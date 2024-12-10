@@ -1,7 +1,7 @@
-/*############################## INPUT STYLES UTILITY ##############################*/
+/*############################## FOCUS-INPUT (Tailwind) ##############################*/
 
 /**
- * Focus ring styles for input elements
+ * Focus ring styles for input elements for tailwind classes
  */
 export const focusRing = [
   "outline outline-offset-2 outline-0 focus-visible:outline-2",
@@ -9,7 +9,7 @@ export const focusRing = [
 ];
 
 /**
- * Styles for input elements with errors
+ * Styles for input elements with errors for tailwind classes
  */
 export const hasErrorInput = [
   "ring-2",
@@ -18,7 +18,7 @@ export const hasErrorInput = [
 ];
 
 /**
- * Focus styles for input elements
+ * Focus styles for input elements for tailwind classes
  */
 export const focusInput = [
   "focus:ring-2",
