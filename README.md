@@ -55,6 +55,7 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
   </a>
  </div>
 
+
 | Package | Description | Install | Link |
 |---------|------------|----------|-------|
 | **XR** | XR Renderer | `deno install @inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) |
@@ -236,6 +237,18 @@ To begin your journey with InSpatial Dev, visit our comprehensive documentation 
       <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-dark.svg"  alt="InSpatial Cloud" height="45">
   </a>
 </div>
+
+| Package | Description | Install | Link |
+|---------|------------|----------|-------|
+| **KV** | Key-Value Store | `deno install @inspatial/kv` | [inspatial.kv](https://www.inspatial.kv) |
+| **DB** | Database | `deno install @inspatial/db` | [inspatial.cloud/db](https://www.inspatial.cloud/db) |
+| **CMS** | Content Management System | `deno install @inspatial/cms` | [inspatial.cloud/cms](https://www.inspatial.cloud/cms) |
+| **ORM** | Object Relational Mapping | `deno install @inspatial/orm` | [inspatial.cloud/orm](https://www.inspatial.cloud/orm) |
+| **Auth** | Authentication | `deno install @inspatial/auth` | [inspatial.cloud/auth](https://www.inspatial.cloud/auth) |
+| **Vault** | File Storage | `deno install @inspatial/vault` | [inspatial.cloud/vault](https://www.inspatial.cloud/vault) |
+| **RateLimit** | Rate Limiter | `deno install @inspatial/ratelimit` | [inspatial.cloud/ratelimit](https://www.inspatial.cloud/ratelimit) |
+| **InFetch** | Data Fetching | `deno install @inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) |
+
 
 ---
 
