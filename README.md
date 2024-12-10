@@ -271,7 +271,16 @@ deno install @inspatial/kv
 
 ---
 
-## 🌐 Ecosystem
+<div align="center">
+  <a href="https://www.inspatiallabs.com#gh-dark-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-labs-light.svg"  alt="InSpatial Labs" height="45">
+  </a>
+  <a href="https://www.inspatiallabs.com#gh-light-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-labs-dark.svg"  alt="InSpatial Labs" height="45">
+  </a>
+</div>
+
+ <br>
 
 | InSpatial | Description                          | Link                                           |
 | --------- | ------------------------------------ | ---------------------------------------------- |
