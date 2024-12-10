@@ -2,29 +2,24 @@
    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon.svg" alt="InSpatial" width="300"/> 
 
    <br>
+   <br>
 
 <p align="center">
   <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" height="50" alt="InSpatial">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" height="75" alt="InSpatial">
     </a>
       <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" height="50" alt="InSpatial">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" height="75" alt="InSpatial">
     </a>
 </p>
 
 <br>
 
 <h3 align="center">
-    <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-light.svg" height="25" alt="InSpatial">
-    </a>
-    <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dark.svg" height="25" alt="InSpatial">
-    </a>
-    is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
+  inSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
 </h3>
 
-<h3 align="center">Reality is your canvas</h3>
+_Reality is your canvas_
 
 <p align="center">
   <a href="https://www.inspatial.dev">
