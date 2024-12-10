@@ -1,23 +1,14 @@
 <div align="center">
-   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-bg.svg" alt="InSpatial Core Logo" width="300"/> 
+   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon.svg" alt="InSpatial" width="300"/> 
 
    <br>
 
-<p align="center">
-    <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
-        <img height="15" src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" alt="InSpatial Logo">
-    </a>
-    <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
-        <img height="15" src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" alt="InSpatial Logo">
-    </a>
-</p>
-
 <h3 align="center">
     <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" height="15" alt="InSpatial">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-light.svg" height="45" alt="InSpatial">
     </a>
     <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" height="15" alt="InSpatial">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dark.svg" height="45" alt="InSpatial">
     </a>
     is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
 </h3>
@@ -26,16 +17,16 @@
 
 <p align="center">
   <a href="https://www.inspatial.dev">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg" height="15" alt="InSpatial Dev">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg"  alt="Dev">
+  </a>
+    <a href="https://www.inspatial.cloud">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg"  alt="Cloud">
   </a>
   <a href="https://www.inspatial.app">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg" height="15" alt="InSpatial App">
-  </a>
-  <a href="https://www.inspatial.cloud">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg" height="15" alt="InSpatial Cloud">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg"  alt="App">
   </a>
   <a href="https://www.inspatial.store">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg" height="15" alt="InSpatial Store">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg" alt="Store">
   </a>
 </p>
 
