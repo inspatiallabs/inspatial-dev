@@ -43,14 +43,14 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 ---
  
   <a href="https://www.inspatial.dev">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg"  alt="Dev" width="100">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg"  alt="Dev" width="70">
   </a>
 
 
-### 1. InSpatial Kit
-
 <div align="center">
   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-light.svg" alt="InSpatial Kit" height="50"/>
+
+  ### InSpatial Kit
 </div> 
 
 A universal UI library for crafting stunning user interfaces across multiple platforms and environments:
