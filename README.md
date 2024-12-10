@@ -93,11 +93,11 @@ deno install @inspatial/kit
 
 ---
 
-### 2. InSpatial XR
+<div align="center">
+  <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/xr-icon-light.svg" alt="InSpatial XR" height="50"/>
 
-<!-- <div align="center">
-  <img src="https://your-image-url.com/inspatial-xr.png" alt="InSpatial XR" width="150"/>
-</div> -->
+  ### InSpatial XR
+</div> 
 
 A progressive and native cross-platform AR/MR/VR renderer:
 
@@ -121,12 +121,11 @@ deno install @inspatial/xr
 
 ---
 
-### 3. InSpatial Run
+<div align="center">
+  <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/run-icon-light.svg" alt="InSpatial Run" height="50"/>
 
-<!-- <div align="center">
-  <img src="https://your-image-url.com/inspatial-run.png" alt="InSpatial Run" width="150"/>
-</div> -->
-
+  ### InSpatial Run
+</div> 
 A cross-platform framework runtime for building InSpatial apps:
 
 - 🌍 Web applications
@@ -151,11 +150,11 @@ deno install @inspatial/run
 
 ---
 
-### 4. InSpatial ECS (Empty Component System)
+<div align="center">
+  <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/ecs-icon-light.svg" alt="InSpatial ECS" height="50"/>
 
-<!-- <div align="center">
-  <img src="https://your-image-url.com/inspatial-ecs.png" alt="InSpatial ECS" width="150"/>
-</div> -->
+  ### InSpatial ECS (Empty Component System)
+</div> 
 
 An Entity Component System architecture for building scalable and performant applications:
 
@@ -184,7 +183,10 @@ To begin your journey with InSpatial Dev, visit our comprehensive documentation 
 
 ---
 
-## 🧰 Cloud Pipeline
+  <a href="https://www.inspatial.cloud">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg"  alt="Cloud" width="70">
+  </a>
+
 
 ### 1. InSpatial KV
 
@@ -219,10 +221,10 @@ To begin your journey with InSpatial Cloud, visit our comprehensive documentatio
 
 | InSpatial | Description                          | Link                                           |
 | --------- | ------------------------------------ | ---------------------------------------------- |
-| 📚 Dev   | API, Infrastructure and SDK          | [inspatial.dev](https://www.inspatial.dev)     |
-| 🏗️ App    | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.app)     |
-| ☁️ Cloud  | Backend APIs and SDKs | [inspatial.cloud](https://www.inspatial.cloud) |
-| 🛍️ Store  | Deploy and discover InSpatial apps | [inspatial.store](https://www.inspatial.store) |
+| [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)  | API, Infrastructure and SDK          | [inspatial.dev](https://www.inspatial.dev)     |
+| [![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud) | Backend APIs and SDKs | [inspatial.cloud](https://www.inspatial.cloud) |
+| [![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)   | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.app)     |
+| [![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store) | Deploy and discover InSpatial apps | [inspatial.store](https://www.inspatial.store) |
 
 ---
 
