@@ -38,7 +38,7 @@ _Reality is your canvas_
 
 </div>
 
---
+----
 
 <div align="center">
 
