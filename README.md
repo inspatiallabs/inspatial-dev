@@ -55,6 +55,7 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
   </a>
  </div>
 
+ <br>
 
 | Package | Description | Install | Link |
 |---------|------------|----------|-------|
@@ -237,6 +238,8 @@ To begin your journey with InSpatial Dev, visit our comprehensive documentation 
       <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-dark.svg"  alt="InSpatial Cloud" height="45">
   </a>
 </div>
+
+ <br>
 
 | Package | Description | Install | Link |
 |---------|------------|----------|-------|
