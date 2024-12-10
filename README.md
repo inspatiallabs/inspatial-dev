@@ -40,6 +40,30 @@ _Reality is your canvas_
 
 ---
 
+<div align="center">
+  <a href="https://www.inspatiallabs.com#gh-dark-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-labs-light.svg"  alt="InSpatial Labs" height="45">
+  </a>
+  <a href="https://www.inspatiallabs.com#gh-light-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-labs-dark.svg"  alt="InSpatial Labs" height="45">
+  </a>
+</div>
+
+ <br>
+
+<div align="center">
+
+| InSpatial | Description                          | Link                                           |
+| --------- | ------------------------------------ | ---------------------------------------------- |
+| [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)  | API, Infrastructure and SDK          | [inspatial.dev](https://www.inspatial.dev)     |
+| [![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud) | Backend APIs and SDKs | [inspatial.cloud](https://www.inspatial.cloud) |
+| [![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)   | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.app)     |
+| [![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store) | Deploy and discover InSpatial apps | [inspatial.store](https://www.inspatial.store) |
+
+</div>
+
+---
+
 ## 🌟 Welcome to InSpatial Core
 
 InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere in every device, rendering environment and platform.
@@ -270,27 +294,6 @@ deno install @inspatial/kv
 ```
 
 ---
-
-<div align="center">
-  <a href="https://www.inspatiallabs.com#gh-dark-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-labs-light.svg"  alt="InSpatial Labs" height="45">
-  </a>
-  <a href="https://www.inspatiallabs.com#gh-light-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-labs-dark.svg"  alt="InSpatial Labs" height="45">
-  </a>
-</div>
-
- <br>
-
-| InSpatial | Description                          | Link                                           |
-| --------- | ------------------------------------ | ---------------------------------------------- |
-| [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)  | API, Infrastructure and SDK          | [inspatial.dev](https://www.inspatial.dev)     |
-| [![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud) | Backend APIs and SDKs | [inspatial.cloud](https://www.inspatial.cloud) |
-| [![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)   | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.app)     |
-| [![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store) | Deploy and discover InSpatial apps | [inspatial.store](https://www.inspatial.store) |
-
----
-
 
 ## 🤝 Contributing
 
