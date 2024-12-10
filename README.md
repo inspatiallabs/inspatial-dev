@@ -1,5 +1,11 @@
 <div align="center">
-   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon.svg" alt="InSpatial" width="300"/> 
+    <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-light.svg" alt="InSpatial" width="300"/> 
+   </a>
+
+   <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg" alt="InSpatial" width="300"/> 
+   </a>
 
    <br>
    <br>
@@ -43,12 +49,17 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 ---
  
   <a href="https://www.inspatial.dev">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg"  alt="Dev" width="70">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-light.svg"  alt="Dev" width="70">
   </a>
 
 
 <div align="center">
-  <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-light.svg" alt="InSpatial Kit" height="50"/>
+  <a href="https://inspatial.dev/kit#gh-dark-mode-only" target="_blank">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-light.svg" alt="InSpatial Kit" height="50"/>
+  </a>
+  <a href="https://inspatial.dev/kit#gh-light-mode-only" target="_blank">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-dark.svg" alt="InSpatial Kit" height="50"/>
+  </a>
 
   ### InSpatial Kit
 </div> 
@@ -94,7 +105,12 @@ deno install @inspatial/kit
 ---
 
 <div align="center">
-  <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/xr-icon-light.svg" alt="InSpatial XR" height="50"/>
+  <a href="https://inspatial.xr#gh-dark-mode-only" target="_blank">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/xr-icon-light.svg" alt="InSpatial XR" height="50"/>
+  </a>
+  <a href="https://inspatial.xr#gh-light-mode-only" target="_blank">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/xr-icon-dark.svg" alt="InSpatial XR" height="50"/>
+  </a>
 
   ### InSpatial XR
 </div> 
@@ -122,7 +138,12 @@ deno install @inspatial/xr
 ---
 
 <div align="center">
+<a href="https://inspatial.run#gh-dark-mode-only" target="_blank">
   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/run-icon-light.svg" alt="InSpatial Run" height="50"/>
+</a>
+<a href="https://inspatial.run#gh-light-mode-only" target="_blank">
+  <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/run-icon-dark.svg" alt="InSpatial Run" height="50"/>
+</a>
 
   ### InSpatial Run
 </div> 
@@ -151,7 +172,12 @@ deno install @inspatial/run
 ---
 
 <div align="center">
-  <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/ecs-icon-light.svg" alt="InSpatial ECS" height="50"/>
+  <a href="https://inspatial.dev/ecs#gh-dark-mode-only" target="_blank">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/ecs-icon-light.svg" alt="InSpatial ECS" height="50"/>
+  </a>
+  <a href="https://inspatial.dev/ecs#gh-light-mode-only" target="_blank">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/ecs-icon-dark.svg" alt="InSpatial ECS" height="50"/>
+  </a>
 
   ### InSpatial ECS (Empty Component System)
 </div> 
@@ -184,7 +210,7 @@ To begin your journey with InSpatial Dev, visit our comprehensive documentation 
 ---
 
   <a href="https://www.inspatial.cloud">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg"  alt="Cloud" width="70">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-light.svg"  alt="Cloud" width="70">
   </a>
 
 
