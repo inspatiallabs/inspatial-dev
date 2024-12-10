@@ -10,7 +10,6 @@ import {
   addBaseComponents,
 } from "./plugins";
 import { withTV } from "tailwind-variants/transformer";
-
 /*******************************************************************************
  * INSPATIAL TAILWIND CONFIG
  ********************************************************************************/
@@ -82,16 +81,20 @@ const inSpatialTailwindConfig = withTV({
    * PLUGINS
    ********************************************************************************/
   plugins: [
-    require("@tailwindcss/forms"),
-    require("@tailwindcss/aspect-ratio"),
-    require("@xpd/tailwind-3dtransforms"),
-    require("tailwind-scrollbar")({ nocompatible: true }),
+    // InSpatial Plugins
+    // addMotion, // TOFIX
     addVariablesForColors,
     addGridBackgrounds,
     addCursorBase,
     addCursorUtilities,
     addBaseSyntax,
     addBaseComponents,
+
+    // Other Plugins
+    require("@xpd/tailwind-3dtransforms"),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/aspect-ratio"),
+    require("tailwind-scrollbar"),
   ],
 
   /**
@@ -103,8 +106,69 @@ const inSpatialTailwindConfig = withTV({
    */
   theme: {
     /*===============================================================================
+     * MOTION:
+     *===============================================================================*/
+
+    // // Animation Timing Functions
+    // animationTimingFunction: ({ theme }) => ({
+    //   ...theme("transitionTimingFunction"),
+    //   "spring-smooth": "var(--motion-spring-smooth)",
+    //   "spring-snappy": "var(--motion-spring-snappy)",
+    //   "spring-bouncy": "var(--motion-spring-bouncy)",
+    //   "spring-bouncier": "var(--motion-spring-bouncier)",
+    //   "spring-bounciest": "var(--motion-spring-bounciest)",
+
+    //   bounce: "var(--motion-bounce)",
+
+    //   "in-quad": "cubic-bezier(.55, .085, .68, .53)",
+    //   "in-cubic": "cubic-bezier(.550, .055, .675, .19)",
+    //   "in-quart": "cubic-bezier(.895, .03, .685, .22)",
+    //   "in-back": "cubic-bezier(0.6,-0.28,0.74,0.05)",
+
+    //   "out-quad": "cubic-bezier(.25, .46, .45, .94)",
+    //   "out-cubic": "cubic-bezier(.215, .61, .355, 1)",
+    //   "out-quart": "cubic-bezier(.165, .84, .44, 1)",
+    //   "out-back": "cubic-bezier(0.18,0.89,0.32,1.27)",
+
+    //   "in-out-quad": "cubic-bezier(.455, .03, .515, .955)",
+    //   "in-out-cubic": "cubic-bezier(.645, .045, .355, 1)",
+    //   "in-out-quart": "cubic-bezier(.77, 0, .175, 1)",
+    //   "in-out-back": "cubic-bezier(0.68,-0.55,0.27,1.55)",
+    // }),
+
+    // animationDuration: ({ theme }) => ({
+    //   ...theme("transitionDuration"),
+    //   1500: "1500ms",
+    //   2000: "2000ms",
+    // }),
+
+    // // Motion
+    // motionScale: ({ theme }) => ({ ...theme("scale"), DEFAULT: "50%" }),
+    // motionTranslate: {
+    //   0: "0%",
+    //   25: "25%",
+    //   50: "50%",
+    //   75: "75%",
+    //   100: "100%",
+    //   150: "150%",
+    //   DEFAULT: "25%",
+    // },
+    // motionRotate: ({ theme }) => ({ ...theme("rotate"), DEFAULT: "12deg" }),
+    // motionBlur: ({ theme }) => theme("blur"),
+    // motionGrayscale: ({ theme }) => theme("grayscale"),
+    // motionOpacity: ({ theme }) => ({
+    //   ...theme("opacity"),
+    //   DEFAULT: "0",
+    //   0: "0.001",
+    // }),
+
+    // motionBackgroundColor: ({ theme }) => flattenColorPalette(theme("colors")),
+    // motionTextColor: ({ theme }) => flattenColorPalette(theme("colors")),
+
+    /*===============================================================================
      * ACCENT COLOR:
      *===============================================================================*/
+
     accentColor: ({ theme }) => ({
       ...theme("colors"),
       auto: "auto",
@@ -298,15 +362,27 @@ const inSpatialTailwindConfig = withTV({
       base: "0 10px 40px rgb(30, 35, 70, 0.05)",
       effect: "0px 3px 1px 1px rgba(0, 0, 0, 0.01)",
       subtle: "0px 2px 2px 0px rgba(27, 28, 29, 0.12)",
-      hollow:
-        "0px -0.5px 1px 0px rgba(255, 255, 255, 0.24) inset, 0px -0.35px 1px 0px rgba(255, 255, 255, 0.10) inset, 1px 1.5px 4px 0px rgba(17, 20, 44, 0.08) inset, 1px 1.5px 4px 0px rgba(17, 20, 44, 0.10) inset;",
-      input: `0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08)`,
-      active: "2px 4px 0px #F9F9F9;",
+      hollow: ` inset 0px -0.5px 1px 0px rgba(255, 255, 255, 0.24),
+        inset 0px -0.35px 1px 0px rgba(255, 255, 255, 0.10),
+        inset 1px 1.5px 4px 0px rgba(17, 20, 44, 0.08),
+        inset 1px 1.5px 4px 0px rgba(17, 20, 44, 0.10)`,
+      input:
+        "0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08)",
+      active: "2px 4px 0px #F9F9F9",
       line: "0px 3px 0px rgba(238, 241, 250, 0.65)",
-      inn: "inset 0px 0px 5px rgba(0, 0, 0, 0.01);",
-      prime:
-        "0px 100px 80px rgba(0, 0, 0, 0.07), 0px 41.7776px 33.4221px rgba(0, 0, 0, 0.0503198), 0px 22.3363px 17.869px rgba(0, 0, 0, 0.0417275), 0px 12.5216px 10.0172px rgba(0, 0, 0, 0.035), 0px 6.6501px 5.32008px rgba(0, 0, 0, 0.0282725), 0px 2.76726px 2.21381px rgba(0, 0, 0, 0.0196802);",
-      cool: "0px 100px 80px rgba(166, 150, 194, 0.07), 0px 41.7776px 33.4221px rgba(166, 150, 194, 0.0503198), 0px 22.3363px 17.869px rgba(166, 150, 194, 0.0417275), 0px 12.5216px 10.0172px rgba(166, 150, 194, 0.035), 0px 6.6501px 5.32008px rgba(166, 150, 194, 0.0282725), 0px 2.76726px 2.21381px rgba(166, 150, 194, 0.0196802);",
+      inn: "inset 0px 0px 5px rgba(0, 0, 0, 0.01)",
+      prime: `0px 100px 80px rgba(0, 0, 0, 0.07),
+        0px 41.7776px 33.4221px rgba(0, 0, 0, 0.0503198),
+        0px 22.3363px 17.869px rgba(0, 0, 0, 0.0417275),
+        0px 12.5216px 10.0172px rgba(0, 0, 0, 0.035),
+        0px 6.6501px 5.32008px rgba(0, 0, 0, 0.0282725),
+        0px 2.76726px 2.21381px rgba(0, 0, 0, 0.0196802)`,
+      cool: `0px 100px 80px rgba(166, 150, 194, 0.07),
+        0px 41.7776px 33.4221px rgba(166, 150, 194, 0.0503198),
+        0px 22.3363px 17.869px rgba(166, 150, 194, 0.0417275),
+        0px 12.5216px 10.0172px rgba(166, 150, 194, 0.035),
+        0px 6.6501px 5.32008px rgba(166, 150, 194, 0.0282725),
+        0px 2.76726px 2.21381px rgba(166, 150, 194, 0.0196802)`,
     },
 
     boxShadowColor: ({ theme }) => theme("colors"),
@@ -2073,4 +2149,4 @@ const inSpatialTailwindConfig = withTV({
   },
 });
 
-module.exports = inSpatialTailwindConfig;
+export default inSpatialTailwindConfig;

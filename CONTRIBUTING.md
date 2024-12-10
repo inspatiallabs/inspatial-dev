@@ -1,6 +1,6 @@
 # 🚀 Contributing to InSpatial Core
 
-First off, thank you for considering contributing to InSpatial! It's people like you that make this project such a great tool. 🎉
+First off, thank you for considering contributing to InSpatial! It's people like you that make open source such a great medium for collaboration and innovation 🎉
 
 ## 🌟 How Can I Contribute?
 
@@ -20,18 +20,21 @@ First off, thank you for considering contributing to InSpatial! It's people like
 
 1. **Fork the repo and create your branch** from `main`.
 2. **Follow our coding conventions** - Check our style guide below.
-3. **Make sure your code lints** - Run `npm run lint` before submitting.
+3. **Make sure your code lints** - Run `deno run lint` before submitting.
 4. **Write meaningful commit messages** - Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
-5. **Include tests** - New features and bug fixes should include tests.
+5. **Include tests** - New features and bug fixes should include tests. - use `deno test` to run tests do not use external test runners.
 
 ## 💻 Development Setup
 
 1. Fork and clone the repository
-2. Run `npm install` to install dependencies
+2. Run `deno install` to install dependencies
 3. Create a branch for your changes
 4. Make your changes
-5. Run tests with `npm test`
-6. Push your branch and submit a pull request
+5. Run tests with `deno test` 
+6. Highlight the core package you are changing in your commit message e.g. `fix(core): fix bug in @inspatial/kit package`
+7. Push your branch and submit a pull request
+
+Read [Deno's JSR documentation](https://jsr.io/docs) for best practices for contributing to a package.
 
 ## 🎨 Style Guide
 
@@ -39,9 +42,9 @@ First off, thank you for considering contributing to InSpatial! It's people like
 - Follow functional and declarative programming patterns
 - Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`)
 - Structure files: exported component, subcomponents, helpers, static content, types
-- Use [InSpatial Kit](https://kit.inspatial.dev/) for components and styling
+- Use [InSpatial Kit](https://inspatial.dev/kit) for components and styling
 - Implement responsive design using a desktop-first approach
-- Use Framer Motion for animations and transitions
+- Use Motion for animations and transitions
 
 ## 🚀 Release Channels
 
@@ -49,9 +52,9 @@ Choose the release channel that best fits your needs:
 
 | Channel        | Description                           | Installation                          |
 | -------------- | ------------------------------------- | ------------------------------------- |
-| 🟢 **Stable**  | Production-ready release              | `npm install @inspatial/core`         |
-| 🟡 **Preview** | Usable early access                   | `npm install @inspatial/core@preview` |
-| 🔴 **Canary**  | Latest features, potentially unstable | `npm install @inspatial/core@canary`  |
+| 🟢 **Stable**  | Production-ready release              | `deno install @inspatial/core`         |
+| 🟡 **Preview** | Usable early access                   | `deno install @inspatial/core@preview` |
+| 🔴 **Canary**  | Latest features, potentially unstable | `deno install @inspatial/core@canary`  |
 
 ### 🛠️ Quick Install Guide
 

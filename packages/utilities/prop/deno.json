@@ -1,0 +1,24 @@
+{
+  "name": "@inspatial/prop",
+  "version": "0.0.1",
+  "tasks": {
+    "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
+  },
+  "imports": {
+    "react": "npm:react@^19.0.0",
+    "tailwind-variants": "npm:tailwind-variants@^0.2.1"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "exclude": [
+      ".github",
+      ".vscode",
+      "examples",
+      "fixtures",
+      "**/*.test.ts",
+      "test_deps.ts"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@inspatial/infetch",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatial.kv",
+  "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+  "description": "InSpatial Fetch (InFetch) is a modern fetch wrapper for Deno with streaming support, retries, and error handling",
+  "keywords": ["fetch", "http", "streaming", "retries", "error handling"],
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

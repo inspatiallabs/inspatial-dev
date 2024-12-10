@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/tailwind-config",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Tailwind CSS configuration for Inspatial Apps",
   "main": "src/index.ts",
   "files": [

@@ -1,0 +1,18 @@
+{
+  "name": "@inspatial/ratelimit",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatial.cloud/ratelimit",
+  "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+  "description": "InSpatial RateLimiter is a type-safe rate limiter for universal and spatial apps",
+  "keywords": ["rate limit", "http", "streaming", "retries", "error handling"],
+  "imports": {
+    "@inspatial/util": "jsr:@inspatial/util",
+    "@inspatial/kv": "jsr:@inspatial/kv"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@inspatial/kv",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatial.kv",
+  "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+  "description": "InSpatial KV is A powerful, type-safe key-value store built with schema validation at compile timeand utility functions for seamless data management optimized for Spatial and Universal Apps",
+  "keywords": ["kv", "key-value"],
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

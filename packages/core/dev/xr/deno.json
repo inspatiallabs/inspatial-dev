@@ -1,0 +1,55 @@
+{
+  "name": "@inspatial/xr",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatial.xr",
+  "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+  "description": "InSpatial XR",
+  "keywords": [
+    "inspatial",
+    "spatial",
+    "xr",
+    "webxr",
+    "webgpu",
+    "openXR",
+    "ar",
+    "vr",
+    "augmented-reality",
+    "virtual-reality",
+    "spatial-computing",
+    "visionOS",
+    "visionPro",
+    "horizonOS",
+    "meta-quest",
+    "metaverse",
+    "native"
+  ],
+  "imports": {
+    "@react-three/fiber": "npm:@react-three/fiber@^8.17.10",
+    "@react-three/xr": "npm:@react-three/xr@^6.4.12",
+    "react": "npm:react@^19.0.0",
+    "react-dom": "npm:react-dom@^19.0.0",
+    "three": "npm:three@^0.171.0"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "tasks": {
+    "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts",
+    "publish": "deno task build:npm && deno task publish:deno && deno task publish:npm",
+    "publish:deno": "deno publish --allow-slow-types --allow-dirty",
+    "publish:npm": "cd .npm && npm publish"
+  },
+  "publish": {
+    "exclude": [
+      ".github",
+      ".vscode",
+      "examples",
+      "fixtures",
+      "**/*.test.ts",
+      "test_deps.ts"
+    ]
+  }
+}

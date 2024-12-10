@@ -10,5 +10,13 @@ export const addBaseSyntax = plugin(({ addBase, theme }) => {
     // h4: { fontSize: theme("") },
     // h5: { fontSize: theme("") },
     // h6: { fontSize: theme("") },
+
+    // 'html': {
+    //   '-webkit-tap-highlight-color': 'transparent',
+    // },
+    // 'body': {
+    //   '-webkit-font-smoothing': 'antialiased',
+    //   '-moz-osx-font-smoothing': 'grayscale',
+    // },
   });
 });
