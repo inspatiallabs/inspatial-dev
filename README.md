@@ -22,7 +22,7 @@
 _Reality is your canvas_
 
 <h3 align="center">
-  InSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
+  InSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) applications
 </h3>
 
 [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
@@ -38,9 +38,7 @@ _Reality is your canvas_
 
 </div>
 
----
-
- <br>
+--
 
 <div align="center">
 
