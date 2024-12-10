@@ -48,9 +48,13 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 
 ---
  
-  <a href="https://www.inspatial.dev">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-light.svg"  alt="Dev" width="70">
+  <a href="https://www.inspatial.dev#gh-dark-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-light.svg"  alt="Dev" height="70">
   </a>
+  <a href="https://www.inspatial.dev#gh-light-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-dark.svg"  alt="Dev" height="70">
+  </a>
+
 
 
 <div align="center">
@@ -209,8 +213,11 @@ To begin your journey with InSpatial Dev, visit our comprehensive documentation 
 
 ---
 
-  <a href="https://www.inspatial.cloud">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-light.svg"  alt="Cloud" width="70">
+  <a href="https://www.inspatial.cloud#gh-dark-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-light.svg"  alt="Cloud" height="70">
+  </a>
+  <a href="https://www.inspatial.cloud#gh-light-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-dark.svg"  alt="Cloud" height="70">
   </a>
 
 
