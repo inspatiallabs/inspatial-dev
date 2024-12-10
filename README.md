@@ -3,12 +3,23 @@
 
    <br>
 
+<p align="center">
+  <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" height="50" alt="InSpatial">
+    </a>
+      <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" height="50" alt="InSpatial">
+    </a>
+</p>
+
+<br>
+
 <h3 align="center">
     <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-light.svg" height="45" alt="InSpatial">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-light.svg" height="25" alt="InSpatial">
     </a>
     <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dark.svg" height="45" alt="InSpatial">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dark.svg" height="25" alt="InSpatial">
     </a>
     is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
 </h3>
