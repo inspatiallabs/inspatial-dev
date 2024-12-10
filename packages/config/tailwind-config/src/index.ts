@@ -8,8 +8,13 @@ import {
   addCursorUtilities,
   addBaseSyntax,
   addBaseComponents,
-} from "./plugins";
+} from "./plugins/index.ts";
 import { withTV } from "tailwind-variants/transformer";
+import tailwind3dTransforms from "@xpd/tailwind-3dtransforms";
+import tailwindForms from "@tailwindcss/forms";
+import tailwindAspectRatio from "@tailwindcss/aspect-ratio";
+import tailwindScrollbar from "tailwind-scrollbar";
+
 /*******************************************************************************
  * INSPATIAL TAILWIND CONFIG
  ********************************************************************************/
@@ -91,10 +96,10 @@ const inSpatialTailwindConfig = withTV({
     addBaseComponents,
 
     // Other Plugins
-    require("@xpd/tailwind-3dtransforms"),
-    require("@tailwindcss/forms"),
-    require("@tailwindcss/aspect-ratio"),
-    require("tailwind-scrollbar"),
+    tailwind3dTransforms,
+    tailwindForms,
+    tailwindAspectRatio,
+    tailwindScrollbar,
   ],
 
   /**
@@ -104,6 +109,7 @@ const inSpatialTailwindConfig = withTV({
    * ║ The properties below override existing values in the default theme         ║
    * ╚════════════════════════════════════════════════════════════════════════════╝
    */
+
   theme: {
     /*===============================================================================
      * MOTION:
@@ -180,6 +186,9 @@ const inSpatialTailwindConfig = withTV({
 
     animation: {
       none: "none",
+      aurora: "aurora 60s linear infinite",
+      meteor: "meteor 5s linear infinite",
+      perspective: "perspective 15s linear infinite",
       shimmer: "shimmer 2s linear infinite",
       "caret-blink": "caret-blink 1.25s ease-out infinite",
       "accordion-down": "accordion-down 0.2s ease-out",
@@ -320,7 +329,7 @@ const inSpatialTailwindConfig = withTV({
      *===============================================================================*/
     borderColor: ({ theme }) => ({
       ...theme("colors"),
-      DEFAULT: theme("currentColor"),
+      DEFAULT: theme("colors.muted", "currentColor"),
     }),
 
     borderOpacity: ({ theme }) => ({
@@ -347,7 +356,7 @@ const inSpatialTailwindConfig = withTV({
     }),
 
     borderWidth: {
-      DEFAULT: "1px",
+      DEFAULT: "2px",
       0: "0px",
       1: "1px",
       2: "2px",
@@ -363,26 +372,26 @@ const inSpatialTailwindConfig = withTV({
       effect: "0px 3px 1px 1px rgba(0, 0, 0, 0.01)",
       subtle: "0px 2px 2px 0px rgba(27, 28, 29, 0.12)",
       hollow: ` inset 0px -0.5px 1px 0px rgba(255, 255, 255, 0.24),
-        inset 0px -0.35px 1px 0px rgba(255, 255, 255, 0.10),
-        inset 1px 1.5px 4px 0px rgba(17, 20, 44, 0.08),
-        inset 1px 1.5px 4px 0px rgba(17, 20, 44, 0.10)`,
+          inset 0px -0.35px 1px 0px rgba(255, 255, 255, 0.10),
+          inset 1px 1.5px 4px 0px rgba(17, 20, 44, 0.08),
+          inset 1px 1.5px 4px 0px rgba(17, 20, 44, 0.10)`,
       input:
         "0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08)",
       active: "2px 4px 0px #F9F9F9",
       line: "0px 3px 0px rgba(238, 241, 250, 0.65)",
       inn: "inset 0px 0px 5px rgba(0, 0, 0, 0.01)",
       prime: `0px 100px 80px rgba(0, 0, 0, 0.07),
-        0px 41.7776px 33.4221px rgba(0, 0, 0, 0.0503198),
-        0px 22.3363px 17.869px rgba(0, 0, 0, 0.0417275),
-        0px 12.5216px 10.0172px rgba(0, 0, 0, 0.035),
-        0px 6.6501px 5.32008px rgba(0, 0, 0, 0.0282725),
-        0px 2.76726px 2.21381px rgba(0, 0, 0, 0.0196802)`,
+          0px 41.7776px 33.4221px rgba(0, 0, 0, 0.0503198),
+          0px 22.3363px 17.869px rgba(0, 0, 0, 0.0417275),
+          0px 12.5216px 10.0172px rgba(0, 0, 0, 0.035),
+          0px 6.6501px 5.32008px rgba(0, 0, 0, 0.0282725),
+          0px 2.76726px 2.21381px rgba(0, 0, 0, 0.0196802)`,
       cool: `0px 100px 80px rgba(166, 150, 194, 0.07),
-        0px 41.7776px 33.4221px rgba(166, 150, 194, 0.0503198),
-        0px 22.3363px 17.869px rgba(166, 150, 194, 0.0417275),
-        0px 12.5216px 10.0172px rgba(166, 150, 194, 0.035),
-        0px 6.6501px 5.32008px rgba(166, 150, 194, 0.0282725),
-        0px 2.76726px 2.21381px rgba(166, 150, 194, 0.0196802)`,
+          0px 41.7776px 33.4221px rgba(166, 150, 194, 0.0503198),
+          0px 22.3363px 17.869px rgba(166, 150, 194, 0.0417275),
+          0px 12.5216px 10.0172px rgba(166, 150, 194, 0.035),
+          0px 6.6501px 5.32008px rgba(166, 150, 194, 0.0282725),
+          0px 2.76726px 2.21381px rgba(166, 150, 194, 0.0196802)`,
     },
 
     boxShadowColor: ({ theme }) => theme("colors"),
@@ -437,7 +446,19 @@ const inSpatialTailwindConfig = withTV({
         burn: "#343a62",
       },
       skyblack: { DEFAULT: "#03082E", dark: "#060621" },
-      damp: { DEFAULT: "#D4DCEF", II: "#CACED9", III: "#7E7D8D" },
+      damp: {
+        DEFAULT: "#D4DCEF",
+        50: "#F9FAFC",
+        100: "#F6F7FA",
+        200: "#F9F9F9",
+        300: "#F6F8FE",
+        400: "#EEF1FA",
+        500: "#D4DCEF",
+        600: "#CACED9", // formerly Damp II
+        700: "#D4DCEF",
+        800: "#969EAE",
+        900: "#7E7D8D", // formerly Damp III
+      },
       lav: { DEFAULT: "#F9FAFC" },
       pop: {
         DEFAULT: "#9000FF",
@@ -861,6 +882,7 @@ const inSpatialTailwindConfig = withTV({
       qualux: ["var(--font-qualux)"],
       "queen-rogette": ["var(--font-queen-rogette)"],
       quora: ["var(--font-quora)"],
+      raleway: ["var(--font-raleway)"],
       ransom: ["var(--font-ransom)"],
       remura: ["var(--font-remura)"],
       rockley: ["var(--font-rockley)"],
@@ -1319,6 +1341,26 @@ const inSpatialTailwindConfig = withTV({
      * KEYFRAMES:
      *===============================================================================*/
     keyframes: {
+      perspective: {
+        "0%": { transform: "translateY(-50%)" },
+        "100%": { transform: "translateY(0)" },
+      },
+      aurora: {
+        from: {
+          backgroundPosition: "50% 50%, 50% 50%",
+        },
+        to: {
+          backgroundPosition: "350% 50%, 350% 50%",
+        },
+      },
+      meteor: {
+        "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
+        "70%": { opacity: "1" },
+        "100%": {
+          transform: "rotate(215deg) translateX(-500px)",
+          opacity: "0",
+        },
+      },
       hide: { from: { opacity: "1" }, to: { opacity: "0" } },
       spin: {
         to: {
@@ -1571,9 +1613,11 @@ const inSpatialTailwindConfig = withTV({
 
     outlineColor: ({ theme }) => ({
       ...theme("colors"),
+      DEFAULT: theme("colors.muted", "currentColor"),
     }),
 
     outlineOffset: {
+      DEFAULT: "0px",
       0: "0px",
       1: "1px",
       2: "2px",
@@ -1581,6 +1625,7 @@ const inSpatialTailwindConfig = withTV({
       8: "8px",
     },
     outlineWidth: {
+      DEFAULT: "0px",
       0: "0px",
       1: "1px",
       2: "2px",
@@ -1953,7 +1998,6 @@ const inSpatialTailwindConfig = withTV({
      * WIDTH:
      *===============================================================================*/
 
-    // @ts-ignore
     width: ({ theme }) => ({
       auto: "auto",
       ...theme("spacing"),
@@ -2084,7 +2128,6 @@ const inSpatialTailwindConfig = withTV({
       fit: "fit-content",
     }),
 
-    // @ts-ignore
     maxWidth: ({ theme, breakpoints }) => ({
       ...theme("spacing"),
       none: "none",
@@ -2107,7 +2150,6 @@ const inSpatialTailwindConfig = withTV({
       ...breakpoints(theme("screens")),
     }),
 
-    // @ts-ignore
     minWidth: ({ theme }) => ({
       ...theme("spacing"),
       full: "100%",
@@ -2145,6 +2187,34 @@ const inSpatialTailwindConfig = withTV({
       90: "90",
       100: "100",
       1000: "1000",
+    },
+
+    extend: {
+      colors: {
+        // variables
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        surface: "hsl(var(--surface))",
+        primary: "hsl(var(--primary))",
+        secondary: "hsl(var(--secondary))",
+        muted: "hsl(var(--muted))",
+        "muted-surface": "hsl(var(--muted-surface))",
+        brand: "hsl(var(--brand))",
+      },
+
+      components: {
+        icon: {
+          default: "sky-500-base",
+          baseStyle: "p-0 inline-block",
+          variants: {
+            filled: "",
+            outlined: "",
+          },
+          sizes: {
+            base: "size-5",
+          },
+        },
+      },
     },
   },
 });

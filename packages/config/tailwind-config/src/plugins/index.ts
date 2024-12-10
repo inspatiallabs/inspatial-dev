@@ -12,9 +12,10 @@
 // export * from "./add-motion";
 
 
-export { addCursorBase } from './add-cursor-base';
-export { addVariablesForColors } from './add-variable-colors';
-export { addGridBackgrounds } from './add-grid-backgrounds';
-export { addCursorUtilities } from './add-cursor-utilities';
-export { addBaseSyntax } from './add-base-syntax';
-export { addBaseComponents } from './add-base-components';
+export { addCursorBase } from './add-cursor-base.ts';
+export { addVariablesForColors } from './add-variable-colors.ts';
+export { addGridBackgrounds } from './add-grid-backgrounds.ts';
+export { addCursorUtilities } from './add-cursor-utilities.ts';
+export { addBaseSyntax } from './add-base-syntax.ts';
+export { addBaseComponents } from './add-base-components.ts';
+

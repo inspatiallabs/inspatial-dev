@@ -36,15 +36,21 @@ First off, thank you for considering contributing to InSpatial! It's people like
 
 Read [Deno's JSR documentation](https://jsr.io/docs) for best practices for contributing to a package.
 
-## 🎨 Style Guide
+## 🎨 Syntax and Style Guide
 
 - Use TypeScript for all code
-- Follow functional and declarative programming patterns
+- ESM modules only: do not use CommonJS
+- Use Deno APIs over Node.js APIs where possible
+- Simple File Name: File names must be Windows and Unix compatible. This means that file names cannot contain characters like *, :, or ?. You may also not have multiple files with the same name, but different casing.
+- No “slow types” - see [Slow Types](https://jsr.io/docs/about-slow-types) for more information.
+- Always document your code by adding comments to the codebase - see [Writing Docs](https://jsr.io/docs/writing-docs) for more information.
+- If you are writing shaders make sure to use WebGPU Shading Language (WGSL) or supersets like Three Shading Language (TSL) with backwards compatibility for WebGL 2.0 (GLSL) - there are helpers in the [@inspatial/util](https://inspatial.dev/) package to help with this.
+- Follow functional and declarative programming patterns - see  [Patterns.dev](https://www.patterns.dev/) for more information.
 - Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`)
 - Structure files: exported component, subcomponents, helpers, static content, types
-- Use [InSpatial Kit](https://inspatial.dev/kit) for components and styling
-- Implement responsive design using a desktop-first approach
-- Use Motion for animations and transitions
+- Use [InSpatial Kit](https://inspatial.dev/kit) for constructing components and [InSpatial ISS](https://inspatial.dev/iss) for styling
+- Use [Motion](https://motion.dev/) for animations and transitions
+
 
 ## 🚀 Release Channels
 
@@ -60,7 +66,7 @@ Choose the release channel that best fits your needs:
 
 ## 🏆 Recognition
 
-Contributors will be recognized in our `CONTRIBUTORS.md` file. Thank you for your support!
+Contributors will be recognized in our [CONTRIBUTORS.md](CONTRIBUTORS.md) file. Thank you for your support!
 
 ## 📜 Code of Conduct
 

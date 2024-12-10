@@ -1,15 +1,51 @@
 <div align="center">
-  <!-- <img src="https://your-image-url.com/inspatial-logo.png" alt="InSpatial Core Logo" width="200"/> -->
+   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-bg.svg" alt="InSpatial Core Logo" width="300"/> 
 
-# InSpatial Core
+   <br>
 
-_Reality is your canvas_
+<p align="center">
+    <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
+        <img height="15" src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" alt="InSpatial Logo">
+    </a>
+    <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
+        <img height="15" src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" alt="InSpatial Logo">
+    </a>
+</p>
+
+<h3 align="center">
+    <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" height="15" alt="InSpatial">
+    </a>
+    <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" height="15" alt="InSpatial">
+    </a>
+    is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
+</h3>
+
+<h3 align="center">Reality is your canvas</h3>
+
+<p align="center">
+  <a href="https://www.inspatial.dev">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg" height="15" alt="InSpatial Dev">
+  </a>
+  <a href="https://www.inspatial.app">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg" height="15" alt="InSpatial App">
+  </a>
+  <a href="https://www.inspatial.cloud">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg" height="15" alt="InSpatial Cloud">
+  </a>
+  <a href="https://www.inspatial.store">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg" height="15" alt="InSpatial Store">
+  </a>
+</p>
+
+<br>
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Core](https://img.shields.io/badge/dev-inspatial.dev-brightgreen.svg)](https://www.inspatial.dev)
-[![App](https://img.shields.io/badge/app-inspatial.app-purple.svg)](https://www.inspatial.app)
-[![Cloud](https://img.shields.io/badge/cloud-inspatial.cloud-yellow.svg)](https://www.inspatial.cloud)
-[![Store](https://img.shields.io/badge/store-inspatial.store-red.svg)](https://www.inspatial.store)
+[![Discord](https://img.shields.io/badge/discord-join_us-5a66f6.svg?style=flat-square)](https://discord.gg/inspatiallabs)
+[![Twitter](https://img.shields.io/badge/twitter-follow_us-1d9bf0.svg?style=flat-square)](https://twitter.com/inspatiallabs)
+[![LinkedIn](https://img.shields.io/badge/linkedin-connect_with_us-0a66c2.svg?style=flat-square)](https://www.linkedin.com/company/inspatiallabs)
+
 
 </div>
 
@@ -17,7 +53,7 @@ _Reality is your canvas_
 
 ## 🌟 Welcome to InSpatial Core
 
-InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere.
+InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere in every device, rendering environment and platform.
 
 ---
 

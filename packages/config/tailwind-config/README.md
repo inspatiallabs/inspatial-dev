@@ -3,10 +3,10 @@
 
 # 🛠️ InSpatial Tailwind CSS Config
 
-_🎨 Elevate your UI with InSpatial's custom Tailwind CSS configurations!_
+_🎨 Use InSpatial design system in tailwind as a simple preset_
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Core](https://img.shields.io/badge/core-inspatial.dev-brightgreen.svg)](https://www.inspatial.dev)
+[![Dev](https://img.shields.io/badge/dev-inspatial.dev-brightgreen.svg)](https://www.inspatial.dev)
 [![App](https://img.shields.io/badge/app-inspatial.app-purple.svg)](https://www.inspatial.app)
 [![Cloud](https://img.shields.io/badge/cloud-inspatial.cloud-yellow.svg)](https://www.inspatial.cloud)
 [![Store](https://img.shields.io/badge/store-inspatial.store-red.svg)](https://www.inspatial.store)
@@ -25,7 +25,7 @@ _🎨 Elevate your UI with InSpatial's custom Tailwind CSS configurations!_
 ## 📦 Install InSpatial Tailwind Config
 
 ```bash
-npm install -D @inspatial/tailwind-config tailwindcss
+deno install @inspatial/tailwind-config tailwindcss
 ```
 
 ---
@@ -152,9 +152,9 @@ Choose the release channel that best fits your needs:
 
 | Channel        | Description                           | Installation                          |
 | -------------- | ------------------------------------- | ------------------------------------- |
-| 🟢 **Stable**  | Production-ready release              | `npm install @inspatial/core`         |
-| 🟡 **Preview** | Usable early access                   | `npm install @inspatial/core@preview` |
-| 🔴 **Canary**  | Latest features, potentially unstable | `npm install @inspatial/core@canary`  |
+| 🟢 **Stable**  | Production-ready release              | `deno install @inspatial/tailwind-config`         |
+| 🟡 **Preview** | Usable early access                   | `deno install @inspatial/tailwind-config@preview` |
+| 🔴 **Canary**  | Latest features, potentially unstable | `deno install @inspatial/tailwind-config@canary`  |
 
 ---
 
@@ -167,5 +167,5 @@ InSpatial Core is released under the Apache 2.0 License. See the [LICENSE](LICEN
 <div align="center">
   <strong>Ready to supercharge your spatial development?</strong>
   <br>
-  <a href="https://www.inspatial.dev">Get Started with InSpatial Utils</a>
+  <a href="https://www.inspatial.dev">Get Started with InSpatial Tailwind Config</a>
 </div>
