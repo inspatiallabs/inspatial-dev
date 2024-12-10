@@ -22,7 +22,7 @@
 _Reality is your canvas_
 
 <h3 align="center">
-  inSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
+  InSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
 </h3>
 
 [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
@@ -47,12 +47,13 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 ---
  
   <a href="https://www.inspatial.dev#gh-dark-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-light.svg"  alt="InSpatial Dev" height="50">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-light.svg"  alt="InSpatial Dev" height="45">
   </a>
   <a href="https://www.inspatial.dev#gh-light-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-dark.svg"  alt="InSpatial Dev" height="50">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-dark.svg"  alt="InSpatial Dev" height="45">
   </a>
 
+---
 
 
 <div align="center">
@@ -212,11 +213,13 @@ To begin your journey with InSpatial Dev, visit our comprehensive documentation 
 ---
 
   <a href="https://www.inspatial.cloud#gh-dark-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-light.svg"  alt="InSpatial Cloud" height="50">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-light.svg"  alt="InSpatial Cloud" height="45">
   </a>
   <a href="https://www.inspatial.cloud#gh-light-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-dark.svg"  alt="InSpatial Cloud" height="50">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-dark.svg"  alt="InSpatial Cloud" height="45">
   </a>
+
+---
 
 
 ### 1. InSpatial KV
