@@ -223,13 +223,6 @@ deno install @inspatial/ecs
 
 ---
 
-## 🚀 Getting Started with InSpatial Dev
-
-To begin your journey with InSpatial Dev, visit our comprehensive documentation at [inspatial.dev](https://www.inspatial.dev).
-
-
----
-
 <div align="center">
   <a href="https://www.inspatial.cloud#gh-dark-mode-only" target="_blank">
       <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-light.svg"  alt="InSpatial Cloud" height="45">
@@ -275,13 +268,6 @@ A powerful, type-safe key-value store built with schema validation at compile ti
 ```bash
 deno install @inspatial/kv
 ```
-
----
-
-## 🚀 Getting Started with InSpatial Cloud
-
-To begin your journey with InSpatial Cloud, visit our comprehensive documentation at [inspatial.cloud](https://www.inspatial.cloud).
-
 
 ---
 
