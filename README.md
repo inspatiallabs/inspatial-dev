@@ -21,16 +21,16 @@ _Reality is your canvas_
 
 <p align="center">
   <a href="https://www.inspatial.dev">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg"  alt="Dev">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg"  alt="Dev" width="150">
   </a>
     <a href="https://www.inspatial.cloud">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg"  alt="Cloud">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg"  alt="Cloud" width="150">
   </a>
   <a href="https://www.inspatial.app">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg"  alt="App">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg"  alt="App" width="150">
   </a>
   <a href="https://www.inspatial.store">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg" alt="Store">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg" alt="Store" width="150">
   </a>
 </p>
 
