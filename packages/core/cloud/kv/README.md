@@ -17,7 +17,7 @@ _Type-safe key-value store for universal and spatial apps_
 
 ## 🌟 Welcome to InSpatial KV
 
-A powerful, type-safe key-value store built with schema validation at compile timeand utility functions for seamless data management optimized for Spatial and Universal Apps
+A powerful, type-safe key-value store built with schema validation at compile time and utility functions for seamless data management optimized for Spatial and Universal Apps
 
 
 ## 🌟 Features
