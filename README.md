@@ -19,20 +19,10 @@ _Reality is your canvas_
   inSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) apps
 </h3>
 
-<p align="center">
-  <a href="https://www.inspatial.dev">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg"  alt="Dev" width="150">
-  </a>
-    <a href="https://www.inspatial.cloud">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg"  alt="Cloud" width="150">
-  </a>
-  <a href="https://www.inspatial.app">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg"  alt="App" width="150">
-  </a>
-  <a href="https://www.inspatial.store">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg" alt="Store" width="150">
-  </a>
-</p>
+[![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
+[![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud)
+[![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)
+[![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store)
 
 <br>
 
@@ -51,14 +41,17 @@ _Reality is your canvas_
 InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere in every device, rendering environment and platform.
 
 ---
+ 
+  <a href="https://www.inspatial.dev">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg"  alt="Dev" width="100">
+  </a>
 
-## 🧰 Dev Pipeline
 
 ### 1. InSpatial Kit
 
-<!-- <div align="center">
-  <img src="https://your-image-url.com/inspatial-kit.png" alt="InSpatial Kit" width="150"/>
-</div> -->
+<div align="center">
+  <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-light.svg" alt="InSpatial Kit" height="50"/>
+</div> 
 
 A universal UI library for crafting stunning user interfaces across multiple platforms and environments:
 
