@@ -2,8 +2,21 @@
   "version": "4",
   "specifiers": {
     "jsr:@inspatial/kv@*": "0.0.1",
+    "jsr:@inspatial/util@*": "0.0.1",
+    "jsr:@inspatial/util@^0.0.1": "0.0.1",
     "jsr:@std/assert@1": "1.0.8",
+    "jsr:@std/bytes@^1.0.3": "1.0.4",
+    "jsr:@std/collections@1.0.9": "1.0.9",
+    "jsr:@std/collections@^1.0.9": "1.0.9",
+    "jsr:@std/csv@1.0.4": "1.0.4",
+    "jsr:@std/datetime@0.225.2": "0.225.2",
+    "jsr:@std/front-matter@1.0.5": "1.0.5",
     "jsr:@std/internal@^1.0.5": "1.0.5",
+    "jsr:@std/streams@^1.0.8": "1.0.8",
+    "jsr:@std/text@1.0.9": "1.0.9",
+    "jsr:@std/toml@^1.0.1": "1.0.2",
+    "jsr:@std/ulid@1.0.0": "1.0.0",
+    "jsr:@std/yaml@^1.0.5": "1.0.5",
     "npm:@react-three/fiber@^8.17.10": "8.17.10_react@18.3.1_three@0.171.0_react-dom@18.3.1__react@18.3.1",
     "npm:@react-three/xr@^6.4.12": "6.4.12_@react-three+fiber@8.17.10__react@18.3.1__three@0.171.0__react-dom@18.3.1___react@18.3.1_react@18.3.1_react-dom@18.3.1__react@18.3.1_three@0.171.0",
     "npm:@standard-schema/spec@^1.0.0-beta.4": "1.0.0-beta.4",
@@ -11,6 +24,7 @@
     "npm:@tailwindcss/aspect-ratio@~0.4.2": "0.4.2_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:@tailwindcss/forms@~0.5.9": "0.5.9_tailwindcss@4.0.0-beta.6",
     "npm:@xpd/tailwind-3dtransforms@^1.0.3": "1.0.3",
+    "npm:clsx@^2.1.1": "2.1.1",
     "npm:hono@^4.6.12": "4.6.12",
     "npm:jose@^5.9.6": "5.9.6",
     "npm:koota@~0.1.7": "0.1.7_@react-three+fiber@8.17.10__react@18.3.1__three@0.171.0__react-dom@18.3.1___react@18.3.1_react@18.3.1_three@0.171.0",
@@ -21,6 +35,7 @@
     "npm:react-dom@19": "19.0.0-rc-fb9a90fa48-20240614_react@19.0.0-rc-fb9a90fa48-20240614",
     "npm:react-strict-dom@^0.0.29": "0.0.29_react@18.3.1_react-dom@18.3.1__react@18.3.1_react-native@0.76.3__react@18.3.1",
     "npm:react@19": "19.0.0-rc-fb9a90fa48-20240614",
+    "npm:tailwind-merge@^1.14.0": "1.14.0",
     "npm:tailwind-merge@^2.5.3": "2.5.5",
     "npm:tailwind-scrollbar@^3.1.0": "3.1.0_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:tailwind-variants@~0.2.1": "0.2.1_tailwindcss@3.4.16__postcss@8.4.49",
@@ -32,14 +47,70 @@
     "@inspatial/kv@0.0.1": {
       "integrity": "c1f5c975710c16a29bed966b791da28a00ae02fbb31496228a9a9f3b670645ab"
     },
+    "@inspatial/util@0.0.1": {
+      "integrity": "e2ba7ce858855646f4f0232586008b37bd52a678ef667fa2751a3d7d12f457e5",
+      "dependencies": [
+        "jsr:@std/collections@1.0.9",
+        "jsr:@std/csv",
+        "jsr:@std/datetime",
+        "jsr:@std/front-matter",
+        "jsr:@std/text",
+        "jsr:@std/ulid",
+        "npm:clsx",
+        "npm:tailwind-merge@^1.14.0"
+      ]
+    },
     "@std/assert@1.0.8": {
       "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
       "dependencies": [
         "jsr:@std/internal"
       ]
     },
+    "@std/bytes@1.0.4": {
+      "integrity": "11a0debe522707c95c7b7ef89b478c13fb1583a7cfb9a85674cd2cc2e3a28abc"
+    },
+    "@std/collections@1.0.9": {
+      "integrity": "4f58104ead08a04a2199374247f07befe50ba01d9cca8cbb23ab9a0419921e71"
+    },
+    "@std/csv@1.0.4": {
+      "integrity": "aa351de654b10b8a407275b61f588863b9538027fd47aed90dd9e7f54ab5bdc0",
+      "dependencies": [
+        "jsr:@std/streams"
+      ]
+    },
+    "@std/datetime@0.225.2": {
+      "integrity": "45f0100554a912cd65f48089ef0a33aa1eb6ea21f08090840b539ab582827eaa"
+    },
+    "@std/front-matter@1.0.5": {
+      "integrity": "abddc64030a33eb5bc524b8c73e7c417cea09177aaeb4abf75a56b540c4b6e60",
+      "dependencies": [
+        "jsr:@std/toml",
+        "jsr:@std/yaml"
+      ]
+    },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
+    },
+    "@std/streams@1.0.8": {
+      "integrity": "b41332d93d2cf6a82fe4ac2153b930adf1a859392931e2a19d9fabfb6f154fb3",
+      "dependencies": [
+        "jsr:@std/bytes"
+      ]
+    },
+    "@std/text@1.0.9": {
+      "integrity": "b2db4abc3e6ab93eb0280a0d5e126fd3fca80955bcc297ccaaf555e995eab747"
+    },
+    "@std/toml@1.0.2": {
+      "integrity": "5892ba489c5b512265a384238a8fe8dddbbb9498b4b210ef1b9f0336a423a39b",
+      "dependencies": [
+        "jsr:@std/collections@^1.0.9"
+      ]
+    },
+    "@std/ulid@1.0.0": {
+      "integrity": "d41c3d27a907714413649fee864b7cde8d42ee68437d22b79d5de4f81d808780"
+    },
+    "@std/yaml@1.0.5": {
+      "integrity": "71ba3d334305ee2149391931508b2c293a8490f94a337eef3a09cade1a2a2742"
     }
   },
   "npm": {
@@ -2806,6 +2877,9 @@
         "kind-of",
         "shallow-clone"
       ]
+    },
+    "clsx@2.1.1": {
+      "integrity": "sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA=="
     },
     "cluster-key-slot@1.1.2": {
       "integrity": "sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA=="
@@ -5744,6 +5818,9 @@
     "system-architecture@0.1.0": {
       "integrity": "sha512-ulAk51I9UVUyJgxlv9M6lFot2WP3e7t8Kz9+IS6D4rVba1tR9kON+Ey69f+1R4Q8cd45Lod6a4IcJIxnzGc/zA=="
     },
+    "tailwind-merge@1.14.0": {
+      "integrity": "sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ=="
+    },
     "tailwind-merge@2.5.5": {
       "integrity": "sha512-0LXunzzAZzo0tEPxV3I297ffKZPlKDrjj7NXphC8V5ak9yHC5zRmxnOe2m/Rd/7ivsOMJe3JZ2JVocoDdQTRBA=="
     },
@@ -5756,7 +5833,7 @@
     "tailwind-variants@0.2.1_tailwindcss@3.4.16__postcss@8.4.49": {
       "integrity": "sha512-2xmhAf4UIc3PijOUcJPA1LP4AbxhpcHuHM2C26xM0k81r0maAO6uoUSHl3APmvHZcY5cZCY/bYuJdfFa4eGoaw==",
       "dependencies": [
-        "tailwind-merge",
+        "tailwind-merge@2.5.5",
         "tailwindcss@3.4.16_postcss@8.4.49"
       ]
     },
@@ -6309,6 +6386,7 @@
       },
       "packages/core/cloud/auth": {
         "dependencies": [
+          "jsr:@inspatial/util@^0.0.1",
           "npm:@standard-schema/spec@^1.0.0-beta.4",
           "npm:jose@^5.9.6"
         ]

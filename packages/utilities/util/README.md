@@ -94,7 +94,7 @@ For detailed usage and parameters of each utility, please refer to the source co
 ## 📦 Install InSpatial Util:
 
 ```bash
-deno install @inspatial/util
+deno install jsr:@inspatial/util
 ```
 
 ---
@@ -115,9 +115,9 @@ Choose the release channel that best fits your needs:
 
 | Channel        | Description                           | Installation                          |
 | -------------- | ------------------------------------- | ------------------------------------- |
-| 🟢 **Stable**  | Production-ready release              | `deno install @inspatial/util`         |
-| 🟡 **Preview** | Usable early access                   | `deno install @inspatial/util@preview` |
-| 🔴 **Canary**  | Latest features, potentially unstable | `deno install @inspatial/util@canary`  |
+| 🟢 **Stable**  | Production-ready release              | `deno install jsr:@inspatial/util`         |
+| 🟡 **Preview** | Usable early access                   | `deno install jsr:@inspatial/util@preview` |
+| 🔴 **Canary**  | Latest features, potentially unstable | `deno install jsr:@inspatial/util@canary`  |
 
 ---
 

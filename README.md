@@ -72,16 +72,16 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 
 | Package | Description | Install | Link |
 |---------|------------|----------|-------|
-| **XR** | XR Renderer | `deno install @inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) |
-| **Kit** | User Interface | `deno install @inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) |
-| **Run** | Framework Runtime | `deno install @inspatial/run` | [inspatial.run](https://www.inspatial.run) |
-| **ECS** | Entity Component System | `deno install @inspatial/ecs` | [inspatial.dev/ecs](https://www.inspatial.dev/ecs) |
-| **ISS** | InSpatial Style Sheet | `deno install @inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) |
-| **CLI** | Command Line Interface | `deno install @inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) |
-| **Util** | Utility Functions | `deno install @inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) |
-| **VFX** | Visual Effects | `deno install @inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) |
-| **Icon** | Iconography | `deno install @inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) |
-| **InMoji** | InMoji | `deno install @inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) |
+| **XR** | XR Renderer | `deno add jsr:@inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) |
+| **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) |
+| **Run** | Framework Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) |
+| **ECS** | Entity Component System | `deno add jsr:@inspatial/ecs` | [inspatial.dev/ecs](https://www.inspatial.dev/ecs) |
+| **ISS** | InSpatial Style Sheet | `deno add jsr:@inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) |
+| **CLI** | Command Line Interface | `deno add jsr:@inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) |
+| **Util** | Utility Functions | `deno add jsr:@inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) |
+| **VFX** | Visual Effects | `deno add jsr:@inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) |
+| **Icon** | Iconography | `deno add jsr:@inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) |
+| **InMoji** | InMoji | `deno add jsr:@inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) |
 
 
 ---
@@ -133,8 +133,25 @@ A universal UI library for crafting stunning user interfaces across multiple pla
 #### Install the InSpatial KIT:
 
 ```bash
-deno install @inspatial/kit
+deno add jsr:@inspatial/kit
 ```
+##
+```bash
+npx jsr add @inspatial/kit
+```
+##
+```bash
+yarn dlx jsr add @inspatial/kit
+```
+##
+```bash
+pnpm dlx jsr add @inspatial/kit
+```
+##
+```bash
+bunx jsr add @inspatial/kit
+```
+
 
 ---
 
@@ -166,7 +183,23 @@ A progressive and native cross-platform AR/MR/VR renderer:
 #### Install the InSpatial XR:
 
 ```bash
-deno install @inspatial/xr
+deno add jsr:@inspatial/xr
+```
+##
+```bash
+npx jsr add @inspatial/xr
+```
+##
+```bash
+yarn dlx jsr add @inspatial/xr
+```
+##
+```bash
+pnpm dlx jsr add @inspatial/xr
+```
+##
+```bash
+bunx jsr add @inspatial/xr
 ```
 
 ---
@@ -200,7 +233,23 @@ A cross-platform framework runtime for building InSpatial apps:
 #### Install the InSpatial Run:
 
 ```bash
-deno install @inspatial/run
+deno add jsr:@inspatial/run
+```
+##
+```bash
+npx jsr add @inspatial/run
+```
+##
+```bash
+yarn dlx jsr add @inspatial/run
+```
+##
+```bash
+pnpm dlx jsr add @inspatial/run
+```
+##
+```bash
+bunx jsr add @inspatial/run
 ```
 
 ---
@@ -231,7 +280,23 @@ An Entity Component System architecture for building scalable and performant app
 #### Install the InSpatial ECS:
 
 ```bash
-deno install @inspatial/ecs
+deno add jsr:@inspatial/ecs
+```
+##
+```bash
+npx jsr add @inspatial/ecs
+```
+##
+```bash
+yarn dlx jsr add @inspatial/ecs
+```
+##
+```bash
+pnpm dlx jsr add @inspatial/ecs
+```
+##
+```bash
+bunx jsr add @inspatial/ecs
 ```
 
 ---
@@ -249,14 +314,14 @@ deno install @inspatial/ecs
 
 | Package | Description | Install | Link |
 |---------|------------|----------|-------|
-| **KV** | Key-Value Store | `deno install @inspatial/kv` | [inspatial.kv](https://www.inspatial.kv) |
-| **DB** | Database | `deno install @inspatial/db` | [inspatial.cloud/db](https://www.inspatial.cloud/db) |
-| **CMS** | Content Management System | `deno install @inspatial/cms` | [inspatial.cloud/cms](https://www.inspatial.cloud/cms) |
-| **ORM** | Object Relational Mapping | `deno install @inspatial/orm` | [inspatial.cloud/orm](https://www.inspatial.cloud/orm) |
-| **Auth** | Authentication | `deno install @inspatial/auth` | [inspatial.cloud/auth](https://www.inspatial.cloud/auth) |
-| **Vault** | File Storage | `deno install @inspatial/vault` | [inspatial.cloud/vault](https://www.inspatial.cloud/vault) |
-| **RateLimit** | Rate Limiter | `deno install @inspatial/ratelimit` | [inspatial.cloud/ratelimit](https://www.inspatial.cloud/ratelimit) |
-| **InFetch** | Data Fetching | `deno install @inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) |
+| **KV** | Key-Value Store | `deno add jsr:@inspatial/kv` | [inspatial.kv](https://www.inspatial.kv) |
+| **DB** | Database | `deno add jsr:@inspatial/db` | [inspatial.cloud/db](https://www.inspatial.cloud/db) |
+| **CMS** | Content Management System | `deno add jsr:@inspatial/cms` | [inspatial.cloud/cms](https://www.inspatial.cloud/cms) |
+| **ORM** | Object Relational Mapping | `deno add jsr:@inspatial/orm` | [inspatial.cloud/orm](https://www.inspatial.cloud/orm) |
+| **Auth** | Authentication | `deno add jsr:@inspatial/auth` | [inspatial.cloud/auth](https://www.inspatial.cloud/auth) |
+| **Vault** | File Storage | `deno add jsr:@inspatial/vault` | [inspatial.cloud/vault](https://www.inspatial.cloud/vault) |
+| **RateLimit** | Rate Limiter | `deno add jsr:@inspatial/ratelimit` | [inspatial.cloud/ratelimit](https://www.inspatial.cloud/ratelimit) |
+| **InFetch** | Data Fetching | `deno add jsr:@inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) |
 
 
 ---
@@ -279,7 +344,23 @@ A powerful, type-safe key-value store built with schema validation at compile ti
 #### Install the InSpatial KV:
 
 ```bash
-deno install @inspatial/kv
+deno add jsr:@inspatial/kv
+```
+##
+```bash
+npx jsr add @inspatial/kv
+```
+##
+```bash
+yarn dlx jsr add @inspatial/kv
+```
+##
+```bash
+pnpm dlx jsr add @inspatial/kv
+```
+##
+```bash
+bunx jsr add @inspatial/kv
 ```
 
 ---
