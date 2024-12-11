@@ -1,23 +1,11 @@
 {
   "name": "@inspatial/util",
+  "license": "Apache-2.0",
   "version": "0.0.1",
-  "private": true,
-  "tasks": {
-    "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts",
-    "test": "deno test --coverage",
-    "clean": "rm -rf node_modules && rm -rf deno.lock"
-  },
   "exports": {
     ".": "./src/index.ts"
   },
   "publish": {
-    "exclude": [
-      ".github",
-      ".vscode",
-      "examples",
-      "fixtures",
-      "**/*.test.ts",
-      "test_deps.ts"
-    ]
+    "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   }
 }

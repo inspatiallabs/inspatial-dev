@@ -31,7 +31,7 @@ First off, thank you for considering contributing to InSpatial! It's people like
 3. Create a branch for your changes
 4. Make your changes
 5. Run tests with `deno test` 
-6. Highlight the core package you are changing in your commit message e.g. `fix(core): fix bug in @inspatial/kit package`
+6. Highlight the core package you are changing in your commit message e.g. `fix(dev): fix bug in @inspatial/kit package`
 7. Push your branch and submit a pull request
 
 Read [Deno's JSR documentation](https://jsr.io/docs) for best practices for contributing to a package.
