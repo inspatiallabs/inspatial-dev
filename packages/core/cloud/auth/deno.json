@@ -1,0 +1,19 @@
+{
+    "name": "@inspatial/auth",
+    "version": "0.0.1",
+    "license": "Apache-2.0",
+    "homepage": "https://www.inspatial.cloud/auth",
+    "repository": "https://github.com/InSpatial-Labs/inspatial-core",
+    "author": "InSpatial Labs",
+    "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
+    "description": "InSpatial Auth",
+    "keywords": ["auth", "authentication", "authorization", "user management"],
+    "exports": {
+      ".": "./src/index.ts"
+    },
+    "imports": {
+        "@standard-schema/spec": "npm:@standard-schema/spec@^1.0.0-beta.4",
+        "jose": "npm:jose@^5.9.6"
+    }
+  }
+  

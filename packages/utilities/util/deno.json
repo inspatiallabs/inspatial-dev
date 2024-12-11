@@ -7,11 +7,6 @@
     "test": "deno test --coverage",
     "clean": "rm -rf node_modules && rm -rf deno.lock"
   },
-  "imports": {
-    "date-fns": "npm:date-fns@^4.1.0",
-    "clsx": "npm:clsx@^2.1.1",
-    "tailwind-merge": "npm:tailwind-merge@^1.14.0"
-  },
   "exports": {
     ".": "./src/index.ts"
   },

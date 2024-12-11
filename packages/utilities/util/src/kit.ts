@@ -1,6 +1,5 @@
-import { clsx } from "clsx";
-import type * as Clsx from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "npm:clsx@^2.1.1";
+import { twMerge } from "npm:tailwind-merge@^1.14.0";
 
 //#region input
 /*##############################################(TW-KIT-UTILITY)##############################################*/
@@ -12,15 +11,12 @@ import { twMerge } from "tailwind-merge";
  * Use for tailwind classes.
  * @example  className={kit(`bg-surface text-primary`, className)}
  */
-export function kit(...inputs: ClassValue[]) {
+export function kit(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
 }
 
 /*##############################################(GENERAL-KIT-UTILITY)##############################################*/
 
-/*************************************(Types)*************************************/
-
-type ClassValue = Clsx.ClassValue;
 
 /*************************************(Functions)*************************************/
 function toVal(mix: ClassValue): string {

@@ -1,17 +1,18 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@inspatial/kv@*": "0.0.1",
     "jsr:@std/assert@1": "1.0.8",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@react-three/fiber@^8.17.10": "8.17.10_react@18.3.1_three@0.171.0_react-dom@18.3.1__react@18.3.1",
     "npm:@react-three/xr@^6.4.12": "6.4.12_@react-three+fiber@8.17.10__react@18.3.1__three@0.171.0__react-dom@18.3.1___react@18.3.1_react@18.3.1_react-dom@18.3.1__react@18.3.1_three@0.171.0",
+    "npm:@standard-schema/spec@^1.0.0-beta.4": "1.0.0-beta.4",
     "npm:@stylexjs/stylex@~0.9.3": "0.9.3",
     "npm:@tailwindcss/aspect-ratio@~0.4.2": "0.4.2_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:@tailwindcss/forms@~0.5.9": "0.5.9_tailwindcss@4.0.0-beta.6",
     "npm:@xpd/tailwind-3dtransforms@^1.0.3": "1.0.3",
-    "npm:clsx@^2.1.1": "2.1.1",
-    "npm:date-fns@^4.1.0": "4.1.0",
     "npm:hono@^4.6.12": "4.6.12",
+    "npm:jose@^5.9.6": "5.9.6",
     "npm:koota@~0.1.7": "0.1.7_@react-three+fiber@8.17.10__react@18.3.1__three@0.171.0__react-dom@18.3.1___react@18.3.1_react@18.3.1_three@0.171.0",
     "npm:mini-svg-data-uri@^1.4.4": "1.4.4",
     "npm:motion@^11.13.1": "11.13.1",
@@ -20,7 +21,6 @@
     "npm:react-dom@19": "19.0.0-rc-fb9a90fa48-20240614_react@19.0.0-rc-fb9a90fa48-20240614",
     "npm:react-strict-dom@^0.0.29": "0.0.29_react@18.3.1_react-dom@18.3.1__react@18.3.1_react-native@0.76.3__react@18.3.1",
     "npm:react@19": "19.0.0-rc-fb9a90fa48-20240614",
-    "npm:tailwind-merge@^1.14.0": "1.14.0",
     "npm:tailwind-merge@^2.5.3": "2.5.5",
     "npm:tailwind-scrollbar@^3.1.0": "3.1.0_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:tailwind-variants@~0.2.1": "0.2.1_tailwindcss@3.4.16__postcss@8.4.49",
@@ -29,6 +29,9 @@
     "npm:vinxi@0.5": "0.5.1_@babel+core@7.26.0"
   },
   "jsr": {
+    "@inspatial/kv@0.0.1": {
+      "integrity": "c1f5c975710c16a29bed966b791da28a00ae02fbb31496228a9a9f3b670645ab"
+    },
     "@std/assert@1.0.8": {
       "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
       "dependencies": [
@@ -2014,6 +2017,9 @@
         "@sinonjs/commons"
       ]
     },
+    "@standard-schema/spec@1.0.0-beta.4": {
+      "integrity": "sha512-d3IxtzLo7P1oZ8s8YNvxzBUXRXojSut8pbPrTYtzsc5sn4+53jVqbk66pQerSZbZSJZQux6LkclB/+8IDordHg=="
+    },
     "@stylexjs/stylex@0.7.5": {
       "integrity": "sha512-e4bryU2AoKBeAlloea7sJZrYrjiqJYViw8AWL6eanTVdk7qJ0CduNoiRQxtCP1dOhqGAPG74kaWT7slLzZnqKg==",
       "dependencies": [
@@ -2801,9 +2807,6 @@
         "shallow-clone"
       ]
     },
-    "clsx@2.1.1": {
-      "integrity": "sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA=="
-    },
     "cluster-key-slot@1.1.2": {
       "integrity": "sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA=="
     },
@@ -2965,9 +2968,6 @@
         "es5-ext",
         "type"
       ]
-    },
-    "date-fns@4.1.0": {
-      "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg=="
     },
     "dax-sh@0.39.2": {
       "integrity": "sha512-gpuGEkBQM+5y6p4cWaw9+ePy5TNon+fdwFVtTI8leU3UhwhsBfPewRxMXGuQNC+M2b/MDGMlfgpqynkcd0C3FQ==",
@@ -3949,6 +3949,9 @@
     },
     "jiti@2.4.1": {
       "integrity": "sha512-yPBThwecp1wS9DmoA4x4KR2h3QoslacnDR8ypuFM962kI4/456Iy1oHx2RAgh4jfZNdn0bctsdadceiBUgpU1g=="
+    },
+    "jose@5.9.6": {
+      "integrity": "sha512-AMlnetc9+CV9asI19zHmrgS/WYsWUwCn2R7RzlbJWD7F9eWYUTGyBmU9o6PxngtLGOiDGPRu+Uc4fhKzbpteZQ=="
     },
     "js-levenshtein@1.1.6": {
       "integrity": "sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g=="
@@ -5741,9 +5744,6 @@
     "system-architecture@0.1.0": {
       "integrity": "sha512-ulAk51I9UVUyJgxlv9M6lFot2WP3e7t8Kz9+IS6D4rVba1tR9kON+Ey69f+1R4Q8cd45Lod6a4IcJIxnzGc/zA=="
     },
-    "tailwind-merge@1.14.0": {
-      "integrity": "sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ=="
-    },
     "tailwind-merge@2.5.5": {
       "integrity": "sha512-0LXunzzAZzo0tEPxV3I297ffKZPlKDrjj7NXphC8V5ak9yHC5zRmxnOe2m/Rd/7ivsOMJe3JZ2JVocoDdQTRBA=="
     },
@@ -5756,7 +5756,7 @@
     "tailwind-variants@0.2.1_tailwindcss@3.4.16__postcss@8.4.49": {
       "integrity": "sha512-2xmhAf4UIc3PijOUcJPA1LP4AbxhpcHuHM2C26xM0k81r0maAO6uoUSHl3APmvHZcY5cZCY/bYuJdfFa4eGoaw==",
       "dependencies": [
-        "tailwind-merge@2.5.5",
+        "tailwind-merge",
         "tailwindcss@3.4.16_postcss@8.4.49"
       ]
     },
@@ -6307,6 +6307,12 @@
           "npm:tailwindcss@next"
         ]
       },
+      "packages/core/cloud/auth": {
+        "dependencies": [
+          "npm:@standard-schema/spec@^1.0.0-beta.4",
+          "npm:jose@^5.9.6"
+        ]
+      },
       "packages/core/cloud/orm": {
         "dependencies": [
           "npm:orange-orm@^4.4.2"
@@ -6372,13 +6378,6 @@
         "dependencies": [
           "npm:react@19",
           "npm:tailwind-variants@~0.2.1"
-        ]
-      },
-      "packages/utilities/util": {
-        "dependencies": [
-          "npm:clsx@^2.1.1",
-          "npm:date-fns@^4.1.0",
-          "npm:tailwind-merge@^1.14.0"
         ]
       }
     }

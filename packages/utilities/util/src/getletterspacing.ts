@@ -7,7 +7,7 @@
  * // letterSpacing will be '0.03em'
  */
 
-//TODO: Add the TypographyLetterSpacingProps type from the @inspatial/props package
+// TODO(@benemmaofficial): Add the TypographyLetterSpacingProps type from the @inspatial/props package
 
 // export function getLetterSpacing(spacing: TypographyLetterSpacingProps): string {
 //     switch (spacing) {

@@ -20,7 +20,7 @@ First off, thank you for considering contributing to InSpatial! It's people like
 
 1. **Fork the repo and create your branch** from `main`.
 2. **Follow our coding conventions** - Check our style guide below.
-3. **Make sure your code lints** - Run `deno run lint` before submitting.
+3. **Make sure your code lints** - Run `deno lint` in the package you are changing before submitting.
 4. **Write meaningful commit messages** - Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
 5. **Include tests** - New features and bug fixes should include tests. - use `deno test` to run tests do not use external test runners.
 
