@@ -12665,7 +12665,9 @@ export type Continent = CountryFeature["properties"]["continent"];
  * const usa = getCountryByName("United States");
  * console.log(usa?.properties.admin); // "United States of America"
  */
-export function getCountryByName(name: CountryName) {
+export function getCountryByName(
+  name: CountryName
+): CountryFeature | undefined {
   return countries.features.find((feature) => feature.properties.name === name);
 }
 
@@ -12677,7 +12679,9 @@ export function getCountryByName(name: CountryName) {
  * const europeanCountries = getCountriesByContinent("Europe");
  * console.log(europeanCountries.map(c => c.properties.name)); // ["France", "Germany", ...]
  */
-export function getCountriesByContinent(continent: Continent) {
+export function getCountriesByContinent(
+  continent: Continent
+): CountryFeature[] {
   return countries.features.filter(
     (feature) => feature.properties.continent === continent
   );
@@ -12693,7 +12697,9 @@ export function getCountriesByContinent(continent: Continent) {
  *   console.log(canadaCoords[0][0]); // First coordinate pair
  * }
  */
-export function getCountryCoordinates(name: CountryName) {
+export function getCountryCoordinates(
+  name: CountryName
+): CountryFeature["geometry"]["coordinates"] | undefined {
   const country = getCountryByName(name);
   return country?.geometry.coordinates;
 }
