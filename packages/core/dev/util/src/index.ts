@@ -32,7 +32,7 @@ export * from "./csv.ts";
 export * from "./extractor.ts";
 export * from "./text.ts";
 export * from "./collection.ts";
-// export * from "./countries.json";
+export * from "./countries.json";
 export * from "./encoding.ts";
 export * from "./regex-escape.ts";
 
