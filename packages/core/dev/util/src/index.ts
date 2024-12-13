@@ -37,5 +37,5 @@ export * from "./encoding.ts";
 export * from "./regex-escape.ts";
 
 // export * from "./getletterspacing.ts";
-// export * from "./validated-auth.ts";
-// export * from "./server-action.ts";
+// export * from "./validated-auth.ts"; moved to InSpatial Auth
+// export * from "./server-action.ts"; moved to InSpatial Run as part of the Framework Runtime
