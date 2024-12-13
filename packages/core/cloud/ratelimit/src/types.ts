@@ -1,4 +1,4 @@
-import type { Duration } from "@inspatial/util";
+import type { Duration } from "../../../dev/util/src/index.ts";
 
 export type Limit = {
   /**

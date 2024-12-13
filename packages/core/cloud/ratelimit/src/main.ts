@@ -1,4 +1,4 @@
-import { type Duration, milliseconds } from "@inspatial/util";
+import { type Duration, milliseconds } from "../../../dev/util/src/index.ts";
 import { InSpatialKV } from "@inspatial/kv";
 
 export type Limit = {

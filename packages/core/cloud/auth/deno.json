@@ -12,6 +12,7 @@
     ".": "./src/index.ts"
   },
   "imports": {
+    "@hono/hono": "jsr:@hono/hono@^4.6.13",
     "@inspatial/util": "jsr:@inspatial/util@^0.0.1",
     "@standard-schema/spec": "npm:@standard-schema/spec@^1.0.0-beta.4",
     "jose": "npm:jose@^5.9.6"

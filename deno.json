@@ -10,7 +10,6 @@
     "./apps/templates/*",
     "./apps/extensions/*",
     "./packages/*",
-    "./packages/config/*",
     "./packages/core/*",
     "./packages/core/dev/*",
     "./packages/core/dev/cli/*",
@@ -19,6 +18,8 @@
     "./packages/core/dev/run/*",
     "./packages/core/dev/iss/*",
     "./packages/core/dev/ecs/*",
+    "./packages/core/dev/tw/*",
+    "./packages/core/dev/util/*",
     "./packages/core/dev/icon/*",
     "./packages/core/dev/dnd/*",
     "./packages/core/dev/node/*",
@@ -32,8 +33,10 @@
     "./packages/core/cloud/orm/*",
     "./packages/core/cloud/auth/*",
     "./packages/core/cloud/vault/*",
+    "./packages/core/cloud/ratelimit/*",
+    "./packages/core/cloud/analytics/*",
+    "./packages/core/cloud/deploy/*",
     "./packages/utilities/*",
-    "./packages/utilities/util/*",
     "./packages/utilities/hooks/*",
     "./packages/utilities/props/*",
     "./packages/utilities/raymarcher/*"
@@ -57,7 +60,18 @@
     ],
     "allowJs": false
   },
-  "unstable": ["cron", "kv", "webgpu", "byonm", "http"],
+  "unstable": [
+    "cron",
+    "kv",
+    "webgpu",
+    "byonm",
+    "http",
+    "fs",
+    "net",
+    "fmt-sql",
+    "worker-options",
+    "broadcast-channel"
+  ],
   "nodeModulesDir": "auto",
   "fmt": {
     "semiColons": false,
@@ -68,8 +82,20 @@
   "lint": {
     "rules": {
       "tags": ["recommended"],
-      "include": ["no-unused-vars", "ban-untagged-todo"],
-      "exclude": ["no-sloppy-imports", "no-unused-vars"]
+      "include": [
+        "no-unused-vars",
+        "ban-untagged-todo",
+        "no-empty-interface",
+        "no-slow-types",
+        "no-deprecated-deno-api",
+        "no-duplicate-case",
+        "no-dupe-class-members",
+        "camelcase",
+        "no-dupe-args",
+        "no-sloppy-imports",
+        "no-class-assign"
+      ],
+      "exclude": ["no-unused-vars"]
     }
   }
 }

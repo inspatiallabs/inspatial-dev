@@ -1,6 +1,7 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@hono/hono@^4.6.13": "4.6.13",
     "jsr:@inspatial/kv@*": "0.0.1",
     "jsr:@inspatial/util@*": "0.0.1",
     "jsr:@inspatial/util@^0.0.1": "0.0.1",
@@ -44,6 +45,9 @@
     "npm:vinxi@0.5": "0.5.1_@babel+core@7.26.0"
   },
   "jsr": {
+    "@hono/hono@4.6.13": {
+      "integrity": "198970fc6facf71a88ee57aa1ed32143b56bcb0f842fa965ca3ee7d6fdd21a8e"
+    },
     "@inspatial/kv@0.0.1": {
       "integrity": "c1f5c975710c16a29bed966b791da28a00ae02fbb31496228a9a9f3b670645ab"
     },
@@ -6372,20 +6376,9 @@
   },
   "workspace": {
     "members": {
-      "packages/config/tailwind-config": {
-        "dependencies": [
-          "npm:@tailwindcss/aspect-ratio@~0.4.2",
-          "npm:@tailwindcss/forms@~0.5.9",
-          "npm:@xpd/tailwind-3dtransforms@^1.0.3",
-          "npm:mini-svg-data-uri@^1.4.4",
-          "npm:tailwind-merge@^2.5.3",
-          "npm:tailwind-scrollbar@^3.1.0",
-          "npm:tailwind-variants@~0.2.1",
-          "npm:tailwindcss@next"
-        ]
-      },
       "packages/core/cloud/auth": {
         "dependencies": [
+          "jsr:@hono/hono@^4.6.13",
           "jsr:@inspatial/util@^0.0.1",
           "npm:@standard-schema/spec@^1.0.0-beta.4",
           "npm:jose@^5.9.6"
@@ -6432,6 +6425,18 @@
           "npm:react-dom@19",
           "npm:react@19",
           "npm:vinxi@0.5"
+        ]
+      },
+      "packages/core/dev/tw": {
+        "dependencies": [
+          "npm:@tailwindcss/aspect-ratio@~0.4.2",
+          "npm:@tailwindcss/forms@~0.5.9",
+          "npm:@xpd/tailwind-3dtransforms@^1.0.3",
+          "npm:mini-svg-data-uri@^1.4.4",
+          "npm:tailwind-merge@^2.5.3",
+          "npm:tailwind-scrollbar@^3.1.0",
+          "npm:tailwind-variants@~0.2.1",
+          "npm:tailwindcss@next"
         ]
       },
       "packages/core/dev/xr": {

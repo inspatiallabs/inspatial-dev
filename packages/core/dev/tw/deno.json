@@ -1,8 +1,8 @@
 {
-  "name": "@inspatial/tailwind-config",
+  "name": "@inspatial/tw",
   "version": "0.0.1",
   "license": "Apache-2.0",
-  "description": "Tailwind CSS configuration for Inspatial Apps",
+  "description": "Tailwind CSS presets for Inspatial Apps",
   "imports": {
     "tailwindcss": "npm:tailwindcss@next",
     "@tailwindcss/aspect-ratio": "npm:@tailwindcss/aspect-ratio@^0.4.2",

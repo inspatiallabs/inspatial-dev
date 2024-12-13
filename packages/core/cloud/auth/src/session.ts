@@ -1,4 +1,5 @@
 import type { v1 } from "@standard-schema/spec"
+import { Prettify } from "@inspatial/util"
 
 export type SubjectSchema = Record<string, v1.StandardSchema>
 
