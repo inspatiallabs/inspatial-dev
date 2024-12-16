@@ -10,7 +10,7 @@ TYPE DEFINITIONS
 // Base schema type that supports both array and record types
 type SchemaType = unknown[] | Record<string, unknown>;
 
-type KvSchema = {
+export type KvSchema = {
   key: Deno.KvKey;
   schema: SchemaType;
 }[];

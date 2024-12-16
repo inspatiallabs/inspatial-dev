@@ -1,193 +1,271 @@
-// import { assertEquals, assertRejects, assertExists } from "@std/assert";
-// import {
-//   InSpatialKV,
-//   setKV,
-//   getKV,
-//   deleteKV,
-//   listKV,
-//   atomic,
-//   enqueueKV,
-//   watchKV,
-//   createKVQueueProcessor,
-//   closeKV,
-//   createInSpatialKV,
-// } from "./index.ts";
+import { assertEquals, assertRejects, assertExists } from "@std/assert";
+import {
+  inSpatialKV,
+  setKV,
+  getKV,
+  getManyKV,
+  deleteKV,
+  listKV,
+  atomic,
+  transaction,
+  createKVQueueProcessor,
+  watchKV,
+  createKVWatcher,
+  type KvSchema,
+} from "./index.ts";
 
-// // Test Schema Definition
-// type TestSchema = [
-//   {
-//     key: ["user", number];
-//     schema: { id: string; name: string; age: number };
-//   },
-//   {
-//     key: ["counter", string];
-//     schema: number;
-//   },
-//   {
-//     key: ["config", string];
-//     schema: { enabled: boolean; value: string };
-//   },
-// ];
+// Define the schema types
+type UserSchema = {
+  key: ["user", number];
+  schema: {
+    id: string;
+    name: string;
+    email: string;
+  };
+};
 
-// Deno.test("InSpatialKV Test Suite", async (t) => {
-//   let kv: InSpatialKV<TestSchema>;
+type PostSchema = {
+  key: ["post", string];
+  schema: {
+    title: string;
+    content: string;
+    authorId: string;
+  };
+};
 
-//   await t.step("setup", async () => {
-//     kv = await createInSpatialKV<TestSchema>();
-//     assertExists(kv);
-//   });
+type TagsSchema = {
+  key: ["tags", string];
+  schema: string[];
+};
 
-//   // Basic CRUD Operations
-//   await t.step("CRUD Operations", async (t) => {
-//     await t.step("should set and get a value", async () => {
-//       const user = { id: "1", name: "John Doe", age: 30 };
-//       await setKV(kv, ["user", 1], user);
-//       const result = await getKV(kv, ["user", 1]);
-//       assertEquals(result.value, user);
-//     });
+type CounterSchema = {
+  key: ["counter", string];
+  schema: { value: number };
+};
 
-//     await t.step("should handle non-existent keys", async () => {
-//       const result = await getKV(kv, ["user", 999]);
-//       assertEquals(result.value, null);
-//     });
+// Combine schemas into single type
+type TestSchema = [UserSchema, PostSchema, TagsSchema, CounterSchema];
 
-//     await t.step("should delete a value", async () => {
-//       await setKV(kv, ["user", 2], { id: "2", name: "Jane Doe", age: 25 });
-//       await deleteKV(kv, ["user", 2]);
-//       const result = await getKV(kv, ["user", 2]);
-//       assertEquals(result.value, null);
-//     });
+Deno.test("InSpatial KV Tests", async (t) => {
+  const kv = await inSpatialKV.create<TestSchema>();
 
-//     await t.step("should list values with prefix", async () => {
-//       // Setup test data
-//       await setKV(kv, ["user", 1], { id: "1", name: "John", age: 30 });
-//       await setKV(kv, ["user", 2], { id: "2", name: "Jane", age: 25 });
+  await t.step("Basic CRUD Operations", async (t) => {
+    await t.step("should create and retrieve a user", async () => {
+      const user: UserSchema["schema"] = {
+        id: "user1",
+        name: "John Doe",
+        email: "john@example.com",
+      };
 
-//       const users: { id: string; name: string; age: number }[] = [];
-//       for await (const entry of listKV(kv, { prefix: ["user"] })) {
-//         if (entry.value) users.push(entry.value);
-//       }
+      await setKV(kv, ["user", 1], user);
+      const result = await getKV(kv, ["user", 1]);
 
-//       assertEquals(users.length, 2);
-//       assertEquals(users[0].name, "John");
-//       assertEquals(users[1].name, "Jane");
-//     });
-//   });
+      assertExists(result.value);
+      assertEquals(result.value, user);
+    });
 
-//   // Atomic Operations
-//   await t.step("Atomic Operations", async (t) => {
-//     await t.step("should perform atomic operations", async () => {
-//       const result = await atomic(kv)
-//         .set(["user", 3], { id: "3", name: "Bob", age: 35 })
-//         .commit();
+    await t.step("should update a user", async () => {
+      const updatedUser: UserSchema["schema"] = {
+        id: "user1",
+        name: "John Updated",
+        email: "john@example.com",
+      };
 
-//       assertEquals(result.ok, true);
-//       const user = await getKV(kv, ["user", 3]);
-//       assertEquals(user.value?.name, "Bob");
-//     });
+      await setKV(kv, ["user", 1], updatedUser);
+      const result = await getKV(kv, ["user", 1]);
 
-//     await t.step("should handle atomic operation failure", async () => {
-//       // Set initial value
-//       await setKV(kv, ["counter", "visits"], 0);
-//       const initial = await getKV(kv, ["counter", "visits"]);
+      assertExists(result.value);
+      assertEquals(result.value.name, "John Updated");
+    });
 
-//       // Attempt conflicting operations
-//       const op1 = atomic(kv)
-//         .check({
-//           key: ["counter", "visits"],
-//           versionstamp: initial.versionstamp,
-//         })
-//         .sum(["counter", "visits"], BigInt(1));
+    await t.step("should delete a user", async () => {
+      await deleteKV(kv, ["user", 1]);
+      const result = await getKV(kv, ["user", 1]);
+      assertEquals(result.value, null);
+    });
+  });
 
-//       const op2 = atomic(kv)
-//         .check({
-//           key: ["counter", "visits"],
-//           versionstamp: initial.versionstamp,
-//         })
-//         .sum(["counter", "visits"], BigInt(1));
+  await t.step("Multiple Key Operations", async () => {
+    const users: UserSchema["schema"][] = [
+      { id: "user1", name: "User 1", email: "user1@example.com" },
+      { id: "user2", name: "User 2", email: "user2@example.com" },
+    ];
 
-//       await op1.commit();
-//       const result = await op2.commit();
-//       assertEquals(result.ok, false);
-//     });
-//   });
+    await setKV(kv, ["user", 1], users[0]);
+    await setKV(kv, ["user", 2], users[1]);
 
-//   // Queue Operations
-//   await t.step("Queue Operations", async (t) => {
-//     await t.step("should enqueue and process messages", async () => {
-//       const messages: { id: string; name: string; age: number }[] = [];
+    const results = await getManyKV(kv, [
+      ["user", 1],
+      ["user", 2],
+    ] as const);
+    assertEquals(results.length, 2);
+    assertEquals(results[0].value, users[0]);
+    assertEquals(results[1].value, users[1]);
+  });
 
-//       const processor = createKVQueueProcessor<TestSchema>(kv).handle(
-//         async (message) => {
-//           messages.push(message.value);
-//           return true;
-//         }
-//       );
+  await t.step("List Operations", async (t) => {
+    // Setup test data
+    await t.step("should setup test data", async () => {
+      const users = [
+        { id: "user1", name: "User A", email: "a@example.com" },
+        { id: "user2", name: "User B", email: "b@example.com" },
+        { id: "user3", name: "User C", email: "c@example.com" }
+      ];
+  
+      for (let i = 0; i < users.length; i++) {
+        await setKV(kv, ["user", i + 1], users[i]);
+      }
+    });
+  
+    await t.step("should list all users with prefix", async () => {
+      const results = await Array.fromAsync(
+        listKV(kv, { prefix: ["user"] as const })
+      );
+  
+      assertEquals(results.length, 3);
+      assertEquals(results[0].value.name, "User A");
+      assertEquals(results[1].value.name, "User B");
+      assertEquals(results[2].value.name, "User C");
+    });
+  
+    await t.step("should list users with start and end bounds", async () => {
+      const results = await Array.fromAsync(
+        listKV(kv, {
+          prefix: ["user"] as const,
+          start: ["user", 1] as const,
+          end: ["user", 3] as const
+        })
+      );
+  
+      assertEquals(results.length, 2);
+      assertEquals(results[0].value.name, "User A");
+      assertEquals(results[1].value.name, "User B");
+    });
+  
+    await t.step("should list users with limit", async () => {
+      const results = await Array.fromAsync(
+        listKV(kv, {
+          prefix: ["user"] as const,
+          limit: 2
+        })
+      );
+  
+      assertEquals(results.length, 2);
+    });
+  
+    await t.step("should list users in reverse", async () => {
+      const results = await Array.fromAsync(
+        listKV(kv, {
+          prefix: ["user"] as const,
+          reverse: true
+        })
+      );
+  
+      assertEquals(results.length, 3);
+      assertEquals(results[0].value.name, "User C");
+      assertEquals(results[1].value.name, "User B");
+      assertEquals(results[2].value.name, "User A");
+    });
+  
+    // Cleanup test data
+    await t.step("should cleanup test data", async () => {
+      await deleteKV(kv, ["user", 1]);
+      await deleteKV(kv, ["user", 2]); 
+      await deleteKV(kv, ["user", 3]);
+    });
+  });
 
-//       await processor.start();
+  await t.step("Atomic Operations", async (t) => {
+    await t.step("should perform atomic operations", async () => {
+      const newUser: UserSchema["schema"] = {
+        id: "user3",
+        name: "User 3",
+        email: "user3@example.com",
+      };
 
-//       await enqueueKV(kv, { id: "4", name: "Queue Test", age: 40 });
+      const result = await atomic(kv)
+        .set(["user", 3], newUser)
+        .commit();
 
-//       // Wait for message processing
-//       await new Promise((resolve) => setTimeout(resolve, 100));
+      assertEquals(result.ok, true);
+    });
 
-//       assertEquals(messages.length, 1);
-//       assertEquals(messages[0].name, "Queue Test");
+    await t.step("should handle transaction with retries", async () => {
+      const result = await transaction(kv, async (tx) => {
+        const user = await getKV(kv, ["user", 3]);
+        if (!user.value) throw new Error("User not found");
+        
+        return tx
+          .check({ key: ["user", 3], versionstamp: user.versionstamp })
+          .set(["user", 3], {
+            ...user.value,
+            name: "User 3 Updated",
+          });
+      });
 
-//       await processor.stop();
-//     });
-//   });
+      assertEquals(result.ok, true);
 
-//   // Watch Operations
-//   await t.step("Watch Operations", async (t) => {
-//     await t.step("should watch for changes", async () => {
-//       const changes: unknown[] = [];
-//       const stream = watchKV(kv, [["user", 1]]);
-//       const reader = stream.getReader();
+      const updated = await getKV(kv, ["user", 3]);
+      assertExists(updated.value);
+      assertEquals(updated.value.name, "User 3 Updated");
+    });
+  });
 
-//       // Start watching in background
-//       const watchPromise = (async () => {
-//         try {
-//           while (true) {
-//             const { done, value } = await reader.read();
-//             if (done) break;
-//             changes.push(value);
-//           }
-//         } finally {
-//           reader.releaseLock();
-//         }
-//       })();
+  await t.step("Queue Processing", async () => {
+    const processor = createKVQueueProcessor<TestSchema>(kv)
+      .use(async (message, next) => {
+        assertExists(message.value);
+        await next();
+      })
+      .handle(async (message) => {
+        assertExists(message.value);
+        return true;
+      });
 
-//       // Make some changes
-//       await setKV(kv, ["user", 1], { id: "1", name: "Updated John", age: 31 });
+    await processor.start();
+    assertEquals(processor.isRunning, true);
+    await processor.stop();
+    assertEquals(processor.isRunning, false);
+  });
 
-//       // Wait for changes to be detected
-//       await new Promise((resolve) => setTimeout(resolve, 100));
+  await t.step("Watch Operations", async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1000);
 
-//       // Cleanup
-//       reader.cancel();
-//       await watchPromise;
+    try {
+      const watcher = createKVWatcher(kv, [["user", 1] as const]);
+      const updatePromise = setKV(kv, ["user", 1], {
+        id: "user1",
+        name: "Updated via Watch",
+        email: "user1@example.com",
+      } as UserSchema["schema"]);
 
-//       assertEquals(changes.length, 1);
-//       assertEquals((changes[0] as any)[0].value?.name, "Updated John");
-//     });
-//   });
+      for await (const [entry] of watcher) {
+        if (entry.value?.name === "Updated via Watch") {
+          assertEquals(entry.value.name, "Updated via Watch");
+          break;
+        }
+      }
 
-//   // Error Cases
-//   await t.step("Error Handling", async (t) => {
-//     await t.step("should handle invalid types", async () => {
-//       // @ts-expect-error - Testing runtime type check
-//       await assertRejects(() => setKV(kv, ["user", 1], { invalid: "data" }));
-//     });
+      await updatePromise;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  });
+});
 
-//     await t.step("should handle invalid keys", async () => {
-//       // @ts-expect-error - Testing invalid key type
-//       await assertRejects(() => getKV(kv, ["invalid", "key"]));
-//     });
-//   });
+// Schema Type Tests
+Deno.test("Schema Type Safety", async (t) => {
+  const kv = await inSpatialKV.create<TestSchema>();
 
-//   // Cleanup
-//   await t.step("cleanup", async () => {
-//     kv.close();
-//   });
-// });
+  await t.step("should enforce schema types", async () => {
+    // @ts-expect-error - Testing type safety for incorrect schema
+    await assertRejects(() => setKV(kv, ["user", 1], { incorrect: "schema" }));
+
+    // @ts-expect-error - Testing type safety for incorrect key type
+    await assertRejects(() => setKV(kv, ["user", "string"], { id: "1" }));
+
+    // @ts-expect-error - Testing type safety for incorrect value type
+    await assertRejects(() => setKV(kv, ["tags", "test"], { not: "array" }));
+  });
+});
