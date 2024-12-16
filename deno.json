@@ -83,6 +83,7 @@
     "rules": {
       "tags": ["recommended"],
       "include": [
+        "no-var",
         "no-unused-vars",
         "ban-untagged-todo",
         "no-empty-interface",
@@ -93,9 +94,10 @@
         "camelcase",
         "no-dupe-args",
         "no-sloppy-imports",
-        "no-class-assign"
+        "no-class-assign",
+        "no-unsafe-finally"
       ],
-      "exclude": ["no-unused-vars"]
+      "exclude": ["no-explicit-any"]
     }
   }
 }

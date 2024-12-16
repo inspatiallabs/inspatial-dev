@@ -19,7 +19,6 @@ _Type-safe key-value store for universal and spatial apps_
 
 A powerful, type-safe key-value store built with schema validation at compile time and utility functions for seamless data management optimized for Spatial and Universal Apps
 
-
 ## 🌟 Features
 
 - 📦 Type-safe key-value operations with schema validation
@@ -28,6 +27,9 @@ A powerful, type-safe key-value store built with schema validation at compile ti
 - 🧩 Utility functions for common operations
 - 🛠️ Flexible and extensible architecture
 - 💪 Full TypeScript support
+- 🔄 Atomic operations and transactions
+- 📊 Queue processing with middleware support
+- 👀 Real-time data watching capabilities
 
 ---
 
@@ -49,13 +51,13 @@ Define your data schema with type safety:
 
 ```typescript
 type UserSchema = [{
-  key: ["user", number],
+  key: ["user", number]
   schema: {
-    id: string,
-    name: string,
+    id: string
+    name: string
     email: string
   }
-}];
+}]
 ```
 
 #### 2. **Initialize KV Store**
@@ -63,46 +65,68 @@ type UserSchema = [{
 Create a new KV instance with your schema:
 
 ```typescript
-import { InSpatialKV } from "@inspatial/kv";
+import { inSpatialKV } from "@inspatial/kv"
 
-const kv = new InSpatialKV<UserSchema>();
+const kv = new inSpatialKV<UserSchema>()
 ```
 
-#### 3. **Using Utility Functions**
+#### 3. **Basic Operations Functions**
 
 Store and retrieve data with type safety:
 
 ```typescript
-import { setKV, getKV, deleteKV, listKV } from "@inspatial/kv";
+import { closeKV, deleteKV, getKV, listKV, setKV } from "@inspatial/kv"
 
 // Store data
 await setKV(kv, ["user", 123], {
   id: "user123",
   name: "John Doe",
-  email: "john@example.com"
-});
+  email: "john@example.com",
+})
 
 // Retrieve data
-const user = await getKV(kv, ["user", 123]);
+const user = await getKV(kv, ["user", 123], {
+  /**...*/
+})
 
 // Delete data
-await deleteKV(kv, ["user", 123]);
+await deleteKV(kv, ["user", 123])
 
 // List data
-const users = listKV(kv, { prefix: ["user"] });
+const users = listKV(kv, {
+  prefix: ["user"],
+  start: ["user", 100],
+  end: ["user", 200],
+  limit: 50,
+})
+
+// Close the KV store
+await closeKV(kv)
 ```
 
-#### 4. **Type-Safe Operations**
+#### 4. **Atomic Operations & Transactions**
 
 Enjoy compile-time type checking:
 
 ```typescript
-// This will cause a type error
-await setKV(kv, ["user", 123], {
-  id: 123, // Error: Type 'number' is not assignable to type 'string'
-  name: "John"
-  // Error: Missing required property 'email'
-});
+import { atomic, transaction } from "@inspatial/kv"
+
+// Simple atomic operation
+const result = await atomic(kv)
+  .check({ key: ["user", 1], versionstamp: "v1" })
+  .set(["user", 1], { id: "123", name: "John", email: "john@example.com" })
+  .delete(["user", 2])
+  .commit()
+
+// Optimistic transaction with retries
+const txResult = await transaction(kv, async (tx) => {
+  const user = await getKV(kv, ["user", 1])
+  if (!user.value) throw new Error("User not found")
+
+  return tx
+    .check({ key: ["user", 1], versionstamp: user.versionstamp })
+    .set(["user", 1], { ...user.value, name: "Updated Name" })
+})
 ```
 
 #### 5. **Using With Complex Schemas**
@@ -112,38 +136,79 @@ Handle multiple data types with a single schema:
 ```typescript
 type ComplexSchema = [
   {
-    key: ["user", number],
-    schema: { id: string, name: string }
+    key: ["user", number]
+    schema: { id: string; name: string }
   },
   {
-    key: ["post", string],
-    schema: { title: string, content: string }
-  }
-];
+    key: ["post", string]
+    schema: { title: string; content: string }
+  },
+]
 
-const kv = new InSpatialKV<ComplexSchema>();
+const kv = new inSpatialKV<ComplexSchema>()
 ```
 
-#### 6. **Advanced Usage**
+#### 6. **Queue Processing with Middleware**
 
-Utilize additional options for fine-tuned control:
+Middleware is a powerful feature that allows you to add custom logic to the processing of messages in a queue. It provides a way to intercept, modify, or extend the behavior of the message processing pipeline.
 
 ```typescript
-// Set with expiration
-await setKV(kv, ["user", 123], data, { expireIn: 3600000 });
+import { createKVQueueProcessor } from "@inspatial/kv"
 
-// Get with consistency level
-const user = await getKV(kv, ["user", 123], {
-  consistency: "strong"
-});
+// Create a queue processor with middleware
+const processor = createKVQueueProcessor<UserSchema>(kv)
+  .use(async (message, next) => {
+    console.log("Processing:", message.value.name)
+    await next()
+    console.log("Processed:", message.value.name)
+  })
+  .handle(async (message) => {
+    // Process the user data
+    await processUser(message.value)
+    return true
+  })
 
-// List with pagination
-const users = listKV(kv, {
-  prefix: ["user"],
-  start: ["user", 100],
-  end: ["user", 200],
-  limit: 50
-});
+// Start processing
+await processor.start()
+
+// Enqueue data for processing
+await enqueueKV(kv, {
+  id: "user123",
+  name: "John Doe",
+  email: "john@example.com",
+}, {
+  delay: 1000, // 1 second delay
+  backoffSchedule: [1000, 5000, 10000], // Retry after 1s, 5s, 10s
+})
+
+// Stop processing when done
+await processor.stop()
+```
+
+#### 7. **Real-Time Data Watching**
+
+```typescript
+import { watchKV } from "@inspatial/kv"
+
+// Watch for changes in the "user" prefix
+import { createKVWatcher } from "@inspatial/kv"
+
+// Create a watcher for specific keys
+const changes = createKVWatcher(kv, [["user", 1], ["user", 2]])
+
+// Handle changes
+try {
+  for await (const entries of changes) {
+    if (entries[0].value) {
+      console.log("User 1 updated:", entries[0].value.name)
+    }
+    if (entries[1].value) {
+      console.log("User 2 updated:", entries[1].value.name)
+    }
+  }
+} catch (error) {
+  console.error("Watch error:", error)
+}
 ```
 
 ## 🎉 You're All Set!
@@ -166,9 +231,9 @@ We welcome contributions from the community! Please read our [Contributing Guide
 
 Choose the release channel that best fits your needs:
 
-| Channel        | Description                           | Installation                        |
-| -------------- | ------------------------------------- | ----------------------------------- |
-| 🟢 **Stable**  | Production-ready release              | `deno install @inspatial/kv`        |
+| Channel        | Description                           | Installation                         |
+| -------------- | ------------------------------------- | ------------------------------------ |
+| 🟢 **Stable**  | Production-ready release              | `deno install @inspatial/kv`         |
 | 🟡 **Preview** | Usable early access                   | `deno install @inspatial/kv@preview` |
 | 🔴 **Canary**  | Latest features, potentially unstable | `deno install @inspatial/kv@canary`  |
 

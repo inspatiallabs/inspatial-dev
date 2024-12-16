@@ -3,14 +3,17 @@
   "specifiers": {
     "jsr:@hono/hono@^4.6.13": "4.6.13",
     "jsr:@inspatial/kv@*": "0.0.1",
-    "jsr:@inspatial/util@*": "0.0.1",
-    "jsr:@inspatial/util@^0.0.1": "0.0.1",
-    "jsr:@std/assert@1": "1.0.8",
+    "jsr:@inspatial/kv@^0.0.1": "0.0.1",
+    "jsr:@inspatial/util@*": "0.0.2",
+    "jsr:@inspatial/util@^0.0.2": "0.0.2",
+    "jsr:@std/assert@1": "1.0.9",
+    "jsr:@std/assert@^1.0.9": "1.0.9",
     "jsr:@std/bytes@^1.0.3": "1.0.4",
     "jsr:@std/collections@1.0.9": "1.0.9",
     "jsr:@std/collections@^1.0.9": "1.0.9",
     "jsr:@std/csv@1.0.4": "1.0.4",
     "jsr:@std/datetime@0.225.2": "0.225.2",
+    "jsr:@std/encoding@1.0.5": "1.0.5",
     "jsr:@std/front-matter@1.0.5": "1.0.5",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/streams@^1.0.8": "1.0.8",
@@ -25,6 +28,7 @@
     "npm:@tailwindcss/aspect-ratio@~0.4.2": "0.4.2_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:@tailwindcss/forms@~0.5.9": "0.5.9_tailwindcss@4.0.0-beta.6",
     "npm:@xpd/tailwind-3dtransforms@^1.0.3": "1.0.3",
+    "npm:arctic@^2.3.1": "2.3.1",
     "npm:clsx@^2.1.1": "2.1.1",
     "npm:hono@^4.6.12": "4.6.12",
     "npm:jose@^5.9.6": "5.9.6",
@@ -51,12 +55,13 @@
     "@inspatial/kv@0.0.1": {
       "integrity": "c1f5c975710c16a29bed966b791da28a00ae02fbb31496228a9a9f3b670645ab"
     },
-    "@inspatial/util@0.0.1": {
-      "integrity": "e2ba7ce858855646f4f0232586008b37bd52a678ef667fa2751a3d7d12f457e5",
+    "@inspatial/util@0.0.2": {
+      "integrity": "ef5f023513021835912273fa84fc3855f04533139b55e2caa35aba2a7e8a185b",
       "dependencies": [
         "jsr:@std/collections@1.0.9",
         "jsr:@std/csv",
         "jsr:@std/datetime",
+        "jsr:@std/encoding",
         "jsr:@std/front-matter",
         "jsr:@std/text",
         "jsr:@std/ulid",
@@ -66,6 +71,12 @@
     },
     "@std/assert@1.0.8": {
       "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/assert@1.0.9": {
+      "integrity": "a9f0c611a869cc791b26f523eec54c7e187aab7932c2c8e8bea0622d13680dcd",
       "dependencies": [
         "jsr:@std/internal"
       ]
@@ -84,6 +95,9 @@
     },
     "@std/datetime@0.225.2": {
       "integrity": "45f0100554a912cd65f48089ef0a33aa1eb6ea21f08090840b539ab582827eaa"
+    },
+    "@std/encoding@1.0.5": {
+      "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
     },
     "@std/front-matter@1.0.5": {
       "integrity": "abddc64030a33eb5bc524b8c73e7c417cea09177aaeb4abf75a56b540c4b6e60",
@@ -1643,6 +1657,34 @@
         "fastq"
       ]
     },
+    "@oslojs/asn1@1.0.0": {
+      "integrity": "sha512-zw/wn0sj0j0QKbIXfIlnEcTviaCzYOY3V5rAyjR6YtOByFtJiT574+8p9Wlach0lZH9fddD4yb9laEAIl4vXQA==",
+      "dependencies": [
+        "@oslojs/binary"
+      ]
+    },
+    "@oslojs/binary@1.0.0": {
+      "integrity": "sha512-9RCU6OwXU6p67H4NODbuxv2S3eenuQ4/WFLrsq+K/k682xrznH5EVWA7N4VFk9VYVcbFtKqur5YQQZc0ySGhsQ=="
+    },
+    "@oslojs/crypto@1.0.1": {
+      "integrity": "sha512-7n08G8nWjAr/Yu3vu9zzrd0L9XnrJfpMioQcvCMxBIiF5orECHe5/3J0jmXRVvgfqMm/+4oxlQ+Sq39COYLcNQ==",
+      "dependencies": [
+        "@oslojs/asn1",
+        "@oslojs/binary"
+      ]
+    },
+    "@oslojs/encoding@0.4.1": {
+      "integrity": "sha512-hkjo6MuIK/kQR5CrGNdAPZhS01ZCXuWDRJ187zh6qqF2+yMHZpD9fAYpX8q2bOO6Ryhl3XpCT6kUX76N8hhm4Q=="
+    },
+    "@oslojs/encoding@1.1.0": {
+      "integrity": "sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ=="
+    },
+    "@oslojs/jwt@0.2.0": {
+      "integrity": "sha512-bLE7BtHrURedCn4Mco3ma9L4Y1GR2SMBuIvjWr7rmQ4/W/4Jy70TIAgZ+0nIlk0xHz1vNP8x8DCns45Sb2XRbg==",
+      "dependencies": [
+        "@oslojs/encoding@0.4.1"
+      ]
+    },
     "@parcel/watcher-android-arm64@2.5.0": {
       "integrity": "sha512-qlX4eS28bUcQCdribHkg/herLe+0A9RyYC+mm2PXpncit8z5b3nSqGVzMNR3CmtAOgRutiZ02eIJJgP/b1iEFQ=="
     },
@@ -2485,6 +2527,14 @@
         "readdir-glob",
         "tar-stream",
         "zip-stream"
+      ]
+    },
+    "arctic@2.3.1": {
+      "integrity": "sha512-bnmPYWbPtrQcneG/dmZIdvDeZ7pYhHqd4hYTbOR5LB9f429XLHiE4VnmKmJCPkw+G2CsG689WS+NDwa5UKsigA==",
+      "dependencies": [
+        "@oslojs/crypto",
+        "@oslojs/encoding@1.1.0",
+        "@oslojs/jwt"
       ]
     },
     "are-we-there-yet@2.0.0": {
@@ -6379,9 +6429,16 @@
       "packages/core/cloud/auth": {
         "dependencies": [
           "jsr:@hono/hono@^4.6.13",
-          "jsr:@inspatial/util@^0.0.1",
+          "jsr:@inspatial/kv@^0.0.1",
+          "jsr:@inspatial/util@^0.0.2",
           "npm:@standard-schema/spec@^1.0.0-beta.4",
+          "npm:arctic@^2.3.1",
           "npm:jose@^5.9.6"
+        ]
+      },
+      "packages/core/cloud/kv": {
+        "dependencies": [
+          "jsr:@std/assert@^1.0.9"
         ]
       },
       "packages/core/cloud/orm": {
