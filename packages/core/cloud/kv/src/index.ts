@@ -2,10 +2,17 @@
 DESCRIPTION: Type-safe key-value store with schema validation at compile time.
 Optimized for Spatial and Universal Apps
 ################################################################################*/
+/*==============================================================================*/
+/*################################################################################
+TYPE DEFINITIONS
+################################################################################*/
+
+// Base schema type that supports both array and record types
+type SchemaType = unknown[] | Record<string, unknown>;
 
 type KvSchema = {
   key: Deno.KvKey;
-  schema: unknown;
+  schema: SchemaType;
 }[];
 
 type CompareKeys<K1 extends Deno.KvKey, K2 extends Deno.KvKey> = [K1] extends [
@@ -30,17 +37,14 @@ type IsNever<T> = [T] extends [never] ? true : never;
 
 type ExtractKeys<S extends KvSchema> = S[number]["key"];
 
-// [never, number, never] => number
-type ExtractNotNever<T extends (unknown | never)[]> = T extends readonly [
-  infer Head,
-  ...infer Tail,
-]
-  ? IsNever<Head> extends true
+type ExtractNotNever<T> = T extends readonly [infer Head, ...infer Tail]
+  ? Head extends never
     ? ExtractNotNever<Tail>
-    : Head
+    : Head extends SchemaType
+      ? Head
+      : never
   : never;
 
-// [{ key: ["user", number], schema: { id: string, name: string } }], ["user", B3N] => { id: string, name: string }
 type SchemaLookup<S extends KvSchema, K extends Deno.KvKey> = {
   [Index in keyof S]: CompareKeys<S[Index]["key"], K> extends true
     ? S[Index]["schema"]
@@ -51,7 +55,6 @@ type ExtractSchema<S extends KvSchema, K extends Deno.KvKey> = ExtractNotNever<
   SchemaLookup<S, K>[keyof S]
 >;
 
-// ["user", B3N] => ["user", number]
 type AbstractKeys<Keys extends Deno.KvKey> = {
   [Index in keyof Keys]: Keys[Index] extends number ? number : Keys[Index];
 };
@@ -88,17 +91,23 @@ KEY-VALUE CLASS
 export class inSpatialKV<S extends KvSchema> {
   private kv: Deno.Kv;
 
-  constructor(path?: string) {
-    this.kv = Deno.openKv(path);
+  private constructor(kv: Deno.Kv) {
+    this.kv = kv;
   }
+
+  static async create<S extends KvSchema>(
+    path?: string
+  ): Promise<inSpatialKV<S>> {
+    const kv = await Deno.openKv(path);
+    return new inSpatialKV<S>(kv);
+  }
+
   /***************get****************/
-  public get<T = unknown, K extends ExtractKeys<S>>(
+  public get<K extends ExtractKeys<S>, T = unknown>(
     key: K,
     options?: { consistency?: Deno.KvConsistencyLevel }
   ): Promise<
-    Deno.KvEntryMaybe<
-      true extends IsUnknown<T> ? ExtractSchema<S, AbstractKeys<K>> : T
-    >
+    Deno.KvEntryMaybe<T extends unknown ? ExtractSchema<S, AbstractKeys<K>> : T>
   > {
     return this.kv.get(key, options);
   }
@@ -107,10 +116,11 @@ export class inSpatialKV<S extends KvSchema> {
   public getMany<K extends ExtractKeys<S>[]>(
     keys: readonly [...K],
     options?: { consistency?: Deno.KvConsistencyLevel }
-  ): Promise<{
-    [I in keyof K]: Deno.KvEntryMaybe<ExtractSchema<S, AbstractKeys<K[I]>>>;
-  }> {
-    return this.kv.getMany(keys, options);
+  ): Promise<{ [I in keyof K]: Deno.KvEntryMaybe<ExtractSchema<S, K[I]>> }> {
+    const result = this.kv.getMany(keys, options);
+    return result as Promise<{
+      [I in keyof K]: Deno.KvEntryMaybe<ExtractSchema<S, K[I]>>;
+    }>;
   }
 
   /***************set****************/
@@ -128,16 +138,14 @@ export class inSpatialKV<S extends KvSchema> {
   }
 
   /***************list****************/
-  public list<T = unknown, K extends ExtractKeys<S>>(
+  public list<K extends ExtractKeys<S>>(
     selector: Deno.KvListSelector & {
       prefix?: K;
       start?: K;
       end?: K;
     },
     options?: Deno.KvListOptions
-  ): Deno.KvListIterator<
-    true extends IsUnknown<T> ? ExtractSchema<S, AbstractKeys<K>> : T
-  > {
+  ): Deno.KvListIterator<ExtractSchema<S, AbstractKeys<K>>> {
     return this.kv.list(selector, options);
   }
 
@@ -163,9 +171,11 @@ export class inSpatialKV<S extends KvSchema> {
     handler: (message: {
       value: ExtractSchema<S, any>;
       versionstamp: string;
-    }) => Promise<boolean>
+    }) => Promise<void>
   ): Promise<void> {
-    return this.kv.listenQueue(handler);
+    return this.kv.listenQueue(async (message) => {
+      await handler(message);
+    });
   }
 
   /***************watch****************/
@@ -173,9 +183,12 @@ export class inSpatialKV<S extends KvSchema> {
     keys: readonly [...K],
     options?: { raw?: boolean }
   ): ReadableStream<{
-    [I in keyof K]: Deno.KvEntryMaybe<ExtractSchema<S, AbstractKeys<K[I]>>>;
+    [I in keyof K]: Deno.KvEntryMaybe<ExtractSchema<S, K[I]>>;
   }> {
-    return this.kv.watch(keys, options);
+    const stream = this.kv.watch(keys, options);
+    return stream as ReadableStream<{
+      [I in keyof K]: Deno.KvEntryMaybe<ExtractSchema<S, K[I]>>;
+    }>;
   }
 
   /***************close****************/
@@ -200,7 +213,7 @@ FACTORY FUNCTIONS
 export function createinSpatialKV<S extends KvSchema>(
   path?: string
 ): Promise<inSpatialKV<S>> {
-  return Promise.resolve(new inSpatialKV<S>(path));
+  return inSpatialKV.create<S>(path);
 }
 
 /*#============================================================================== 
@@ -228,20 +241,14 @@ export function setKV<S extends KvSchema, K extends ExtractKeys<S>>(
 /**
  * Get a value from the KV store
  */
-export function getKV<
-  S extends KvSchema,
-  T = unknown,
-  K extends ExtractKeys<S>,
->(
+export function getKV<S extends KvSchema, K extends ExtractKeys<S>>(
   kv: inSpatialKV<S>,
   key: K,
   options?: { consistency?: Deno.KvConsistencyLevel }
-): Promise<
-  Deno.KvEntryMaybe<
-    true extends IsUnknown<T> ? ExtractSchema<S, AbstractKeys<K>> : T
-  >
-> {
-  return kv.get(key, options);
+): Promise<Deno.KvEntryMaybe<ExtractSchema<S, AbstractKeys<K>>>> {
+  return kv.get<K>(key, options) as Promise<
+    Deno.KvEntryMaybe<ExtractSchema<S, AbstractKeys<K>>>
+  >;
 }
 
 /*#################################(getManyKV)######################################*/
@@ -278,11 +285,7 @@ export function deleteKV<S extends KvSchema>(
 /**
  * List values from the KV store
  */
-export function listKV<
-  S extends KvSchema,
-  T = unknown,
-  K extends ExtractKeys<S>,
->(
+export function listKV<S extends KvSchema, K extends ExtractKeys<S>>(
   kv: inSpatialKV<S>,
   selector: Deno.KvListSelector & {
     prefix?: K;
@@ -290,9 +293,7 @@ export function listKV<
     end?: K;
   },
   options?: Deno.KvListOptions
-): Deno.KvListIterator<
-  true extends IsUnknown<T> ? ExtractSchema<S, AbstractKeys<K>> : T
-> {
+): Deno.KvListIterator<ExtractSchema<S, AbstractKeys<K>>> {
   return kv.list(selector, options);
 }
 
@@ -350,10 +351,7 @@ export function enqueueKV<S extends KvSchema, K extends ExtractKeys<S>>(
  */
 export function createKVQueueListener<S extends KvSchema>(
   kv: inSpatialKV<S>,
-  handler: (message: {
-    value: ExtractSchema<S, any>;
-    versionstamp: string;
-  }) => Promise<boolean>
+  handler: Handler<S>
 ): {
   listen: () => Promise<void>;
   close: () => Promise<void>;
@@ -362,7 +360,7 @@ export function createKVQueueListener<S extends KvSchema>(
   let isListening = false;
   let abortController: AbortController | null = null;
 
-  async function listen() {
+  async function listen(): Promise<void> {
     if (isListening) return;
     isListening = true;
     abortController = new AbortController();
@@ -370,11 +368,10 @@ export function createKVQueueListener<S extends KvSchema>(
     try {
       await kv.listenQueue(async (message) => {
         try {
-          const success = await handler(message);
-          return success;
+          await handler(message);
+          return;
         } catch (error) {
           console.error("Queue message handling error:", error);
-          return false;
         }
       });
     } catch (error) {
@@ -389,10 +386,11 @@ export function createKVQueueListener<S extends KvSchema>(
     }
   }
 
-  function close(): void {
-    if (!isListening || !abortController) return;
+  function close(): Promise<void> {
+    if (!isListening || !abortController) return Promise.resolve();
     abortController.abort();
     isListening = false;
+    return Promise.resolve();
   }
 
   return {
@@ -406,12 +404,17 @@ export function createKVQueueListener<S extends KvSchema>(
 
 /*#################################(listenKVQueue)######################################*/
 
-type Message<S> = { value: ExtractSchema<S, any>; versionstamp: string };
-type Middleware<S> = (
+type Message<S extends KvSchema> = {
+  value: ExtractSchema<S, any>;
+  versionstamp: string;
+};
+
+type Middleware<S extends KvSchema> = (
   message: Message<S>,
   next: () => Promise<void>
 ) => Promise<void>;
-type Handler<S> = (message: Message<S>) => Promise<boolean>;
+
+type Handler<S extends KvSchema> = (message: Message<S>) => Promise<boolean>;
 
 interface QueueProcessorAPI<S extends KvSchema> {
   use: (middleware: Middleware<S>) => QueueProcessorAPI<S>;
@@ -439,7 +442,9 @@ export function listenKVQueue<S extends KvSchema>(
     versionstamp: string;
   }) => Promise<boolean>
 ): Promise<void> {
-  return kv.listenQueue(handler);
+  return kv.listenQueue(async (message) => {
+    await handler(message);
+  });
 }
 
 /**
