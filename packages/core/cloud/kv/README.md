@@ -3,7 +3,7 @@
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-light.svg" alt="InSpatial" width="300"/>
    </a> -->
 
-<a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
+<a href="https://inspatiallabs.com" target="_blank">
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg" alt="InSpatial" width="300"/>
    </a>
 
@@ -14,7 +14,7 @@
   <!-- <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
         <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" height="75" alt="InSpatial">
     </a> -->
-      <a href="https://inspatiallabs.com#gh-light-mode-only" target="_blank">
+      <a href="https://inspatiallabs.com" target="_blank">
         <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" height="75" alt="InSpatial">
     </a>
 </p>

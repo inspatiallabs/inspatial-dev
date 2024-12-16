@@ -89,10 +89,10 @@ export class inSpatialKV<S extends KvSchema> {
   private kv: Deno.Kv;
 
   constructor(path?: string) {
-    this.kv = await Deno.openKv(path);
+    this.kv = Deno.openKv(path);
   }
   /***************get****************/
-  public async get<T = unknown, K extends ExtractKeys<S>>(
+  public get<T = unknown, K extends ExtractKeys<S>>(
     key: K,
     options?: { consistency?: Deno.KvConsistencyLevel }
   ): Promise<
@@ -104,7 +104,7 @@ export class inSpatialKV<S extends KvSchema> {
   }
 
   /***************getMany****************/
-  public async getMany<K extends ExtractKeys<S>[]>(
+  public getMany<K extends ExtractKeys<S>[]>(
     keys: readonly [...K],
     options?: { consistency?: Deno.KvConsistencyLevel }
   ): Promise<{
@@ -114,7 +114,7 @@ export class inSpatialKV<S extends KvSchema> {
   }
 
   /***************set****************/
-  public async set<K extends ExtractKeys<S>>(
+  public set<K extends ExtractKeys<S>>(
     key: K,
     value: ExtractSchema<S, AbstractKeys<K>>,
     options?: { expireIn?: number }
@@ -123,7 +123,7 @@ export class inSpatialKV<S extends KvSchema> {
   }
 
   /***************delete****************/
-  public async delete(key: ExtractKeys<S>): Promise<void> {
+  public delete(key: ExtractKeys<S>): Promise<void> {
     return this.kv.delete(key);
   }
 
@@ -147,7 +147,7 @@ export class inSpatialKV<S extends KvSchema> {
   }
 
   /***************enqueue****************/
-  public async enqueue<K extends ExtractKeys<S>>(
+  public enqueue<K extends ExtractKeys<S>>(
     value: ExtractSchema<S, AbstractKeys<K>>,
     options?: {
       delay?: number;
@@ -159,7 +159,7 @@ export class inSpatialKV<S extends KvSchema> {
   }
 
   /***************listenQueue****************/
-  public async listenQueue(
+  public listenQueue(
     handler: (message: {
       value: ExtractSchema<S, any>;
       versionstamp: string;
@@ -196,10 +196,11 @@ FACTORY FUNCTIONS
  * const kv = await createinSpatialKV<UserSchema>("path/to/kv");
  * ```
  */
-export async function createinSpatialKV<S extends KvSchema>(
+
+export function createinSpatialKV<S extends KvSchema>(
   path?: string
 ): Promise<inSpatialKV<S>> {
-  return new inSpatialKV<S>(path);
+  return Promise.resolve(new inSpatialKV<S>(path));
 }
 
 /*#============================================================================== 
@@ -214,7 +215,7 @@ KEY-VALUE FUNCTIONS
  * await setKV(kv, ["user", 123], { id: "B3N", name: "Ben Emma" });
  * ```
  */
-export async function setKV<S extends KvSchema, K extends ExtractKeys<S>>(
+export function setKV<S extends KvSchema, K extends ExtractKeys<S>>(
   kv: inSpatialKV<S>,
   key: K,
   value: ExtractSchema<S, AbstractKeys<K>>,
@@ -227,7 +228,7 @@ export async function setKV<S extends KvSchema, K extends ExtractKeys<S>>(
 /**
  * Get a value from the KV store
  */
-export async function getKV<
+export function getKV<
   S extends KvSchema,
   T = unknown,
   K extends ExtractKeys<S>,
@@ -251,7 +252,7 @@ export async function getKV<
  * const [user1, user2] = await getManyKV(kv, [["user", 1], ["user", 2]]);
  * ```
  */
-export async function getManyKV<S extends KvSchema, K extends ExtractKeys<S>[]>(
+export function getManyKV<S extends KvSchema, K extends ExtractKeys<S>[]>(
   kv: inSpatialKV<S>,
   keys: readonly [...K],
   options?: { consistency?: Deno.KvConsistencyLevel }
@@ -265,7 +266,7 @@ export async function getManyKV<S extends KvSchema, K extends ExtractKeys<S>[]>(
 /**
  * Delete a value from the KV store
  */
-export async function deleteKV<S extends KvSchema>(
+export function deleteKV<S extends KvSchema>(
   kv: inSpatialKV<S>,
   key: ExtractKeys<S>
 ): Promise<void> {
@@ -316,7 +317,7 @@ export function listKV<
  * );
  * ```
  */
-export async function enqueueKV<S extends KvSchema, K extends ExtractKeys<S>>(
+export function enqueueKV<S extends KvSchema, K extends ExtractKeys<S>>(
   kv: inSpatialKV<S>,
   value: ExtractSchema<S, AbstractKeys<K>>,
   options?: {
@@ -353,7 +354,11 @@ export function createKVQueueListener<S extends KvSchema>(
     value: ExtractSchema<S, any>;
     versionstamp: string;
   }) => Promise<boolean>
-) {
+): {
+  listen: () => Promise<void>;
+  close: () => Promise<void>;
+  isListening: boolean;
+} {
   let isListening = false;
   let abortController: AbortController | null = null;
 
@@ -384,7 +389,7 @@ export function createKVQueueListener<S extends KvSchema>(
     }
   }
 
-  async function close() {
+  function close(): void {
     if (!isListening || !abortController) return;
     abortController.abort();
     isListening = false;
@@ -401,6 +406,21 @@ export function createKVQueueListener<S extends KvSchema>(
 
 /*#################################(listenKVQueue)######################################*/
 
+type Message<S> = { value: ExtractSchema<S, any>; versionstamp: string };
+type Middleware<S> = (
+  message: Message<S>,
+  next: () => Promise<void>
+) => Promise<void>;
+type Handler<S> = (message: Message<S>) => Promise<boolean>;
+
+interface QueueProcessorAPI<S extends KvSchema> {
+  use: (middleware: Middleware<S>) => QueueProcessorAPI<S>;
+  handle: (handler: Handler<S>) => QueueProcessorAPI<S>;
+  start: () => Promise<void>;
+  stop: () => Promise<void>;
+  readonly isRunning: boolean;
+}
+
 /**
  * Simple utility to listen to the queue directly
  * @example
@@ -412,7 +432,7 @@ export function createKVQueueListener<S extends KvSchema>(
  * });
  * ```
  */
-export async function listenKVQueue<S extends KvSchema>(
+export function listenKVQueue<S extends KvSchema>(
   kv: inSpatialKV<S>,
   handler: (message: {
     value: ExtractSchema<S, any>;
@@ -444,7 +464,9 @@ export async function listenKVQueue<S extends KvSchema>(
  * await processor.stop();
  * ```
  */
-export function createKVQueueProcessor<S extends KvSchema>(kv: inSpatialKV<S>) {
+export function createKVQueueProcessor<S extends KvSchema>(
+  kv: inSpatialKV<S>
+): QueueProcessorAPI<S> {
   type Message = { value: ExtractSchema<S, any>; versionstamp: string };
   type Middleware = (
     message: Message,
@@ -592,14 +614,13 @@ export async function* createKVWatcher<
  * await closeKV(kv);
  * ```
  */
-export async function closeKV<S extends KvSchema>(
-  kv: inSpatialKV<S>
-): Promise<void> {
+export function closeKV<S extends KvSchema>(kv: inSpatialKV<S>): Promise<void> {
   try {
-    // Close the KV connection
     kv.close();
+    return Promise.resolve();
   } catch (error) {
     console.error("Error closing KV connection:", error);
+    return Promise.reject(error);
   }
 }
 
@@ -616,14 +637,6 @@ ATOMIC OPERATION TYPES
 interface AtomicCheck {
   key: Deno.KvKey;
   versionstamp: string | null;
-}
-
-interface KvMutation {
-  // type: "set" | "delete" | "sum" | "min" | "max";
-  type: Deno.KvMutation;
-  key: Deno.KvKey;
-  value?: unknown;
-  expireIn?: number;
 }
 
 /*################################################################################
@@ -683,7 +696,7 @@ export class InSpatialAtomicOperation<S extends KvSchema> {
   /**
    * Add mutations atomically
    */
-  mutate(...mutations: KvMutation[]): this {
+  mutate(...mutations: Deno.KvMutation[]): this {
     this.operation.mutate(...mutations);
     return this;
   }
@@ -744,7 +757,7 @@ UTILITY FUNCTIONS
 export function atomic<S extends KvSchema>(
   kv: inSpatialKV<S>
 ): InSpatialAtomicOperation<S> {
-  return new InSpatialAtomicOperation(kv.atomic());
+  return new InSpatialAtomicOperation<S>(kv.atomic());
 }
 
 /**
