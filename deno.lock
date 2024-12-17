@@ -4,8 +4,9 @@
     "jsr:@hono/hono@^4.6.13": "4.6.13",
     "jsr:@inspatial/kv@*": "0.0.1",
     "jsr:@inspatial/kv@^0.0.1": "0.0.1",
-    "jsr:@inspatial/util@*": "0.0.2",
+    "jsr:@inspatial/util@*": "0.0.3",
     "jsr:@inspatial/util@^0.0.2": "0.0.2",
+    "jsr:@inspatial/util@^0.0.3": "0.0.3",
     "jsr:@std/assert@1": "1.0.9",
     "jsr:@std/assert@^1.0.9": "1.0.9",
     "jsr:@std/bytes@^1.0.3": "1.0.4",
@@ -60,6 +61,20 @@
     },
     "@inspatial/util@0.0.2": {
       "integrity": "ef5f023513021835912273fa84fc3855f04533139b55e2caa35aba2a7e8a185b",
+      "dependencies": [
+        "jsr:@std/collections@1.0.9",
+        "jsr:@std/csv",
+        "jsr:@std/datetime",
+        "jsr:@std/encoding",
+        "jsr:@std/front-matter",
+        "jsr:@std/text",
+        "jsr:@std/ulid",
+        "npm:clsx",
+        "npm:tailwind-merge@^1.14.0"
+      ]
+    },
+    "@inspatial/util@0.0.3": {
+      "integrity": "b297680ae1486608d734da1ddcc0a09c80e9f4a3e9238097e658876ccbfd1c3b",
       "dependencies": [
         "jsr:@std/collections@1.0.9",
         "jsr:@std/csv",
@@ -6494,6 +6509,11 @@
           "npm:react-dom@19",
           "npm:react@19",
           "npm:vinxi@0.5"
+        ]
+      },
+      "packages/core/dev/test": {
+        "dependencies": [
+          "jsr:@inspatial/util@^0.0.3"
         ]
       },
       "packages/core/dev/tw": {

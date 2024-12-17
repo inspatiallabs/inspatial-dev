@@ -84,6 +84,7 @@
       "tags": ["recommended"],
       "include": [
         "no-var",
+        "no-window",
         "no-unused-vars",
         "ban-untagged-todo",
         "no-empty-interface",

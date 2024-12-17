@@ -35,6 +35,7 @@ export * from "./collection.ts";
 export * from "./countries.ts";
 export * from "./encoding.ts";
 export * from "./regex-escape.ts";
+export * from "./types.ts";
 
 // export * from "./getletterspacing.ts";
 // export * from "./validated-auth.ts"; moved to InSpatial Auth

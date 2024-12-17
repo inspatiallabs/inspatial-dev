@@ -27,8 +27,8 @@ import type {
   Nullable,
   record,
   TypeOf,
-} from "jsr:@libs/typing@^3.1.2";
-import type { testing } from "./test.ts";
+} from "@inspatial/util";
+import type { testing } from "./test-runtime.ts";
 import { STATUS_CODE as Status } from "jsr:/@std/http@1/status";
 
 /**

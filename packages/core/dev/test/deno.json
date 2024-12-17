@@ -1,0 +1,14 @@
+{
+  "name": "@inspatial/test",
+  "license": "Apache-2.0",
+  "version": "0.0.1",
+  "imports": {
+    "@inspatial/util": "jsr:@inspatial/util@^0.0.3"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
+  }
+}
