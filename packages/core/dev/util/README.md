@@ -109,16 +109,6 @@ To begin your journey with InSpatial Core, visit our comprehensive documentation
 
 We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
 
-## 🚀 Release Channels
-
-Choose the release channel that best fits your needs:
-
-| Channel        | Description                           | Installation                          |
-| -------------- | ------------------------------------- | ------------------------------------- |
-| 🟢 **Stable**  | Production-ready release              | `deno install jsr:@inspatial/util`         |
-| 🟡 **Preview** | Usable early access                   | `deno install jsr:@inspatial/util@preview` |
-| 🔴 **Canary**  | Latest features, potentially unstable | `deno install jsr:@inspatial/util@canary`  |
-
 ---
 
 ## 📄 License
