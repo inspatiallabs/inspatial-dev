@@ -70,18 +70,20 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 
  <br>
 
-| Package | Description | Install | Link |
-|---------|------------|----------|-------|
-| **XR** | XR Renderer | `deno add jsr:@inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) |
-| **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) |
-| **Run** | Framework Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) |
-| **ECS** | Entity Component System | `deno add jsr:@inspatial/ecs` | [inspatial.dev/ecs](https://www.inspatial.dev/ecs) |
-| **ISS** | InSpatial Style Sheet | `deno add jsr:@inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) |
-| **CLI** | Command Line Interface | `deno add jsr:@inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) |
-| **Util** | Utility Functions | `deno add jsr:@inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) |
-| **VFX** | Visual Effects | `deno add jsr:@inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) |
-| **Icon** | Iconography | `deno add jsr:@inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) |
-| **InMoji** | InMoji | `deno add jsr:@inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) |
+| Package | Description | Install | Link | Status |
+|---------|------------|----------|-------|--------|
+| **XR** | XR Renderer | `deno add jsr:@inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) | 🔴 Unstable |
+| **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
+| **Run** | Framework Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
+| **ECS** | Entity Component System | `deno add jsr:@inspatial/ecs` | [inspatial.dev/ecs](https://www.inspatial.dev/ecs) | 🔴 Unstable |
+| **ISS** | InSpatial Style Sheet | `deno add jsr:@inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) | 🔴 Unstable |
+| **TW** | Tailwind CSS Presets | `deno add jsr:@inspatial/tw` | [inspatial.dev/tw](https://www.inspatial.dev/tw) | 🟡 Preview |
+| **CLI** | Command Line Interface | `deno add jsr:@inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) | 🔴 Unstable |
+| **Util** | Utility Functions | `deno add jsr:@inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) | 🟢 Stable |
+| **Test** | Test Framework | `deno add jsr:@inspatial/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🔴 Unstable |
+| **VFX** | Visual Effects | `deno add jsr:@inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) | 🔴 Unstable |
+| **Icon** | Iconography | `deno add jsr:@inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) | 🔴 Unstable |
+| **InMoji** | InMoji | `deno add jsr:@inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) | 🔴 Unstable |
 
 
 ---
@@ -312,16 +314,18 @@ bunx jsr add @inspatial/ecs
 
  <br>
 
-| Package | Description | Install | Link |
-|---------|------------|----------|-------|
-| **KV** | Key-Value Store | `deno add jsr:@inspatial/kv` | [inspatial.kv](https://www.inspatial.kv) |
-| **DB** | Database | `deno add jsr:@inspatial/db` | [inspatial.cloud/db](https://www.inspatial.cloud/db) |
-| **CMS** | Content Management System | `deno add jsr:@inspatial/cms` | [inspatial.cloud/cms](https://www.inspatial.cloud/cms) |
-| **ORM** | Object Relational Mapping | `deno add jsr:@inspatial/orm` | [inspatial.cloud/orm](https://www.inspatial.cloud/orm) |
-| **Auth** | Authentication | `deno add jsr:@inspatial/auth` | [inspatial.cloud/auth](https://www.inspatial.cloud/auth) |
-| **Vault** | File Storage | `deno add jsr:@inspatial/vault` | [inspatial.cloud/vault](https://www.inspatial.cloud/vault) |
-| **RateLimit** | Rate Limiter | `deno add jsr:@inspatial/ratelimit` | [inspatial.cloud/ratelimit](https://www.inspatial.cloud/ratelimit) |
-| **InFetch** | Data Fetching | `deno add jsr:@inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) |
+| Package | Description | Install | Link | Status |
+|---------|------------|----------|-------|--------|
+| **KV** | Key-Value Store | `deno add jsr:@inspatial/kv` | [inspatial.kv](https://www.inspatial.kv) | 🟡 Preview |
+| **DB** | Database | `deno add jsr:@inspatial/db` | [inspatial.cloud/db](https://www.inspatial.cloud/db) | 🔴 Unstable |
+| **CMS** | Content Management System | `deno add jsr:@inspatial/cms` | [inspatial.cloud/cms](https://www.inspatial.cloud/cms) | 🔴 Unstable |
+| **ORM** | Object Relational Mapping | `deno add jsr:@inspatial/orm` | [inspatial.cloud/orm](https://www.inspatial.cloud/orm) | 🔴 Unstable |
+| **Auth** | Authentication | `deno add jsr:@inspatial/auth` | [inspatial.cloud/auth](https://www.inspatial.cloud/auth) | 🔴 Unstable |
+| **Vault** | File Storage | `deno add jsr:@inspatial/vault` | [inspatial.cloud/vault](https://www.inspatial.cloud/vault) | 🔴 Unstable |
+| **RateLimit** | Rate Limiter | `deno add jsr:@inspatial/ratelimit` | [inspatial.cloud/ratelimit](https://www.inspatial.cloud/ratelimit) | 🔴 Unstable |
+| **InFetch** | Data Fetching | `deno add jsr:@inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) | 🔴 Unstable |
+| **Cron** | Cron Jobs | `deno add jsr:@inspatial/cron` | [inspatial.cloud/cron](https://www.inspatial.cloud/cron) | 🔴 Unstable |
+| **Analytics** | Analytics | `deno add jsr:@inspatial/analytics` | [inspatial.cloud/analytics](https://www.inspatial.cloud/analytics) | 🔴 Unstable |
 
 
 ---
