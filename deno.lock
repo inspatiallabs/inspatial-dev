@@ -14,7 +14,9 @@
     "jsr:@std/csv@1.0.4": "1.0.4",
     "jsr:@std/datetime@0.225.2": "0.225.2",
     "jsr:@std/encoding@1.0.5": "1.0.5",
+    "jsr:@std/fmt@1": "1.0.3",
     "jsr:@std/front-matter@1.0.5": "1.0.5",
+    "jsr:@std/html@1": "1.0.3",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/streams@^1.0.8": "1.0.8",
     "jsr:@std/text@1.0.9": "1.0.9",
@@ -30,6 +32,7 @@
     "npm:@xpd/tailwind-3dtransforms@^1.0.3": "1.0.3",
     "npm:arctic@^2.3.1": "2.3.1",
     "npm:clsx@^2.1.1": "2.1.1",
+    "npm:highlight.js@^11.10.0": "11.11.0",
     "npm:hono@^4.6.12": "4.6.12",
     "npm:jose@^5.9.6": "5.9.6",
     "npm:koota@~0.1.7": "0.1.7_@react-three+fiber@8.17.10__react@18.3.1__three@0.171.0__react-dom@18.3.1___react@18.3.1_react@18.3.1_three@0.171.0",
@@ -99,12 +102,18 @@
     "@std/encoding@1.0.5": {
       "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
     },
+    "@std/fmt@1.0.3": {
+      "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
+    },
     "@std/front-matter@1.0.5": {
       "integrity": "abddc64030a33eb5bc524b8c73e7c417cea09177aaeb4abf75a56b540c4b6e60",
       "dependencies": [
         "jsr:@std/toml",
         "jsr:@std/yaml"
       ]
+    },
+    "@std/html@1.0.3": {
+      "integrity": "7a0ac35e050431fb49d44e61c8b8aac1ebd55937e0dc9ec6409aa4bab39a7988"
     },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
@@ -3732,6 +3741,9 @@
       "dependencies": [
         "hermes-estree@0.25.1"
       ]
+    },
+    "highlight.js@11.11.0": {
+      "integrity": "sha512-6ErL7JlGu2CNFHyRQEuDogOyGPNiqcuWdt4iSSFUPyferNTGlNTPFqeV36Y/XwA4V/TJ8l0sxp6FTnxud/mf8g=="
     },
     "homedir-polyfill@1.0.3": {
       "integrity": "sha512-eSmmWE5bZTK2Nou4g0AI3zZ9rswp7GRKoKXS1BLUkvPviOqs4YTN1djQIqrXy9k5gEtdLPy86JjRwsNM9tnDcA==",
