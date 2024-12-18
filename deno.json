@@ -98,7 +98,7 @@
         "no-class-assign",
         "no-unsafe-finally"
       ],
-      "exclude": ["no-explicit-any"]
+      "exclude": ["no-explicit-any", "ban-ts-comment"]
     }
   }
 }

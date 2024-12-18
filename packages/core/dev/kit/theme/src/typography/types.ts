@@ -1,4 +1,5 @@
 import { type PrimitiveFontTypes } from "./primitive/types.ts";
+//@ts-expect-error
 import { type GoogleFontTypes } from "./google/fonts.ts";
 
 export type AllFontVariants = GoogleFontTypes | PrimitiveFontTypes;

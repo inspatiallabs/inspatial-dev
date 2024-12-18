@@ -2,6 +2,26 @@ import { proxyAgent } from "./proxy-agent.ts";
 import { retry } from "./retry.ts";
 
 /**
+ * helper function that handles the mocked data loading in a more predictable way
+ */
+async function getMockedResponse(path: string, url: string): Promise<string> {
+  try {
+    const mockData = await Deno.readTextFile(path);
+    const mockResponses = JSON.parse(mockData);
+    if (!mockResponses[url]) {
+      throw new Error("Missing mocked response for URL: " + url);
+    }
+    return mockResponses[url];
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to load mocked response: ${error.message}`);
+    }
+    // Handle case where error is not an Error object
+    throw new Error("Failed to load mocked response: Unknown error");
+  }
+}
+
+/**
  * Fetches the CSS containing the @font-face declarations from Google Fonts.
  * The fetch has a user agent header with a modern browser to ensure we'll get .woff2 files.
  *
@@ -15,25 +35,16 @@ export async function fetchStylesheet(
   isDev: boolean,
   customDeno?: typeof Deno
 ): Promise<string> {
-  // Use provided Deno instance or fall back to global
   const deno = customDeno ?? globalThis.Deno;
 
   // Check if mocked responses are defined
-  let mockedResponse: string | undefined;
+  let cssResponse: string;
   const mockedResponsePath = deno?.env.get(
     "INSPATIAL_FONT_GOOGLE_MOCKED_RESPONSES"
   );
-  if (mockedResponsePath) {
-    const mockFile = await import(mockedResponsePath);
-    mockedResponse = mockFile[url];
-    if (!mockedResponse) {
-      throw new Error("Missing mocked response for URL: " + url);
-    }
-  }
 
-  let cssResponse: string;
-  if (mockedResponse) {
-    cssResponse = mockedResponse;
+  if (mockedResponsePath) {
+    cssResponse = await getMockedResponse(mockedResponsePath, url);
   } else {
     // Retry logic for network issues
     cssResponse = await retry(async () => {

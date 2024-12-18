@@ -1,5 +1,3 @@
-
-
 /**
  * Creates a proxy configuration for fetch based on environment variables
  * Returns undefined if no proxy is configured
@@ -37,5 +35,5 @@ export function proxyAgent(
             }
           : undefined,
     },
-  };
+  } as RequestInit;
 }

@@ -1,4 +1,3 @@
-import { proxyAgent } from "./proxy-agent.ts";
 import { retry } from "./retry.ts";
 
 /**
@@ -19,8 +18,6 @@ export async function fetchFont(url: string, isDev: boolean) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
     const arrayBuffer = await fetch(url, {
-      agent: proxyAgent(),
-      // Add a timeout in dev
       signal: isDev ? controller.signal : undefined,
     })
       .then((r: any) => r.arrayBuffer())

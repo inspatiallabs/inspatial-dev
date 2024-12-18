@@ -1,7 +1,7 @@
 // prop.ts
 import { InSpatialFontProp } from "../primitive/types.ts";
 import fontMap from "./font-map.json" with { type: "json" };
-import type * as GeneratedFonts from "./fonts.ts";
+import * as GeneratedFonts from "./fonts.ts";
 
 /**
  * Represents the properties of a Google Font
@@ -11,6 +11,7 @@ export interface GoogleFontProp extends InSpatialFontProp {
   name: string;
   font: InSpatialFontProp & {
     weights: string[];
+    styles: string[];
     subsets: string[];
     axes?: Array<{
       tag: string;
@@ -22,14 +23,35 @@ export interface GoogleFontProp extends InSpatialFontProp {
 }
 
 // Get all generated font functions
-type FontFunctions = typeof GeneratedFonts;
+type FontFunctions = {
+  [K: string]: (options: {
+    weight: string;
+    style: string;
+    subsets: string[];
+    variable?: string;
+  }) => InSpatialFontProp;
+};
+
+interface FontMapEntry {
+  weights: string[];
+  styles: string[] | string;
+  subsets: string[];
+  axes?: Array<{
+    tag: string;
+    min: number;
+    max: number;
+    defaultValue: number;
+  }>;
+}
 
 /**
  * Array of all available Google Fonts with their properties
  * Uses the generated font functions instead of direct mapping
  * @constant {readonly GoogleFontProp[]}
  */
-export const GoogleFontProps = Object.entries(fontMap).map(([key, font]) => {
+export const GoogleFontProps = Object.entries(
+  fontMap as Record<string, FontMapEntry>
+).map(([key, font]) => {
   const fontName = key
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -38,16 +60,23 @@ export const GoogleFontProps = Object.entries(fontMap).map(([key, font]) => {
   // Get the generated font function
   const fontFunction = (GeneratedFonts as FontFunctions)[
     fontName as keyof FontFunctions
-  ];
+  ] as
+    | ((options: {
+        weight: string;
+        style: string;
+        subsets: string[];
+        variable?: string;
+      }) => InSpatialFontProp)
+    | undefined;
 
   if (!fontFunction) {
-    throw new Error(`Font function not found for ${fontName}`);
+    return undefined;
   }
 
   // Create font instance with default options
   const fontInstance = fontFunction({
     weight: font.weights[0],
-    style: Array.isArray(font.style) ? font.style[0] : font.style,
+    style: Array.isArray(font.styles) ? font.styles[0] : font.styles,
     subsets: font.subsets,
   });
 
@@ -57,7 +86,7 @@ export const GoogleFontProps = Object.entries(fontMap).map(([key, font]) => {
       ...fontInstance,
       weights: font.weights,
       subsets: font.subsets,
-      axes: font.axes,
+      ...(font.axes ? { axes: font.axes } : {}),
     },
   };
 }) as unknown as readonly GoogleFontProp[];
@@ -87,9 +116,7 @@ export function initializeGoogleFont(
   } = {}
 ): InSpatialFontProp | undefined {
   const normalizedName = fontName.replace(/\s+/g, "_");
-  const fontFunction = (GeneratedFonts as FontFunctions)[
-    normalizedName as keyof FontFunctions
-  ];
+  const fontFunction = (GeneratedFonts as FontFunctions)[normalizedName];
 
   if (!fontFunction) {
     return undefined;
@@ -104,9 +131,9 @@ export function initializeGoogleFont(
     weight: options.weight || fontProps.font.weights[0],
     style:
       options.style ||
-      (Array.isArray(fontProps.font.style)
-        ? fontProps.font.style[0]
-        : fontProps.font.style),
+      (Array.isArray(fontProps.font.styles)
+        ? fontProps.font.styles[0]
+        : fontProps.font.styles),
     subsets: options.subsets || fontProps.font.subsets,
     variable: options.variable,
   });

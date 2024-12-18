@@ -226,12 +226,10 @@ export const googleFont: FontLoader = async ({
         const hasCachedFont = fontCache.has(googleFontFileUrl);
         const fontFileBuffer = hasCachedFont
           ? fontCache.get(googleFontFileUrl)
-          : await fetchFont(googleFontFileUrl, isDev, denoInstance).catch(
-              (err) => {
-                console.error(err);
-                return null;
-              }
-            );
+          : await fetchFont(googleFontFileUrl, isDev).catch((err) => {
+              console.error(err);
+              return null;
+            });
 
         if (!hasCachedFont) {
           fontCache.set(googleFontFileUrl, fontFileBuffer ?? null);
