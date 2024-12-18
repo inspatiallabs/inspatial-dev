@@ -60,7 +60,7 @@ const primitiveFonts = PrimitiveFontProps;
  *   );
  * }
  */
-export const inspatialFontStyle = [
+export const inspatialFontStyle: string = [
   ...googleFonts.map((font) => font.font?.style).filter(Boolean),
   ...primitiveFonts.map((font) => font.font?.style).filter(Boolean),
 ].join(" ");
@@ -94,7 +94,7 @@ export const inspatialFontStyle = [
  *   );
  * }
  */
-export const inspatialFontClass = [
+export const inspatialFontClass: string = [
   ...googleFonts.map((font) => font.font?.axes).filter(Boolean),
   ...primitiveFonts
     .map((font) => font.font?.className as string)
@@ -150,7 +150,7 @@ export const inspatialFontClass = [
  *   );
  * }
  */
-export const inspatialFontVariable = [
+export const inspatialFontVariable: string = [
   ...googleFonts.map((font) => font.font?.variable).filter(Boolean),
   ...primitiveFonts.map((font) => font.font?.variable).filter(Boolean),
 ].join(" ");

@@ -15,9 +15,13 @@ export default function primitiveFont<
   throw new Error("Function not implemented.");
 }
 
-//##############################################(PRIMITIVE FONTS)##############################################//
+/*##############################################(TYPE)##############################################*/
+
+type AssignPrimitiveFont = ReturnType<typeof primitiveFont>;
+
+/*##############################################(PRIMITIVE FONTS)##############################################*/
 // Actual Font
-export const actual = primitiveFont({
+export const actual: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/actual/actual.otf",
   variable: "--font-actual",
   display: "auto",
@@ -26,7 +30,7 @@ export const actual = primitiveFont({
 });
 
 // Alternox Font
-export const alternox = primitiveFont({
+export const alternox: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/alternox/alternox-extralight.otf",
@@ -66,7 +70,7 @@ export const alternox = primitiveFont({
 });
 
 // Amithen Font
-export const amithen = primitiveFont({
+export const amithen: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/amithen/amithen.otf",
   variable: "--font-amithen",
   display: "auto",
@@ -75,7 +79,7 @@ export const amithen = primitiveFont({
 });
 
 // Aeion Font
-export const aeion = primitiveFont({
+export const aeion: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/aeion/aeion-regular.otf",
   variable: "--font-aeion",
   display: "auto",
@@ -84,7 +88,7 @@ export const aeion = primitiveFont({
 });
 
 // Aerospace Font
-export const aerospace = primitiveFont({
+export const aerospace: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/aerospace/aerospace.otf",
@@ -104,7 +108,7 @@ export const aerospace = primitiveFont({
 });
 
 // Along Font
-export const along = primitiveFont({
+export const along: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/along/along-regular.otf",
   variable: "--font-along",
   display: "auto",
@@ -113,7 +117,7 @@ export const along = primitiveFont({
 });
 
 // Ankle Font
-export const ankle = primitiveFont({
+export const ankle: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/ankle/ankle.otf",
   variable: "--font-ankle",
   display: "auto",
@@ -122,7 +126,7 @@ export const ankle = primitiveFont({
 });
 
 // Anything Font
-export const anything = primitiveFont({
+export const anything: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/anything/anything-bold.otf",
   variable: "--font-anything",
   display: "auto",
@@ -131,7 +135,7 @@ export const anything = primitiveFont({
 });
 
 // Aperture Font
-export const aperture = primitiveFont({
+export const aperture: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/aperture/aperture.otf",
   variable: "--font-aperture",
   display: "auto",
@@ -140,7 +144,7 @@ export const aperture = primitiveFont({
 });
 
 // Aqum Font
-export const aqum = primitiveFont({
+export const aqum: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/aqum/aqum-classic.otf",
@@ -170,7 +174,7 @@ export const aqum = primitiveFont({
 });
 
 // Attack Font
-export const attack = primitiveFont({
+export const attack: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/attack/attack-regular.otf",
   variable: "--font-attack",
   display: "auto",
@@ -179,7 +183,7 @@ export const attack = primitiveFont({
 });
 
 // Bernados Font
-export const bernados = primitiveFont({
+export const bernados: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/bernados/bernados-regular.otf",
   variable: "--font-bernados",
   display: "auto",
@@ -188,7 +192,7 @@ export const bernados = primitiveFont({
 });
 
 // Bertha Font
-export const bertha = primitiveFont({
+export const bertha: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/bertha/bertha.otf",
   variable: "--font-bertha",
   display: "auto",
@@ -197,7 +201,7 @@ export const bertha = primitiveFont({
 });
 
 // Bionix Font
-export const bionix = primitiveFont({
+export const bionix: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/bionix/bionix.otf",
   variable: "--font-bionix",
   display: "auto",
@@ -206,7 +210,7 @@ export const bionix = primitiveFont({
 });
 
 // Brawls Font
-export const brawls = primitiveFont({
+export const brawls: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/brawls/brawls.otf",
   variable: "--font-brawls",
   display: "auto",
@@ -215,7 +219,7 @@ export const brawls = primitiveFont({
 });
 
 // Brighton Font
-export const brighton = primitiveFont({
+export const brighton: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/brighton/brighton.otf",
@@ -233,7 +237,7 @@ export const brighton = primitiveFont({
 });
 
 // // Broad Font
-export const broad = primitiveFont({
+export const broad: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/broad/broad.otf",
   variable: "--font-broad",
   display: "auto",
@@ -242,7 +246,7 @@ export const broad = primitiveFont({
 });
 
 // Candace Font
-export const candace = primitiveFont({
+export const candace: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/candace/candace-regular.otf",
@@ -262,7 +266,7 @@ export const candace = primitiveFont({
 });
 
 // Carolin Font
-export const carolin = primitiveFont({
+export const carolin: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/carolin/carolin-regular.otf",
@@ -292,7 +296,7 @@ export const carolin = primitiveFont({
 });
 
 // Congenial Font
-export const congenial = primitiveFont({
+export const congenial: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/congenial/congenial-light.otf",
@@ -327,7 +331,7 @@ export const congenial = primitiveFont({
 });
 
 // Dakar Font
-export const dakar = primitiveFont({
+export const dakar: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/dakar/dakar.otf",
@@ -352,7 +356,7 @@ export const dakar = primitiveFont({
 });
 
 // Denson Font
-export const denson = primitiveFont({
+export const denson: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/denson/denson-round.otf",
@@ -377,7 +381,7 @@ export const denson = primitiveFont({
 });
 
 // Dumeh Font
-export const dumeh = primitiveFont({
+export const dumeh: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/dumeh/dumeh.otf",
   variable: "--font-dumeh",
   display: "auto",
@@ -386,7 +390,7 @@ export const dumeh = primitiveFont({
 });
 
 // Elsone Font
-export const elsone = primitiveFont({
+export const elsone: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/elsone/elsone-regular.otf",
@@ -416,7 +420,7 @@ export const elsone = primitiveFont({
 });
 
 // Engine Font
-export const engine = primitiveFont({
+export const engine: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/engine/engine.otf",
   variable: "--font-engine",
   display: "auto",
@@ -425,7 +429,7 @@ export const engine = primitiveFont({
 });
 
 // Enrique Font
-export const enrique = primitiveFont({
+export const enrique: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/enrique/enrique.otf",
@@ -450,7 +454,7 @@ export const enrique = primitiveFont({
 });
 
 // Folker Font
-export const folker = primitiveFont({
+export const folker: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/folker/folker.otf",
   variable: "--font-folker",
   display: "auto",
@@ -459,7 +463,7 @@ export const folker = primitiveFont({
 });
 
 // Fonzy Font
-export const fonzy = primitiveFont({
+export const fonzy: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/fonzy/fonzy-regular.otf",
   variable: "--font-fonzy",
   display: "auto",
@@ -468,7 +472,7 @@ export const fonzy = primitiveFont({
 });
 
 // Foregen Font
-export const foregen = primitiveFont({
+export const foregen: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/foregen/foregen-regular.otf",
   variable: "--font-foregen",
   display: "auto",
@@ -477,7 +481,7 @@ export const foregen = primitiveFont({
 });
 
 // Gaoel Font
-export const gaoel = primitiveFont({
+export const gaoel: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/gaoel/gaoel.otf",
   variable: "--font-gaoel",
   display: "auto",
@@ -486,7 +490,7 @@ export const gaoel = primitiveFont({
 });
 
 // Goodly Font
-export const goodly = primitiveFont({
+export const goodly: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/goodly/goodly-regular.otf",
   variable: "--font-goodly",
   display: "auto",
@@ -495,7 +499,7 @@ export const goodly = primitiveFont({
 });
 
 // Hadeed Font
-export const hadeed = primitiveFont({
+export const hadeed: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/hadeed/hadeed-regular.otf",
   variable: "--font-hadeed",
   display: "auto",
@@ -504,7 +508,7 @@ export const hadeed = primitiveFont({
 });
 
 // Heather Font
-export const heather = primitiveFont({
+export const heather: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/heather/heather.otf",
   variable: "--font-heather",
   display: "auto",
@@ -513,7 +517,7 @@ export const heather = primitiveFont({
 });
 
 // JLS Space GothicR
-export const jls = primitiveFont({
+export const jls: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/jls/JLSSpaceGothicR.otf",
   variable: "--font-jls",
   display: "auto",
@@ -522,7 +526,7 @@ export const jls = primitiveFont({
 });
 
 // Inder Font
-export const inder = primitiveFont({
+export const inder: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/inder/inder.ttf",
   variable: "--font-inder",
   display: "auto",
@@ -531,7 +535,7 @@ export const inder = primitiveFont({
 });
 
 // Inter Font
-export const inter = primitiveFont({
+export const inter: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/inter/inter.ttf",
@@ -551,7 +555,7 @@ export const inter = primitiveFont({
 });
 
 // Kimura Font
-export const kimura = primitiveFont({
+export const kimura: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/kimura/kimura-outline.otf",
@@ -576,7 +580,7 @@ export const kimura = primitiveFont({
 });
 
 // Lato Font
-export const lato = primitiveFont({
+export const lato: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/lato/lato-thin.ttf",
@@ -611,7 +615,7 @@ export const lato = primitiveFont({
 });
 
 // Logotype Font
-export const logotype = primitiveFont({
+export const logotype: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/logotype/logotype.otf",
   variable: "--font-logotype",
   display: "auto",
@@ -620,7 +624,7 @@ export const logotype = primitiveFont({
 });
 
 // Lovelo BLACK
-export const lovelo = primitiveFont({
+export const lovelo: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/lovelo/lovelo.otf",
   variable: "--font-lovelo",
   display: "auto",
@@ -630,7 +634,7 @@ export const lovelo = primitiveFont({
 });
 
 // Micro Font
-export const micro = primitiveFont({
+export const micro: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/micro/micro.otf",
   variable: "--font-micro",
   display: "auto",
@@ -639,7 +643,7 @@ export const micro = primitiveFont({
 });
 
 // Moisses Font
-export const moisses = primitiveFont({
+export const moisses: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/moisses/moisses.otf",
@@ -664,7 +668,7 @@ export const moisses = primitiveFont({
 });
 
 // Monica Font
-export const monica = primitiveFont({
+export const monica: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/monica/monica.otf",
@@ -684,7 +688,7 @@ export const monica = primitiveFont({
 });
 
 // Montserrat
-export const montserrat = primitiveFont({
+export const montserrat: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/montserrat/montserrat-thin.ttf",
@@ -730,7 +734,7 @@ export const montserrat = primitiveFont({
 });
 
 // Morality Font
-export const morality = primitiveFont({
+export const morality: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/morality/morality.otf",
   variable: "--font-morality",
   display: "auto",
@@ -739,7 +743,7 @@ export const morality = primitiveFont({
 });
 
 // Nafasyah Font
-export const nafasyah = primitiveFont({
+export const nafasyah: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/nafasyah/nafasyah.otf",
@@ -764,7 +768,7 @@ export const nafasyah = primitiveFont({
 });
 
 // Nanotech Font
-export const nanotech = primitiveFont({
+export const nanotech: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/nanotech/nanotech-regular.otf",
@@ -794,7 +798,7 @@ export const nanotech = primitiveFont({
 });
 
 // // Naon Font
-export const naon = primitiveFont({
+export const naon: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/naon/naon.otf",
   variable: "--font-naon",
   display: "auto",
@@ -803,7 +807,7 @@ export const naon = primitiveFont({
 });
 
 // Notche Font
-export const notche = primitiveFont({
+export const notche: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/notche/notche.otf",
@@ -832,7 +836,7 @@ export const notche = primitiveFont({
 });
 
 // Numaposa Font
-export const numaposa = primitiveFont({
+export const numaposa: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/numaposa/numaposa.otf",
   variable: "--font-numaposa",
   display: "auto",
@@ -841,7 +845,7 @@ export const numaposa = primitiveFont({
 });
 
 // Oklean Font
-export const oklean = primitiveFont({
+export const oklean: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/oklean/oklean.otf",
   variable: "--font-oklean",
   display: "auto",
@@ -850,7 +854,7 @@ export const oklean = primitiveFont({
 });
 
 // Parizaad Font
-export const parizaad = primitiveFont({
+export const parizaad: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/parizaad/parizaad-regular.otf",
   variable: "--font-parizaad",
   display: "auto",
@@ -859,7 +863,7 @@ export const parizaad = primitiveFont({
 });
 
 // Polaris Font
-export const polaris = primitiveFont({
+export const polaris: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/polaris/polaris.otf",
   variable: "--font-polaris",
   display: "auto",
@@ -868,7 +872,7 @@ export const polaris = primitiveFont({
 });
 
 // Polly Font
-export const polly = primitiveFont({
+export const polly: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/polly/polly-rounded-regular.otf",
   variable: "--font-polly",
   display: "auto",
@@ -877,7 +881,7 @@ export const polly = primitiveFont({
 });
 
 // Poppins
-export const poppins = primitiveFont({
+export const poppins: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/poppins/poppins-bold.ttf",
@@ -897,7 +901,7 @@ export const poppins = primitiveFont({
 });
 
 // Qualux Font
-export const qualux = primitiveFont({
+export const qualux: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/qualux/qualux-regular.otf",
   variable: "--font-qualux",
   display: "auto",
@@ -906,7 +910,7 @@ export const qualux = primitiveFont({
 });
 
 // Queen Rogette Font
-export const queenRogette = primitiveFont({
+export const queenRogette: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/queen-rogette/queen-rogette.otf",
   variable: "--font-queen-rogette",
   display: "auto",
@@ -915,7 +919,7 @@ export const queenRogette = primitiveFont({
 });
 
 // Quora Font
-export const quora = primitiveFont({
+export const quora: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/quora/quora-regular.otf",
   variable: "--font-quora",
   display: "auto",
@@ -924,7 +928,7 @@ export const quora = primitiveFont({
 });
 
 // Raleway Font
-export const raleway = primitiveFont({
+export const raleway: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/raleway/raleway.ttf",
   variable: "--font-raleway",
   display: "auto",
@@ -933,7 +937,7 @@ export const raleway = primitiveFont({
 });
 
 // Ransom Font
-export const ransom = primitiveFont({
+export const ransom: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/ransom/ransom.otf",
   variable: "--font-ransom",
   display: "auto",
@@ -942,7 +946,7 @@ export const ransom = primitiveFont({
 });
 
 // Remura Font
-export const remura = primitiveFont({
+export const remura: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/remura/remura-outline.otf",
@@ -962,7 +966,7 @@ export const remura = primitiveFont({
 });
 
 // Rockley Font
-export const rockley = primitiveFont({
+export const rockley: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/rockley/rockley-light.otf",
@@ -996,7 +1000,7 @@ export const rockley = primitiveFont({
 });
 
 // // Ronald Font
-export const ronald = primitiveFont({
+export const ronald: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/ronald/ronald.otf",
   variable: "--font-ronald",
   display: "auto",
@@ -1005,7 +1009,7 @@ export const ronald = primitiveFont({
 });
 
 // Rubik Font
-export const rubik = primitiveFont({
+export const rubik: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/rubik/rubik-light.ttf",
@@ -1039,7 +1043,7 @@ export const rubik = primitiveFont({
 });
 
 // Safari Font
-export const safari = primitiveFont({
+export const safari: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/safari/safari.otf",
   variable: "--font-safari",
   display: "auto",
@@ -1048,7 +1052,7 @@ export const safari = primitiveFont({
 });
 
 // // Sheylla Font
-export const sheylla = primitiveFont({
+export const sheylla: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/sheylla/sheylla-thin.otf",
@@ -1078,7 +1082,7 @@ export const sheylla = primitiveFont({
 });
 
 // Slam Dunk Font
-export const slamDunk = primitiveFont({
+export const slamDunk: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/slamdunk/slamdunk.otf",
@@ -1103,7 +1107,7 @@ export const slamDunk = primitiveFont({
 });
 
 // Sweet Snow Font
-export const sweetSnow = primitiveFont({
+export const sweetSnow: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/sweetsnow/sweetsnow-light.otf",
@@ -1133,7 +1137,7 @@ export const sweetSnow = primitiveFont({
 });
 
 // Stampbor Font
-export const stampbor = primitiveFont({
+export const stampbor: AssignPrimitiveFont = primitiveFont({
   src: [
     {
       path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/stampbor/stampbor-clean.otf",
@@ -1148,7 +1152,7 @@ export const stampbor = primitiveFont({
 });
 
 // Trebuchet MS
-export const trebuchet = primitiveFont({
+export const trebuchet: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/trebuchet/trebuchet.ttf",
   variable: "--font-trebuchet",
   preload: true,
@@ -1156,7 +1160,7 @@ export const trebuchet = primitiveFont({
 });
 
 // Viora Font
-export const viora = primitiveFont({
+export const viora: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/viora/viora.otf",
   variable: "--font-viora",
   display: "auto",
@@ -1165,7 +1169,7 @@ export const viora = primitiveFont({
 });
 
 // Zebrawood Font
-export const zebrawood = primitiveFont({
+export const zebrawood: AssignPrimitiveFont = primitiveFont({
   src: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/zebrawood/zebrawood.otf",
   variable: "--font-zebrawood",
   display: "auto",
