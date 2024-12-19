@@ -78,6 +78,7 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 | **ECS** | Entity Component System | `deno add jsr:@inspatial/ecs` | [inspatial.dev/ecs](https://www.inspatial.dev/ecs) | 🔴 Unstable |
 | **ISS** | InSpatial Style Sheet | `deno add jsr:@inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) | 🔴 Unstable |
 | **TW** | Tailwind CSS Presets | `deno add jsr:@inspatial/tw` | [inspatial.dev/tw](https://www.inspatial.dev/tw) | 🟡 Preview |
+| **Theme** | Theme System | `deno add jsr:@inspatial/theme` | [inspatial.dev/kit/theme](https://www.inspatial.dev/kit/theme) | 🟡 Preview |
 | **CLI** | Command Line Interface | `deno add jsr:@inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) | 🔴 Unstable |
 | **Util** | Utility Functions | `deno add jsr:@inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) | 🟢 Stable |
 | **Test** | Test Framework | `deno add jsr:@inspatial/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🔴 Unstable |

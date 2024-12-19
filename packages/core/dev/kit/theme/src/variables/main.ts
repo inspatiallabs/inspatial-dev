@@ -49,7 +49,6 @@ import generateThemeMode from "../helpers.ts";
  * const isDark = theme.mode === 'dark';
  * const primaryColor = isDark ? theme.format.dark.primary : theme.format.light.primary;
  */
-
 export const ThemeVariable: ThemeProps[] = [
   /*************(Default Theme)***************/
   /*                                         */
