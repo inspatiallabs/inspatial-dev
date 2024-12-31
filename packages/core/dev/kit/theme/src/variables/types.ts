@@ -1,4 +1,4 @@
-import { TypographyProps } from "../typography/types.ts";
+import { TypographyProps } from "../font/types.ts";
 
 /**********************************(Theme Props)**********************************/
 
