@@ -1,7 +1,7 @@
 // Imports
-import type { Nullable, Promisable } from "jsr:@libs/typing@^3.1.2";
+import type { Nullable, Promisable } from "@inspatial/util";
 export type { Nullable, Promisable };
-import { highlight } from "../highlight.ts";
+import { highlight } from "./highlight.ts";
 
 /** Test options. */
 export type options = {
@@ -14,17 +14,17 @@ export type options = {
 };
 
 /** Test runner method. */
-export type runner_method = (
+export type RunnerMethod = (
   name: string,
   fn: () => Promisable<unknown>,
   options?: options
 ) => Promisable<unknown>;
 
 /** Test runner. */
-export type runner = runner_method & {
-  only: runner_method;
-  skip: runner_method;
-  todo: runner_method;
+export type Runner = RunnerMethod & {
+  only: RunnerMethod;
+  skip: RunnerMethod;
+  todo: RunnerMethod;
 };
 
 /** Test runner mode. */

@@ -84,6 +84,8 @@ export async function domShare(props: ShareProps): Promise<boolean> {
  * });
  * ```
  */
+
+// deno-lint-ignore no-unused-vars
 export function nativeShare(props: ShareProps) {
   //   // Platform-specific implementations
   //   if (platformOS() === "iOS") {

@@ -3,7 +3,7 @@
   "license": "Apache-2.0",
   "version": "0.0.1",
   "imports": {
-    "@inspatial/util": "jsr:@inspatial/util@^0.0.3"
+    "@inspatial/util": "jsr:@inspatial/util@^0.0.4"
   },
   "exports": {
     ".": "./src/index.ts"

@@ -397,14 +397,44 @@ function isType(
 ): asserts value is record;
 function isType(value: testing, type: "function"): asserts value is callback;
 function isType(value: testing, type: TypeOf, { nullable = false } = {}) {
-  if (typeof value !== type) {
-    throw new TypeError(`Value is not of type "${type}"`);
-  }
-  if (!nullable && type === "object" && value === null) {
-    throw new TypeError(`Value is null`);
+  switch (type) {
+    case "string":
+      if (typeof value !== "string")
+        throw new TypeError(`Value is not of type "${type}"`);
+      break;
+    case "number":
+      if (typeof value !== "number")
+        throw new TypeError(`Value is not of type "${type}"`);
+      break;
+    case "boolean":
+      if (typeof value !== "boolean")
+        throw new TypeError(`Value is not of type "${type}"`);
+      break;
+    case "undefined":
+      if (typeof value !== "undefined")
+        throw new TypeError(`Value is not of type "${type}"`);
+      break;
+    case "object":
+      if (typeof value !== "object")
+        throw new TypeError(`Value is not of type "${type}"`);
+      if (!nullable && value === null) throw new TypeError(`Value is null`);
+      break;
+    case "function":
+      if (typeof value !== "function")
+        throw new TypeError(`Value is not of type "${type}"`);
+      break;
+    case "symbol":
+      if (typeof value !== "symbol")
+        throw new TypeError(`Value is not of type "${type}"`);
+      break;
+    case "bigint":
+      if (typeof value !== "bigint")
+        throw new TypeError(`Value is not of type "${type}"`);
+      break;
+    default:
+      throw new TypeError(`Invalid type "${type}"`);
   }
 }
-
 _expect.extend({
   toThrow(context, error, message) {
     // deno-lint-ignore no-explicit-any
