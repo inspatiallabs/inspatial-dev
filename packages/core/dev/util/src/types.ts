@@ -21,7 +21,7 @@
  * ```
  */
 export interface ModalContextType {
-  openModal: (content: React.ReactNode) => void;
+  openModal: (content: unknown) => void;
   closeModal: () => void;
 }
 
