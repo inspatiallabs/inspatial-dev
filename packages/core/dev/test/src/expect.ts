@@ -19,7 +19,7 @@ import {
   assertNotStrictEquals,
   assertObjectMatch,
   assertStrictEquals,
-} from "jsr:@std/assert@1";
+} from "@std/assert";
 import type {
   Arg,
   Arrayable,

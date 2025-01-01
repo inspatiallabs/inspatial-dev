@@ -55,8 +55,9 @@ A universal testing framework that works seamlessly across Deno, Node.js, and Bu
 
 ## 🌟 Features
 
-- 🎯 Cross-platform support (Deno, Node.js, Bun)
+- 🌍 Cross-platform support (Deno, Node.js, Bun)
 - 📝 Multiple test syntax styles (Function and Object)
+- 🎯 Support for both `assert` and `expect` style assertions
 - ⚡ Async/await support out of the box
 - 🎨 Beautiful test output with syntax highlighting
 - 🔄 Runtime auto-detection
@@ -71,6 +72,47 @@ A universal testing framework that works seamlessly across Deno, Node.js, and Bu
 - 🎨 Visual Regression Testing for 3D
 - 📊 Spatial Computing Metrics
 - 🤖 AI-Powered Test Generation
+
+## 🚀 Installation
+
+Choose your preferred package manager:
+
+```bash
+# Deno
+deno add jsr:@inspatial/test
+
+# npm
+npx jsr add @inspatial/test
+
+# yarn
+yarn dlx jsr add @inspatial/test
+
+# pnpm
+pnpm dlx jsr add @inspatial/test
+
+# bun
+bunx jsr add @inspatial/test
+```
+
+---
+
+## 🏃 Running Tests
+
+```bash
+# Node.js
+node --test
+
+# Node.js with TypeScript
+npx tsx --test  # Requires "type": "module" in package.json
+
+# Deno
+deno test
+
+# Bun
+bun test
+```
+
+---
 
 ## 🛠️ Usage
 
@@ -136,25 +178,81 @@ test("test with options", () => {
 #### 5. **Assertions**
 
 ```typescript
-import { expect, test } from "@inspatial/test"
+import { assert, expect, test } from "@inspatial/test"
 
-test("various assertions", () => {
-  // Basic assertions
+test("using both assertion styles", () => {
+  // Using expect
   expect(42).toBe(42)
-  expect([1, 2, 3]).toContain(2)
+  expect("hello").toContain("ll")
 
-  // Type checking
-  expect("string").toBeType("string")
-
-  // Async assertions
-  await expect(Promise.resolve(42)).resolves.toBe(42)
-
-  // Error handling
-  expect(() => {
-    throw new Error("boom!")
-  }).toThrow()
+  // Using assert
+  assert.equal(42, 42)
+  assert.match("hello", /ll/)
 })
 ```
+
+---
+
+## ⚙️ CI Configuration
+
+### Bun
+
+```yaml
+name: Bun CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: antongolub/action-setup-bun@v1.12.8
+        with:
+          bun-version: v1.x
+      - run: bun x jsr add @inspatial/test
+      - run: bun test
+```
+
+### Deno
+
+```yaml
+name: Deno CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - run: deno add @inspatial/test
+      - run: deno test
+```
+
+### Node.js
+
+```yaml
+name: Node.js CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 21.x]
+    steps:
+      - uses: actions/checkout@v3
+      - run: npx jsr add @inspatial/test
+      - run: |
+          echo '{"type":"module"}' > package.json
+          npx --yes tsx --test *.test.ts
+```
+
+---
 
 ## 📚 API Reference
 

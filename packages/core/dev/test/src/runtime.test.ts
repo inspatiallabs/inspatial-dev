@@ -32,6 +32,7 @@ test("runtime detection", () => {
   expect(runtime).toBeOneOf(["deno", "bun", "node", "unknown"]);
 });
 
+
 /*#########################################(Test Execution Modes)#########################################*/
 test("normal test mode executes", async () => {
   let wasExecuted = false;

@@ -4,10 +4,11 @@
     "jsr:@hono/hono@^4.6.13": "4.6.13",
     "jsr:@inspatial/kv@*": "0.0.1",
     "jsr:@inspatial/kv@^0.0.1": "0.0.1",
-    "jsr:@inspatial/util@*": "0.0.2",
+    "jsr:@inspatial/util@*": "0.0.4",
     "jsr:@inspatial/util@^0.0.2": "0.0.2",
     "jsr:@inspatial/util@^0.0.4": "0.0.4",
     "jsr:@std/assert@1": "1.0.9",
+    "jsr:@std/assert@^1.0.10": "1.0.10",
     "jsr:@std/assert@^1.0.9": "1.0.9",
     "jsr:@std/bytes@^1.0.3": "1.0.4",
     "jsr:@std/collections@1.0.9": "1.0.9",
@@ -98,6 +99,12 @@
     },
     "@std/assert@1.0.9": {
       "integrity": "a9f0c611a869cc791b26f523eec54c7e187aab7932c2c8e8bea0622d13680dcd",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/assert@1.0.10": {
+      "integrity": "59b5cbac5bd55459a19045d95cc7c2ff787b4f8527c0dd195078ff6f9481fbb3",
       "dependencies": [
         "jsr:@std/internal"
       ]
@@ -6526,7 +6533,8 @@
       },
       "packages/core/dev/test": {
         "dependencies": [
-          "jsr:@inspatial/util@^0.0.4"
+          "jsr:@inspatial/util@^0.0.4",
+          "jsr:@std/assert@^1.0.10"
         ]
       },
       "packages/core/dev/tw": {
