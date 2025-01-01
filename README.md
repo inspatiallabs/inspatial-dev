@@ -81,7 +81,7 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 | **Theme** | Theme System | `deno add jsr:@inspatial/theme` | [inspatial.dev/kit/theme](https://www.inspatial.dev/kit/theme) | 🟡 Preview |
 | **CLI** | Command Line Interface | `deno add jsr:@inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) | 🔴 Unstable |
 | **Util** | Utility Functions | `deno add jsr:@inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) | 🟢 Stable |
-| **Test** | Test Framework | `deno add jsr:@inspatial/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🔴 Unstable |
+| **Test** | Test Framework | `deno add jsr:@inspatial/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🟡 Preview |
 | **VFX** | Visual Effects | `deno add jsr:@inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) | 🔴 Unstable |
 | **Icon** | Iconography | `deno add jsr:@inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) | 🔴 Unstable |
 | **InMoji** | InMoji | `deno add jsr:@inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) | 🔴 Unstable |
