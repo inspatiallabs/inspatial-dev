@@ -3,8 +3,31 @@ import type { Nullable, Promisable } from "@inspatial/util";
 export type { Nullable, Promisable };
 import { highlight } from "./highlight.ts";
 
-/** Test options. */
-export type options = {
+/*#########################################(PROPS)#########################################*/
+
+/** InSpatial Test Properties for an object style test runner */
+export interface TestProps {
+  /** The name of the test */
+  name: string;
+
+  /** The function to pass to the test */
+  fn: () => Promisable<void>;
+
+  /** The options for the test */
+  options?: OptionProp & {
+    /** Only run this test */
+    only?: boolean;
+
+    /** Skip this test */
+    skip?: boolean;
+
+    /** Todo this test */
+    todo?: boolean;
+  };
+}
+/*#########################################(OPTIONS)#########################################*/
+/** InSpatial Test options. */
+export type OptionProp = {
   permissions?: Deno.TestDefinition["permissions"];
   sanitizeResources?: Deno.TestDefinition["sanitizeResources"];
   sanitizeOps?: Deno.TestDefinition["sanitizeOps"];
@@ -13,24 +36,46 @@ export type options = {
   [key: PropertyKey]: unknown;
 };
 
-/** Test runner method. */
+/*#########################################(METHODS)#########################################*/
+/** InSpatial Test runner method. */
 export type RunnerMethod = (
   name: string,
-  fn: () => Promisable<unknown>,
-  options?: options
-) => Promisable<unknown>;
+  fn: () => Promisable<void>,
+  options?: OptionProp
+) => Promise<void>;
 
-/** Test runner. */
-export type Runner = RunnerMethod & {
-  only: RunnerMethod;
-  skip: RunnerMethod;
-  todo: RunnerMethod;
-};
+/*#########################################(TEST RUNNER MODIFIERS)#########################################*/
 
-/** Test runner mode. */
+/** InSpatial Test runner. */
+export interface Runner {
+  (
+    nameOrConfig: string | TestProps,
+    fnOrUndefined?: () => Promisable<void>,
+    options?: OptionProp
+  ): Promise<void>;
+  only: (
+    nameOrConfig: string | TestProps,
+    fnOrUndefined?: () => Promisable<void>,
+    options?: OptionProp
+  ) => Promise<void>;
+  skip: (
+    nameOrConfig: string | TestProps,
+    fnOrUndefined?: () => Promisable<void>,
+    options?: OptionProp
+  ) => Promise<void>;
+  todo: (
+    nameOrConfig: string | TestProps,
+    fnOrUndefined?: () => Promisable<void>,
+    options?: OptionProp
+  ) => Promise<void>;
+}
+
+/*#########################################(MODE)#########################################*/
+/** InSpatial Test runner mode. */
 export type mode = "test" | "skip" | "only" | "todo";
 
-/** Format test name. */
+/*#########################################(FORMAT)#########################################*/
+/** Format InSpatial test name. */
 export function format(name: string): string {
   return highlight(name, { underline: true });
 }

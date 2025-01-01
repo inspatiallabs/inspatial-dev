@@ -4,9 +4,9 @@
     "jsr:@hono/hono@^4.6.13": "4.6.13",
     "jsr:@inspatial/kv@*": "0.0.1",
     "jsr:@inspatial/kv@^0.0.1": "0.0.1",
-    "jsr:@inspatial/util@*": "0.0.3",
+    "jsr:@inspatial/util@*": "0.0.2",
     "jsr:@inspatial/util@^0.0.2": "0.0.2",
-    "jsr:@inspatial/util@^0.0.3": "0.0.3",
+    "jsr:@inspatial/util@^0.0.4": "0.0.4",
     "jsr:@std/assert@1": "1.0.9",
     "jsr:@std/assert@^1.0.9": "1.0.9",
     "jsr:@std/bytes@^1.0.3": "1.0.4",
@@ -15,9 +15,11 @@
     "jsr:@std/csv@1.0.4": "1.0.4",
     "jsr:@std/datetime@0.225.2": "0.225.2",
     "jsr:@std/encoding@1.0.5": "1.0.5",
+    "jsr:@std/expect@1": "1.0.9",
     "jsr:@std/fmt@1": "1.0.3",
     "jsr:@std/front-matter@1.0.5": "1.0.5",
     "jsr:@std/html@1": "1.0.3",
+    "jsr:@std/http@1": "1.0.11",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/streams@^1.0.8": "1.0.8",
     "jsr:@std/text@1.0.9": "1.0.9",
@@ -30,6 +32,7 @@
     "npm:@stylexjs/stylex@~0.9.3": "0.9.3",
     "npm:@tailwindcss/aspect-ratio@~0.4.2": "0.4.2_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:@tailwindcss/forms@~0.5.9": "0.5.9_tailwindcss@4.0.0-beta.6",
+    "npm:@types/node@*": "22.5.4",
     "npm:@xpd/tailwind-3dtransforms@^1.0.3": "1.0.3",
     "npm:arctic@^2.3.1": "2.3.1",
     "npm:clsx@^2.1.1": "2.1.1",
@@ -73,8 +76,8 @@
         "npm:tailwind-merge@^1.14.0"
       ]
     },
-    "@inspatial/util@0.0.3": {
-      "integrity": "b297680ae1486608d734da1ddcc0a09c80e9f4a3e9238097e658876ccbfd1c3b",
+    "@inspatial/util@0.0.4": {
+      "integrity": "64a4524820c97435a35ed9dcf1223f42775066b6c284f168f68aabe51e80fdac",
       "dependencies": [
         "jsr:@std/collections@1.0.9",
         "jsr:@std/csv",
@@ -117,6 +120,13 @@
     "@std/encoding@1.0.5": {
       "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
     },
+    "@std/expect@1.0.9": {
+      "integrity": "108bb428f17492ac40439479e1dc55fbaae581530e905a8603f97305842a5a01",
+      "dependencies": [
+        "jsr:@std/assert@^1.0.9",
+        "jsr:@std/internal"
+      ]
+    },
     "@std/fmt@1.0.3": {
       "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
     },
@@ -129,6 +139,9 @@
     },
     "@std/html@1.0.3": {
       "integrity": "7a0ac35e050431fb49d44e61c8b8aac1ebd55937e0dc9ec6409aa4bab39a7988"
+    },
+    "@std/http@1.0.11": {
+      "integrity": "f1928e69e7dcf1664e22d153934cb866bf31e1bbe4bc59f8ac1b4d0e98cb7558"
     },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
@@ -6513,7 +6526,7 @@
       },
       "packages/core/dev/test": {
         "dependencies": [
-          "jsr:@inspatial/util@^0.0.3"
+          "jsr:@inspatial/util@^0.0.4"
         ]
       },
       "packages/core/dev/tw": {
@@ -6542,12 +6555,6 @@
           "jsr:@inspatial/props@^0.0.1",
           "npm:next-safe-action@^7.9.3",
           "npm:react-dom@19",
-          "npm:react@19",
-          "npm:tailwind-variants@~0.2.1"
-        ]
-      },
-      "packages/utilities/prop": {
-        "dependencies": [
           "npm:react@19",
           "npm:tailwind-variants@~0.2.1"
         ]

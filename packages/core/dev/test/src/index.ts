@@ -1,5 +1,3 @@
-export * from "./expect.ts";
-export * from "./permissions.ts";
-export * from "./test-runtime.ts";
-export * from "./highlight.ts";
-export * from "./noop.ts";
+export { test, runtime, TestingError, throws } from "./runtime.ts";
+export { expect } from "./expect.ts";
+export type { Runner, OptionProp, Promisable, format } from "./shared.ts";

@@ -7,6 +7,10 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./theme": "./src/index.ts"
+    "./theme": "./src/index.ts",
+    "./color": "./src/color/index.ts",
+    "./font": "./src/font/index.ts",
+    "./effect": "./src/effect/index.ts",
+    "./variables": "./src/variables/index.ts"
   }
 }

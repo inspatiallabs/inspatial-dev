@@ -57,8 +57,7 @@
       "deno.unstable",
       "deno.worker",
       "deno.window"
-    ],
-    "allowJs": false
+    ]
   },
   "unstable": [
     "cron",

@@ -8,6 +8,9 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "tasks": {
+    "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"
+  },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   }

@@ -28,7 +28,7 @@ import type {
   record,
   TypeOf,
 } from "@inspatial/util";
-import type { testing } from "./test-runtime.ts";
+import type { testing } from "./runtime.ts";
 import { STATUS_CODE as Status } from "jsr:/@std/http@1/status";
 
 /**
@@ -338,8 +338,10 @@ let AssertionError: typeof _AssertionError;
 // AssertionError is not exported by `@std/expect` (and it differs from `@std/assert`) which is why we retrieve it this way
 try {
   _expect(null).toBe(true);
-} catch (error) {
-  AssertionError = error.constructor;
+} catch (error: unknown) {
+  if (error instanceof Error) {
+    AssertionError = error.constructor as typeof _AssertionError;
+  }
 }
 
 /** Process callback and format result to match {@link Expected} result interface. */
@@ -351,15 +353,17 @@ function process(
   let pass = true;
   try {
     evaluate();
-  } catch (error) {
-    if (error.name === AssertionError.name) {
-      pass = false;
-      message += message
-        ? `${error.message.charAt(0).toLocaleLowerCase()}${error.message.substring(1)}`
-        : error.message;
-    } else {
-      pass = not;
-      message = error.message;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.name === AssertionError.name) {
+        pass = false;
+        message += message
+          ? `${error.message.charAt(0).toLocaleLowerCase()}${error.message.substring(1)}`
+          : error.message;
+      } else {
+        pass = not;
+        message = error.message;
+      }
     }
   }
   message = message
@@ -494,8 +498,11 @@ _expect.extend({
       () => {
         try {
           isType(context.value, type, { nullable });
-        } catch (error) {
-          throw new AssertionError(error.message);
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            throw new AssertionError(error.message);
+          }
+          throw new Error(`Assertion failed: ${error}`);
         }
       },
       `Expected value to {!NOT} be of type "${type}"${!nullable ? " and not null but " : ""}`
@@ -545,8 +552,11 @@ _expect.extend({
       () => {
         try {
           isIterable(context.value);
-        } catch (error) {
-          throw new AssertionError(error.message);
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            throw new AssertionError(error.message);
+          }
+          throw new Error(`Assertion failed: ${error}`);
         }
       },
       `Expected value to {!NOT} be iterable, `
@@ -668,8 +678,11 @@ _expect.extend({
       () => {
         try {
           JSON.parse(`${context.value}`, reviver);
-        } catch (error) {
-          throw new AssertionError(error.message);
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            throw new AssertionError(error.message);
+          }
+          throw new Error(`Assertion failed: ${error}`);
         }
       },
       `Expected value to {!NOT} be parseable JSON, `
@@ -704,8 +717,11 @@ _expect.extend({
       () => {
         try {
           atob(`${context.value}`);
-        } catch (error) {
-          throw new AssertionError(error.message);
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            throw new AssertionError(error.message);
+          }
+          throw new Error(`Assertion failed: ${error}`);
         }
       },
       `Expected "${context.value}" to {!NOT} be a valid base64 string`
