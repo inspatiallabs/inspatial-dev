@@ -96,29 +96,29 @@ bunx jsr add @inspatial/test
 
 ---
 
-## 🏃 Running Tests
-
-```bash
-# Node.js
-node --test
-
-# Node.js with TypeScript
-npx tsx --test  # Requires "type": "module" in package.json
-
-# Deno
-deno test
-
-# Bun
-bun test
-```
-
----
-
 ## 🛠️ Usage
 
 ### Step-by-Step Usage Guide
 
 Follow these simple steps to get started with **InSpatial Test**:
+
+#### #. **File Naming Convention**
+
+Create test files using either of these naming patterns:
+
+- `file.test.ts` (preferred)
+- `file_test.ts`
+
+Example:
+
+```typescript
+// user.test.ts or user_test.ts
+import { expect, test } from "@inspatial/test"
+
+test("user creation", () => {
+  // ... test code
+})
+```
 
 #### 1. **Basic Test**
 
@@ -189,6 +189,24 @@ test("using both assertion styles", () => {
   assert.equal(42, 42)
   assert.match("hello", /ll/)
 })
+```
+
+---
+
+## 🏃 Running Tests
+
+```bash
+# Node.js
+node --test
+
+# Node.js with TypeScript
+npx tsx --test  # Requires "type": "module" in package.json
+
+# Deno
+deno test
+
+# Bun
+bun test
 ```
 
 ---
