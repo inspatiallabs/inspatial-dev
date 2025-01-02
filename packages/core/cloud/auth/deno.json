@@ -13,8 +13,9 @@
   },
   "imports": {
     "@hono/hono": "jsr:@hono/hono@^4.6.13",
-    "@inspatial/kv": "jsr:@inspatial/kv@^0.0.1",
-    "@inspatial/util": "jsr:@inspatial/util@^0.0.2",
+    "@inspatial/kv": "jsr:@inspatial/kv@^0.0.2",
+    "@inspatial/util": "jsr:@inspatial/util@^0.0.4",
+    "@inspatial/test": "jsr:@inspatial/test@^0.0.2",
     "@standard-schema/spec": "npm:@standard-schema/spec@^1.0.0-beta.4",
     "arctic": "npm:arctic@^2.3.1",
     "jose": "npm:jose@^5.9.6"

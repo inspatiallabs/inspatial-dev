@@ -1,7 +1,7 @@
 import { Oauth2Adapter, Oauth2WrappedConfig } from "./config/oauth2.ts";
 import { OidcAdapter, OidcWrappedConfig } from "./config/oidc.ts";
 
-export function FacebookAuth(config: Oauth2WrappedConfig) {
+export function FacebookAuth(config: Oauth2WrappedConfig): Oauth2Adapter {
   return Oauth2Adapter({
     ...config,
     type: "facebook",
@@ -12,7 +12,7 @@ export function FacebookAuth(config: Oauth2WrappedConfig) {
   });
 }
 
-export function FacebookOidcAuth(config: OidcWrappedConfig) {
+export function FacebookOidcAuth(config: OidcWrappedConfig): OidcAdapter {
   return OidcAdapter({
     ...config,
     type: "facebook",

@@ -1,21 +1,26 @@
 import { Adapter, AdapterOptions } from "./adapter.ts";
 import { SubjectPayload, SubjectSchema } from "./session.ts";
-import { Hono } from "hono/tiny";
-import { Context } from "hono";
-import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { Hono } from "@hono/hono";
+import { Context } from "@hono/hono";
+import { deleteCookie, getCookie, setCookie } from "@hono/hono/cookie";
 import {
   MissingParameterError,
-  OauthError, 
+  OauthError,
   UnauthorizedClientError,
   UnknownStateError,
 } from "./error.ts";
 import { compactDecrypt, CompactEncrypt, SignJWT } from "jose";
-import { Storage, StorageAdapter } from "./storage/storage.ts";
+import {
+  getStorage,
+  scanStorage,
+  removeStorage,
+  setStorage,
+  StorageAdapter,
+} from "./storage/storage.ts";
 import { keys } from "./keys.ts";
 import { validatePKCE } from "./pkce.ts";
-import { Select } from "./ui/select.tsx";
 import { MemoryStorage } from "./storage/memory.ts";
-import { cors } from "hono/cors";
+import { cors } from "@hono/hono/cors";
 import { Prettify, isDomainMatch } from "@inspatial/util";
 import { getEnv } from "./helpers.ts";
 
@@ -32,10 +37,10 @@ export interface OnSuccessResponder<
 }
 
 interface AuthorizationState {
-  redirect_uri: string;
-  response_type: string;
+  redirectURI: string;
+  responseType: string;
   state: string;
-  client_id: string;
+  clientID: string;
   audience?: string;
   pkce?: {
     challenge: string;
@@ -50,7 +55,9 @@ export function inSpatialAuth<
     [key in keyof AuthenticationMethods]: Prettify<
       {
         provider: key;
-      } & (AuthenticationMethods[key] extends Adapter<infer T> ? T : {})
+      } & (AuthenticationMethods[key] extends Adapter<infer T>
+        ? T
+        : Record<string, never>)
     >;
   }[keyof AuthenticationMethods],
 >(input: {
@@ -94,10 +101,9 @@ export function inSpatialAuth<
   const ttlAccess = input.ttl?.access ?? 60 * 60 * 24 * 30;
   const ttlRefresh = input.ttl?.refresh ?? 60 * 60 * 24 * 365;
 
-  const select = input.select ?? Select();
   const allow =
     input.allow ??
-    (async (input, req) => {
+    ((input, req) => {
       const redir = new URL(input.redirectURI).hostname;
       if (redir === "localhost" || redir === "127.0.0.1") {
         return true;
@@ -131,36 +137,36 @@ export function inSpatialAuth<
           async subject(type, properties) {
             const authorization = await getAuthorization(ctx);
             await opts?.invalidate?.(await resolveSubject(type, properties));
-            if (authorization.response_type === "token") {
-              const location = new URL(authorization.redirect_uri);
+            if (authorization.responseType === "token") {
+              const location = new URL(authorization.redirectURI);
               const tokens = await generateTokens(ctx, {
                 type: type as string,
                 properties,
-                clientID: authorization.client_id,
+                clientID: authorization.clientID,
               });
               location.hash = new URLSearchParams({
-                access_token: tokens.access,
-                refresh_token: tokens.refresh,
+                accessToken: tokens.access,
+                refreshToken: tokens.refresh,
                 state: authorization.state || "",
               }).toString();
               await auth.unset(ctx, "authorization");
               return ctx.redirect(location.toString(), 302);
             }
-            if (authorization.response_type === "code") {
+            if (authorization.responseType === "code") {
               const code = crypto.randomUUID();
-              await Storage.set(
+              await setStorage(
                 storage,
                 ["oauth:code", code],
                 {
                   type,
                   properties,
-                  redirectURI: authorization.redirect_uri,
-                  clientID: authorization.client_id,
+                  redirectURI: authorization.redirectURI,
+                  clientID: authorization.clientID,
                   pkce: authorization.pkce,
                 },
                 60
               );
-              const location = new URL(authorization.redirect_uri);
+              const location = new URL(authorization.redirectURI);
               location.searchParams.set("code", code);
               location.searchParams.set("state", authorization.state || "");
               await auth.unset(ctx, "authorization");
@@ -168,7 +174,7 @@ export function inSpatialAuth<
             }
             throw new OauthError(
               "invalid_request",
-              `Unsupported response_type: ${authorization.response_type}`
+              `Unsupported responseType: ${authorization.responseType}`
             );
           },
         },
@@ -198,19 +204,20 @@ export function inSpatialAuth<
     async get(ctx: Context, key: string) {
       const raw = getCookie(ctx, key);
       if (!raw) return;
-      return decrypt(raw).catch((ex) => {
+      return await decrypt(raw).catch((ex) => {
         console.error("failed to decrypt", key, ex);
       });
     },
-    async unset(ctx: Context, key: string) {
+    unset(ctx: Context, key: string) {
       deleteCookie(ctx, key);
+      return Promise.resolve();
     },
     async invalidate(subject: string) {
-      for await (const [key] of Storage.scan(this.storage, [
+      for await (const [key] of scanStorage(this.storage, [
         "oauth:refresh",
         subject,
       ])) {
-        await Storage.remove(this.storage, key);
+        await removeStorage(this.storage, key);
       }
     },
     storage,
@@ -253,7 +260,7 @@ export function inSpatialAuth<
   ) {
     const subject = await resolveSubject(value.type, value.properties);
     const refreshToken = crypto.randomUUID();
-    await Storage.set(
+    await setStorage(
       storage!,
       ["oauth:refresh", subject, refreshToken],
       {
@@ -326,14 +333,14 @@ export function inSpatialAuth<
     });
   });
 
-  app.get("/.well-known/oauth-authorization-server", async (c) => {
+  app.get("/.well-known/oauth-authorization-server", (c) => {
     const iss = issuer(c);
     return c.json({
       issuer: iss,
-      authorization_endpoint: `${iss}/authorize`,
-      token_endpoint: `${iss}/token`,
-      jwks_uri: `${iss}/.well-known/jwks.json`,
-      response_types_supported: ["code", "token"],
+      authorizationEndpoint: `${iss}/authorize`,
+      tokenEndpoint: `${iss}/token`,
+      jwksUri: `${iss}/.well-known/jwks.json`,
+      responseTypesSupported: ["code", "token"],
     });
   });
 
@@ -360,7 +367,7 @@ export function inSpatialAuth<
             400
           );
         const key = ["oauth:code", code.toString()];
-        const payload = await Storage.get<{
+        const payload = await getStorage<{
           type: string;
           properties: any;
           clientID: string;
@@ -376,7 +383,7 @@ export function inSpatialAuth<
             400
           );
         }
-        await Storage.remove(storage, key);
+        await removeStorage(storage, key);
         if (payload.redirectURI !== form.get("redirect_uri")) {
           return c.json(
             {
@@ -445,7 +452,7 @@ export function inSpatialAuth<
         const token = splits.pop()!;
         const subject = splits.join(":");
         const key = ["oauth:refresh", subject, token];
-        const payload = await Storage.get<{
+        const payload = await getStorage<{
           type: string;
           properties: any;
           clientID: string;
@@ -459,7 +466,7 @@ export function inSpatialAuth<
             400
           );
         }
-        await Storage.remove(storage, key);
+        await removeStorage(storage, key);
         const tokens = await generateTokens(c, payload);
         return c.json({
           access_token: tokens.access,
@@ -518,39 +525,39 @@ export function inSpatialAuth<
 
   app.get("/authorize", async (c) => {
     const provider = c.req.query("provider");
-    const response_type = c.req.query("response_type");
-    const redirect_uri = c.req.query("redirect_uri");
+    const responseType = c.req.query("responseType");
+    const redirectURI = c.req.query("redirectURI");
     const state = c.req.query("state");
-    const client_id = c.req.query("client_id");
+    const clientID = c.req.query("clientID");
     const audience = c.req.query("audience");
-    const code_challenge = c.req.query("code_challenge");
-    const code_challenge_method = c.req.query("code_challenge_method");
+    const codeChallenge = c.req.query("codeChallenge");
+    const codeChallengeMethod = c.req.query("codeChallengeMethod");
     const authorization: AuthorizationState = {
-      response_type,
-      redirect_uri,
+      responseType,
+      redirectURI,
       state,
-      client_id,
+      clientID,
       audience,
       pkce:
-        code_challenge && code_challenge_method
+        codeChallenge && codeChallengeMethod
           ? {
-              challenge: code_challenge,
-              method: code_challenge_method,
+              challenge: codeChallenge,
+              method: codeChallengeMethod,
             }
           : undefined,
     } as AuthorizationState;
     c.set("authorization", authorization);
 
-    if (!redirect_uri) {
+    if (!redirectURI) {
       return c.text("Missing redirect_uri", { status: 400 });
     }
 
-    if (!response_type) {
-      throw new MissingParameterError("response_type");
+    if (!responseType) {
+      throw new MissingParameterError("responseType");
     }
 
-    if (!client_id) {
-      throw new MissingParameterError("client_id");
+    if (!clientID) {
+      throw new MissingParameterError("clientID");
     }
 
     if (input.start) {
@@ -560,34 +567,23 @@ export function inSpatialAuth<
     if (
       !(await allow(
         {
-          clientID: client_id,
-          redirectURI: redirect_uri,
+          clientID: clientID,
+          redirectURI: redirectURI,
           audience,
         },
         c.req.raw
       ))
     )
-      throw new UnauthorizedClientError(client_id, redirect_uri);
+      throw new UnauthorizedClientError(clientID, redirectURI);
     await auth.set(c, "authorization", 60 * 60 * 24, authorization);
     if (provider) return c.redirect(`/${provider}/authorize`);
     const authMethod = Object.keys(input.authMethod);
     if (authMethod.length === 1)
       return c.redirect(`/${authMethod[0]}/authorize`);
-    return auth.forward(
-      c,
-      await select(
-        Object.fromEntries(
-          Object.entries(input.authMethod).map(([key, value]) => [
-            key,
-            value.type,
-          ])
-        ),
-        c.req.raw
-      )
-    );
+    return auth.forward(c, c.req.raw);
   });
 
-  app.all("/*", async (c) => {
+  app.all("/*", (c) => {
     return c.notFound();
   });
 
@@ -597,7 +593,7 @@ export function inSpatialAuth<
       return auth.forward(c, await error(err, c.req.raw));
     }
     const authorization = await getAuthorization(c);
-    const url = new URL(authorization.redirect_uri);
+    const url = new URL(authorization.redirectURI);
     const oauth =
       err instanceof OauthError
         ? err

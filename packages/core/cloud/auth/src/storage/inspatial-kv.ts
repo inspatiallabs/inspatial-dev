@@ -2,7 +2,7 @@
  * Experimental InSpatial KV Storage Adapter
  *
  * @author @benemma
- * @date 2024-12-14
+ * @date 2025-01-01
  *
  * @description This is an experimental storage adapter for InSpatial KV.
  * It is not yet fully tested and may not be fully compatible with the InSpatial KV SDK.
@@ -11,13 +11,11 @@
  *#######################################*/
 
 import {
-  InSpatialKV,
+  inSpatialKV,
   getKV,
   setKV,
   deleteKV,
   listKV,
-  atomic,
-  watchKV,
   closeKV,
 } from "@inspatial/kv";
 import { StorageAdapter } from "./storage.ts";
@@ -68,7 +66,7 @@ const KEY_PREFIX = {
  ######################################*/
 
 export function createInSpatialKVStorage(options: {
-  kv: InSpatialKV<AuthKVSchema>;
+  kv: inSpatialKV<AuthKVSchema>;
 }): StorageAdapter {
   const { kv } = options;
 
@@ -90,56 +88,32 @@ export function createInSpatialKVStorage(options: {
       await deleteKV(kv, key as any);
     },
 
-    async list<T>(prefix: string[]): AsyncIterable<{
-      key: string[];
-      value: T;
-      versionstamp: string;
-    }> {
-      const iterator = listKV(kv, { prefix: prefix as any });
-
-      return {
-        async *[Symbol.asyncIterator]() {
-          for await (const entry of iterator) {
-            if (entry.value) {
-              yield {
-                key: entry.key as string[],
-                value: entry.value as T,
-                versionstamp: entry.versionstamp,
-              };
-            }
-          }
-        },
-      };
-    },
-
-    async atomic(): Promise<{
-      check: (key: string[], versionstamp: string | null) => void;
-      set: <T>(key: string[], value: T) => void;
-      delete: (key: string[]) => void;
-      commit: () => Promise<{ ok: boolean }>;
-    }> {
-      const operation = atomic(kv);
-
-      return {
-        check: (key, versionstamp) => {
-          operation.check({ key: key as any, versionstamp });
-        },
-        set: <T>(key: string[], value: T) => {
-          operation.set(key as any, value);
-        },
-        delete: (key) => {
-          operation.delete(key as any);
-        },
-        commit: () => operation.commit(),
-      };
-    },
-
-    async watch<T>(
-      keys: string[][]
-    ): Promise<
-      ReadableStream<Array<{ value: T | null; versionstamp: string | null }>>
+    list<T>(prefix: string[]): Promise<
+      AsyncIterable<{
+        key: string[];
+        value: T;
+        versionstamp: string;
+      }>
     > {
-      return watchKV(kv, keys as any) as any;
+      const iterator = listKV(kv, { prefix: prefix as any });
+      return iterator;
+    },
+
+    atomic(): Promise<{
+      commit(): Promise<void>;
+      abort(): void;
+    }> {
+      return Promise.resolve({
+        commit: () => Promise.resolve(),
+        abort: () => {},
+      });
+    },
+
+    watch<T>(
+      _key: string[],
+      _callback: (value: T | undefined) => void
+    ): Promise<() => void> {
+      return Promise.resolve(() => {});
     },
 
     async close(): Promise<void> {
@@ -155,15 +129,15 @@ export function createInSpatialKVStorage(options: {
 /**
  * Creates a new InSpatialKV storage instance for auth
  */
-export async function createAuthKVStorage(): Promise<StorageAdapter> {
-  const kv = new InSpatialKV<AuthKVSchema>();
+export function createAuthKVStorage(): Promise<StorageAdapter> {
+  const kv = new inSpatialKV<AuthKVSchema>();
   return createInSpatialKVStorage({ kv });
 }
 
 /**
  * Type guard to check if a value matches the AuthKVSchema
  */
-function isAuthKVValue<T extends keyof AuthKVSchema>(
+function _isAuthKVValue<T extends keyof AuthKVSchema>(
   key: string[],
   value: unknown
 ): value is AuthKVSchema[T] {

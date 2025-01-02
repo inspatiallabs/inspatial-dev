@@ -47,17 +47,17 @@ export function MemoryStorage(input?: MemoryStorageOptions): StorageAdapter {
   }
 
   return {
-    async get(key: string[]) {
+    get(key: string[]) {
       const match = search(joinKey(key));
       if (match.found && match) {
         const entry = store[match.index][1];
         if (entry.expiry && entry.expiry < Date.now()) {
           store.splice(match.index, 1);
-          return;
+          return Promise.resolve(undefined);
         }
-        return entry.value;
+        return Promise.resolve(entry.value);
       }
-      return;
+      return Promise.resolve(undefined);
     },
 
     async set(key: string[], value: any, ttl?: number) {

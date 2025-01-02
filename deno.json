@@ -98,6 +98,17 @@
         "no-unsafe-finally"
       ],
       "exclude": ["no-explicit-any", "ban-ts-comment"]
-    }
+    },
+    "exclude": [
+      "**/test/**/*",
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "**/*.test.jsx",
+      "**/*.test.js",
+      "**/*_test.ts",
+      "**/*_test.tsx",
+      "**/*_test.jsx",
+      "**/*_test.js"
+    ]
   }
 }

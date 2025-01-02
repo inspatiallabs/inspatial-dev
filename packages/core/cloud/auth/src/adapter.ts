@@ -1,4 +1,4 @@
-import type { Context, Hono } from "hono";
+import type { Context, Hono } from "@hono/hono";
 import { StorageAdapter } from "./storage/storage.ts";
 
 export type AdapterRoute = Hono;

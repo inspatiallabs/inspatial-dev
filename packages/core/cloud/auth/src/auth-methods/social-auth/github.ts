@@ -1,6 +1,6 @@
 import { Oauth2Adapter, Oauth2WrappedConfig } from "./config/oauth2.ts";
 
-export function GithubAuth(config: Oauth2WrappedConfig) {
+export function GithubAuth(config: Oauth2WrappedConfig): Oauth2Adapter {
   return Oauth2Adapter({
     ...config,
     type: "github",

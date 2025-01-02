@@ -1,7 +1,7 @@
 import { Oauth2Adapter, Oauth2WrappedConfig } from "./config/oauth2.ts";
 import { OidcAdapter, OidcWrappedConfig } from "./config/oidc.ts";
 
-export function GoogleAuth(config: Oauth2WrappedConfig) {
+export function GoogleAuth(config: Oauth2WrappedConfig): Oauth2Adapter {
   return Oauth2Adapter({
     ...config,
     type: "google",
@@ -12,7 +12,7 @@ export function GoogleAuth(config: Oauth2WrappedConfig) {
   });
 }
 
-export function GoogleOidcAuth(config: OidcWrappedConfig) {
+export function GoogleOidcAuth(config: OidcWrappedConfig): OidcAdapter {
   return OidcAdapter({
     ...config,
     type: "google",

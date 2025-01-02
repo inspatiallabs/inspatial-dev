@@ -1,7 +1,7 @@
 import { Oauth2Adapter, Oauth2WrappedConfig } from "./config/oauth2.ts";
 import { OidcAdapter, OidcWrappedConfig } from "./config/oidc.ts";
 
-export function AppleAuth(config: Oauth2WrappedConfig) {
+export function AppleAuth(config: Oauth2WrappedConfig): Oauth2Adapter {
   return Oauth2Adapter({
     ...config,
     type: "apple",
@@ -12,7 +12,7 @@ export function AppleAuth(config: Oauth2WrappedConfig) {
   });
 }
 
-export function AppleOidcAuth(config: OidcWrappedConfig) {
+export function AppleOidcAuth(config: OidcWrappedConfig): OidcAdapter {
   return OidcAdapter({
     ...config,
     type: "apple",

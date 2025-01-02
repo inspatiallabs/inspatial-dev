@@ -17,9 +17,9 @@ import { generatePKCE } from "./pkce.ts";
 import { getEnv } from "./helpers.ts";
 
 export interface WellKnown {
-  jwks_uri: string;
-  token_endpoint: string;
-  authorization_endpoint: string;
+  jwksUri: string;
+  tokenEndpoint: string;
+  authorizationEndpoint: string;
 }
 
 export interface Tokens {
@@ -42,7 +42,7 @@ export function createClient(input: {
   clientID: string;
   issuer?: string;
   fetch?: FetchLike;
-}) {
+}): AuthClient {
   const jwksCache = new Map<string, ReturnType<typeof createLocalJWKSet>>();
   const issuerCache = new Map<string, WellKnown>();
   const issuer = input.issuer || getEnv("INSPATIALAUTH_ISSUER");
@@ -63,7 +63,7 @@ export function createClient(input: {
     const wk = await getIssuer();
     const cached = jwksCache.get(issuer!);
     if (cached) return cached;
-    const keyset = (await (f || fetch)(wk.jwks_uri).then((r) =>
+    const keyset = (await (f || fetch)(wk.jwksUri).then((r) =>
       r.json()
     )) as JSONWebKeySet;
     const result = createLocalJWKSet(keyset);

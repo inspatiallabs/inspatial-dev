@@ -1,4 +1,4 @@
-import type { v1 } from "@standard-schema/spec";
+import type { v1 } from "npm:@standard-schema/spec";
 import { Prettify } from "@inspatial/util";
 
 export type SubjectSchema = Record<string, v1.StandardSchema>;
@@ -12,9 +12,9 @@ export type SubjectPayload<T extends SubjectSchema> = Prettify<
   }[keyof T & string]
 >;
 
-export function createSubjects<Schema extends SubjectSchema = {}>(
-  types: Schema
-) {
+export function createSubjects<
+  Schema extends SubjectSchema = Record<string, never>,
+>(types: Schema): Schema {
   return {
     ...types,
   } as Schema;

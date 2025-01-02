@@ -2,14 +2,12 @@
   "version": "4",
   "specifiers": {
     "jsr:@hono/hono@^4.6.13": "4.6.13",
-    "jsr:@inspatial/kv@*": "0.0.1",
-    "jsr:@inspatial/kv@^0.0.1": "0.0.1",
+    "jsr:@inspatial/test@^0.0.2": "0.0.2",
     "jsr:@inspatial/util@*": "0.0.4",
-    "jsr:@inspatial/util@^0.0.2": "0.0.2",
     "jsr:@inspatial/util@^0.0.4": "0.0.4",
-    "jsr:@std/assert@1": "1.0.9",
+    "jsr:@std/assert@1": "1.0.10",
     "jsr:@std/assert@^1.0.10": "1.0.10",
-    "jsr:@std/assert@^1.0.9": "1.0.9",
+    "jsr:@std/assert@^1.0.9": "1.0.10",
     "jsr:@std/bytes@^1.0.3": "1.0.4",
     "jsr:@std/collections@1.0.9": "1.0.9",
     "jsr:@std/collections@^1.0.9": "1.0.9",
@@ -29,6 +27,7 @@
     "jsr:@std/yaml@^1.0.5": "1.0.5",
     "npm:@react-three/fiber@^8.17.10": "8.17.10_react@18.3.1_three@0.171.0_react-dom@18.3.1__react@18.3.1",
     "npm:@react-three/xr@^6.4.12": "6.4.12_@react-three+fiber@8.17.10__react@18.3.1__three@0.171.0__react-dom@18.3.1___react@18.3.1_react@18.3.1_react-dom@18.3.1__react@18.3.1_three@0.171.0",
+    "npm:@standard-schema/spec@*": "1.0.0-beta.4",
     "npm:@standard-schema/spec@^1.0.0-beta.4": "1.0.0-beta.4",
     "npm:@stylexjs/stylex@~0.9.3": "0.9.3",
     "npm:@tailwindcss/aspect-ratio@~0.4.2": "0.4.2_tailwindcss@3.4.16__postcss@8.4.49",
@@ -60,21 +59,14 @@
     "@hono/hono@4.6.13": {
       "integrity": "198970fc6facf71a88ee57aa1ed32143b56bcb0f842fa965ca3ee7d6fdd21a8e"
     },
-    "@inspatial/kv@0.0.1": {
-      "integrity": "c1f5c975710c16a29bed966b791da28a00ae02fbb31496228a9a9f3b670645ab"
-    },
-    "@inspatial/util@0.0.2": {
-      "integrity": "ef5f023513021835912273fa84fc3855f04533139b55e2caa35aba2a7e8a185b",
+    "@inspatial/test@0.0.2": {
+      "integrity": "0e8fd5d4908d4340db509eb203d450900278c85d3a483dd265e63738118e621d",
       "dependencies": [
-        "jsr:@std/collections@1.0.9",
-        "jsr:@std/csv",
-        "jsr:@std/datetime",
-        "jsr:@std/encoding",
-        "jsr:@std/front-matter",
-        "jsr:@std/text",
-        "jsr:@std/ulid",
-        "npm:clsx",
-        "npm:tailwind-merge@^1.14.0"
+        "jsr:@std/assert@^1.0.10",
+        "jsr:@std/expect",
+        "jsr:@std/html",
+        "jsr:@std/http",
+        "npm:highlight.js"
       ]
     },
     "@inspatial/util@0.0.4": {
@@ -6476,8 +6468,9 @@
       "packages/core/cloud/auth": {
         "dependencies": [
           "jsr:@hono/hono@^4.6.13",
-          "jsr:@inspatial/kv@^0.0.1",
-          "jsr:@inspatial/util@^0.0.2",
+          "jsr:@inspatial/kv@^0.0.2",
+          "jsr:@inspatial/test@^0.0.2",
+          "jsr:@inspatial/util@^0.0.4",
           "npm:@standard-schema/spec@^1.0.0-beta.4",
           "npm:arctic@^2.3.1",
           "npm:jose@^5.9.6"

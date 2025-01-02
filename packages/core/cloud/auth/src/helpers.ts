@@ -1,4 +1,4 @@
-import { Context } from "hono";
+import { Context } from "@hono/hono";
 
 export function getRelativeUrl(ctx: Context, path: string) {
   const result = new URL(path, ctx.req.url);
