@@ -195,6 +195,8 @@ test("using both assertion styles", () => {
 
 ## 🏃 Running Tests
 
+### Basic Usage
+
 ```bash
 # Node.js
 node --test
@@ -207,6 +209,38 @@ deno test
 
 # Bun
 bun test
+```
+
+### Advanced Options
+
+```bash
+# Test specific file
+deno test my_test.ts
+node --test my_test.ts
+bun test my_test.ts
+
+# Test specific folder
+deno test tests/
+node --test tests/
+bun test tests/
+
+# Run tests in parallel (faster)
+deno test --parallel
+node --test --parallel
+bun test --preload ./setup.ts
+
+# Include extra settings
+deno test --allow-read my_test.ts  # Give permission to read files
+node --test --experimental-test-coverage  # Get coverage report
+bun test --coverage  # Get coverage report
+```
+
+### Watch Mode (Auto-rerun on changes)
+
+```bash
+deno test --watch
+node --test --watch
+bun test --watch
 ```
 
 ---
