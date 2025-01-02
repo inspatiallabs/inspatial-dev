@@ -79,7 +79,7 @@ export function MemoryStorage(input?: MemoryStorageOptions): StorageAdapter {
       await save();
     },
 
-    async remove(key: string[]) {
+    async delete(key: string[]) {
       const joined = joinKey(key);
       const match = search(joined);
       if (match.found) {

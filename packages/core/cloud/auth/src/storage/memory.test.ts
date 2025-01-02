@@ -10,7 +10,7 @@ test({
     expect(storage).toBeDefined();
     expect(storage.get).toBeType("function");
     expect(storage.set).toBeType("function");
-    expect(storage.remove).toBeType("function");
+    expect(storage.delete).toBeType("function");
     expect(storage.scan).toBeType("function");
   },
 });
@@ -38,7 +38,7 @@ test({
     const value = { data: "test value" };
 
     await storage.set(key, value);
-    await storage.remove(key);
+    await storage.delete(key);
     const result = await storage.get(key);
     expect(result).toBeUndefined();
   },

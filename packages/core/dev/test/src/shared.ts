@@ -13,7 +13,17 @@ export interface TestProps {
   /** The function to pass to the test */
   fn: () => Promisable<void>;
 
-  /** The options for the test */
+  /**
+   * Options for configuring test behavior
+   * @property {boolean} only - When true, only this test will be run
+   * @property {boolean} skip - When true, this test will be skipped
+   * @property {boolean} todo - When true, marks this test as planned for future implementation
+   * @property {Deno.TestDefinition["permissions"]} permissions - Controls what system features the test can access
+   * @property {boolean} sanitizeResources - Checks if test properly closes resources like files and connections
+   * @property {boolean} sanitizeOps - Checks if test completes all async operations
+   * @property {boolean} sanitizeExit - Checks if test tries to exit unexpectedly
+   * @property {Record<string, string>} env - Custom environment variables for this test
+   */
   options?: OptionProp & {
     /** Only run this test */
     only?: boolean;
@@ -26,13 +36,25 @@ export interface TestProps {
   };
 }
 /*#########################################(OPTIONS)#########################################*/
-/** InSpatial Test options. */
+/**
+ * Configuration options for running tests on InSpatial.
+ */
 export type OptionProp = {
+  /** Controls what system features the test can access */
   permissions?: Deno.TestDefinition["permissions"];
+
+  /** Checks if the test properly closes all resources it opens (like files or network connections) */
   sanitizeResources?: Deno.TestDefinition["sanitizeResources"];
+
+  /** Checks if the test properly completes all async operations it starts */
   sanitizeOps?: Deno.TestDefinition["sanitizeOps"];
+
+  /** Checks if the test tries to exit the process unexpectedly */
   sanitizeExit?: Deno.TestDefinition["sanitizeExit"];
+
+  /** Custom environment variables to use while running the test */
   env?: Record<string, string>;
+
   [key: PropertyKey]: unknown;
 };
 

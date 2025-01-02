@@ -11,11 +11,11 @@ export interface StorageAdapter {
   get(key: string[]): Promise<Record<string, any> | undefined>;
 
   /**
-   * Removes a value from storage
+   * Deletes a value from storage
    * @param {string[]} key - Array of strings representing the storage key path
    * @returns {Promise<void>}
    */
-  remove(key: string[]): Promise<void>;
+  delete(key: string[]): Promise<void>;
 
   /**
    * Sets a value in storage with optional TTL
@@ -106,7 +106,7 @@ export function removeStorage(
   adapter: StorageAdapter,
   key: string[]
 ): Promise<void> {
-  return adapter.remove(encode(key));
+  return adapter.delete(encode(key));
 }
 
 /**

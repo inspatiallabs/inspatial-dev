@@ -33,7 +33,7 @@ class MockStorageAdapter implements StorageAdapter {
     });
   }
 
-  async remove(key: string[]): Promise<void> {
+  async delete(key: string[]): Promise<void> {
     this.store.delete(joinKey(key));
   }
 

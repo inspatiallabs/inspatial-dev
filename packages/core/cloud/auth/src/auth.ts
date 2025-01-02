@@ -24,7 +24,6 @@ import { cors } from "@hono/hono/cors";
 import { Prettify, isDomainMatch } from "@inspatial/util";
 import { getEnv } from "./helpers.ts";
 
-// import { InSpatialKV } from "@inspatial/kv";
 import { createInSpatialKVStorage } from "./storage/inspatial-kv.ts";
 
 export interface OnSuccessResponder<
@@ -73,7 +72,7 @@ export function inSpatialAuth<
     req: Request
   ) => Promise<Response>;
   start?(req: Request): Promise<void>;
-  success(
+  onSuccess(
     response: OnSuccessResponder<SubjectPayload<Subjects>>,
     input: Result,
     req: Request
@@ -132,7 +131,7 @@ export function inSpatialAuth<
 
   const auth: Omit<AdapterOptions<any>, "name"> = {
     async success(ctx: Context, properties: any, opts) {
-      return await input.success(
+      return await input.onSuccess(
         {
           async subject(type, properties) {
             const authorization = await getAuthorization(ctx);
@@ -497,7 +496,7 @@ export function inSpatialAuth<
           clientSecret: clientSecret.toString(),
           params: Object.fromEntries(form) as Record<string, string>,
         });
-        return input.success(
+        return input.onSuccess(
           {
             async subject(type, properties) {
               const tokens = await generateTokens(c, {
