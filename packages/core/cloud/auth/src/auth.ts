@@ -22,17 +22,12 @@ import { validatePKCE } from "./pkce.ts";
 import { MemoryStorage } from "./storage/memory.ts";
 import { cors } from "@hono/hono/cors";
 import { Prettify, isDomainMatch } from "@inspatial/util";
-import { getEnv } from "./helpers.ts";
+import { getEnv, setEnv } from "./helpers.ts";
 
-import { createInSpatialKVStorage } from "./storage/inspatial-kv.ts";
+// import { createInSpatialKVStorage } from "./storage/inspatial-kv.ts";
 
-export interface OnSuccessResponder<
-  T extends { type: string; properties: any },
-> {
-  subject<Type extends T["type"]>(
-    type: Type,
-    properties: Extract<T, { type: Type }>["properties"]
-  ): Promise<Response>;
+export interface OnSuccessResponder<T> {
+  subject(type: string, properties: any): Promise<Response>;
 }
 
 interface AuthorizationState {
@@ -46,6 +41,8 @@ interface AuthorizationState {
     method: "S256";
   };
 }
+
+export type Scope = "identify" | "openid" | "email" | "profile";
 
 export function inSpatialAuth<
   AuthenticationMethods extends Record<string, Adapter<any>>,
@@ -72,11 +69,11 @@ export function inSpatialAuth<
     req: Request
   ) => Promise<Response>;
   start?(req: Request): Promise<void>;
-  onSuccess(
+  onSuccess: (
     response: OnSuccessResponder<SubjectPayload<Subjects>>,
     input: Result,
     req: Request
-  ): Promise<Response>;
+  ) => Promise<Response>;
   error?(error: UnknownStateError, req: Request): Promise<Response>;
   allow?(
     input: {
@@ -86,7 +83,11 @@ export function inSpatialAuth<
     },
     req: Request
   ): Promise<boolean>;
-}) {
+}): Hono<{
+  Variables: {
+    authorization: AuthorizationState;
+  };
+}> {
   const error =
     input.error ??
     function (err) {
@@ -118,8 +119,8 @@ export function inSpatialAuth<
   let storage = input.storage;
   if (getEnv("INSPATIALAUTH_STORAGE")) {
     const parsed = JSON.parse(getEnv("INSPATIALAUTH_STORAGE")!);
-    if (parsed.type === "kv")
-      storage = createInSpatialKVStorage(parsed.options);
+    // if (parsed.type === "kv")
+    //   storage = createInSpatialKVStorage(parsed.options);
     if (parsed.type === "memory") storage = MemoryStorage();
   }
   if (!storage)
@@ -184,11 +185,19 @@ export function inSpatialAuth<
         ctx.req.raw
       );
     },
-    forward(ctx, response) {
+    forward(ctx: Context, request: Request | Response) {
+      if (request instanceof Request) {
+        return ctx.newResponse(request.body, {
+          status: 200,
+          headers: request.headers,
+        });
+      }
       return ctx.newResponse(
-        response.body,
-        response.status as any,
-        Object.fromEntries(response.headers.entries())
+        request.body,
+        request.status as 100 | 200 | 300 | 400 | 500,
+        Object.fromEntries(
+          Array.from(request.headers.entries()) as Iterable<[string, string]>
+        )
       );
     },
     async set(ctx, key, maxAge, value) {
@@ -237,7 +246,7 @@ export function inSpatialAuth<
       .encrypt(await primaryKey.then((k) => k.encryption.public));
   }
 
-  async function resolveSubject(type: string, properties: any) {
+  async function resolveSubject(type: string | any, properties: any) {
     const jsonString = JSON.stringify(properties);
     const encoder = new TextEncoder();
     const data = encoder.encode(jsonString);
@@ -246,7 +255,7 @@ export function inSpatialAuth<
     const hashHex = hashArray
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
-    return `${type}:${hashHex.slice(0, 16)}`;
+    return `${String(type)}:${hashHex.slice(0, 16)}`;
   }
 
   async function generateTokens(
@@ -579,7 +588,13 @@ export function inSpatialAuth<
     const authMethod = Object.keys(input.authMethod);
     if (authMethod.length === 1)
       return c.redirect(`/${authMethod[0]}/authorize`);
-    return auth.forward(c, c.req.raw);
+    return auth.forward(
+      c,
+      new Response(c.req.raw.body, {
+        headers: c.req.raw.headers,
+        status: 200,
+      })
+    );
   });
 
   app.all("/*", (c) => {

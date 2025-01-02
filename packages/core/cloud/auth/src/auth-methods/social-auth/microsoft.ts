@@ -5,7 +5,9 @@ export interface MicrosoftConfig extends Oauth2WrappedConfig {
   tenant: string;
 }
 
-export function MicrosoftAuth(config: MicrosoftConfig): Oauth2Adapter {
+export function MicrosoftAuth(
+  config: MicrosoftConfig
+): ReturnType<typeof Oauth2Adapter> {
   return Oauth2Adapter({
     ...config,
     type: "microsoft",
@@ -16,7 +18,9 @@ export function MicrosoftAuth(config: MicrosoftConfig): Oauth2Adapter {
   });
 }
 
-export function MicrosoftOidcAuth(config: OidcWrappedConfig): OidcAdapter {
+export function MicrosoftOidcAuth(
+  config: OidcWrappedConfig
+): ReturnType<typeof OidcAdapter> {
   return OidcAdapter({
     ...config,
     type: "microsoft",

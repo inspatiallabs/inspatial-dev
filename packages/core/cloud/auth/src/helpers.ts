@@ -24,3 +24,7 @@ export function getEnv(key: string): string {
   }
   return value;
 }
+
+export function setEnv(key: string, value: string) {
+  Deno.env.set(key, value);
+}

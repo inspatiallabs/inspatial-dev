@@ -29,7 +29,7 @@ export interface IdTokenResponse {
 
 export function OidcAdapter(
   config: OidcConfig
-): Adapter<{ tokenset: OidcToken; clientID: string }> {
+): Adapter<{ id: JWTPayload; clientID: string }> {
   const query = config.query || {};
   const scopes = config.scopes || [];
 
@@ -41,7 +41,7 @@ export function OidcAdapter(
   );
 
   const jwks = wk
-    .then((r) => r.jwksUri)
+    .then((r) => r.jwksURI)
     .then(async (uri) => {
       const r = await fetch(uri);
       if (!r.ok) throw new Error(await r.text());

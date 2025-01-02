@@ -1,287 +1,351 @@
-// import { test, expect } from "@inspatial/test";
-// import { inSpatialAuth } from "./auth.ts";
-// import { OTPAuth } from "./auth-methods/otp/main.ts";
-// import {
-//   GoogleAuth,
-//   GithubAuth,
-//   DiscordAuth,
-//   FacebookAuth,
-//   AppleAuth,
-//   MicrosoftAuth,
-//   SlackAuth,
-//   SpotifyAuth,
-//   TwitchAuth,
-//   XAuth,
-//   YahooAuth,
-// } from "./auth-methods/social-auth/index.ts";
-// import { MemoryStorage } from "./storage/memory.ts";
+import { test, expect } from "@inspatial/test";
+import { inSpatialAuth } from "./auth.ts";
+import { OTPAuth } from "./auth-methods/otp/main.ts";
+import {
+  GoogleAuth,
+  GithubAuth,
+  DiscordAuth,
+  FacebookAuth,
+  AppleAuth,
+  MicrosoftAuth,
+  SlackAuth,
+  SpotifyAuth,
+  TwitchAuth,
+  XAuth,
+  YahooAuth,
+} from "./auth-methods/social-auth/index.ts";
+import { MemoryStorage } from "./storage/memory.ts";
+import { createSubjectSchema, string, email } from "./schema.ts";
 
-// /*#########################################(Core Auth Tests)#########################################*/
+/*#########################################(Core Auth Tests)#########################################*/
 
-// test({
-//   name: "inSpatialAuth initializes with basic configuration",
-//   fn: async () => {
-//     const auth = inSpatialAuth({
-//       storage: MemoryStorage(),
-//       authMethod: {
-//         otp: OTPAuth({
-//           sendCode: async () => {},
-//           request: async () => new Response(),
-//         }),
-//       },
-//       subjects: {
-//         user: {
-//           id: "string",
-//           email: "string",
-//         },
-//       },
-//     });
+test({
+  name: "inSpatialAuth initializes with basic configuration",
+  fn: async () => {
+    const auth = inSpatialAuth({
+      storage: MemoryStorage(),
+      authMethod: {
+        otp: OTPAuth({
+          sendCode: async () => {},
+          request: async () => new Response(),
+        }),
+      },
+      subjects: {
+        user: createSubjectSchema({
+          name: string("Invalid name"),
+          email: email("Invalid email format"),
+        }),
+      },
+      onSuccess: async ({ subject }) => {
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: "/",
+          },
+        });
+      },
+    });
 
-//     expect(auth).toBeDefined();
-//     expect(typeof auth.fetch).toBe("function");
-//   },
-// });
+    expect(auth).toBeDefined();
+    expect(typeof auth.fetch).toBe("function");
+  },
+});
 
-// /*#########################################(Storage Tests)#########################################*/
+/*#########################################(Schema Tests)#########################################*/
+test({
+  name: "Auth validates user data correctly",
+  fn: async () => {
+    const userSchema = createSubjectSchema({
+      name: string("Invalid name"),
+      email: email("Invalid email format"),
+    });
 
-// test({
-//   name: "MemoryStorage implements required methods",
-//   fn: async () => {
-//     const storage = MemoryStorage();
+    const validData = {
+      name: "John Doe",
+      email: "john@example.com",
+    };
 
-//     expect(storage.get).toBeDefined();
-//     expect(storage.set).toBeDefined();
-//     expect(storage.delete).toBeDefined();
-//     expect(storage.scan).toBeDefined();
-//   },
-// });
+    const invalidData = {
+      name: 123,
+      email: "invalid-email",
+    };
 
-// test({
-//   name: "Storage operations work correctly",
-//   fn: async () => {
-//     const storage = MemoryStorage();
-//     const testKey = "test-key";
-//     const testValue = { data: "test" };
+    const validResult = await userSchema["~standard"].validate(validData);
+    expect("value" in validResult).toBe(true);
+    if ("value" in validResult) {
+      expect(validResult.value).toEqual(validData);
+    }
 
-//     await storage.set(testKey, testValue);
-//     const retrieved = await storage.get(testKey);
+    const invalidResult = await userSchema["~standard"].validate(invalidData);
+    expect("issues" in invalidResult).toBe(true);
+    if ("issues" in invalidResult) {
+      expect(invalidResult.issues.length).toBeGreaterThan(0);
+    }
+  },
+});
 
-//     expect(retrieved).toEqual(testValue);
+/*#########################################(Storage Tests)#########################################*/
 
-//     await storage.delete(testKey);
-//     const deleted = await storage.get(testKey);
+test({
+  name: "MemoryStorage implements required methods",
+  fn: async () => {
+    const storage = MemoryStorage();
 
-//     expect(deleted).toBeUndefined();
-//   },
-// });
+    expect(storage.get).toBeDefined();
+    expect(storage.set).toBeDefined();
+    expect(storage.delete).toBeDefined();
+    expect(storage.scan).toBeDefined();
+  },
+});
 
-// /*#########################################(OAuth Provider Tests)#########################################*/
+test({
+  name: "Storage operations work correctly",
+  fn: async () => {
+    const storage = MemoryStorage();
+    const testKey = ["test"];
+    const testValue = { data: "test" };
 
-// test({
-//   name: "Social auth providers initialize correctly",
-//   fn: () => {
-//     const providers = {
-//       google: GoogleAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["email"],
-//       }),
-//       github: GithubAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["user"],
-//       }),
-//       discord: DiscordAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["identify"],
-//       }),
-//       facebook: FacebookAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["email"],
-//       }),
-//       apple: AppleAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["email"],
-//       }),
-//       microsoft: MicrosoftAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         tenant: "common",
-//         scopes: ["user.read"],
-//       }),
-//       slack: SlackAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["identity.email"],
-//       }),
-//       spotify: SpotifyAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["user-read-email"],
-//       }),
-//       twitch: TwitchAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["user:read:email"],
-//       }),
-//       x: XAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["users.read"],
-//       }),
-//       yahoo: YahooAuth({
-//         clientID: "test",
-//         clientSecret: "test",
-//         scopes: ["openid"],
-//       }),
-//     };
+    await storage.set(testKey, testValue);
+    const retrieved = await storage.get(testKey);
 
-//     for (const [name, provider] of Object.entries(providers)) {
-//       expect(provider).toBeDefined();
-//       expect(provider.type).toBe(name);
-//       expect(typeof provider.init).toBe("function");
-//     }
-//   },
-// });
+    expect(retrieved).toEqual(testValue);
 
-// /*#########################################(OTP Auth Tests)#########################################*/
+    await storage.delete(testKey);
+    const deleted = await storage.get(testKey);
 
-// test({
-//   name: "OTP authentication flow works correctly",
-//   fn: async () => {
-//     let sentCode: string | null = null;
-//     let sentClaims: Record<string, string> | null = null;
+    expect(deleted).toBeUndefined();
+  },
+});
 
-//     const otpAuth = OTPAuth({
-//       length: 6,
-//       sendCode: async (claims, code) => {
-//         sentCode = code;
-//         sentClaims = claims;
-//       },
-//       request: async () => new Response(),
-//     });
+/*#########################################(OAuth Provider Tests)#########################################*/
 
-//     expect(otpAuth.type).toBe("code");
-//     expect(typeof otpAuth.init).toBe("function");
-//   },
-// });
+test({
+  name: "Social auth providers initialize correctly",
+  fn: () => {
+    const providers = {
+      google: GoogleAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["email"],
+      }),
+      github: GithubAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["user"],
+      }),
+      discord: DiscordAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["email"],
+      }),
+      facebook: FacebookAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["email"],
+      }),
+      apple: AppleAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["email"],
+      }),
+      microsoft: MicrosoftAuth({
+        clientID: "test",
+        clientSecret: "test",
+        tenant: "common",
+        scopes: ["user.read"],
+      }),
+      slack: SlackAuth({
+        clientID: "test",
+        clientSecret: "test",
+        team: "test",
+        scopes: ["openid"],
+      }),
+      spotify: SpotifyAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["user-read-email"],
+      }),
+      twitch: TwitchAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["user:read:email"],
+      }),
+      x: XAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["users.read"],
+      }),
+      yahoo: YahooAuth({
+        clientID: "test",
+        clientSecret: "test",
+        scopes: ["openid"],
+      }),
+    };
 
-// /*#########################################(Integration Tests)#########################################*/
+    for (const [name, provider] of Object.entries(providers)) {
+      expect(provider).toBeDefined();
+      expect(provider.type).toBe(name);
+      expect(typeof provider.init).toBe("function");
+    }
+  },
+});
 
-// test({
-//   name: "Full authentication flow with OTP",
-//   fn: async () => {
-//     const auth = inSpatialAuth({
-//       storage: MemoryStorage(),
-//       authMethod: {
-//         otp: OTPAuth({
-//           sendCode: async () => {},
-//           request: async () => new Response(),
-//         }),
-//       },
-//       subjects: {
-//         user: {
-//           id: "string",
-//           email: "string",
-//         },
-//       },
-//     });
+/*#########################################(OTP Auth Tests)#########################################*/
 
-//     const response = await auth.fetch(
-//       new Request("http://localhost/auth/otp/start", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           email: "test@example.com",
-//         }),
-//       })
-//     );
+test({
+  name: "OTP authentication flow works correctly",
+  fn: async () => {
+    let sentCode: string | null = null;
+    let sentClaims: Record<string, string> | null = null;
 
-//     expect(response.status).toBe(200);
-//   },
-// });
+    const otpAuth = OTPAuth({
+      length: 6,
+      sendCode: async (claims, code) => {
+        sentCode = code;
+        sentClaims = claims;
+      },
+      request: async () => new Response(),
+    });
 
-// /*#########################################(Error Handling Tests)#########################################*/
+    expect(otpAuth.type).toBe("code");
+    expect(typeof otpAuth.init).toBe("function");
+  },
+});
 
-// test({
-//   name: "Auth handles invalid configuration",
-//   fn: () => {
-//     expect(() => {
-//       inSpatialAuth({
-//         storage: null as any,
-//         authMethod: {},
-//         subjects: {
-//           user: {
-//             id: "string",
-//           },
-//         },
-//       });
-//     }).toThrow();
-//   },
-// });
+/*#########################################(Integration Tests)#########################################*/
+test({
+  name: "Full authentication flow with OTP and validation",
+  fn: async () => {
+    const auth = inSpatialAuth({
+      storage: MemoryStorage(),
+      authMethod: {
+        otp: OTPAuth({
+          sendCode: async () => {},
+          request: async () => new Response(),
+        }),
+      },
+      subjects: {
+        user: createSubjectSchema({
+          email: email("Invalid email format"),
+        }),
+      },
+      onSuccess: async ({ subject }) => {
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: "/",
+          },
+        });
+      },
+    });
+  },
+});
 
-// test({
-//   name: "Auth handles invalid requests",
-//   fn: async () => {
-//     const auth = inSpatialAuth({
-//       storage: MemoryStorage(),
-//       authMethod: {
-//         otp: OTPAuth({
-//           sendCode: async () => {},
-//           request: async () => new Response(),
-//         }),
-//       },
-//       subjects: {
-//         user: {
-//           id: "string",
-//           email: "string",
-//         },
-//       },
-//     });
+/*#########################################(Integration Tests)#########################################*/
 
-//     const response = await auth.fetch(
-//       new Request("http://localhost/auth/invalid", {
-//         method: "POST",
-//       })
-//     );
+test({
+  name: "Full authentication flow with OTP",
+  fn: async () => {
+    const auth = inSpatialAuth({
+      storage: MemoryStorage(),
+      authMethod: {
+        otp: OTPAuth({
+          sendCode: async () => {},
+          request: async () => new Response(),
+        }),
+      },
+      subjects: {
+        user: {
+          "~standard": {
+            version: 1,
+            vendor: "test",
+            validate: async () => ({ value: {} }),
+          },
+          properties: {},
+        },
+      },
+      onSuccess: async ({ subject }) => {
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: "/",
+          },
+        });
+      },
+    });
 
-//     expect(response.status).toBe(404);
-//   },
-// });
+    const response = await auth.fetch(
+      new Request("http://localhost/auth/otp/start", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "test@example.com",
+        }),
+      })
+    );
 
-// /*#########################################(Security Tests)#########################################*/
+    expect(response.status).toBe(200);
+  },
+});
 
-// test({
-//   name: "Auth enforces CORS policies",
-//   fn: async () => {
-//     const auth = inSpatialAuth({
-//       storage: MemoryStorage(),
-//       authMethod: {
-//         otp: OTPAuth({
-//           sendCode: async () => {},
-//           request: async () => new Response(),
-//         }),
-//       },
-//       subjects: {
-//         user: {
-//           id: "string",
-//           email: "string",
-//         },
-//       },
-//     });
+/*#########################################(Error Handling Tests)#########################################*/
 
-//     const response = await auth.fetch(
-//       new Request("http://localhost/auth/otp/start", {
-//         method: "OPTIONS",
-//       })
-//     );
+test({
+  name: "Auth properly handles validation errors",
+  fn: async () => {
+    const userSchema = createSubjectSchema({
+      email: email("Invalid email format"),
+    });
 
-//     expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-//     expect(response.headers.get("Access-Control-Allow-Methods")).toBe("POST");
-//   },
-// });
+    const result = await userSchema["~standard"].validate({
+      email: "invalid-email",
+    });
+
+    expect("issues" in result).toBe(true);
+    if ("issues" in result) {
+      expect(result.issues[0].message).toBe("Invalid email format");
+    }
+  },
+});
+
+/*#########################################(Security Tests)#########################################*/
+
+test({
+  name: "Auth enforces CORS policies",
+  fn: async () => {
+    const auth = inSpatialAuth({
+      storage: MemoryStorage(),
+      authMethod: {
+        otp: OTPAuth({
+          sendCode: async () => {},
+          request: async () => new Response(),
+        }),
+      },
+      subjects: {
+        user: createSubjectSchema({
+          email: email("Invalid email format"),
+          name: string("Invalid name"),
+        }),
+      },
+      onSuccess: async ({ subject }) => {
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: "/",
+          },
+        });
+      },
+    });
+
+    const response = await auth.fetch(
+      new Request("http://localhost/auth/otp/start", {
+        method: "OPTIONS",
+      })
+    );
+
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
+    expect(response.headers.get("Access-Control-Allow-Methods")).toBe("POST");
+  },
+});

@@ -2,6 +2,17 @@ import { OauthError } from "../../../error.ts";
 import { getRelativeUrl } from "../../../helpers.ts";
 import { Adapter } from "../../../adapter.ts";
 
+export type Scope = 
+  | "identify"
+  | "openid" 
+  | "email" 
+  | "profile"
+  | "user"
+  | "user:read:email"
+  | "user.read"
+  | "users.read"
+  | "user-read-email"; // For Spotify
+
 export interface Oauth2Config {
   type?: string;
   clientID: string;

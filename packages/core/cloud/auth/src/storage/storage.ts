@@ -120,5 +120,7 @@ export async function* scanStorage<T>(
   adapter: StorageAdapter,
   key: string[]
 ): AsyncIterable<[string[], T]> {
-  yield* adapter.scan(encode(key));
+  for await (const [k, v] of adapter.scan(encode(key))) {
+    yield [k, v as T];
+  }
 }

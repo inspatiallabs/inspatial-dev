@@ -8,7 +8,7 @@ import {
   JWK,
   KeyLike,
 } from "jose";
-import { Storage, StorageAdapter } from "./storage/storage.ts";
+import { scanStorage, setStorage, StorageAdapter } from "./storage/storage.ts";
 
 const alg = "RS512";
 
@@ -36,7 +36,7 @@ export interface KeyPair {
 
 export async function keys(storage: StorageAdapter): Promise<KeyPair[]> {
   const results = [] as KeyPair[];
-  const scanner = Storage.scan<SerializedKeyPair>(storage, ["oauth:key"]);
+  const scanner = scanStorage<SerializedKeyPair>(storage, ["oauth:key"]);
   for await (const [_key, value] of scanner) {
     const publicKey = await importSPKI(value.publicKey, alg, {
       extractable: true,
@@ -70,6 +70,6 @@ export async function keys(storage: StorageAdapter): Promise<KeyPair[]> {
     privateKey: await exportPKCS8(key.privateKey),
     created: Date.now(),
   };
-  await Storage.set(storage, ["oauth:key", serialized.id], serialized);
+  await setStorage(storage, ["oauth:key", serialized.id], serialized);
   return keys(storage);
 }

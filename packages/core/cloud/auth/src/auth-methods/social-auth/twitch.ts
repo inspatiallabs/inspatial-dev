@@ -1,6 +1,8 @@
 import { Oauth2Adapter, Oauth2WrappedConfig } from "./config/oauth2.ts";
 
-export function TwitchAuth(config: Oauth2WrappedConfig): Oauth2Adapter {
+export function TwitchAuth(
+  config: Oauth2WrappedConfig
+): ReturnType<typeof Oauth2Adapter> {
   return Oauth2Adapter({
     type: "twitch",
     ...config,

@@ -2,9 +2,12 @@
   "version": "4",
   "specifiers": {
     "jsr:@hono/hono@^4.6.13": "4.6.13",
+    "jsr:@inspatial/kv@*": "0.0.2",
+    "jsr:@inspatial/kv@^0.0.2": "0.0.2",
     "jsr:@inspatial/test@^0.0.2": "0.0.2",
     "jsr:@inspatial/util@*": "0.0.4",
     "jsr:@inspatial/util@^0.0.4": "0.0.4",
+    "jsr:@standard-schema/spec@^1.0.0-beta.4": "1.0.0-beta.4",
     "jsr:@std/assert@1": "1.0.10",
     "jsr:@std/assert@^1.0.10": "1.0.10",
     "jsr:@std/assert@^1.0.9": "1.0.10",
@@ -28,7 +31,6 @@
     "npm:@react-three/fiber@^8.17.10": "8.17.10_react@18.3.1_three@0.171.0_react-dom@18.3.1__react@18.3.1",
     "npm:@react-three/xr@^6.4.12": "6.4.12_@react-three+fiber@8.17.10__react@18.3.1__three@0.171.0__react-dom@18.3.1___react@18.3.1_react@18.3.1_react-dom@18.3.1__react@18.3.1_three@0.171.0",
     "npm:@standard-schema/spec@*": "1.0.0-beta.4",
-    "npm:@standard-schema/spec@^1.0.0-beta.4": "1.0.0-beta.4",
     "npm:@stylexjs/stylex@~0.9.3": "0.9.3",
     "npm:@tailwindcss/aspect-ratio@~0.4.2": "0.4.2_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:@tailwindcss/forms@~0.5.9": "0.5.9_tailwindcss@4.0.0-beta.6",
@@ -59,6 +61,9 @@
     "@hono/hono@4.6.13": {
       "integrity": "198970fc6facf71a88ee57aa1ed32143b56bcb0f842fa965ca3ee7d6fdd21a8e"
     },
+    "@inspatial/kv@0.0.2": {
+      "integrity": "1c29a1f9c8cbb48b5de6c2121d7dca5546db81621634e85b15bd1d5f80cac854"
+    },
     "@inspatial/test@0.0.2": {
       "integrity": "0e8fd5d4908d4340db509eb203d450900278c85d3a483dd265e63738118e621d",
       "dependencies": [
@@ -82,6 +87,9 @@
         "npm:clsx",
         "npm:tailwind-merge@^1.14.0"
       ]
+    },
+    "@standard-schema/spec@1.0.0-beta.4": {
+      "integrity": "6606ba192ad218c6562de542d8d42bc8f315f47c33b2053947d3fce31c2df7d2"
     },
     "@std/assert@1.0.8": {
       "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
@@ -6471,7 +6479,7 @@
           "jsr:@inspatial/kv@^0.0.2",
           "jsr:@inspatial/test@^0.0.2",
           "jsr:@inspatial/util@^0.0.4",
-          "npm:@standard-schema/spec@^1.0.0-beta.4",
+          "jsr:@standard-schema/spec@^1.0.0-beta.4",
           "npm:arctic@^2.3.1",
           "npm:jose@^5.9.6"
         ]

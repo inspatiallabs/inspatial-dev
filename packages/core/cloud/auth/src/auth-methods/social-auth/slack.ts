@@ -39,7 +39,9 @@ export interface SlackConfig extends Oauth2WrappedConfig {
  *
  * @see {@link https://api.slack.com/authentication/sign-in-with-slack}
  */
-export function SlackAuth(config: SlackConfig) {
+export function SlackAuth(
+  config: SlackConfig
+): ReturnType<typeof Oauth2Adapter> {
   return Oauth2Adapter({
     ...config,
     type: "slack",
