@@ -1029,7 +1029,7 @@ export function assertEqual(a: unknown, b: unknown): boolean {
  *
  * @param msg - The message to show if the check fails (optional)
  */
-export function fail(msg?: string): never {
+export function assertFail(msg?: string): never {
   const msgSuffix = msg ? `: ${msg}` : ".";
   throw new AssertionError(`Failed assertion${msgSuffix}`);
 }
@@ -1048,7 +1048,7 @@ export function fail(msg?: string): never {
  *
  * @param msg - The message to show if the check fails (optional)
  */
-export function unimplemented(msg?: string): never {
+export function assertUnimplemented(msg?: string): never {
   const msgSuffix = msg ? `: ${msg}` : ".";
   throw new AssertionError(`Unimplemented${msgSuffix}`);
 }
