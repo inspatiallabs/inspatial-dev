@@ -317,7 +317,57 @@ export function throws(error: Error | string): never {
   throw error;
 }
 
-/** InSpatial Test  */
+/**
+ * Universal test runner that works across Deno, Node.js, and Bun runtimes.
+ * Supports both object-style and function-style test definitions with full TypeScript support.
+ *
+ * @example
+ * // Function-style with expect assertions
+ * ```ts
+ * import { expect, test } from "@inspatial/test"
+ *
+ * test("user authentication", async () => {
+ *   const user = await authenticateUser("john", "password123")
+ *   expect(user.isAuthenticated).toBe(true)
+ *   expect(user.roles).toContain("user")
+ * })
+ *
+ * // Object-style with assert assertions
+ * import { assertEquals, test } from "@inspatial/test"
+ *
+ * test({
+ *   name: "database connection",
+ *   fn: async () => {
+ *     const db = await Database.connect()
+ *     assertEquals(db.status, "connected")
+ *     assertEquals(db.version, "1.0.0")
+ *   },
+ *   options: {
+ *     permissions: { read: true, net: true },
+ *     sanitizeResources: true
+ *   }
+ * })
+ *
+ * // Test modifiers
+ * test.only("focus on this test", () => {
+ *   expect(true).toBe(true)
+ * })
+ *
+ * test.skip("skip this test", () => {
+ *   // This won't run
+ * })
+ *
+ * test.todo("implement user logout")
+ * ```
+ *
+ * @param {string | TestProps} nameOrConfig - Test name or configuration object
+ * @param {(() => Promisable<void>)} [fnOrUndefined] - Test function to be executed
+ * @param {OptionProp} [options] - Additional test options
+ * @returns {Promise<void>}
+ *
+ * @see {@link TestProps} for object-style configuration
+ * @see {@link OptionProp} for available test options
+ */
 let test = noop as Runner;
 switch (runtime) {
   case "deno":

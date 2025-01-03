@@ -5,12 +5,31 @@ import { highlight } from "./highlight.ts";
 
 /*#########################################(PROPS)#########################################*/
 
-/** InSpatial Test Properties for an object style test runner */
+/** InSpatial Test Properties definition for an object style test runner */
 export interface TestProps {
   /** The name of the test */
   name: string;
 
-  /** The function to pass to the test */
+  /** The function to pass to the test can be async or sync
+   *
+   * @example (Sync)
+   * ```ts
+   * test({
+   *   fn: () => {
+   *     ...
+   *   }
+   * })
+   * ```
+   *
+   * @example (Async)
+   * ```ts
+   * test({
+   *   async fn() {
+   *     ...
+   *   }
+   * })
+   * ```
+   */
   fn: () => Promisable<void>;
 
   /**

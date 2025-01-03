@@ -12,14 +12,14 @@ import {
 import {
   assert,
   assertEquals,
-  type AssertionError as _AssertionError,
+  AssertAssertionErrorProp,
   assertIsError,
   assertMatch,
   assertNotEquals,
   assertNotStrictEquals,
   assertObjectMatch,
   assertStrictEquals,
-} from "@std/assert";
+} from "./assert.ts";
 import type {
   Arg,
   Arrayable,
@@ -42,7 +42,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * In this case, the behavior is the same as {@link assertIsError} where you can both check the error type and message.
    *
    * ```ts ignore
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * const throws = () => { throw new Error("Expected error") }
    * expect(throws).toThrow(Error)
    * expect(throws).toThrow("Expected error")
@@ -60,7 +60,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a value matches the given predicate.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect("foo").toSatisfy((value:string) => value.length > 1)
    * ```
    */
@@ -70,7 +70,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Note that `null` is not considered of type `"object"` unless `nullable` option is set to `true`.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect("foo").toBeType("string")
    * expect({}).toBeType("object")
    * expect(null).toBeType("object", { nullable: true })
@@ -82,7 +82,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a property matches a given descriptor (using `Object.getOwnPropertyDescriptor`).
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * const foo = Object.defineProperties({}, { bar: { value: true, writable: false, enumerable: true } })
    * expect(foo).toHaveDescribedProperty("bar", { writable: false, enumerable: true })
    * ```
@@ -97,7 +97,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Note that it will actually proceed to assign `testValue` and restore it to original value after test.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * const foo = new (class {
    *   #bar = true
    *   get bar() {
@@ -115,7 +115,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Assert an object is iterable (checking `Symbol.iterator` presence).
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect([]).toBeIterable()
    * expect(new Map()).toBeIterable()
    * expect(new Set()).toBeIterable()
@@ -126,7 +126,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Assert an object is sealed (using `Object.isSealed`).
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect(Object.seal({})).toBeSealed()
    * ```
    */
@@ -135,7 +135,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Assert an object is frozen (using `Object.isFrozen`).
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect(Object.freeze({})).toBeFrozen()
    * ```
    */
@@ -144,7 +144,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Assert an object is extensible (using `Object.isExtensible`).
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect(Object.preventExtensions({})).not.toBeExtensible()
    * ```
    */
@@ -153,7 +153,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts an object is a shallow copy (i.e. its content is identical but reference is not).
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * const foo = { bar: true }
    * expect({...foo}).toBeShallowCopyOf(foo)
    * ```
@@ -163,7 +163,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts an iterable is empty.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect([]).toBeEmpty()
    * expect(new Map()).toBeEmpty()
    * expect(new Set()).toBeEmpty()
@@ -174,7 +174,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts an iterable to be sorted.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect([1, 2, 3]).toBeSorted()
    * ```
    */
@@ -183,7 +183,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts an iterable to be reverse sorted.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect([3, 2, 1]).toBeReverseSorted()
    * ```
    */
@@ -192,7 +192,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a value is one of expected value.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect("foo").toBeOneOf(["foo", "bar"])
    * ```
    */
@@ -201,7 +201,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a number is with a given range.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect(Math.PI).toBeWithin([3, 4])
    * ```
    */
@@ -210,7 +210,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a number to be finite.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect(1).toBeFinite()
    * expect(Infinity).not.toBeFinite()
    * ```
@@ -220,7 +220,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a string to be parseable JSON.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect('{"foo":"bar"}').toBeParseableJSON()
    * ```
    */
@@ -229,7 +229,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a string is a valid email address (using https://pdw.ex-parrot.com/Mail-RFC822-Address.html).
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect("foo@example.com").toBeEmail()
    * expect("foo+bar@example.com").toBeEmail()
    * ```
@@ -239,7 +239,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a string is a valid url (using `URL`).
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect("https://example.com").toBeUrl()
    * ```
    */
@@ -248,7 +248,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a string is a valid base64 string.
    *
    * ```ts
-   * import { expect } from "./expect.ts"
+   * import { expect } from "@inspatial/test"
    * expect(btoa("foo")).toBeBase64()
    * ```
    */
@@ -260,7 +260,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * If you need to perform more assertions on a response, it is advised use separate matchers instead.
    *
    * ```ts
-   * import { expect, Status } from "./expect.ts"
+   * import { expect, Status } from "@inspatial/test"
    * expect(new Response(null, { status: Status.OK })).toRespondWithStatus(Status.OK)
    * expect(new Response(null, { status: Status.OK })).toRespondWithStatus([Status.OK, Status.Created])
    * expect(new Response(null, { status: Status.OK })).toRespondWithStatus("2XX")
@@ -289,7 +289,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Please note that it only checks whether it could be a valid output of specified hash algorithm.
    *
    * ```ts
-   * import { expect, Status } from "./expect.ts"
+   * import { expect, Status } from "@inspatial/test"
    * expect("$2a$12$lpGSoVPZ8erLDF93Sqyic.U73v0/w0owPb3dIP9goO7iC5Wp/I8OG").toBeHashed("bcrypt")
    * ```
    */
@@ -298,7 +298,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a value is a valid date (using `Date`).
    *
    * ```ts
-   * import { expect, Status } from "./expect.ts"
+   * import { expect, Status } from "@inspatial/test"
    * expect("2024-07-13T20:30:57.958Z").toBeDate()
    * expect(new Date()).toBeDate()
    * ```
@@ -308,7 +308,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a date is before another date.
    *
    * ```ts
-   * import { expect, Status } from "./expect.ts"
+   * import { expect, Status } from "@inspatial/test"
    * expect(new Date(Date.now() - 5000)).toBePast()
    * ```
    */
@@ -317,7 +317,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    * Asserts a date is after another date.
    *
    * ```ts
-   * import { expect, Status } from "./expect.ts"
+   * import { expect, Status } from "@inspatial/test"
    * expect(new Date(Date.now() + 5000)).toBeFuture()
    * ```
    */
@@ -333,14 +333,14 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
 }
 
 /** Error thrown when an assertion fails. */
-let AssertionError: typeof _AssertionError;
+let AssertionError: typeof AssertAssertionErrorProp;
 
 // AssertionError is not exported by `@std/expect` (and it differs from `@std/assert`) which is why we retrieve it this way
 try {
   _expect(null).toBe(true);
 } catch (error: unknown) {
   if (error instanceof Error) {
-    AssertionError = error.constructor as typeof _AssertionError;
+    AssertionError = error.constructor as typeof AssertAssertionErrorProp;
   }
 }
 
@@ -860,14 +860,118 @@ _expect.extend({
   },
 });
 
-/** https://jsr.io/@std/expect/doc/~/expect. */
+/**
+ * A friendly testing helper that lets you check if things work the way you want.
+ *
+ * @example
+ * ```ts
+ * import { test, expect } from '@inspatial/test'
+ * // for dead or unwanted code removal (tree-shaking) use:
+ * import { test, expect } from '@inspatial/test/expect';
+ *
+ * // Check if numbers are equal
+ * test({
+ *   name: "...",
+ *   fn: () => {
+ *     expect(2 + 2).toBe(4)
+ *   }
+ * })
+ *
+ * // Check if arrays contain the same items
+ * test({
+ *   name: "...",
+ *   fn: () => {
+ *     expect(['apple', 'banana']).toEqual(['apple', 'banana'])
+ *   }
+ * })
+ *
+ * // Check if something is true
+ * test({
+ *   name: "...",
+ *   fn: () => {
+ *     expect(true).toBe(true)
+ *   }
+ * })
+ *
+ * // Check if a string contains text
+ * test({
+ *   name: "...",
+ *   fn: () => {
+ *     expect('hello world').toContain('hello')
+ *   }
+ * })
+ *
+ * // Check if something throws an error
+ * test({
+ *   name: "...",
+ *   fn: () => {
+ *     expect(() => {
+ *       throw new Error('Oops!')
+ *     }).toThrow('Oops!')
+ *   }
+ * })
+ *
+ * // Check if something is not equal
+ * test({
+ *   name: "...",
+ *   fn: () => {
+ *     expect(123).not.toBe(456)
+ *   }
+ * })
+ * ```
+ *
+ * The `expect` function is like a helper that takes what you want to test
+ * and gives you ways to check if it's correct. Think of it like asking questions:
+ *
+ * - "Is this equal to that?" → .toBe()
+ * - "Does this contain that?" → .toContain()
+ * - "Is this true?" → .toBeTruthy()
+ *
+ * You can also check if something is NOT true by adding .not:
+ * ```ts
+ * test({
+ *   name: "...",
+ *   async fn () => {
+ *     expect(123).not.toBe(456) // "123 should NOT be 456"
+ *   }
+ * })
+ * ```
+ *
+ * For checking things that take time (like loading data), you can use await:
+ * ```ts
+ * test({
+ *   name: "...",
+ *   async fn() {
+ *     await expect(fetchData()).resolves.toBe('some data')
+ *   }
+ * })
+ * ```
+ * InSpatial gives you two ways to check if your code is working correctly:
+ *
+ * 1. Using `expect` (recommended):
+ *    Like asking questions about your code:
+ *    "Is this equal to that?"
+ *    "Does this list contain this item?"
+ *    "Did this action work properly?"
+ *
+ * 2. Using `assert`:
+ *    Like making direct statements about your code:
+ *    "This must equal that"
+ *    "This list must contain this item"
+ *    "This action must work properly"
+ *
+ * Both do the same job - they help you verify your code works as intended.
+ * We recommend using `expect` as it's very expressive and feels easier and more natural to read and write.
+ *
+ * For more documentation see: https://inspatial.dev/test
+ */
 const expect = _expect as unknown as ((
   ...args: Parameters<typeof _expect>
 ) => ExtendedExpected) & { [K in keyof typeof _expect]: (typeof _expect)[K] };
 
 export { AssertionError, expect, fn, Status };
 export type {
-  _AssertionError,
+  AssertAssertionErrorProp,
   _expect,
   Arg,
   Arrayable,
