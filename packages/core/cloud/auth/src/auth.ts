@@ -22,7 +22,7 @@ import { validatePKCE } from "./pkce.ts";
 import { MemoryStorage } from "./storage/memory.ts";
 import { cors } from "@hono/hono/cors";
 import { Prettify, isDomainMatch } from "@inspatial/util";
-import { getEnv, setEnv } from "./helpers.ts";
+import { getEnv } from "./helpers.ts";
 
 // import { createInSpatialKVStorage } from "./storage/inspatial-kv.ts";
 
