@@ -6,7 +6,7 @@ import {
   green,
   red,
   white,
-} from "jsr:@inspatial/theme/color";
+} from "jsr:@inspatial/theme@^0.0.2/color";
 
 /*#############################################(TYPES)#############################################*/
 //#region DiffType
