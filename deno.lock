@@ -7,6 +7,7 @@
     "jsr:@inspatial/test@^0.0.2": "0.0.2",
     "jsr:@inspatial/util@*": "0.0.4",
     "jsr:@inspatial/util@^0.0.4": "0.0.4",
+    "jsr:@inspatial/util@^0.0.5": "0.0.5",
     "jsr:@standard-schema/spec@^1.0.0-beta.4": "1.0.0-beta.4",
     "jsr:@std/assert@1": "1.0.10",
     "jsr:@std/assert@^1.0.10": "1.0.10",
@@ -84,6 +85,20 @@
     },
     "@inspatial/util@0.0.4": {
       "integrity": "64a4524820c97435a35ed9dcf1223f42775066b6c284f168f68aabe51e80fdac",
+      "dependencies": [
+        "jsr:@std/collections@1.0.9",
+        "jsr:@std/csv",
+        "jsr:@std/datetime",
+        "jsr:@std/encoding",
+        "jsr:@std/front-matter",
+        "jsr:@std/text",
+        "jsr:@std/ulid",
+        "npm:clsx",
+        "npm:tailwind-merge@^1.14.0"
+      ]
+    },
+    "@inspatial/util@0.0.5": {
+      "integrity": "fe2a4f6bdae69f07e32bf050453a372e7c1e44b17775e18018dea980008b424a",
       "dependencies": [
         "jsr:@std/collections@1.0.9",
         "jsr:@std/csv",

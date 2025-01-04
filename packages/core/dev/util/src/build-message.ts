@@ -7,30 +7,18 @@ import {
   red,
   white,
 } from "jsr:@inspatial/theme@^0.0.2/color";
+import { DiffResultProp, DiffTypeProp } from "./difference.ts";
 
-/*#############################################(TYPES)#############################################*/
-//#region DiffType
-/** Ways that lines in a diff can be different. */
-type DiffTypeProp = "removed" | "common" | "added";
-//#endregion DiffType
-
-//#region DiffResult
 /**
- * Represents the result of a diff operation.
+ * The `createDiffColor` utility function applies color formatting to text based on the type of difference (e.g., "added" or "removed"). It uses different colors to highlight changes, making it easier to visually identify differences.
  *
- * @typeParam T The type of the value in the diff result.
- */
-interface DiffResultProp<T> {
-  /** The type of the diff. */
-  type: DiffTypeProp;
-  /** The value of the diff. */
-  value: T;
-  /** The details of the diff. */
-  details?: DiffResultProp<T>[];
-}
-
-/**
- * Colors the output of assertion diffs.
+ * #### NOTE:
+ * This utility is commonly used in testing frameworks to display differences between expected and actual outputs, helping you quickly identify discrepancies.
+ *
+ * #### Terminology:
+ * ##### `assertion`: a check to see if something is true or false
+ * ##### `difference`: a change between what you have and what you expect
+ * ##### `assertion difference`: a change between what you have and what you expect in a check
  *
  * @param diffType Difference type, either added or removed.
  * @param background If true, colors the background instead of the text.
@@ -40,12 +28,30 @@ interface DiffResultProp<T> {
  * @example Usage
  * ```ts
  * import { createDiffColor } from "@inspatial/util";
- * import { expect } from "@inspatial/test";
+ * import { expect, test } from "@inspatial/test";
  * import { bold, green, red, white } from "@inspatial/theme/color";
  *
- * expect(createDiffColor("added")("foo")).toBe(green(bold("foo")));
- * expect(createDiffColor("removed")("foo")).toBe(red(bold("foo")));
- * expect(createDiffColor("common")("foo")).toBe(white("foo"));
+ *
+ * test ({
+ *  name: "create difference color added",
+ *  fn: () => {
+ *    expect(createDiffColor("added")("foo")).toBe(green(bold("foo")));
+ *  }
+ * })
+ *
+ * test ({
+ *  name: "create difference color removed",
+ *  fn: () => {
+ *    expect(createDiffColor("removed")("foo")).toBe(red(bold("foo")));
+ *  }
+ * })
+ *
+ * test ({
+ *  name: "create difference color common",
+ *  fn: () => {
+ *    expect(createDiffColor("common")("foo")).toBe(white("foo"));
+ *  }
+ * })
  * ```
  */
 export function createDiffColor(
@@ -70,7 +76,13 @@ export function createDiffColor(
 
 //#region createDiffSign
 /**
- * Prefixes `+` or `-` in diff output.
+ * The `createDiffSign` is a utility function that prefixes a "+" or "-" sign to indicate whether a line was added or removed in the difference output.
+ *
+ * #### NOTE:
+ * This utility is commonly used in testing frameworks to display differences between expected and actual outputs, helping you quickly identify discrepancies.
+ *
+ * #### Terminology:
+ * ##### `difference`: a change between what you have and what you expect
  *
  * @param diffType Difference type, either added or removed
  *
@@ -109,9 +121,15 @@ interface BuildMessageOptions {
 }
 
 /**
- * Builds a message based on the provided diff result with enhanced visual formatting.
+ * The `buildMessage` utility function constructs a formatted message that visually represents the differences between two strings or data sets. It uses the above utilities like {@linkcode createDiffColor} and {@linkcode createDiffSign} to enhance the readability of the difference output.
  *
- * @param diffResult The diff result array.
+ * #### NOTE:
+ * This utility is commonly used in testing frameworks to display differences between expected and actual outputs, helping you quickly identify discrepancies.
+ *
+ * #### Terminology:
+ * ##### `difference`: a change between what you have and what you expect
+ *
+ * @param diffResult The array of objects representing the differences between two strings or data sets
  * @param options Optional parameters for customizing the message.
  *
  * @returns An array of strings representing the built message.
@@ -178,4 +196,4 @@ export function buildMessage(
 
   return messages;
 }
-//#endregion BuildMessage
+//#endregion buildMessage
