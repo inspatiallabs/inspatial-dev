@@ -15,6 +15,7 @@ export * from "./track-debug.ts";
 export * from "./domain-matcher.ts";
 export * from "./prettify.ts";
 // export * from "./get-relative-url.ts"; moved to InSpatial Auth
+export * from "./format.ts";
 export * from "./format-time.ts";
 export * from "./get-random-kit-colors.ts";
 export * from "./merge-ref.ts";
