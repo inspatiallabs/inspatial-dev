@@ -1,7 +1,11 @@
 /*#############################################(IMPORTS)#############################################*/
-import { format, buildMessage, diff } from "jsr:@inspatial/util@^0.0.7";
+import {
+  format,
+  buildMessage,
+  diff,
+  differenceString,
+} from "jsr:@inspatial/util@^0.0.7";
 import { stripAnsiCode, red } from "jsr:@inspatial/theme@^0.0.2/color";
-import { differenceString } from "../../util/src/difference.ts";
 
 /*#############################################(TYPES)#############################################*/
 /**
