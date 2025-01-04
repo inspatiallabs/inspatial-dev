@@ -327,6 +327,8 @@ bunx jsr add @inspatial/ecs
 | **InFetch** | Data Fetching | `deno add jsr:@inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) | 🟡 Preview  |
 | **Cron** | Cron Jobs | `deno add jsr:@inspatial/cron` | [inspatial.cloud/cron](https://www.inspatial.cloud/cron) | 🔴 Unstable |
 | **Analytics** | Analytics | `deno add jsr:@inspatial/analytics` | [inspatial.cloud/analytics](https://www.inspatial.cloud/analytics) | 🔴 Unstable |
+| **Live** | Realtime Infrastucture | `deno add jsr:@inspatial/live` | [inspatial.cloud/live](https://www.inspatial.cloud/live) | 🔴 Unstable |
+| **Deploy** | Serverless Edge Deployment | `deno add jsr:@inspatial/deploy` | [inspatial.cloud/deploy](https://www.inspatial.cloud/deploy) | 🔴 Unstable |
 
 
 ---
