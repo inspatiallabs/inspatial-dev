@@ -13,6 +13,7 @@ import {
   assert,
   assertEquals,
   AssertAssertionErrorProp,
+  type AssertionError as _AssertionError,
   assertIsError,
   assertMatch,
   assertNotEquals,
@@ -333,14 +334,14 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
 }
 
 /** Error thrown when an assertion fails. */
-let AssertionError: typeof AssertAssertionErrorProp;
+let AssertionError: typeof _AssertionError;
 
 // AssertionError is not exported by `@std/expect` (and it differs from `@std/assert`) which is why we retrieve it this way
 try {
   _expect(null).toBe(true);
 } catch (error: unknown) {
   if (error instanceof Error) {
-    AssertionError = error.constructor as typeof AssertAssertionErrorProp;
+    AssertionError = error.constructor as typeof _AssertionError;
   }
 }
 
@@ -971,6 +972,7 @@ const expect = _expect as unknown as ((
 
 export { AssertionError, expect, fn, Status };
 export type {
+  _AssertionError,
   AssertAssertionErrorProp,
   _expect,
   Arg,

@@ -1,14 +1,15 @@
 {
   "name": "@inspatial/test",
   "license": "Apache-2.0",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "imports": {
     "@inspatial/util": "jsr:@inspatial/util@^0.0.4",
-    "@std/testing": "jsr:@std/testing@^1.0.8",
-    "@std/assert": "jsr:@std/assert@^1.0.10"
+    "@std/testing": "jsr:@std/testing@^1.0.8"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./assert": "./src/assert.ts",
+    "./expect": "./src/expect.ts"
   },
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"

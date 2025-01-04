@@ -6594,7 +6594,6 @@
       "packages/core/dev/test": {
         "dependencies": [
           "jsr:@inspatial/util@^0.0.4",
-          "jsr:@std/assert@^1.0.10",
           "jsr:@std/testing@^1.0.8"
         ]
       },

@@ -1,9 +1,12 @@
-import { expect } from "../expect.ts";
-import { test } from "../runtime.ts";
+import { test, expect, assertIsError } from "@inspatial/test";
 
 test({
-  name: "example (InSpatial) test",
+  name: "should throw an error",
   fn: () => {
-    expect("world").toBe("world");
+    try {
+      throw new Error("Oops!");
+    } catch (error) {
+      expect(() => assertIsError(error)).not.toThrow();
+    }
   },
 });

@@ -1,21 +1,7 @@
 /*#############################################(IMPORTS)#############################################*/
-import type {
-  AnyConstructor,
-  ArrayLikeArg,
-  Falsy,
-  GetConstructorType,
-} from "@std/assert";
-import {
-  format,
-  createDiffColor,
-  createDiffSign,
-  buildMessage,
-  DiffResultProp,
-  DiffTypeProp,
-  FarthestPointProp,
-} from "jsr:@inspatial/util@^0.0.5";
-
-import * as stdAssert from "@std/assert";
+import { format, buildMessage, diff } from "jsr:@inspatial/util@^0.0.7";
+import { stripAnsiCode, red } from "jsr:@inspatial/theme@^0.0.2/color";
+import { differenceString } from "../../util/src/difference.ts";
 
 /*#############################################(TYPES)#############################################*/
 /**
@@ -38,7 +24,7 @@ import * as stdAssert from "@std/assert";
  * createThing(Dog);
  * ```
  */
-export type AssertAnyConstructorProp = AnyConstructor;
+export type AssertAnyConstructorProp = new (...args: any[]) => any;
 
 /**
  * A type for anything that works like a list (has a length and numbered items).
@@ -56,7 +42,7 @@ export type AssertAnyConstructorProp = AnyConstructor;
  * countItems("hello");         // Works with strings
  * ```
  */
-export type AssertArrayLikeArgProp = ArrayLikeArg;
+export type AssertArrayLikeArgProp<T> = ArrayLike<T> & object;
 
 /**
  * The type of error that happens when a test check fails.
@@ -101,7 +87,7 @@ export type AssertAssertionErrorProp = AssertionError;
  * checkIfEmpty(undefined);// Works
  * ```
  */
-export type AssertFalsyProp = Falsy;
+export type AssertFalsyProp = false | 0 | 0n | "" | null | undefined;
 
 /**
  * Gets the type of thing a class creates.
@@ -123,15 +109,39 @@ export type AssertFalsyProp = Falsy;
  * const player: PlayerInstance = new Player();
  * ```
  */
-export type AssertGetConstructorTypeProp = GetConstructorType;
+export type AssertGetConstructorTypeProp<T extends AssertAnyConstructorProp> =
+  InstanceType<T>;
 
 /*#############################################(ASSERTION ERROR)#############################################*/
 //#region AssertionError
+/**
+ * This class represents an error that occurs when an assertion fails.
+ *
+ * An assertion is a statement that a condition is true. If the condition is false,
+ * an `AssertionError` is thrown. This is useful in testing or debugging to ensure
+ * that your code behaves as expected.
+ *
+ * ### Usage
+ *
+ * You can create a new `AssertionError` by providing a message that describes the error.
+ * Optionally, you can also provide additional options for the error.
+ *
+ * ```typescript
+ * const error = new AssertionError("This is an assertion error");
+ * ```
+ *
+ * ##### NOTE:
+ * The `options` parameter is still unstable and may change in future releases.
+ *
+ * ##### Terminology:
+ * **Assertion**: A statement that a condition is true. Used to verify that code behaves as expected.
+ */
 export class AssertionError extends Error {
-  /** Constructs a new instance.
+  /**
+   * Constructs a new instance of `AssertionError`.
    *
-   * @param message The error message.
-   * @param options Additional options. This argument is still unstable. It may change in the future release.
+   * @param message - The error message that explains why the assertion failed.
+   * @param options - Additional options for the error. This is optional and may change in the future.
    */
   constructor(message: string, options?: ErrorOptions) {
     super(message, options);
@@ -142,7 +152,14 @@ export class AssertionError extends Error {
 /*#############################################(ASSERT)#############################################*/
 //#region assert
 /**
- * Checks if something is true. If it's not, it stops your code and tells you there's a problem.
+ * The `assert` function checks if something is true.
+ * If it's not true, it stops your code and tells you there's a problem.
+ *
+ * ##### NOTE:
+ * This is useful when you want to make sure certain conditions are met in your code.
+ *
+ * ##### Terminology:
+ * `AssertionError`: This is a special kind of error that happens when something you expected to be true is not.
  *
  * Example:
  * ```ts
@@ -151,15 +168,31 @@ export class AssertionError extends Error {
  * const userAge = 25;
  * assert(userAge > 0, "Age must be positive");
  * ```
- * @param expr - What you want to check is true
- * @param msg - The message to show if the check fails
+ *
+ * ### Test Examples
+ *
+ * ```ts
+ * import { test, assert } from "@inspatial/test";
+ *
+ * // Test using assert syntax
+ * test({
+ *   name: "assert should not throw for true expression",
+ *   fn: () => {
+ *     const isValid = true;
+ *     assert(isValid, "This should not throw");
+ *   }
+ * });
+ *
+ * ```
+ *
+ * @param expr - This is what you want to check is true. It can be anything.
+ * @param msg - This is the message to show if the check fails. It's optional.
  */
 export function assert(expr: unknown, msg = ""): asserts expr {
   if (!expr) {
     throw new AssertionError(msg);
   }
 }
-
 
 /*#############################################(ASSERT EQUAL)#############################################*/
 //#region assertEqual
@@ -260,16 +293,46 @@ function sameValueZero(a: unknown, b: unknown) {
 /**
  * Checks if two things are equal.
  *
- * Example:
+ * This function helps you verify if two values are the same. It's useful when you want to make sure that a value matches what you expect.
+ *
+ * ##### Terminology:
+ * **Equal**: In this context, it means that two values are the same in terms of their content or structure.
+ *
+ * ### Test Example
+ *
+ * #### Using Assert Syntax
+ *
  * ```ts
- * import { assertEqual } from '@inspatial/test';
- *
- * const firstName = "Ben";
- * const lastName = "Emma";
- *
- * assertEqual(firstName, lastName); // false
- * assertEqual(firstName, firstName); // true
+ * import { test, assertEqual } from '@inspatial/test';
+ * test({
+ *   name: "Check if two strings are equal",
+ *   fn: () => {
+ *     const firstName = "Ben";
+ *     const lastName = "Emma";
+ *     assertEqual(firstName, firstName); // This will pass
+ *     assertEqual(firstName, lastName);  // This will fail
+ *   }
+ * });
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ *
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Check if two numbers are equal",
+ *   fn: () => {
+ *     const number1 = 42;
+ *     const number2 = 42;
+ *     expect(number1).toEqual(number2); // This will pass
+ *   }
+ * });
+ * ```
+ *
+ * @param a - The first value you want to compare
+ * @param b - The second value you want to compare
+ * @returns `true` if the values are equal, otherwise `false`
  */
 export function assertEqual(a: unknown, b: unknown): boolean {
   const seen = new Map<unknown, unknown>();
@@ -379,18 +442,58 @@ export function assertEqual(a: unknown, b: unknown): boolean {
 /*#############################################(ASSERT EQUALS)#############################################*/
 //#region assertEquals
 /**
- * Checks if two things are the same. Great for making sure values match what you expect.
+ * This function checks if two values are the same.
  *
- * Example:
+ * It is useful for making sure that the value you have is what you expect it to be.
+ *
+ * ### Example
+ *
  * ```ts
  * import { assertEquals } from '@inspatial/test';
  *
  * const sum = 2 + 2;
  * assertEquals(sum, 4, "2 + 2 should equal 4");
  * ```
- * @param actual - What you got
- * @param expected - What you wanted
- * @param msg - The message to show if they don't match
+ *
+ * ##### NOTE:
+ * If the values are not the same, an error will be thrown with a message explaining the difference.
+ *
+ * ##### Terminology:
+ * - **Assertion**: A statement that a condition is true. If it is not true, an error is thrown.
+ *
+ * ### Test Example
+ *
+ * #### Using Assert Syntax
+ *
+ * ```ts
+ * import { test, assertEquals } from '@inspatial/test';
+ *
+ * test({
+ *   name: "testing with assert syntax",
+ *   fn: () => {
+ *     const result = 3 + 3;
+ *     assertEquals(result, 6, "3 + 3 should equal 6");
+ *   }
+ * });
+ * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ *
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "testing with expect syntax",
+ *   fn: () => {
+ *     const result = 5 + 5;
+ *     expect(result).toBe(10);
+ *   }
+ * });
+ * ```
+ *
+ * @param actual - The value you have
+ * @param expected - The value you want
+ * @param msg - The message to show if the values are not the same
  */
 export function assertEquals<T>(actual: T, expected: T, msg?: string) {
   if (assertEqual(actual, expected)) {
@@ -403,7 +506,7 @@ export function assertEquals<T>(actual: T, expected: T, msg?: string) {
   const expectedString = format(expected);
   const stringDiff = typeof actual === "string" && typeof expected === "string";
   const diffResult = stringDiff
-    ? diffStr(actual as string, expected as string)
+    ? differenceString(actual as string, expected as string)
     : diff(actualString.split("\n"), expectedString.split("\n"));
   const diffMsg = buildMessage(diffResult, { stringDiff }).join("\n");
   message = `${message}\n${diffMsg}`;
@@ -413,35 +516,140 @@ export function assertEquals<T>(actual: T, expected: T, msg?: string) {
 /*#############################################(ASSERT IS ERROR)#############################################*/
 //#region assertIsError
 /**
- * Checks if something is an error. Useful when testing error handling.
+ * This function checks if a given value is an error. It is useful when you want to test if your code correctly handles errors.
  *
- * Example:
+ * ### How to Use
+ *
+ * You can use `assertIsError` to verify that a value is an error object. Optionally, you can specify the type of error and check if the error message matches a specific string or pattern.
+ *
+ * ### Parameters
+ *
+ * - `error`: The value you want to check. It can be anything.
+ * - `ErrorClass` (optional): The specific type of error you expect. For example, `TypeError` or `ReferenceError`.
+ * - `msgMatches` (optional): A string or pattern to match against the error message.
+ * - `msg` (optional): A custom message to display if the check fails.
+ *
+ * ### What It Does
+ *
+ * - If `error` is not an instance of `Error`, it throws an `AssertionError`.
+ * - If `ErrorClass` is provided and `error` is not an instance of it, it throws an `AssertionError`.
+ * - If `msgMatches` is provided and the error message does not match, it throws an `AssertionError`.
+ *
+ * ##### NOTE:
+ * The `AssertionError` is a special error that indicates a failed test condition.
+ *
+ * ### Test Example
+ *
+ * #### Using Assert Syntax
  * ```ts
- * import { assertIsError } from '@inspatial/test';
+ * import { test, assert } from '@inspatial/test';
  *
- * try {
- *   throw new Error("Oops!");
- * } catch (error) {
- *   assertIsError(error);
- * }
+ * test({
+ *   name: 'should throw an error',
+ *   fn: () => {
+ *     try {
+ *       throw new Error("Oops!");
+ *     } catch (error) {
+ *       assertIsError(error);
+ *     }
+ *   }
+ * });
+ * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: 'should throw an error',
+ *   fn: () => {
+ *     try {
+ *       throw new Error("Oops!");
+ *     } catch (error) {
+ *       expect(() => assertIsError(error)).not.toThrow();
+ *     }
+ *   }
+ * });
  * ```
  */
-export function assertIsError(error: Error): void {
-  return stdAssert.assertIsError(error);
+export function assertIsError<E extends Error = Error>(
+  error: unknown,
+  // deno-lint-ignore no-explicit-any
+  ErrorClass?: abstract new (...args: any[]) => E,
+  msgMatches?: string | RegExp,
+  msg?: string
+): asserts error is E {
+  const msgSuffix = msg ? `: ${msg}` : ".";
+  if (!(error instanceof Error)) {
+    throw new AssertionError(
+      `Expected "error" to be an Error object${msgSuffix}`
+    );
+  }
+  if (ErrorClass && !(error instanceof ErrorClass)) {
+    msg = `Expected error to be instance of "${ErrorClass.name}", but was "${error?.constructor?.name}"${msgSuffix}`;
+    throw new AssertionError(msg);
+  }
+  let msgCheck;
+  if (typeof msgMatches === "string") {
+    msgCheck = stripAnsiCode(error.message).includes(stripAnsiCode(msgMatches));
+  }
+  if (msgMatches instanceof RegExp) {
+    msgCheck = msgMatches.test(stripAnsiCode(error.message));
+  }
+
+  if (msgMatches && !msgCheck) {
+    msg = `Expected error message to include ${
+      msgMatches instanceof RegExp
+        ? msgMatches.toString()
+        : JSON.stringify(msgMatches)
+    }, but got ${JSON.stringify(error?.message)}${msgSuffix}`;
+    throw new AssertionError(msg);
+  }
 }
 
 /*#############################################(ASSERT MATCH)#############################################*/
 //#region assertMatch
 /**
- * Checks if text matches a pattern.
+ * This function checks if a given text matches a specified pattern.
  *
- * Example:
+ * The `assertMatch` function is used to verify that a string (text) fits a particular pattern defined by a regular expression.
+ * If the text does not match the pattern, it throws an error with a message.
+ *
+ * ### Parameters
+ * - `actual`: The text you want to check.
+ * - `expected`: The pattern you expect the text to match, defined as a regular expression.
+ * - `msg` (optional): A custom message to include if the text does not match the pattern.
+ *
+ * ### How It Works
+ * The function uses the `test` method of the regular expression to check if the text matches the pattern.
+ * If it doesn't match, it throws an `AssertionError` with a message that includes the actual text, the expected pattern, and any custom message provided.
+ *
+ * ### Test Example
+ *
+ * #### Using Assert Syntax
  * ```ts
- * import { assertMatch } from '@inspatial/test';
+ * import { test, assertMatch } from '@inspatial/test';
  *
- * const email = "user@example.com";
- * assertMatch(email, /^.+@.+\..+$/, "Should be a valid email");
+ * test({
+ *   name: "should match valid email",
+ *   fn: () => {
+ *     const email = "user@example.com";
+ *     assertMatch(email, /^.+@.+\..+$/, "Should be a valid email");
+ *   }
+ * });
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "should match valid email",
+ *   fn: () => {
+ *     const email = "user@example.com";
+ *     expect(email).toMatch(/^.+@.+\..+$/, "Should be a valid email");
+ *   }
+ * });
  */
 export function assertMatch(actual: string, expected: RegExp, msg?: string) {
   if (expected.test(actual)) return;
@@ -453,33 +661,107 @@ export function assertMatch(actual: string, expected: RegExp, msg?: string) {
 /*#############################################(ASSERT NOT EQUALS)#############################################*/
 //#region assertNotEquals
 /**
- * Checks if two things are different.
+ * This function checks if two values are not the same.
  *
- * Example:
+ * It compares two values and throws an error if they are equal.
+ * This is useful when you want to ensure that two values are different.
+ *
+ * ### Test Example
+ *
+ * #### Using Assert Syntax
  * ```ts
- * import { assertNotEquals } from '@inspatial/test';
+ * import { test, assertNotEquals } from '@inspatial/test';
  *
- * const player1 = "Mario";
- * const player2 = "Luigi";
- * assertNotEquals(player1, player2, "Players should be different");
+ * test({
+ *   name: "Players should be different",
+ *   fn: () => {
+ *     const player1 = "Mario";
+ *     const player2 = "Luigi";
+ *     assertNotEquals(player1, player2, "Players should be different");
+ *   }
+ * });
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Players should be different",
+ *   fn: () => {
+ *     const player1 = "Mario";
+ *     const player2 = "Luigi";
+ *     expect(player1).not.toEqual(player2);
+ *   }
+ * });
+ * ```
+ *
+ * ##### NOTE:
+ * If the two values are the same, the function will throw an error.
+ *
+ * ##### Terminology:
+ * **Assertion**: A statement that a condition is true. In programming, it's used to check if a condition holds.
  */
-export function assertNotEquals<T>(actual: T, expected: T, msg?: string): void {
-  return stdAssert.assertNotEquals(actual, expected, msg);
+export function assertNotEquals<T>(actual: T, expected: T, msg?: string) {
+  if (!assertEqual(actual, expected)) {
+    return;
+  }
+  const actualString = format(actual);
+  const expectedString = format(expected);
+  const msgSuffix = msg ? `: ${msg}` : ".";
+  throw new AssertionError(
+    `Expected actual: ${actualString} not to be: ${expectedString}${msgSuffix}`
+  );
 }
 
 /*#############################################(ASSERT EXISTS)#############################################*/
 //#region assertExists
 /**
- * Checks if a value exists (is not null or undefined).
+ * This function, `assertExists`, checks if a value is present, meaning it is not `null` or `undefined`.
  *
- * Example:
+ * When you have a value that you expect to be there, you can use this function to make sure it actually is.
+ * If the value is missing, it will throw an error with a message you can provide.
+ *
+ * ### Example Usage
+ *
  * ```ts
- * import { assertExist } from '@inspatial/test';
+ * import { assertExists } from '@inspatial/test';
  * import { getUser } from '@inspatial/auth';
  *
  * const user = getUser();
  * assertExists(user, "User should exist");
+ * ```
+ *
+ * ##### NOTE:
+ * If the value is `null` or `undefined`, an `AssertionError` will be thrown.
+ *
+ * ### Test Example
+ *
+ * #### Using the Assert Syntax
+ * ```ts
+ * import { test, assertExists } from '@inspatial/test';
+ *
+ * test({
+ *   name: "should assert existence of a non-null value",
+ *   fn: () => {
+ *     const value = "Hello";
+ *     assertExists(value, "Value should exist");
+ *   }
+ * });
+ * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "should expect existence of a non-null value",
+ *   fn: () => {
+ *     const value = "Hello";
+ *     expect(value).not.toBeNull();
+ *     expect(value).not.toBeUndefined();
+ *   }
+ * });
  * ```
  */
 export function assertExists<T>(
@@ -496,20 +778,48 @@ export function assertExists<T>(
 /*#############################################(ASSERT FALSE)#############################################*/
 //#region assertFalse
 /**
- * Checks if something is false.
+ * This function, `assertFalse`, checks if a given expression is false.
  *
- * Example:
+ * If the expression is true, it throws an error with an optional message.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertFalse Syntax
  * ```ts
  * import { assertFalse } from '@inspatial/test';
  *
- * const isGameOver = false;
- * assertFalse(isGameOver, "Game should not be over");
+ * test({
+ *   name: "should assert false",
+ *   fn: () => {
+ *     const isGameOver = false;
+ *     assertFalse(isGameOver, "Game should not be over");
+ *   }
+ * });
  * ```
  *
- * @param expr - What you want to check is false
- * @param msg -  The message to show if the check fails (optional)
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "should assert false with expect",
+ *   fn: () => {
+ *     const isGameOver = false;
+ *     expect(isGameOver).toBeFalsy();
+ *   }
+ * });
+ * ```
+ *
+ * ##### NOTE:
+ * The function will throw an error if the expression is true.
+ *
+ * @param expr - The expression you want to check is false.
+ * @param msg - The message to show if the check fails (optional).
  */
-export function assertFalse(expr: unknown, msg = ""): asserts expr is Falsy {
+export function assertFalse(
+  expr: unknown,
+  msg = ""
+): asserts expr is AssertFalsyProp {
   if (expr) {
     throw new AssertionError(msg);
   }
@@ -518,9 +828,14 @@ export function assertFalse(expr: unknown, msg = ""): asserts expr is Falsy {
 /*#############################################(ASSERT NOT STRICTLY EQUALS)#############################################*/
 //#region assertNotStrictEquals
 /**
- * Checks if two things are not strictly equal.
+ * This function, `assertNotStrictEquals`, checks if two values are not strictly equal.
  *
- * Example:
+ * In JavaScript, strict equality means that the values are equal in both type and value.
+ * This function is useful when you want to ensure that two values are different.
+ *
+ * ### Test Example
+ *
+ * #### Using the `assertNotStrictEquals` Syntax
  * ```ts
  * import { assertNotStrictEquals } from '@inspatial/test';
  *
@@ -528,76 +843,389 @@ export function assertFalse(expr: unknown, msg = ""): asserts expr is Falsy {
  * const player2 = "Luigi";
  * assertNotStrictEquals(player1, player2, "Players should be different");
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { expect } from '@inspatial/test';
+ *
+ * const player1 = "Mario";
+ * const player2 = "Luigi";
+ * expect(player1).not.toBe(player2);
+ * ```
+ *
+ * ##### NOTE:
+ * The `assertNotStrictEquals` function will throw an error if the two values are strictly equal.
+ *
+ * ##### Terminology: Strict Equality
+ * Strict equality (`===`) checks if two values are equal in both type and value.
  */
-export function assertNotStrictEquals(
-  actual: unknown,
-  expected: unknown,
-  msg?: string
-): void {
-  return stdAssert.assertNotStrictEquals(actual, expected, msg);
+export function assertNotStrictEquals<T>(actual: T, expected: T, msg?: string) {
+  if (!Object.is(actual, expected)) {
+    return;
+  }
+
+  const msgSuffix = msg ? `: ${msg}` : ".";
+  throw new AssertionError(
+    `Expected "actual" to not be strictly equal to: ${format(
+      actual
+    )}${msgSuffix}\n`
+  );
 }
 
 /*#############################################(ASSERT OBJECT MATCH)#############################################*/
 //#region assertObjectMatch
 /**
- * Checks if two objects are equal.
+ * This function checks if two objects are equal by comparing their properties.
  *
- * Example:
+ * The `assertObjectMatch` function is useful when you want to ensure that two objects have the same properties and values.
+ *
+ * ##### NOTE:
+ * The function compares the properties of the objects, not their references. This means that two different objects with the same properties and values will be considered equal.
+ *
+ * ##### Terminology:
+ * **Intersection**: In this context, it refers to the common properties between two objects.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertObjectMatch Function
  * ```ts
- * import { assertObjectMatch } from '@inspatial/test';
+ * import { test, assertObjectMatch } from '@inspatial/test';
  *
- * const player1 = { name: "Mario" };
- * const player2 = { name: "Mario" };
- * assertObjectMatch(player1, player2, "Players should be equal");
+ * test({
+ *   name: "Objects should match",
+ *   fn: () => {
+ *     const player1 = { name: "Mario" };
+ *     const player2 = { name: "Mario" };
+ *     assertObjectMatch(player1, player2, "Players should be equal");
+ *   }
+ * });
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Objects should match using expect",
+ *   fn: () => {
+ *     const player1 = { name: "Mario" };
+ *     const player2 = { name: "Mario" };
+ *     expect(player1).toEqual(player2);
+ *   }
+ * });
+ * ```
+ *
+ * @param actual - The first object to compare.
+ * @param expected - The second object to compare.
+ * @param msg - An optional message to display if the objects are not equal.
  */
 export function assertObjectMatch(
-  actual: unknown,
-  expected: unknown,
+  // deno-lint-ignore no-explicit-any
+  actual: Record<PropertyKey, any>,
+  expected: Record<PropertyKey, unknown>,
   msg?: string
 ): void {
-  return stdAssert.assertObjectMatch(actual, expected, msg);
+  return assertEquals(
+    // get the intersection of "actual" and "expected"
+    // side effect: all the instances' constructor field is "Object" now.
+    filter(actual, expected),
+    // set (nested) instances' constructor field to be "Object" without changing expected value.
+    filter(expected, expected),
+    msg
+  );
+}
+
+type loose = Record<PropertyKey, unknown>;
+
+function isObject(val: unknown): boolean {
+  return typeof val === "object" && val !== null;
+}
+
+function filter(a: loose, b: loose): loose {
+  const seen = new WeakMap();
+  return filterObject(a, b);
+
+  function filterObject(a: loose, b: loose): loose {
+    // Prevent infinite loop with circular references with same filter
+    if (seen.has(a) && seen.get(a) === b) {
+      return a;
+    }
+
+    try {
+      seen.set(a, b);
+    } catch (err) {
+      if (err instanceof TypeError) {
+        throw new TypeError(
+          `Cannot assertObjectMatch ${a === null ? null : `type ${typeof a}`}`
+        );
+      }
+    }
+
+    // Filter keys and symbols which are present in both actual and expected
+    const filtered = {} as loose;
+    const keysA = Reflect.ownKeys(a);
+    const keysB = Reflect.ownKeys(b);
+    const entries = keysA
+      .filter((key) => keysB.includes(key))
+      .map((key) => [key, a[key as string]]) as Array<[string, unknown]>;
+
+    if (keysA.length && keysB.length && !entries.length) {
+      // If both objects are not empty but don't have the same keys or symbols,
+      // returns the entries in object a.
+      for (const key of keysA) {
+        filtered[key] = a[key];
+      }
+
+      return filtered;
+    }
+
+    for (const [key, value] of entries) {
+      // On regexp references, keep value as it to avoid loosing pattern and flags
+      if (value instanceof RegExp) {
+        filtered[key] = value;
+        continue;
+      }
+
+      const subset = (b as loose)[key];
+
+      // On array references, build a filtered array and filter nested objects inside
+      if (Array.isArray(value) && Array.isArray(subset)) {
+        filtered[key] = filterArray(value, subset);
+        continue;
+      }
+
+      // On nested objects references, build a filtered object recursively
+      if (isObject(value) && isObject(subset)) {
+        // When both operands are maps, build a filtered map with common keys and filter nested objects inside
+        if (value instanceof Map && subset instanceof Map) {
+          filtered[key] = new Map(
+            [...value]
+              .filter(([k]) => subset.has(k))
+              .map(([k, v]) => {
+                const v2 = subset.get(k);
+                if (isObject(v) && isObject(v2)) {
+                  return [k, filterObject(v as loose, v2 as loose)];
+                }
+
+                return [k, v];
+              })
+          );
+          continue;
+        }
+
+        // When both operands are set, build a filtered set with common values
+        if (value instanceof Set && subset instanceof Set) {
+          filtered[key] = value.intersection(subset);
+          continue;
+        }
+
+        filtered[key] = filterObject(value as loose, subset as loose);
+        continue;
+      }
+
+      filtered[key] = value;
+    }
+
+    return filtered;
+  }
+
+  function filterArray(a: unknown[], b: unknown[]): unknown[] {
+    // Prevent infinite loop with circular references with same filter
+    if (seen.has(a) && seen.get(a) === b) {
+      return a;
+    }
+
+    seen.set(a, b);
+
+    const filtered: unknown[] = [];
+    const count = Math.min(a.length, b.length);
+
+    for (let i = 0; i < count; ++i) {
+      const value = a[i];
+      const subset = b[i];
+
+      // On regexp references, keep value as it to avoid loosing pattern and flags
+      if (value instanceof RegExp) {
+        filtered.push(value);
+        continue;
+      }
+
+      // On array references, build a filtered array and filter nested objects inside
+      if (Array.isArray(value) && Array.isArray(subset)) {
+        filtered.push(filterArray(value, subset));
+        continue;
+      }
+
+      // On nested objects references, build a filtered object recursively
+      if (isObject(value) && isObject(subset)) {
+        // When both operands are maps, build a filtered map with common keys and filter nested objects inside
+        if (value instanceof Map && subset instanceof Map) {
+          const map = new Map(
+            [...value]
+              .filter(([k]) => subset.has(k))
+              .map(([k, v]) => {
+                const v2 = subset.get(k);
+                if (isObject(v) && isObject(v2)) {
+                  return [k, filterObject(v as loose, v2 as loose)];
+                }
+
+                return [k, v];
+              })
+          );
+          filtered.push(map);
+          continue;
+        }
+
+        // When both operands are set, build a filtered set with common values
+        if (value instanceof Set && subset instanceof Set) {
+          filtered.push(value.intersection(subset));
+          continue;
+        }
+
+        filtered.push(filterObject(value as loose, subset as loose));
+        continue;
+      }
+
+      filtered.push(value);
+    }
+
+    return filtered;
+  }
 }
 
 /*#############################################(ASSERT STRICTLY EQUALS)#############################################*/
 //#region assertStrictEquals
 /**
- * Checks if two things are strictly equal.
+ * This function checks if two values are exactly the same.
  *
- * Example:
+ * The `assertStrictEquals` function is used to compare two values to see if they are strictly equal.
+ * Strict equality means that the values are the same in both type and value.
+ * If they are not equal, an error is thrown with a message explaining the difference.
+ *
+ * ##### NOTE:
+ * Strict equality is different from regular equality.
+ * Regular equality (`==`) allows for type conversion, while strict equality (`===`) does not.
+ *
+ * ##### Terminology:
+ * **Strictly equal**: This means that two values are the same in both type and value, without any type conversion.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertStrictEquals Function
  * ```ts
- * import { assertStrictEquals } from '@inspatial/test';
+ * import { test, assertStrictEquals } from '@inspatial/test';
  *
- * const player1 = "Mario";
- * const player2 = "Mario";
- * assertStrictEquals(player1, player2, "Players should be equal");
+ * test({
+ *   name: "Players should be equal",
+ *   fn: () => {
+ *     const player1 = "Mario";
+ *     const player2 = "Mario";
+ *     assertStrictEquals(player1, player2, "Players should be equal");
+ *   }
+ * });
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Players should be equal",
+ *   fn: () => {
+ *     const player1 = "Mario";
+ *     const player2 = "Mario";
+ *     expect(player1).toBe(player2);
+ *   }
+ * });
+ * ```
+ *
+ * @param actual - The actual value you want to check.
+ * @param expected - The expected value you want to compare against.
+ * @param msg - An optional message to display if the values are not equal.
+ * @throws {AssertionError} Throws an error if the values are not strictly equal.
  */
-export function assertStrictEquals(
+export function assertStrictEquals<T>(
   actual: unknown,
-  expected: unknown,
+  expected: T,
   msg?: string
-): void {
-  return stdAssert.assertStrictEquals(actual, expected, msg);
+): asserts actual is T {
+  if (Object.is(actual, expected)) {
+    return;
+  }
+
+  const msgSuffix = msg ? `: ${msg}` : ".";
+  let message: string;
+
+  const actualString = format(actual);
+  const expectedString = format(expected);
+
+  if (actualString === expectedString) {
+    const withOffset = actualString
+      .split("\n")
+      .map((l) => `    ${l}`)
+      .join("\n");
+    message = `Values have the same structure but are not reference-equal${msgSuffix}\n\n${red(
+      withOffset
+    )}\n`;
+  } else {
+    const stringDiff =
+      typeof actual === "string" && typeof expected === "string";
+    const diffResult = stringDiff
+      ? differenceString(actual as string, expected as string)
+      : diff(actualString.split("\n"), expectedString.split("\n"));
+    const diffMsg = buildMessage(diffResult, { stringDiff }).join("\n");
+    message = `Values are not strictly equal${msgSuffix}\n${diffMsg}`;
+  }
+
+  throw new AssertionError(message);
 }
 
 /*#############################################(ASSERT ALMOST EQUALS)#############################################*/
 //#region assertAlmostEquals
 /**
- * Checks if two numbers are almost equal.
+ * This function checks if two numbers are almost equal.
  *
- * Example:
+ * When you have two numbers that should be the same, but might have tiny differences due to calculations,
+ * you can use this function to check if they are "close enough" to be considered equal.
+ *
+ * @param actual - The number you have.
+ * @param expected - The number you want.
+ * @param tolerance - The maximum difference allowed between the numbers. If not provided, a small default value is used.
+ * @param msg - A message to show if the numbers are not close enough. This is optional.
+ *
+ * ##### NOTE:
+ * The `tolerance` is a small number that defines how close the two numbers need to be. If not specified,
+ * it defaults to a very small value based on the `expected` number.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertAlmostEquals Function
  * ```ts
- * import { assertAlmostEquals } from '@inspatial/test';
+ * import { test, assertAlmostEquals } from '@inspatial/test';
  *
- * const player1 = 25;
- * const player2 = 25.00001;
- * assertAlmostEquals(player1, player2, "Players should be equal");
+ * test({
+ *   name: "Numbers are almost equal",
+ *   fn: () => {
+ *     const player1 = 25;
+ *     const player2 = 25.00001;
+ *     assertAlmostEquals(player1, player2, 0.0001, "Players should be equal");
+ *   }
+ * });
  * ```
- * @param actual - What you got
- * @param expected - What you wanted
- * @param tolerance - The maximum difference allowed (optional)
- * @param msg - The message to show if they don't match (optional)
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Numbers are almost equal",
+ *   fn: () => {
+ *     const player1 = 25;
+ *     const player2 = 25.00001;
+ *     expect(player1).toBeCloseTo(player2, 0.0001);
+ *   }
+ * });
+ * ```
  */
 export function assertAlmostEquals(
   actual: number,
@@ -627,94 +1255,224 @@ export function assertAlmostEquals(
 /*#############################################(ASSERT ARRAY INCLUDES)#############################################*/
 //#region assertArrayIncludes
 /**
- * Checks if an array includes a certain value.
+ * This function, `assertArrayIncludes`, checks if all elements of one array are present in another array.
  *
- * Example:
+ * It is useful when you want to ensure that a list contains certain values.
+ * If any of the expected values are not found in the actual array, an error is thrown.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertArrayIncludes Function
  * ```ts
- * import { assertArrayIncludes } from '@inspatial/test';
+ * import { test, assertArrayIncludes } from '@inspatial/test';
  *
- * const items = [1, 2, 3];
- * assertArrayIncludes(items, 2, "2 should be in the array");
+ * test({
+ *   name: "should include all expected values",
+ *   fn: () => {
+ *     const items = [1, 2, 3];
+ *     assertArrayIncludes(items, [2], "2 should be in the array");
+ *   }
+ * });
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "should include all expected values",
+ *   fn: () => {
+ *     const items = [1, 2, 3];
+ *     expect(items).toInclude([2]);
+ *   }
+ * });
+ * ```
+ *
+ * ##### NOTE:
+ * The function will throw an `AssertionError` if any of the expected values are missing from the actual array.
+ *
+ * ##### Terminology: AssertionError
+ * An `AssertionError` is an error thrown when an assertion fails. An assertion is a statement that a condition is true.
  */
-export function assertArrayIncludes(
-  array: unknown[],
-  item: unknown,
+export function assertArrayIncludes<T>(
+  actual: AssertArrayLikeArgProp<T>,
+  expected: AssertArrayLikeArgProp<T>,
   msg?: string
-): void {
-  return stdAssert.assertArrayIncludes(array, item, msg);
+) {
+  const missing: unknown[] = [];
+  for (let i = 0; i < expected.length; i++) {
+    let found = false;
+    for (let j = 0; j < actual.length; j++) {
+      if (assertEqual(expected[i], actual[j])) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      missing.push(expected[i]);
+    }
+  }
+  if (missing.length === 0) {
+    return;
+  }
+
+  const msgSuffix = msg ? `: ${msg}` : ".";
+  msg = `Expected actual: "${format(actual)}" to include: "${format(
+    expected
+  )}"${msgSuffix}\nmissing: ${format(missing)}`;
+  throw new AssertionError(msg);
 }
 
 /*#############################################(ASSERT GREATER)#############################################*/
 //#region assertGreater
 /**
- * Checks if something is greater than a certain value.
+ * This function checks if one value is greater than another.
  *
- * Example:
+ * The `assertGreater` function is used to compare two values. If the first value is not greater than the second, it throws an error. This is useful for testing conditions where one value should be larger than another.
+ *
+ * @param actual - The value you expect to be greater.
+ * @param expected - The value you expect to be smaller.
+ * @param msg - An optional message to display if the assertion fails.
+ *
+ * ##### NOTE:
+ * The function will throw an error if `actual` is not greater than `expected`.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertGreater Function
  * ```ts
- * import { assertGreater } from '@inspatial/test';
+ * import { test, assertGreater } from '@inspatial/test';
  *
- * const player1 = 25;
- * const player2 = 20;
- * assertGreater(player1, player2, "Player1 should be greater than Player2");
+ * test({
+ *   name: "Player1 should be greater than Player2",
+ *   fn: () => {
+ *     const player1 = 25;
+ *     const player2 = 20;
+ *     assertGreater(player1, player2, "Player1 should be greater than Player2");
+ *   }
+ * });
+ * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Player1 should be greater than Player2",
+ *   fn: () => {
+ *     const player1 = 25;
+ *     const player2 = 20;
+ *     expect(player1).toBeGreaterThan(player2);
+ *   }
+ * });
  * ```
  */
-export function assertGreater(
-  actual: number,
-  expected: number,
-  msg?: string
-): void {
-  return stdAssert.assertGreater(actual, expected, msg);
+export function assertGreater<T>(actual: T, expected: T, msg?: string) {
+  if (actual > expected) return;
+
+  const actualString = format(actual);
+  const expectedString = format(expected);
+  throw new AssertionError(msg ?? `Expect ${actualString} > ${expectedString}`);
 }
 
 /*#############################################(ASSERT GREATER OR EQUAL)#############################################*/
 //#region assertGreaterOrEqual
 /**
- * Checks if something is greater than or equal to a certain value.
+ * This function checks if one value is greater than or equal to another value.
  *
- * Example:
+ * It is useful when you want to ensure that a number or comparable value is not less than a certain threshold.
+ *
+ * ##### NOTE:
+ * If the first value is not greater than or equal to the second, an error is thrown.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertGreaterOrEqual Function
  * ```ts
- * import { assertGreaterOrEqual } from '@inspatial/test';
+ * import { test, assertGreaterOrEqual } from '@inspatial/test';
  *
- * const player1 = 25;
- * const player2 = 20;
- * assertGreaterOrEqual(player1, player2, "Player1 should be greater than or equal to Player2");
+ * test({
+ *   name: "Player1 should be greater than or equal to Player2",
+ *   fn: () => {
+ *     const player1 = 25;
+ *     const player2 = 20;
+ *     assertGreaterOrEqual(player1, player2, "Player1 should be greater than or equal to Player2");
+ *   }
+ * });
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Player1 should be greater than or equal to Player2",
+ *   fn: () => {
+ *     const player1 = 25;
+ *     const player2 = 20;
+ *     expect(player1).toBeGreaterThanOrEqual(player2);
+ *   }
+ * });
+ * ```
+ *
+ * @param actual - The value you have.
+ * @param expected - The value you want to compare against.
+ * @param msg - An optional message to display if the assertion fails.
  */
-export function assertGreaterOrEqual(
-  actual: number,
-  expected: number,
-  msg?: string
-): void {
-  return stdAssert.assertGreaterOrEqual(actual, expected, msg);
+export function assertGreaterOrEqual<T>(actual: T, expected: T, msg?: string) {
+  if (actual >= expected) return;
+
+  const actualString = format(actual);
+  const expectedString = format(expected);
+  throw new AssertionError(
+    msg ?? `Expect ${actualString} >= ${expectedString}`
+  );
 }
 
 /*#############################################(ASSERT INSTANCE OF)#############################################*/
 //#region assertInstanceOf
 /**
- * Checks if something is a specific type of thing.
- * For example, checking if a date is really a Date, or if a number is really a Number.
+ * This function checks if a given value is an instance of a specific type.
  *
- * Example:
+ * It is useful for verifying that an object is created from a particular class or constructor.
+ *
+ * ##### NOTE:
+ * If the value is not an instance of the expected type, an error is thrown.
+ *
+ * ##### Terminology:
+ * **Instance**: An object created from a class or constructor.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertInstanceOf Function
  * ```ts
- * import { assertInstanceOf } from '@inspatial/test';
+ * import { test, assertInstanceOf } from '@inspatial/test';
  *
- * // Creating some things to check
- * const today = new Date();
- * const number = 42;
- *
- * // These work fine
- * assertInstanceOf(today, Date, "Should be a date");
- *
- * // These will show an error
- * assertInstanceOf(number, Date, "Numbers aren't dates!");
- * assertInstanceOf(null, Date, "null isn't a date!");
- * assertInstanceOf(undefined, Date, "undefined isn't a date!");
+ * test({
+ *   name: "Should be an instance of Date",
+ *   fn: () => {
+ *     const today = new Date();
+ *     assertInstanceOf(today, Date, "Should be a date");
+ *   }
+ * });
  * ```
  *
- * @param actual - The thing you want to check
- * @param expectedType - What type you think it should be
- * @param msg - Message to show if it's not the right type
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Should be an instance of Date",
+ *   fn: () => {
+ *     const today = new Date();
+ *     expect(today).toBeInstanceOf(Date);
+ *   }
+ * });
+ * ```
+ *
+ * @param actual - The value you want to check.
+ * @param expectedType - The type you expect the value to be an instance of.
+ * @param msg - An optional message to display if the check fails.
  */
 export function assertInstanceOf<
   T extends abstract new (...args: any[]) => any,
@@ -764,47 +1522,107 @@ export function assertInstanceOf<
  * assertLess(player1, player2, "Player1 should be less than Player2");
  * ```
  */
-export function assertLess(
-  actual: number,
-  expected: number,
-  msg?: string
-): void {
-  return stdAssert.assertLess(actual, expected, msg);
+export function assertLess<T>(actual: T, expected: T, msg?: string) {
+  if (actual < expected) return;
+
+  const actualString = format(actual);
+  const expectedString = format(expected);
+  throw new AssertionError(msg ?? `Expect ${actualString} < ${expectedString}`);
 }
 
 /*#############################################(ASSERT LESS OR EQUAL)#############################################*/
 //#region assertLessOrEqual
 /**
- * Checks if something is less than or equal to a certain value.
+ * This function checks if one value is less than or equal to another value.
  *
- * Example:
+ * It is useful when you want to ensure that a number or comparable value is not greater than a certain threshold.
+ *
+ * ##### NOTE:
+ * If the first value is not less than or equal to the second, an error is thrown.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertLessOrEqual Function
  * ```ts
- * import { assertLessOrEqual } from '@inspatial/test';
+ * import { test, assertLessOrEqual } from '@inspatial/test';
  *
- * const player1 = 25;
- * const player2 = 30;
- * assertLessOrEqual(player1, player2, "Player1 should be less than or equal to Player2");
+ * test({
+ *   name: "Player1 should be less than or equal to Player2",
+ *   fn: () => {
+ *     const player1 = 25;
+ *     const player2 = 30;
+ *     assertLessOrEqual(player1, player2, "Player1 should be less than or equal to Player2");
+ *   }
+ * });
  * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Player1 should be less than or equal to Player2",
+ *   fn: () => {
+ *     const player1 = 25;
+ *     const player2 = 30;
+ *     expect(player1).toBeLessThanOrEqual(player2);
+ *   }
+ * });
+ * ```
+ *
+ * @param actual - The value you have.
+ * @param expected - The value you want to compare against.
+ * @param msg - An optional message to display if the assertion fails.
  */
-export function assertLessOrEqual(
-  actual: number,
-  expected: number,
-  msg?: string
-): void {
-  return stdAssert.assertLessOrEqual(actual, expected, msg);
+export function assertLessOrEqual<T>(actual: T, expected: T, msg?: string) {
+  if (actual <= expected) return;
+
+  const actualString = format(actual);
+  const expectedString = format(expected);
+  throw new AssertionError(
+    msg ?? `Expect ${actualString} <= ${expectedString}`
+  );
 }
 
 /*#############################################(ASSERT NOT INSTANCE OF)#############################################*/
 //#region assertNotInstanceOf
 /**
- * Checks if an instance is not of a certain type.
+ * This function checks if a given object is not an instance of a specific type.
  *
- * Example:
+ * It is useful for verifying that an object is not created from a particular class or constructor.
+ *
+ * ##### NOTE:
+ * If the object is an instance of the specified type, an error is thrown.
+ *
+ * ##### Terminology:
+ * **Instance**: An object created from a class or constructor.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertNotInstanceOf Function
  * ```ts
- * import { assertNotInstanceOf } from '@inspatial/test';
+ * import { test, assertNotInstanceOf } from '@inspatial/test';
  *
- * const player = new Player();
- * assertNotInstanceOf(player, Player, "player should not be an instance of Player");
+ * test({
+ *   name: "Player should not be an instance of Player class",
+ *   fn: () => {
+ *     const player = new Player();
+ *     assertNotInstanceOf(player, Player, "Player should not be an instance of Player");
+ *   }
+ * });
+ * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Player should not be an instance of Player class",
+ *   fn: () => {
+ *     const player = new Player();
+ *     expect(player).not.toBeInstanceOf(Player);
+ *   }
+ * });
  * ```
  *
  * @param actual - The thing you want to check
@@ -825,18 +1643,40 @@ export function assertNotInstanceOf<A, T>(
 /*#############################################(ASSERT NOT MATCH)#############################################*/
 //#region assertNotMatch
 /**
- * Checks if text does not match a pattern.
+ * This function checks if a given string does not match a specified pattern.
  *
- * Example:
+ * It is useful for ensuring that a string does not fit a particular pattern defined by a regular expression.
+ *
+ * ##### NOTE:
+ * If the string matches the pattern, an error is thrown.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertNotMatch Function
  * ```ts
- * import { assertNotMatch } from '@inspatial/test';
+ * import { test, assertNotMatch } from '@inspatial/test';
  *
- * const email = "user@example.com";
- * assertNotMatch(email, /^.+@.+\..+$/, "Should not be a valid email");
+ * test({
+ *   name: "Email should not match the pattern",
+ *   fn: () => {
+ *     const email = "user@example.com";
+ *     assertNotMatch(email, /^.+@.+\..+$/, "Should not be a valid email");
+ *   }
+ * });
  * ```
- * @param actual - What you got
- * @param expected - What you wanted
- * @param msg - The message to show if they don't match (optional)
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Email should not match the pattern",
+ *   fn: () => {
+ *     const email = "user@example.com";
+ *     expect(email).not.toMatch(/^.+@.+\..+$/);
+ *   }
+ * });
+ * ```
  */
 export function assertNotMatch(actual: string, expected: RegExp, msg?: string) {
   if (!expected.test(actual)) return;
@@ -848,35 +1688,57 @@ export function assertNotMatch(actual: string, expected: RegExp, msg?: string) {
 /*#############################################(ASSERT REJECTS)#############################################*/
 //#region assertRejects
 /**
- * Checks if a function rejects a certain value.
+ * This function, `assertRejects`, checks if a function that returns a promise rejects with a specific error.
  *
- * Example:
+ * When you have a function that should fail, you can use this to make sure it does.
+ * If the function doesn't reject, or if it rejects with the wrong error, an error is thrown.
+ *
+ * ##### NOTE:
+ * This is useful for testing functions that are supposed to fail under certain conditions.
+ *
+ * ##### Terminology:
+ * **Reject**: In programming, when a promise fails, it is said to "reject".
+ *
+ * ### Test Example
+ *
+ * #### Using the assertRejects Syntax
  * ```ts
- * import { assertRejects } from '@inspatial/test';
+ * import { test, assertRejects } from '@inspatial/test';
  *
- * function isEven(n: number): boolean {
- *   return n % 2 === 0;
- * }
- *
- * assertRejects(isEven, 1, "isEven should reject odd numbers");
+ * test({
+ *   name: "should reject with an error",
+ *   fn: async () => {
+ *     const failingFunction = async () => {
+ *       throw new Error("Failure!");
+ *     };
+ *     await assertRejects(failingFunction, Error, "Failure!");
+ *   }
+ * });
  * ```
  *
- * @param fn - The function to check
- * @param errorClassOrMsg - The error class or message to expect
- * @param msgIncludes - The message to expect (optional)
- * @param msg - The message to show if the check fails (optional)
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "should reject with an error",
+ *   fn: async () => {
+ *     const failingFunction = async () => {
+ *       throw new Error("Failure!");
+ *     };
+ *     await expect(failingFunction).rejects.toThrow("Failure!");
+ *   }
+ * });
+ * ```
+ *
+ * @param fn - The function that should return a promise and reject.
+ * @param errorClassOrMsg - The error class or message you expect.
+ * @param msgIncludes - A part of the error message you expect (optional).
+ * @param msg - A custom message to show if the check fails (optional).
  */
-export function assertRejects<E extends Error = Error>(
-  fn: () => PromiseLike<unknown>,
-  // deno-lint-ignore no-explicit-any
-  ErrorClass: abstract new (...args: any[]) => E,
-  msgIncludes?: string,
-  msg?: string
-): Promise<E>;
 export async function assertRejects<E extends Error = Error>(
   fn: () => PromiseLike<unknown>,
-  errorClassOrMsg?: // deno-lint-ignore no-explicit-any
-  (abstract new (...args: any[]) => E) | string,
+  errorClassOrMsg?: (abstract new (...args: any[]) => E) | string,
   msgIncludesOrMsg?: string,
   msg?: string
 ): Promise<E | Error | unknown> {
@@ -936,18 +1798,44 @@ export async function assertRejects<E extends Error = Error>(
 /*#############################################(ASSERT STRING INCLUDES)#############################################*/
 //#region assertStringIncludes
 /**
- * Checks if a string includes a certain substring.
+ * This function checks if a string contains a specific substring.
  *
- * Example:
+ * It is useful when you want to ensure that a string includes certain text.
+ * If the substring is not found, an error is thrown with an optional message.
+ *
+ * ##### NOTE:
+ * The function will throw an `AssertionError` if the substring is not found.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertStringIncludes Function
  * ```ts
- * import { assertStringIncludes } from '@inspatial/test';
+ * import { test, assertStringIncludes } from '@inspatial/test';
  *
- * const email = "user@example.com";
- * assertStringIncludes(email, "@", "Should contain '@'");
+ * test({
+ *   name: "Email should contain '@'",
+ *   fn: () => {
+ *     const email = "user@example.com";
+ *     assertStringIncludes(email, "@", "Should contain '@'");
+ *   }
+ * });
  * ```
  *
- * @param actual - What you got
- * @param expected - What you wanted
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Email should contain '@'",
+ *   fn: () => {
+ *     const email = "user@example.com";
+ *     expect(email).toContain("@");
+ *   }
+ * });
+ * ```
+ *
+ * @param actual - The string you have.
+ * @param expected - The substring you want to find.
  * @param msg - The message to show if it doesn't contain the expected substring (optional)
  */
 export function assertStringIncludes(
@@ -964,26 +1852,59 @@ export function assertStringIncludes(
 /*#############################################(ASSERT THROWS)#############################################*/
 //#region assertThrows
 /**
- * Checks if a function throws a certain error.
+ * This function checks if a function throws a specific error.
  *
- * Example:
+ * It is useful for testing functions that should fail under certain conditions.
+ * If the function does not throw, or if it throws the wrong error, an error is thrown.
+ *
+ * ##### NOTE:
+ * This is useful for testing functions that are supposed to fail under certain conditions.
+ *
+ * ##### Terminology:
+ * **Throw**: In programming, when a function fails, it is said to "throw" an error.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertThrows Function
  * ```ts
- * import { assertThrows } from '@inspatial/test';
+ * import { test, assertThrows } from '@inspatial/test';
  *
- * function isEven(n: number): boolean {
- *   if (n % 2 !== 0) {
- *     throw new Error("Odd number");
+ * test({
+ *   name: "Function should throw an error",
+ *   fn: () => {
+ *     function isEven(n: number): boolean {
+ *       if (n % 2 !== 0) {
+ *         throw new Error("Odd number");
+ *       }
+ *       return true;
+ *     }
+ *     assertThrows(() => isEven(1), Error, "isEven should throw an error for odd numbers");
  *   }
- *   return true;
- * }
- *
- * assertThrows(isEven, 1, "isEven should throw an error for odd numbers");
+ * });
  * ```
  *
- * @param fn - The function to check
- * @param errorClassOrMsg - The error class or message to expect
- * @param msgIncludes - The message to expect (optional)
- * @param msg - The message to show if the check fails (optional)
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "Function should throw an error",
+ *   fn: () => {
+ *     function isEven(n: number): boolean {
+ *       if (n % 2 !== 0) {
+ *         throw new Error("Odd number");
+ *       }
+ *       return true;
+ *     }
+ *     expect(() => isEven(1)).toThrow("Odd number");
+ *   }
+ * });
+ * ```
+ *
+ * @param fn - The function to check.
+ * @param errorClassOrMsg - The error class or message to expect.
+ * @param msgIncludes - The message to expect (optional).
+ * @param msg - The message to show if the check fails (optional).
  */
 export function assertThrows<E extends Error = Error>(
   fn: () => unknown,
@@ -1042,16 +1963,40 @@ export function assertThrows<E extends Error = Error>(
 /*#############################################(ASSERT FAIL)#############################################*/
 //#region assertFail
 /**
- * Fails a test.
+ * This function fails a test by throwing an error.
  *
- * Example:
+ * It is useful when you want to explicitly fail a test with a specific message.
+ *
+ * ##### NOTE:
+ * The function will always throw an `AssertionError`.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertFail Function
  * ```ts
- * import { assertFail } from '@inspatial/test';
+ * import { test, assertFail } from '@inspatial/test';
  *
- * assertFail("This test must fail");
+ * test({
+ *   name: "This test should fail",
+ *   fn: () => {
+ *     assertFail("This test must fail");
+ *   }
+ * });
  * ```
  *
- * @param msg - The message to show if the check fails (optional)
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "This test should fail",
+ *   fn: () => {
+ *     expect(() => assertFail("This test must fail")).toThrow("This test must fail");
+ *   }
+ * });
+ * ```
+ *
+ * @param msg - The message to show if the check fails (optional).
  */
 export function assertFail(msg?: string): never {
   const msgSuffix = msg ? `: ${msg}` : ".";
@@ -1061,16 +2006,40 @@ export function assertFail(msg?: string): never {
 /*#############################################(ASSERT UNIMPLEMENTED)#############################################*/
 //#region assertUnimplemented
 /**
- * Unimplements a function: throws an error if the function is not implemented.
+ * This function throws an error to indicate that a function is not implemented.
  *
- * Example:
+ * It is useful for marking parts of your code that are not yet complete.
+ *
+ * ##### NOTE:
+ * The function will always throw an `AssertionError`.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertUnimplemented Function
  * ```ts
- * import { assertUnimplemented } from '@inspatial/test';
+ * import { test, assertUnimplemented } from '@inspatial/test';
  *
- * assertUnimplemented("This function is not implemented");
+ * test({
+ *   name: "This function is not implemented",
+ *   fn: () => {
+ *     assertUnimplemented("This function is not implemented");
+ *   }
+ * });
  * ```
  *
- * @param msg - The message to show if the check fails (optional)
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "This function is not implemented",
+ *   fn: () => {
+ *     expect(() => assertUnimplemented("This function is not implemented")).toThrow("Unimplemented");
+ *   }
+ * });
+ * ```
+ *
+ * @param msg - The message to show if the check fails (optional).
  */
 export function assertUnimplemented(msg?: string): never {
   const msgSuffix = msg ? `: ${msg}` : ".";
@@ -1080,16 +2049,40 @@ export function assertUnimplemented(msg?: string): never {
 /*#############################################(ASSERT UNREACHABLE)#############################################*/
 //#region assertUnreachable
 /**
- * Unreachable code: throws an error if the code is unreachable.
+ * This function throws an error to indicate that a piece of code should never be reached.
  *
- * Example:
+ * It is useful for marking code paths that should be impossible to reach.
+ *
+ * ##### NOTE:
+ * The function will always throw an `AssertionError`.
+ *
+ * ### Test Example
+ *
+ * #### Using the assertUnreachable Function
  * ```ts
- * import { assertUnreachable } from '@inspatial/test';
+ * import { test, assertUnreachable } from '@inspatial/test';
  *
- * assertUnreachable("This code should never be reached");
+ * test({
+ *   name: "This code should never be reached",
+ *   fn: () => {
+ *     assertUnreachable("This code should never be reached");
+ *   }
+ * });
  * ```
  *
- * @param msg - The message to show if the check fails (optional)
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "This code should never be reached",
+ *   fn: () => {
+ *     expect(() => assertUnreachable("This code should never be reached")).toThrow("Unreachable");
+ *   }
+ * });
+ * ```
+ *
+ * @param msg - The message to show if the check fails (optional).
  */
 export function assertUnreachable(msg?: string): never {
   const msgSuffix = msg ? `: ${msg}` : ".";
