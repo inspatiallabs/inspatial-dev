@@ -12,7 +12,7 @@ import { sameStart } from "./same-start.ts";
 //#region DiffTypeProp
 /** Ways that lines in a diff can be different. */
 export type DiffTypeProp = "removed" | "common" | "added";
-//#endregion DiffType
+//#endregion DiffTypeProp
 
 //#region DiffResultProp
 /**
@@ -34,8 +34,8 @@ export interface DiffResultProp<T> {
 
 const COMMON = 2;
 
-/*#############################################(FUNCTIONS)#############################################*/
-
+/*#############################################(DIFF)#############################################*/
+//#region diff
 /**
  * Renders the differences between the actual and expected values.
  *
@@ -146,3 +146,297 @@ export function diff<T>(A: T[], B: T[]): DiffResultProp<T>[] {
     ...backTrace(A, B, currentFp, swapped, routes, diffTypesPtrOffset),
   ] as DiffResultProp<T>[];
 }
+
+/*#############################################(UNESCAPE STRING)#############################################*/
+//#region unescapeString
+
+/**
+ * This function, `unescapeString`, transforms special characters in a string
+ * into their visible escape sequences. This is useful for displaying or
+ * processing strings with invisible characters.
+ *
+ * @param string - The input string that may contain invisible characters.
+ * @returns A new string with invisible characters replaced by their escape sequences.
+ *
+ * ##### NOTE:
+ * This function does not remove line breaks but converts them to visible sequences.
+ *
+ * @example
+ * ```ts
+ * import { unescapeString } from "@inspatial/util";
+ * import { test, assertEquals, expect } from "@inspatial/test";
+ *
+ * test({
+ *   name: "unescapeString with assert",
+ *   fn: () => {
+ *     assertEquals(unescapeString("Hello\nWorld"), "Hello\\n\nWorld");
+ *   }
+ * });
+ *
+ * test({
+ *   name: "unescapeString with expect",
+ *   fn: () => {
+ *     expect(unescapeString("Hello\nWorld")).toBe("Hello\\n\nWorld");
+ *   }
+ * });
+ * ```
+ */
+export function unescapeString(string: string): string {
+  return string
+    .replaceAll("\b", "\\b")
+    .replaceAll("\f", "\\f")
+    .replaceAll("\t", "\\t")
+    .replaceAll("\v", "\\v")
+    .replaceAll(/\r\n|\r|\n/g, (str) =>
+      str === "\r" ? "\\r" : str === "\n" ? "\\n\n" : "\\r\\n\r\n"
+    );
+}
+
+const WHITESPACE_SYMBOLS = /([^\S\r\n]+|[()[\]{}'"\r\n]|\b)/;
+
+/*#############################################(TOKENIZE STRING)#############################################*/
+//#region tokenizeString
+
+/**
+ * This function, `tokenizeString`, breaks a string into smaller parts called tokens.
+ * It can split based on words or lines, depending on the `wordDiff` parameter.
+ *
+ * @param string - The string to be split into tokens.
+ * @param wordDiff - If true, splits the string into words. Default is false, which splits by lines.
+ * @returns An array of tokens derived from the input string.
+ *
+ * ##### Terminology:
+ * **Token**: A small piece of a string, like a word or a line.
+ *
+ * @example
+ * ```ts
+ * import { tokenizeString } from "@inspatial/util";
+ * import { test, assertEquals, expect } from "@inspatial/test";
+ *
+ * test({
+ *   name: "tokenizeString with assert",
+ *   fn: () => {
+ *     assertEquals(tokenizeString("Hello\nWorld"), ["Hello\n", "World"]);
+ *   }
+ * });
+ *
+ * test({
+ *   name: "tokenizeString with expect",
+ *   fn: () => {
+ *     expect(tokenizeString("Hello\nWorld")).toEqual(["Hello\n", "World"]);
+ *   }
+ * });
+ * ```
+ */
+export function tokenizeString(string: string, wordDiff = false): string[] {
+  if (wordDiff) {
+    return string.split(WHITESPACE_SYMBOLS).filter((token) => token);
+  }
+  const tokens: string[] = [];
+  const lines = string.split(/(\n|\r\n)/).filter((line) => line);
+
+  for (const [i, line] of lines.entries()) {
+    if (i % 2) {
+      tokens[tokens.length - 1] += line;
+    } else {
+      tokens.push(line);
+    }
+  }
+  return tokens;
+}
+
+//#endregion tokenizeString
+
+/*#############################################(CREATE DETAILED DIFF)#############################################*/
+//#region createDetailedDiff
+
+/**
+ * This function, `createDetailedDiff`, refines the differences between tokens
+ * by merging spaces with surrounding word differences for a cleaner display.
+ *
+ * @param line - The current line being processed.
+ * @param tokens - The tokens representing word differences.
+ * @returns An array of refined diff results.
+ *
+ * ##### NOTE:
+ * This function helps in making the diff output more readable by merging spaces.
+ *
+ * @example
+ * ```ts
+ * import { createDetailedDiff } from "@inspatial/util";
+ * import { test, assertEquals, expect } from "@inspatial/test";
+ *
+ * const tokens = [
+ *   { type: "added", value: "a" },
+ *   { type: "removed", value: "b" },
+ *   { type: "common", value: "c" },
+ * ] as const;
+ *
+ * test({
+ *   name: "createDetailedDiff with assert",
+ *   fn: () => {
+ *     assertEquals(
+ *       createDetailedDiff({ type: "added", value: "a" }, [...tokens]),
+ *       [{ type: "added", value: "a" }, { type: "common", value: "c" }]
+ *     );
+ *   }
+ * });
+ *
+ * test({
+ *   name: "createDetailedDiff with expect",
+ *   fn: () => {
+ *     expect(
+ *       createDetailedDiff({ type: "added", value: "a" }, [...tokens])
+ *     ).toEqual([{ type: "added", value: "a" }, { type: "common", value: "c" }]);
+ *   }
+ * });
+ * ```
+ */
+export function createDetailedDiff(
+  line: DiffResultProp<string>,
+  tokens: DiffResultProp<string>[]
+): DiffResultProp<string>[] {
+  return tokens
+    .filter(({ type }) => type === line.type || type === "common")
+    .map((result, i, t) => {
+      const token = t[i - 1];
+      if (
+        result.type === "common" &&
+        token &&
+        token.type === t[i + 1]?.type &&
+        /\s+/.test(result.value)
+      ) {
+        return {
+          ...result,
+          type: token.type,
+        };
+      }
+      return result;
+    });
+}
+
+const NON_WHITESPACE_REGEXP = /\S/;
+
+/*#############################################(DIFFERENCE STRING)#############################################*/
+//#region differenceString
+
+/**
+ * This function, `differenceString`, identifies and displays the differences
+ * between two strings. It shows what was added, removed, or unchanged.
+ *
+ * @param A - The first string to compare.
+ * @param B - The second string to compare.
+ * @returns An array of objects showing the differences between the two strings.
+ *
+ * ##### NOTE:
+ * This function is inspired by a popular library for string differences.
+ *
+ * @example
+ * ```ts
+ * import { differenceString } from "@inspatial/util";
+ * import { test, assertEquals, expect } from "@inspatial/test";
+ *
+ * test({
+ *   name: "differenceString with assert",
+ *   fn: () => {
+ *     assertEquals(differenceString("Hello!", "Hello"), [
+ *       {
+ *         type: "removed",
+ *         value: "Hello!\n",
+ *         details: [
+ *           { type: "common", value: "Hello" },
+ *           { type: "removed", value: "!" },
+ *           { type: "common", value: "\n" }
+ *         ]
+ *       },
+ *       {
+ *         type: "added",
+ *         value: "Hello\n",
+ *         details: [
+ *           { type: "common", value: "Hello" },
+ *           { type: "common", value: "\n" }
+ *         ]
+ *       }
+ *     ]);
+ *   }
+ * });
+ *
+ * test({
+ *   name: "differenceString with expect",
+ *   fn: () => {
+ *     expect(differenceString("Hello!", "Hello")).toEqual([
+ *       {
+ *         type: "removed",
+ *         value: "Hello!\n",
+ *         details: [
+ *           { type: "common", value: "Hello" },
+ *           { type: "removed", value: "!" },
+ *           { type: "common", value: "\n" }
+ *         ]
+ *       },
+ *       {
+ *         type: "added",
+ *         value: "Hello\n",
+ *         details: [
+ *           { type: "common", value: "Hello" },
+ *           { type: "common", value: "\n" }
+ *         ]
+ *       }
+ *     ]);
+ *   }
+ * });
+ * ```
+ */
+export function differenceString(
+  A: string,
+  B: string
+): DiffResultProp<string>[] {
+  const diffResult = diff(
+    tokenizeString(`${unescapeString(A)}\n`),
+    tokenizeString(`${unescapeString(B)}\n`)
+  );
+
+  const added = [];
+  const removed = [];
+  for (const result of diffResult) {
+    if (result.type === "added") {
+      added.push(result);
+    }
+    if (result.type === "removed") {
+      removed.push(result);
+    }
+  }
+
+  const hasMoreRemovedLines = added.length < removed.length;
+  const aLines = hasMoreRemovedLines ? added : removed;
+  const bLines = hasMoreRemovedLines ? removed : added;
+  for (const a of aLines) {
+    let tokens = [] as Array<DiffResultProp<string>>;
+    let b: undefined | DiffResultProp<string>;
+    while (bLines.length) {
+      b = bLines.shift();
+      const tokenized = [
+        tokenizeString(a.value, true),
+        tokenizeString(b!.value, true),
+      ] as [string[], string[]];
+      if (hasMoreRemovedLines) tokenized.reverse();
+      tokens = diff(tokenized[0], tokenized[1]);
+      if (
+        tokens.some(
+          ({ type, value }) =>
+            type === "common" && NON_WHITESPACE_REGEXP.test(value)
+        )
+      ) {
+        break;
+      }
+    }
+    a.details = createDetailedDiff(a, tokens);
+    if (b) {
+      b.details = createDetailedDiff(b, tokens);
+    }
+  }
+
+  return diffResult;
+}
+
+//#endregion differenceString

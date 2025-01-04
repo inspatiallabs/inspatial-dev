@@ -49,39 +49,73 @@ _Reality is your canvas_
 
 ---
 
-## 🛠️ InSpatial util
+## 🛠️ InSpatial util (🟢 Stable)
 
 InSpatial util is your Swiss Army knife for universal and spatial application development. It provides a collection of powerful, type-safe utility functions to streamline your workflow and enhance your projects.
 
 ## 🚀 Features
 
-- 🧰 Comprehensive set of utility functions for common tasks
-- 🎨 Tailwind CSS class merging with `kit` and `cKit`
-- 📅 Calendar and date manipulation utilities
-- 🔢 Array and mathematical helpers
-- 🔍 Focus and input styling utilities
-- 🔀 Array shuffling function
-- 📄 and more...
+- 🧰 Comprehensive set of utility functions for common tasks, enhancing productivity and efficiency.
+- 🎨 Tailwind CSS class merging with `kit` and `cKit` for seamless styling.
+- 📅 Advanced calendar and date manipulation utilities for precise time management.
+- 🔢 Array and mathematical helpers to simplify complex operations.
+- 🔍 Focus and input styling utilities to improve user interface interactions.
+- 🔀 Array shuffling and manipulation functions for dynamic data handling.
+- 📄 Extensive text and data formatting utilities for clean and readable outputs.
+- 🌐 Domain and URL utilities for robust web application development.
+- 🔧 TypeScript type utilities for safer and more reliable code.
+- 📊 Data extraction and manipulation tools for effective data processing.
+- 🌍 Country and encoding utilities for internationalization and data encoding needs.
+- ... and more!
+
+These features make InSpatial util a powerful toolkit for developers working on universal and spatial applications.
 
 ---
 
 ## 🛠️ Available Utilities
 
-<!-- <div align="center">
-  <img src="https://your-image-url.com/inspatial-kit.png" alt="InSpatial Kit" width="150"/>
-</div> -->
-
 InSpatial util includes the following utility functions:
 
-1. `capitalize`: Capitalizes the first letter of a string
-2. `kit` and `cKit`: Tailwind CSS class and styled merging utilities
-3. `shuffle`: Randomly shuffles an array
-4. `focusRing`, `hasErrorInput`, `focusInput`: Input styling utilities
-5. `range`: Generates an array of numbers within a specified range
-6. `datePresets`: Predefined date presets for calendar components
-7. `getDatePresetByLabel`: Retrieves a specific date preset by its label
-8. `addCustomDatePreset`: Adds a custom date preset to the collection
-   ... and more!
+1. `capitalize`: Capitalizes the first letter of a string.
+2. `kit` and `cKit`: Tailwind CSS class and styled merging utilities.
+3. `shuffle`: Randomly shuffles an array.
+4. `shuffled`: Returns a new array with shuffled elements.
+5. `focusInput`, `hasErrorInput`, `focusRing`: Input styling utilities for focus and error states.
+6. `range`: Generates an array of numbers within a specified range.
+7. `milliseconds`: Converts time units to milliseconds.
+8. `crossArray`: Crosses two arrays to produce a Cartesian product.
+9. `dedupe`: Removes duplicate elements from an array.
+10. `eq`: Checks for deep equality between two values.
+11. `random`: Generates a random number within a specified range.
+12. `swap`: Swaps two elements in an array.
+13. `trackDebug`: Utility for tracking and debugging.
+14. `domainMatcher`: Matches a domain against a list of patterns.
+15. `prettify`: Formats data into a more readable form.
+16. `format`: Formats strings with placeholders.
+17. `formatTime`: Formats time values into human-readable strings.
+18. `getRandomKitColors`: Generates random color schemes for UI components.
+19. `mergeRef`: Merges multiple React refs into one.
+20. `generateUniqueId`: Generates a unique identifier.
+21. `copyToClipboard`: Copies a URL to the clipboard and executes an optional callback.
+22. `openLink`: Opens a URL in a new browser tab.
+23. `printPage`: Triggers the browser's print dialog for the current page.
+24. `replaceNonDigits`: Removes non-digit characters from a string.
+25. `currency`: Formats numbers as currency strings.
+26. `share`: Shares content using the Web Share API.
+27. `dateTime`: Utilities for date and time manipulation.
+28. `ulid`: Generates a Universally Unique Lexicographically Sortable Identifier.
+29. `csv`: Parses and generates CSV data.
+30. `extractor`: Extracts specific data from a larger dataset.
+31. `text`: Text manipulation utilities.
+32. `collection`: Provides collection utilities from the standard library.
+33. `countries`: Utilities for handling country data.
+34. `encoding`: Utilities for encoding and decoding data.
+35. `regexEscape`: Escapes special characters in a regex pattern.
+36. `types`: Type utilities for TypeScript.
+37. `buildMessage`: Constructs a formatted message to represent differences between data sets.
+38. `sameStart`: Checks if two strings start with the same sequence.
+39. `farthestPoint`: Finds the farthest point in a dataset.
+40. `difference`: Calculates the difference between two datasets.
 
 For detailed usage and parameters of each utility, please refer to the source code or our comprehensive documentation.
 
@@ -91,6 +125,30 @@ For detailed usage and parameters of each utility, please refer to the source co
 
 ```bash
 deno install jsr:@inspatial/util
+```
+
+## 
+
+```bash
+npx jsr add @inspatial/util
+```
+
+## 
+
+```bash
+yarn dlx jsr add @inspatial/util
+```
+
+## 
+
+```bash
+pnpm dlx jsr add @inspatial/util
+```
+
+## 
+
+```bash
+bunx jsr add @inspatial/util
 ```
 
 ---
