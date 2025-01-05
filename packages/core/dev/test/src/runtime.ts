@@ -1,8 +1,8 @@
 // Imports
 import type { OptionProp, Promisable, Runner, TestProps } from "./shared.ts";
 import { format } from "./shared.ts";
-import * as node from "node:test";
 import { noop } from "./noop.ts";
+let node: any = null;
 
 /*#########################################(RUNTIME)#########################################*/
 
@@ -15,6 +15,7 @@ if ((globalThis as any).Deno) {
   runtime = "bun";
 } else if ((globalThis as any).process?.versions?.node) {
   runtime = "node";
+  node = import("node:test");
 }
 
 export { runtime };
