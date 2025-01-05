@@ -76,6 +76,7 @@ A universal testing framework that works seamlessly across Deno, Node.js, and Bu
 - 🧩 BDD (Behavior Driven Development) Support
 - 🧪 Test Doubles (Mocks, Stubs, Spies, etc.)
 - 📸 Snapshot Testing
+- 📈 Benchmarking
 
 ## 🚀 Installation
 
