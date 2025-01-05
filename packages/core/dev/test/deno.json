@@ -9,7 +9,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./assert": "./src/assert.ts",
-    "./expect": "./src/expect.ts"
+    "./expect": "./src/expect.ts",
+    "./log": "./src/log/index.ts"
   },
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"

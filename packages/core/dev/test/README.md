@@ -71,7 +71,11 @@ A universal testing framework that works seamlessly across Deno, Node.js, and Bu
 - 🌐 3D Environment Testing
 - 🎨 Visual Regression Testing for 3D
 - 📊 Spatial Computing Metrics
-- 🤖 AI-Powered Test Generation
+- 🤖 AI-Powered CI/CD Test Agent
+- 📝 Logging and Reporting
+- 🧩 BDD (Behavior Driven Development) Support
+- 🧪 Test Doubles (Mocks, Stubs, Spies, etc.)
+- 📸 Snapshot Testing
 
 ## 🚀 Installation
 
