@@ -947,24 +947,6 @@ _expect.extend({
  *   }
  * })
  * ```
- * InSpatial gives you two ways to check if your code is working correctly:
- *
- * 1. Using `expect` (recommended):
- *    Like asking questions about your code:
- *    "Is this equal to that?"
- *    "Does this list contain this item?"
- *    "Did this action work properly?"
- *
- * 2. Using `assert`:
- *    Like making direct statements about your code:
- *    "This must equal that"
- *    "This list must contain this item"
- *    "This action must work properly"
- *
- * Both do the same job - they help you verify your code works as intended.
- * We recommend using `expect` as it's very expressive and feels easier and more natural to read and write.
- *
- * For more documentation see: https://inspatial.dev/test
  */
 const expect = _expect as unknown as ((
   ...args: Parameters<typeof _expect>
