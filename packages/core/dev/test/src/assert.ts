@@ -1,3 +1,143 @@
+/*#############################################(DOCUMENTATION)#############################################*/
+/**
+ * ## Assert
+ *
+ * In testing, `assert` is a tool that helps you check if your code works correctly.
+ * Think of it like a safety net that catches problems before they reach your users.
+ *
+ * ## Getting Started
+ *
+ * First, import what you need:
+ * ```ts
+ * import { test, assert } from "@inspatial/test";
+ * ```
+ *
+ * ## Basic Testing
+ *
+ * There are two main ways to write tests: using `assert` or using `expect`.
+ * But we are going to focus on `assert` in this documentation.
+ *
+ * ### Using Assert
+ * ```ts
+ * test({
+ *   name: "check if numbers add correctly",
+ *   fn: () => {
+ *     const result = 2 + 2;
+ *     assertEquals(result, 4);
+ *   }
+ * });
+ * ```
+ *
+ * ## Main Features
+ *
+ * ### Checking Values (Assertions)
+ *
+ * - `assertEquals(actual, expected)`: Check if two things are equal
+ * - `assertNotEquals(actual, expected)`: Check if two things are different
+ * - `assertExists(value)`: Check if something exists (not null/undefined)
+ * - `assertMatch(text, pattern)`: Check if text matches a pattern
+ *
+ * ### Comparing Numbers
+ *
+ * - `assertGreater(a, b)`: Check if a is bigger than b
+ * - `assertLess(a, b)`: Check if a is smaller than b
+ * - `assertGreaterOrEqual(a, b)`: Check if a is bigger or equal to b
+ * - `assertLessOrEqual(a, b)`: Check if a is smaller or equal to b
+ *
+ * ### Working with Objects
+ *
+ * - `assertInstanceOf(object, type)`: Check if something is a specific type
+ * - `assertObjectMatch(actual, expected)`: Check if objects have matching properties
+ *
+ * ### Testing Errors
+ *
+ * - `assertThrows(fn)`: Check if code throws an error
+ * - `assertRejects(fn)`: Check if a promise fails
+ *
+ * ### Special Cases
+ *
+ * - `assertFail()`: Make a test fail on purpose
+ * - `assertUnimplemented()`: Mark code as not finished
+ * - `assertUnreachable()`: Mark code that should never run
+ *
+ * ##### NOTE: Writing Good Tests
+ * - Give your tests clear names that explain what they check
+ * - Test one thing at a time
+ * - Use descriptive variable names
+ * - Add helpful error messages
+ *
+ * ##### Terminology: Common Testing Terms
+ * - **Test**: A piece of code that checks if another piece of code works correctly
+ * - **Assert**: To check if something is true
+ * - **Expect**: See {@link module:expect|Expect Module} for another way to write tests that reads more like English
+ * - **Mock**: See {@link module:mock|Mock Module} for creating fake versions of things for testing
+ *
+ * ## Examples
+ *
+ * ### Testing a Simple Function
+ * ```ts
+ * function add(a: number, b: number): number {
+ *   return a + b;
+ * }
+ *
+ * test({
+ *   name: "add function should work correctly",
+ *   fn: () => {
+ *     assertEquals(add(2, 2), 4);
+ *     assertEquals(add(-1, 1), 0);
+ *     assertEquals(add(0, 0), 0);
+ *   }
+ * });
+ * ```
+ *
+ * ### Testing Error Cases
+ * ```ts
+ * function divide(a: number, b: number): number {
+ *   if (b === 0) throw new Error("Cannot divide by zero");
+ *   return a / b;
+ * }
+ *
+ * test({
+ *   name: "divide function should handle errors",
+ *   fn: () => {
+ *     // Test normal case
+ *     assertEquals(divide(10, 2), 5);
+ *
+ *     // Test error case
+ *     assertThrows(
+ *       () => divide(10, 0),
+ *       Error,
+ *       "Cannot divide by zero"
+ *     );
+ *   }
+ * });
+ * ```
+ *
+ * ### Testing Async Code
+ * ```ts
+ * async function fetchUser(id: string) {
+ *   if (!id) throw new Error("ID required");
+ *   return { id, name: "Test User" };
+ * }
+ *
+ * test({
+ *   name: "fetchUser should work with valid ID",
+ *   fn: async () => {
+ *     const user = await fetchUser("123");
+ *     assertEquals(user.name, "Test User");
+ *
+ *     await assertRejects(
+ *       () => fetchUser(""),
+ *       Error,
+ *       "ID required"
+ *     );
+ *   }
+ * });
+ * ```
+ *
+ * @module
+ */
+
 /*#############################################(IMPORTS)#############################################*/
 import {
   format,
