@@ -364,7 +364,7 @@ import {
   assertIsError,
   assertRejects,
   AssertionError,
-} from "./assert";
+} from "./assert.ts";
 
 /*###############################################(IS TEST SPY)###############################################*/
 //#region isTestSpy
