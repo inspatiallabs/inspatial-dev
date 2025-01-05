@@ -93,7 +93,6 @@ export function OTPAuth<
           fd.get("action")?.toString() === "verify" &&
           state.type === "code"
         ) {
-          const fd = await c.req.formData();
           const compare = fd.get("code")?.toString();
           if (!state.code || !compare || state.code !== compare) {
             return transition(

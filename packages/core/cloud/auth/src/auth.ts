@@ -24,8 +24,6 @@ import { cors } from "@hono/hono/cors";
 import { Prettify, isDomainMatch } from "@inspatial/util";
 import { getEnv } from "./helpers.ts";
 
-// import { createInSpatialKVStorage } from "./storage/inspatial-kv.ts";
-
 export interface OnSuccessResponder<T> {
   subject(type: string, properties: any): Promise<Response>;
 }
@@ -117,16 +115,24 @@ export function inSpatialAuth<
     });
 
   let storage = input.storage;
-  if (getEnv("INSPATIALAUTH_STORAGE")) {
-    const parsed = JSON.parse(getEnv("INSPATIALAUTH_STORAGE")!);
-    // if (parsed.type === "kv")
-    //   storage = createInSpatialKVStorage(parsed.options);
-    if (parsed.type === "memory") storage = MemoryStorage();
+  if (!storage) {
+    const envStorage = getEnv("INSPATIALAUTH_STORAGE", false); // Make it optional
+    if (envStorage) {
+      try {
+        const parsed = JSON.parse(envStorage);
+        if (parsed.type === "memory") {
+          storage = MemoryStorage();
+        }
+        // ...Add other storage type handlers here later e.g InSpatial KV
+      } catch (e) {
+        console.warn("Failed to parse INSPATIALAUTH_STORAGE:", e);
+      }
+    }
+    // Default to memory storage if nothing else is configured
+    if (!storage) {
+      storage = MemoryStorage();
+    }
   }
-  if (!storage)
-    throw new Error(
-      "Store is not configured. Either set the `storage` option or set `INSPATIALAUTH_STORAGE` environment variable."
-    );
   const allKeys = keys(storage);
   const primaryKey = allKeys.then((all) => all[0]);
 
@@ -315,7 +321,7 @@ export function inSpatialAuth<
     return url.protocol + "//" + host;
   }
 
-  const app = new Hono<{
+  const hono = new Hono<{
     Variables: {
       authorization: AuthorizationState;
     };
@@ -331,17 +337,17 @@ export function inSpatialAuth<
       name,
       ...auth,
     });
-    app.route(`/${name}`, route);
+    hono.route(`/${name}`, route);
   }
 
-  app.get("/.well-known/jwks.json", async (c) => {
+  hono.get("/.well-known/jwks.json", async (c) => {
     const all = await allKeys;
     return c.json({
       keys: all.map((item) => item.jwk),
     });
   });
 
-  app.get("/.well-known/oauth-authorization-server", (c) => {
+  hono.get("/.well-known/oauth-authorization-server", (c) => {
     const iss = issuer(c);
     return c.json({
       issuer: iss,
@@ -352,186 +358,187 @@ export function inSpatialAuth<
     });
   });
 
-  app.post(
-    "/token",
+  hono.use(
+    "*",
     cors({
       origin: "*",
       allowHeaders: ["*"],
-      allowMethods: ["POST"],
+      allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       credentials: false,
-    }),
-    async (c) => {
-      const form = await c.req.formData();
-      const grantType = form.get("grant_type");
+    })
+  );
 
-      if (grantType === "authorization_code") {
-        const code = form.get("code");
-        if (!code)
-          return c.json(
-            {
-              error: "invalid_request",
-              error_description: "Missing code",
-            },
-            400
-          );
-        const key = ["oauth:code", code.toString()];
-        const payload = await getStorage<{
-          type: string;
-          properties: any;
-          clientID: string;
-          redirectURI: string;
-          pkce?: AuthorizationState["pkce"];
-        }>(storage, key);
-        if (!payload) {
-          return c.json(
-            {
-              error: "invalid_grant",
-              error_description: "Authorization code has been used or expired",
-            },
-            400
-          );
-        }
-        await removeStorage(storage, key);
-        if (payload.redirectURI !== form.get("redirect_uri")) {
-          return c.json(
-            {
-              error: "invalid_redirect_uri",
-              error_description: "Redirect URI mismatch",
-            },
-            400
-          );
-        }
-        if (payload.clientID !== form.get("client_id")) {
-          return c.json(
-            {
-              error: "unauthorized_client",
-              error_description:
-                "Client is not authorized to use this authorization code",
-            },
-            403
-          );
-        }
+  hono.post("/token", async (c) => {
+    const form = await c.req.formData();
+    const grantType = form.get("grant_type");
 
-        if (payload.pkce) {
-          const codeVerifier = form.get("code_verifier")?.toString();
-          if (!codeVerifier)
-            return c.json(
-              {
-                error: "invalid_grant",
-                error_description: "Missing code_verifier",
-              },
-              400
-            );
-
-          if (
-            !(await validatePKCE(
-              codeVerifier,
-              payload.pkce.challenge,
-              payload.pkce.method
-            ))
-          ) {
-            return c.json(
-              {
-                error: "invalid_grant",
-                error_description: "Code verifier does not match",
-              },
-              400
-            );
-          }
-        }
-        const tokens = await generateTokens(c, payload);
-        return c.json({
-          access_token: tokens.access,
-          refresh_token: tokens.refresh,
-        });
-      }
-
-      if (grantType === "refresh_token") {
-        const refreshToken = form.get("refresh_token");
-        if (!refreshToken)
-          return c.json(
-            {
-              error: "invalid_request",
-              error_description: "Missing refresh_token",
-            },
-            400
-          );
-        const splits = refreshToken.toString().split(":");
-        const token = splits.pop()!;
-        const subject = splits.join(":");
-        const key = ["oauth:refresh", subject, token];
-        const payload = await getStorage<{
-          type: string;
-          properties: any;
-          clientID: string;
-        }>(storage, key);
-        if (!payload) {
-          return c.json(
-            {
-              error: "invalid_grant",
-              error_description: "Refresh token has been used or expired",
-            },
-            400
-          );
-        }
-        await removeStorage(storage, key);
-        const tokens = await generateTokens(c, payload);
-        return c.json({
-          access_token: tokens.access,
-          refresh_token: tokens.refresh,
-        });
-      }
-
-      if (grantType === "client_credentials") {
-        const provider = form.get("provider");
-        if (!provider)
-          return c.json({ error: "missing `provider` form value" }, 400);
-        const match = input.authMethod[provider.toString()];
-        if (!match)
-          return c.json({ error: "invalid `provider` query parameter" }, 400);
-        if (!match.client)
-          return c.json(
-            { error: "this provider does not support client_credentials" },
-            400
-          );
-        const clientID = form.get("client_id");
-        const clientSecret = form.get("client_secret");
-        if (!clientID)
-          return c.json({ error: "missing `client_id` form value" }, 400);
-        if (!clientSecret)
-          return c.json({ error: "missing `client_secret` form value" }, 400);
-        const response = await match.client({
-          clientID: clientID.toString(),
-          clientSecret: clientSecret.toString(),
-          params: Object.fromEntries(form) as Record<string, string>,
-        });
-        return input.onSuccess(
+    if (grantType === "authorization_code") {
+      const code = form.get("code");
+      if (!code)
+        return c.json(
           {
-            async subject(type, properties) {
-              const tokens = await generateTokens(c, {
-                type: type as string,
-                properties,
-                clientID: response.clientID,
-              });
-              return c.json({
-                access_token: tokens.access,
-                refresh_token: tokens.refresh,
-              });
-            },
+            error: "invalid_request",
+            error_description: "Missing code",
           },
+          400
+        );
+      const key = ["oauth:code", code.toString()];
+      const payload = await getStorage<{
+        type: string;
+        properties: any;
+        clientID: string;
+        redirectURI: string;
+        pkce?: AuthorizationState["pkce"];
+      }>(storage, key);
+      if (!payload) {
+        return c.json(
           {
-            provider: provider.toString(),
-            ...response,
+            error: "invalid_grant",
+            error_description: "Authorization code has been used or expired",
           },
-          c.req.raw
+          400
+        );
+      }
+      await removeStorage(storage, key);
+      if (payload.redirectURI !== form.get("redirect_uri")) {
+        return c.json(
+          {
+            error: "invalid_redirect_uri",
+            error_description: "Redirect URI mismatch",
+          },
+          400
+        );
+      }
+      if (payload.clientID !== form.get("client_id")) {
+        return c.json(
+          {
+            error: "unauthorized_client",
+            error_description:
+              "Client is not authorized to use this authorization code",
+          },
+          403
         );
       }
 
-      throw new Error("Invalid grant_type");
-    }
-  );
+      if (payload.pkce) {
+        const codeVerifier = form.get("code_verifier")?.toString();
+        if (!codeVerifier)
+          return c.json(
+            {
+              error: "invalid_grant",
+              error_description: "Missing code_verifier",
+            },
+            400
+          );
 
-  app.get("/authorize", async (c) => {
+        if (
+          !(await validatePKCE(
+            codeVerifier,
+            payload.pkce.challenge,
+            payload.pkce.method
+          ))
+        ) {
+          return c.json(
+            {
+              error: "invalid_grant",
+              error_description: "Code verifier does not match",
+            },
+            400
+          );
+        }
+      }
+      const tokens = await generateTokens(c, payload);
+      return c.json({
+        access_token: tokens.access,
+        refresh_token: tokens.refresh,
+      });
+    }
+
+    if (grantType === "refresh_token") {
+      const refreshToken = form.get("refresh_token");
+      if (!refreshToken)
+        return c.json(
+          {
+            error: "invalid_request",
+            error_description: "Missing refresh_token",
+          },
+          400
+        );
+      const splits = refreshToken.toString().split(":");
+      const token = splits.pop()!;
+      const subject = splits.join(":");
+      const key = ["oauth:refresh", subject, token];
+      const payload = await getStorage<{
+        type: string;
+        properties: any;
+        clientID: string;
+      }>(storage, key);
+      if (!payload) {
+        return c.json(
+          {
+            error: "invalid_grant",
+            error_description: "Refresh token has been used or expired",
+          },
+          400
+        );
+      }
+      await removeStorage(storage, key);
+      const tokens = await generateTokens(c, payload);
+      return c.json({
+        access_token: tokens.access,
+        refresh_token: tokens.refresh,
+      });
+    }
+
+    if (grantType === "client_credentials") {
+      const provider = form.get("provider");
+      if (!provider)
+        return c.json({ error: "missing `provider` form value" }, 400);
+      const match = input.authMethod[provider.toString()];
+      if (!match)
+        return c.json({ error: "invalid `provider` query parameter" }, 400);
+      if (!match.client)
+        return c.json(
+          { error: "this provider does not support client_credentials" },
+          400
+        );
+      const clientID = form.get("client_id");
+      const clientSecret = form.get("client_secret");
+      if (!clientID)
+        return c.json({ error: "missing `client_id` form value" }, 400);
+      if (!clientSecret)
+        return c.json({ error: "missing `client_secret` form value" }, 400);
+      const response = await match.client({
+        clientID: clientID.toString(),
+        clientSecret: clientSecret.toString(),
+        params: Object.fromEntries(form) as Record<string, string>,
+      });
+      return input.onSuccess(
+        {
+          async subject(type, properties) {
+            const tokens = await generateTokens(c, {
+              type: type as string,
+              properties,
+              clientID: response.clientID,
+            });
+            return c.json({
+              access_token: tokens.access,
+              refresh_token: tokens.refresh,
+            });
+          },
+        },
+        {
+          provider: provider.toString(),
+          ...response,
+        },
+        c.req.raw
+      );
+    }
+
+    throw new Error("Invalid grant_type");
+  });
+
+  hono.get("/authorize", async (c) => {
     const provider = c.req.query("provider");
     const responseType = c.req.query("responseType");
     const redirectURI = c.req.query("redirectURI");
@@ -597,25 +604,36 @@ export function inSpatialAuth<
     );
   });
 
-  app.all("/*", (c) => {
+  hono.all("/*", (c) => {
     return c.notFound();
   });
 
-  app.onError(async (err, c) => {
+  hono.onError(async (err, c) => {
     console.error(err);
     if (err instanceof UnknownStateError) {
       return auth.forward(c, await error(err, c.req.raw));
     }
-    const authorization = await getAuthorization(c);
-    const url = new URL(authorization.redirectURI);
-    const oauth =
-      err instanceof OauthError
-        ? err
-        : new OauthError("server_error", err.message);
-    url.searchParams.set("error", oauth.error);
-    url.searchParams.set("error_description", oauth.description);
-    return c.redirect(url.toString());
+    try {
+      const authorization = await getAuthorization(c);
+      const url = new URL(authorization.redirectURI);
+      const oauth =
+        err instanceof OauthError
+          ? err
+          : new OauthError("server_error", err.message);
+      url.searchParams.set("error", oauth.error);
+      url.searchParams.set("error_description", oauth.description);
+      return c.redirect(url.toString());
+    } catch (e) {
+      // If we can't get authorization, return a JSON error
+      return c.json(
+        {
+          error: "server_error",
+          error_description: err.message,
+        },
+        400
+      );
+    }
   });
 
-  return app;
+  return hono;
 }

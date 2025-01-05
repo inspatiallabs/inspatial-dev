@@ -17,9 +17,12 @@ export function getRelativeUrl(ctx: Context, path: string) {
  * getEnv("HOME"); // Returns "/home/alice"
  * ```
  */
-export function getEnv(key: string): string {
+export function getEnv(
+  key: string,
+  required: boolean = false
+): string | undefined {
   const value = Deno.env.get(key);
-  if (value === undefined) {
+  if (required && value === undefined) {
     throw new Error(`"${key}" environment variable must be set`);
   }
   return value;

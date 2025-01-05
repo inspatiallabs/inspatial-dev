@@ -16,6 +16,9 @@ import {
 } from "./auth-methods/social-auth/index.ts";
 import { MemoryStorage } from "./storage/memory.ts";
 import { createSubjectSchema, string, email } from "./schema.ts";
+import { mockSession, restoreTest } from "@inspatial/test/mock";
+import { FakeTime } from "@inspatial/test/time";
+import { setEnv } from "./helpers.ts";
 
 /*#########################################(Core Auth Tests)#########################################*/
 
@@ -46,8 +49,12 @@ test({
       },
     });
 
-    expect(auth).toBeDefined();
-    expect(typeof auth.fetch).toBe("function");
+    // Wait for the auth initialization and key generation to complete
+    const instance = await auth;
+    await new Promise((resolve) => setTimeout(resolve, 100)); // Give time for key generation
+
+    expect(instance).toBeDefined();
+    expect(typeof instance.fetch).toBe("function");
   },
 });
 
@@ -214,44 +221,14 @@ test({
 
 /*#########################################(Integration Tests)#########################################*/
 test({
-  name: "Full authentication flow with OTP and validation",
-  fn: async () => {
-    const auth = inSpatialAuth({
-      storage: MemoryStorage(),
-      authMethod: {
-        otp: OTPAuth({
-          sendCode: async () => {},
-          request: async () => new Response(),
-        }),
-      },
-      subjects: {
-        user: createSubjectSchema({
-          email: email("Invalid email format"),
-        }),
-      },
-      onSuccess: async ({ subject }) => {
-        return new Response(null, {
-          status: 302,
-          headers: {
-            Location: "/",
-          },
-        });
-      },
-    });
-  },
-});
-
-/*#########################################(Integration Tests)#########################################*/
-
-test({
   name: "Full authentication flow with OTP",
   fn: async () => {
-    const auth = inSpatialAuth({
+    const auth = await inSpatialAuth({
       storage: MemoryStorage(),
       authMethod: {
         otp: OTPAuth({
           sendCode: async () => {},
-          request: async () => new Response(),
+          request: async () => new Response(null, { status: 200 }),
         }),
       },
       subjects: {
@@ -274,15 +251,17 @@ test({
       },
     });
 
+    // Send proper form data in the request
     const response = await auth.fetch(
-      new Request("http://localhost/auth/otp/start", {
+      new Request("http://localhost/otp/authorize", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify({
+        body: new URLSearchParams({
+          action: "request",
           email: "test@example.com",
-        }),
+        }).toString(),
       })
     );
 
@@ -315,7 +294,10 @@ test({
 test({
   name: "Auth enforces CORS policies",
   fn: async () => {
-    const auth = inSpatialAuth({
+    // Create a FakeTime controller
+    using time = new FakeTime();
+
+    const auth = await inSpatialAuth({
       storage: MemoryStorage(),
       authMethod: {
         otp: OTPAuth({
@@ -339,13 +321,28 @@ test({
       },
     });
 
+    // Give time for any async operations including key generation to complete
+    // Using FakeTime instead of real setTimeout
+    time.tick(500);
+
     const response = await auth.fetch(
-      new Request("http://localhost/auth/otp/start", {
+      new Request("http://localhost/otp/authorize", {
         method: "OPTIONS",
       })
     );
 
     expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-    expect(response.headers.get("Access-Control-Allow-Methods")).toBe("POST");
+    expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+      "GET,POST,PUT,DELETE,OPTIONS"
+    );
+    expect(response.headers.get("Access-Control-Allow-Headers")).toBe("*");
   },
+});
+
+test("mock environment variable", () => {
+  const sessionId = mockSession();
+
+  setEnv("INSPATIALAUTH_STORAGE", "mock_storage_value");
+
+  restoreTest(sessionId);
 });
