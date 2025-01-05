@@ -41,6 +41,8 @@ export * from "./build-message.ts";
 export * from "./same-start.ts";
 export * from "./farthest-point.ts";
 export * from "./difference.ts";
+export * from "./delay.ts";
+export * from "./backoff-jitter.ts"
 
 // export * from "./getletterspacing.ts";
 // export * from "./validated-auth.ts"; moved to InSpatial Auth

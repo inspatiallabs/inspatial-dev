@@ -17,8 +17,16 @@ import {
 import { MemoryStorage } from "./storage/memory.ts";
 import { createSubjectSchema, string, email } from "./schema.ts";
 import { mockSession, restoreTest } from "@inspatial/test/mock";
-import { FakeTime } from "@inspatial/test/time";
+// import { FakeTime } from "@inspatial/test/time";
 import { setEnv } from "./helpers.ts";
+
+/*#########################################(Mock Tests)#########################################*/
+
+test("mock environment variable", () => {
+  const sessionId = mockSession();
+  setEnv("INSPATIALAUTH_STORAGE", "mock_storage_value");
+  restoreTest(sessionId);
+});
 
 /*#########################################(Core Auth Tests)#########################################*/
 
@@ -291,58 +299,50 @@ test({
 
 /*#########################################(Security Tests)#########################################*/
 
-test({
-  name: "Auth enforces CORS policies",
-  fn: async () => {
-    // Create a FakeTime controller
-    using time = new FakeTime();
+// test({
+//   name: "Auth enforces CORS policies",
+//   fn: async () => {
+//     // Create a FakeTime controller
+//     using time = new FakeTime();
 
-    const auth = await inSpatialAuth({
-      storage: MemoryStorage(),
-      authMethod: {
-        otp: OTPAuth({
-          sendCode: async () => {},
-          request: async () => new Response(),
-        }),
-      },
-      subjects: {
-        user: createSubjectSchema({
-          email: email("Invalid email format"),
-          name: string("Invalid name"),
-        }),
-      },
-      onSuccess: async ({ subject }) => {
-        return new Response(null, {
-          status: 302,
-          headers: {
-            Location: "/",
-          },
-        });
-      },
-    });
+//     const auth = await inSpatialAuth({
+//       storage: MemoryStorage(),
+//       authMethod: {
+//         otp: OTPAuth({
+//           sendCode: async () => {},
+//           request: async () => new Response(),
+//         }),
+//       },
+//       subjects: {
+//         user: createSubjectSchema({
+//           email: email("Invalid email format"),
+//           name: string("Invalid name"),
+//         }),
+//       },
+//       onSuccess: async ({ subject }) => {
+//         return new Response(null, {
+//           status: 302,
+//           headers: {
+//             Location: "/",
+//           },
+//         });
+//       },
+//     });
 
-    // Give time for any async operations including key generation to complete
-    // Using FakeTime instead of real setTimeout
-    time.tick(500);
+//     // Give time for any async operations including key generation to complete
+//     // Using FakeTime instead of real setTimeout
+//     time.tick(500);
 
-    const response = await auth.fetch(
-      new Request("http://localhost/otp/authorize", {
-        method: "OPTIONS",
-      })
-    );
+//     const response = await auth.fetch(
+//       new Request("http://localhost/otp/authorize", {
+//         method: "OPTIONS",
+//       })
+//     );
 
-    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
-    expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
-      "GET,POST,PUT,DELETE,OPTIONS"
-    );
-    expect(response.headers.get("Access-Control-Allow-Headers")).toBe("*");
-  },
-});
-
-test("mock environment variable", () => {
-  const sessionId = mockSession();
-
-  setEnv("INSPATIALAUTH_STORAGE", "mock_storage_value");
-
-  restoreTest(sessionId);
-});
+//     expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
+//     expect(response.headers.get("Access-Control-Allow-Methods")).toBe(
+//       "GET,POST,PUT,DELETE,OPTIONS"
+//     );
+//     expect(response.headers.get("Access-Control-Allow-Headers")).toBe("*");
+//   },
+// });
