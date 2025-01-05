@@ -6,7 +6,7 @@
  * and control their outputs. Think of it like a security camera (spy) that watches
  * your functions or a stunt double (stub) that stands in for them during tests.
  *
- * ## Introduction to Function Watching (Spying)
+ * ## Introduction to Function Watching (Spy)
  *
  * Sometimes you want to make sure one function is correctly using another function.
  * Think of it like a security camera - you can see when someone enters a room,
@@ -40,22 +40,22 @@
  *   name: "square function should use multiply to calculate square of a number",
  *   fn: () => {
  *     // Create a spy to watch the multiply function
- *     const multiplySpy = spy(multiply);
+ *     const multiplySpyProp = spy(multiply);
  *
  *     // Try squaring the number 5
- *     const result = square(multiplySpy, 5);
+ *     const result = square(multiplySpyProp, 5);
  *
  *     // Check if we got the right answer (5 × 5 = 25)
  *     assertEquals(result, 25);
  *
  *     // Check if multiply was used correctly
- *     assertSpyCall(multiplySpy, 0, {  // 0 means "first time it was called"
+ *     assertSpyCall(multiplySpyProp, 0, {  // 0 means "first time it was called"
  *       args: [5, 5],     // Was it called with 5 and 5?
  *       returned: 25,     // Did it return 25?
  *     });
  *
  *     // Check if multiply was called exactly once
- *     assertSpyCalls(multiplySpy, 1);
+ *     assertSpyCalls(multiplySpyProp, 1);
  *   }
  * });
  * ```
@@ -83,7 +83,7 @@
  *   name: "square function should use multiply to calculate square of a number",
  *   fn: () => {
  *     // Create a spy to watch the multiply function in our object
- *     using multiplySpy = spy(mathTools, "multiply");
+ *     using multiplySpyProp = spy(mathTools, "multiply");
  *
  *     // Try squaring the number 5
  *     const result = square(5);
@@ -92,13 +92,13 @@
  *     assertEquals(result, 25);
  *
  *     // Make sure multiply was used correctly
- *     assertSpyCall(multiplySpy, 0, {
+ *     assertSpyCall(multiplySpyProp, 0, {
  *       args: [5, 5],
  *       returned: 25,
  *     });
  *
  *     // Make sure multiply was used exactly once
- *     assertSpyCalls(multiplySpy, 1);
+ *     assertSpyCalls(multiplySpyProp, 1);
  *   }
  * });
  * ```
@@ -134,7 +134,7 @@
  * });
  * ```
  *
- * ## Replacing Functions for Testing (Stubbing)
+ * ## Replacing Functions for Testing (Stub)
  *
  * Sometimes you need to test code that uses unpredictable functions (like getting
  * random numbers or current weather). This can make testing tricky - how do you
@@ -176,7 +176,7 @@
  *   fn: () => {
  *     // Replace getRandomNumber with our stunt double
  *     // First it will return -3, then it will return 3
- *     using numberStub = stub(
+ *     using numberStubProp = stub(
  *       mathHelpers,           // object containing our function
  *       "getRandomNumber",     // name of function to replace
  *       returnsNext([-3, 3])   // values it should return
@@ -191,25 +191,25 @@
  *     assertEquals(secondResult, 15);
  *
  *     // Check first time getRandomNumber was called
- *     assertSpyCall(numberStub, 0, {           // 0 means first call
+ *     assertSpyCall(numberStubProp, 0, {           // 0 means first call
  *       args: [-10, 10],    // Was it called with -10 and 10?
  *       returned: -3,       // Did it return -3?
  *     });
  *
  *     // Check second time getRandomNumber was called
- *     assertSpyCall(numberStub, 1, {           // 1 means second call
+ *     assertSpyCall(numberStubProp, 1, {           // 1 means second call
  *       args: [-10, 10],    // Was it called with -10 and 10?
  *       returned: 3,        // Did it return 3?
  *     });
  *
  *     // Make sure it was called exactly twice
- *     assertSpyCalls(numberStub, 2);
+ *     assertSpyCalls(numberStubProp, 2);
  *   }
  * });
  * ```
  *
- * ##### NOTE: When to Use Stubs
- * Stubs are great for testing functions that normally:
+ * ##### NOTE: When to Use Stub
+ * StubProps are great for testing functions that normally:
  * - Generate random numbers
  * - Get the current time
  * - Make network requests
@@ -229,11 +229,11 @@
  *   name: "test using assert",
  *   fn: () => {
  *     const helpers = { getData: () => Math.random() };
- *     using dataStub = stub(helpers, "getData", returnsNext([1, 2, 3]));
+ *     using dataStubProp = stub(helpers, "getData", returnsNext([1, 2, 3]));
  *
  *     assertEquals(helpers.getData(), 1);
  *     assertEquals(helpers.getData(), 2);
- *     assertSpyCalls(dataStub, 2);
+ *     assertSpyCalls(dataStubProp, 2);
  *   }
  * });
  * ```
@@ -244,11 +244,11 @@
  *   name: "test using expect",
  *   fn: () => {
  *     const helpers = { getData: () => Math.random() };
- *     using dataStub = stub(helpers, "getData", returnsNext([1, 2, 3]));
+ *     using dataStubProp = stub(helpers, "getData", returnsNext([1, 2, 3]));
  *
  *     expect(helpers.getData()).toBe(1);
  *     expect(helpers.getData()).toBe(2);
- *     expect(dataStub).toHaveBeenCalledTimes(2);
+ *     expect(dataStubProp).toHaveBeenCalledTimes(2);
  *   }
  * });
  * ```
@@ -380,8 +380,8 @@ import {
  */
 export function isTestSpy<Self, Args extends unknown[], Return>(
   func: ((this: Self, ...args: Args) => Return) | unknown
-): func is Spy<Self, Args, Return> {
-  const spy = func as Spy<Self, Args, Return>;
+): func is SpyProp<Self, Args, Return> {
+  const spy = func as SpyProp<Self, Args, Return>;
   return (
     typeof spy === "function" &&
     typeof spy.original === "function" &&
@@ -395,13 +395,13 @@ export function isTestSpy<Self, Args extends unknown[], Return>(
 /*###############################################(TEST SESSIONS)###############################################*/
 //#region testSessions
 // deno-lint-ignore no-explicit-any
-export const testSessions: Set<Spy<any, any[], any>>[] = [];
+export const testSessions: Set<SpyProp<any, any[], any>>[] = [];
 //#endregion testSessions
 
 /*###############################################(GET TEST SESSION)###############################################*/
 //#region getTestSession
 // deno-lint-ignore no-explicit-any
-function getTestSession(): Set<Spy<any, any[], any>> {
+function getTestSession(): Set<SpyProp<any, any[], any>> {
   if (testSessions.length === 0) testSessions.push(new Set());
   return testSessions.at(-1)!;
 }
@@ -410,7 +410,7 @@ function getTestSession(): Set<Spy<any, any[], any>> {
 /*###############################################(REGISTER MOCK)###############################################*/
 //#region registerMock
 // deno-lint-ignore no-explicit-any
-export function registerMock(spy: Spy<any, any[], any>) {
+export function registerMock(spy: SpyProp<any, any[], any>) {
   const session = getTestSession();
   session.add(spy);
 }
@@ -419,7 +419,7 @@ export function registerMock(spy: Spy<any, any[], any>) {
 /*###############################################(UNREGISTER MOCK)###############################################*/
 //#region unregisterMock
 // deno-lint-ignore no-explicit-any
-export function unregisterMock(spy: Spy<any, any[], any>) {
+export function unregisterMock(spy: SpyProp<any, any[], any>) {
   const session = getTestSession();
   session.delete(spy);
 }
@@ -454,9 +454,9 @@ export class MockError extends Error {
 //#endregion MockError
 
 /*###############################################(SPY CALL)###############################################*/
-//#region SpyCall
+//#region SpyCallProp
 /** Call information recorded by a spy. */
-export interface SpyCall<
+export interface SpyCallProp<
   // deno-lint-ignore no-explicit-any
   Self = any,
   // deno-lint-ignore no-explicit-any
@@ -473,12 +473,12 @@ export interface SpyCall<
   /** The instance that a method was called on. */
   self?: Self;
 }
-//#endregion SpyCall
+//#endregion SpyCallProp
 
 /*###############################################(SPY)###############################################*/
-//#region Spy
+//#region SpyProp
 /** A function or instance method wrapper that records all calls made to it. */
-export interface Spy<
+export interface SpyProp<
   // deno-lint-ignore no-explicit-any
   Self = any,
   // deno-lint-ignore no-explicit-any
@@ -490,39 +490,39 @@ export interface Spy<
   /** The function that is being spied on. */
   original: (this: Self, ...args: Args) => Return;
   /** Information about calls made to the function or instance method. */
-  calls: SpyCall<Self, Args, Return>[];
+  calls: SpyCallProp<Self, Args, Return>[];
   /** Whether or not the original instance method has been restoredTest. */
   restoredTest: boolean;
   /** If spying on an instance method, this restoreTests the original instance method. */
   restoreTest(): void;
 }
-//#endregion Spy
+//#endregion SpyProp
 
 /*###############################################(METHOD SPY)###############################################*/
-//#region MethodSpy
+//#region MethodSpyProp
 /** An instance method wrapper that records all calls made to it. */
-export interface MethodSpy<
+export interface MethodSpyProp<
   // deno-lint-ignore no-explicit-any
   Self = any,
   // deno-lint-ignore no-explicit-any
   Args extends unknown[] = any[],
   // deno-lint-ignore no-explicit-any
   Return = any,
-> extends Spy<Self, Args, Return>,
+> extends SpyProp<Self, Args, Return>,
     Disposable {}
-//#endregion MethodSpy
+//#endregion MethodSpyProp
 
 /*###############################################(FUNCTION SPY)###############################################*/
-//#region functionSpy
-/** Wraps a function with a Spy. */
-function functionSpy<Self, Args extends unknown[], Return>(
+//#region functionSpyProp
+/** Wraps a function with a SpyProp. */
+function functionSpyProp<Self, Args extends unknown[], Return>(
   func?: (this: Self, ...args: Args) => Return
-): Spy<Self, Args, Return> {
+): SpyProp<Self, Args, Return> {
   const original =
     func ?? ((() => {}) as (this: Self, ...args: Args) => Return);
-  const calls: SpyCall<Self, Args, Return>[] = [];
+  const calls: SpyCallProp<Self, Args, Return>[] = [];
   const spy = function (this: Self, ...args: Args): Return {
-    const call: SpyCall<Self, Args, Return> = { args };
+    const call: SpyCallProp<Self, Args, Return> = { args };
     if (this) call.self = this;
     try {
       call.returned = original.apply(this, args);
@@ -533,7 +533,7 @@ function functionSpy<Self, Args extends unknown[], Return>(
     }
     calls.push(call);
     return call.returned;
-  } as Spy<Self, Args, Return>;
+  } as SpyProp<Self, Args, Return>;
   Object.defineProperties(spy, {
     original: {
       enumerable: true,
@@ -558,7 +558,7 @@ function functionSpy<Self, Args extends unknown[], Return>(
   });
   return spy;
 }
-//#endregion functionSpy
+//#endregion functionSpyProp
 
 /*###############################################(MOCK SESSION)###############################################*/
 //#region mockSession
@@ -715,11 +715,11 @@ export function restoreTest(id?: number) {
 
 /*###############################################(METHOD SPY)###############################################*/
 //#region methodSpy
-/** Wraps an instance method with a Spy. */
+/** Wraps an instance method with a SpyProp. */
 function methodSpy<Self, Args extends unknown[], Return>(
   self: Self,
   property: keyof Self
-): MethodSpy<Self, Args, Return> {
+): MethodSpyProp<Self, Args, Return> {
   if (typeof self[property] !== "function") {
     throw new MockError("Cannot spy: property is not an instance method");
   }
@@ -736,10 +736,10 @@ function methodSpy<Self, Args extends unknown[], Return>(
     this: Self,
     ...args: Args
   ) => Return;
-  const calls: SpyCall<Self, Args, Return>[] = [];
+  const calls: SpyCallProp<Self, Args, Return>[] = [];
   let restoredTest = false;
   const spy = function (this: Self, ...args: Args): Return {
-    const call: SpyCall<Self, Args, Return> = { args };
+    const call: SpyCallProp<Self, Args, Return> = { args };
     if (this) call.self = this;
     try {
       call.returned = original.apply(this, args);
@@ -750,7 +750,7 @@ function methodSpy<Self, Args extends unknown[], Return>(
     }
     calls.push(call);
     return call.returned;
-  } as MethodSpy<Self, Args, Return>;
+  } as MethodSpyProp<Self, Args, Return>;
   Object.defineProperties(spy, {
     original: {
       enumerable: true,
@@ -803,7 +803,7 @@ function methodSpy<Self, Args extends unknown[], Return>(
 /*###############################################(CONSTRUCTOR SPY)###############################################*/
 //#region constructorSpy
 /** A constructor wrapper that records all calls made to it. */
-export interface ConstructorSpy<
+export interface ConstructorSpyProp<
   // deno-lint-ignore no-explicit-any
   Self = any,
   // deno-lint-ignore no-explicit-any
@@ -814,24 +814,24 @@ export interface ConstructorSpy<
   /** The function that is being spied on. */
   original: new (...args: Args) => Self;
   /** Information about calls made to the function or instance method. */
-  calls: SpyCall<Self, Args, Self>[];
+  calls: SpyCallProp<Self, Args, Self>[];
   /** Whether or not the original instance method has been restoredTest. */
   restoredTest: boolean;
   /** If spying on an instance method, this restoreTests the original instance method. */
   restoreTest(): void;
 }
 
-/** Wraps a constructor with a Spy. */
+/** Wraps a constructor with a SpyProp. */
 function constructorSpy<Self, Args extends unknown[]>(
   constructor: new (...args: Args) => Self
-): ConstructorSpy<Self, Args> {
+): ConstructorSpyProp<Self, Args> {
   const original = constructor;
-  const calls: SpyCall<Self, Args, Self>[] = [];
+  const calls: SpyCallProp<Self, Args, Self>[] = [];
   // @ts-ignore TS2509: Can't know the type of `original` statically.
   const spy = class extends original {
     // deno-lint-ignore constructor-super
     constructor(...args: Args) {
-      const call: SpyCall<Self, Args, Self> = { args };
+      const call: SpyCallProp<Self, Args, Self> = { args };
       try {
         super(...args);
         call.returned = this as unknown as Self;
@@ -851,7 +851,7 @@ function constructorSpy<Self, Args extends unknown[]>(
         "Cannot restoreTest: constructor cannot be restoredTest"
       );
     }
-  } as ConstructorSpy<Self, Args>;
+  } as ConstructorSpyProp<Self, Args>;
   return spy;
 }
 //#endregion constructorSpy
@@ -884,15 +884,15 @@ export type GetReturnFromProp<
 
 /*###############################################(SPY LIKE)###############################################*/
 //#region spyLike
-/** SpyLink object type. */
-export type SpyLike<
+/** SpyPropLink object type. */
+export type SpyLikeProp<
   // deno-lint-ignore no-explicit-any
   Self = any,
   // deno-lint-ignore no-explicit-any
   Args extends unknown[] = any[],
   // deno-lint-ignore no-explicit-any
   Return = any,
-> = Spy<Self, Args, Return> | ConstructorSpy<Self, Args>;
+> = SpyProp<Self, Args, Return> | ConstructorSpyProp<Self, Args>;
 //#endregion spyLike
 
 /*###############################################(SPY)###############################################*/
@@ -932,7 +932,7 @@ export function spy<
   // deno-lint-ignore no-explicit-any
   Args extends unknown[] = any[],
   Return = undefined,
->(): Spy<Self, Args, Return>;
+>(): SpyProp<Self, Args, Return>;
 //#endregion spy
 
 /*###############################################(SPY WITH IMPLEMENTATION)###############################################*/
@@ -968,7 +968,7 @@ export function spy<
  */
 export function spy<Self, Args extends unknown[], Return>(
   func: (this: Self, ...args: Args) => Return
-): Spy<Self, Args, Return>;
+): SpyProp<Self, Args, Return>;
 //#endregion spyWithImplementation
 
 /*###############################################(SPY CONSTRUCTOR)###############################################*/
@@ -1007,13 +1007,13 @@ export function spy<Self, Args extends unknown[], Return>(
  */
 export function spy<Self, Args extends unknown[]>(
   constructor: new (...args: Args) => Self
-): ConstructorSpy<Self, Args>;
+): ConstructorSpyProp<Self, Args>;
 //#endregion spyConstructor
 
 /*###############################################(SPY METHOD)###############################################*/
 //#region spyMethod
 /**
- * Wraps a instance method with a Spy.
+ * Wraps a instance method with a SpyProp.
  *
  * @example Usage
  * ```ts
@@ -1050,7 +1050,7 @@ export function spy<Self, Args extends unknown[]>(
 export function spy<Self, Prop extends keyof Self>(
   self: Self,
   property: Prop
-): MethodSpy<
+): MethodSpyProp<
   Self,
   GetParametersFromProp<Self, Prop>,
   GetReturnFromProp<Self, Prop>
@@ -1065,9 +1065,9 @@ export function spy<Self, Args extends unknown[], Return>(
     | (new (...args: Args) => Self)
     | Self,
   property?: keyof Self
-): SpyLike<Self, Args, Return> {
+): SpyLikeProp<Self, Args, Return> {
   if (!funcOrConstOrSelf) {
-    return functionSpy<Self, Args, Return>();
+    return functionSpyProp<Self, Args, Return>();
   } else if (property !== undefined) {
     return methodSpy<Self, Args, Return>(funcOrConstOrSelf as Self, property);
   } else if (funcOrConstOrSelf.toString().startsWith("class")) {
@@ -1075,7 +1075,7 @@ export function spy<Self, Args extends unknown[], Return>(
       funcOrConstOrSelf as new (...args: Args) => Self
     );
   } else {
-    return functionSpy<Self, Args, Return>(
+    return functionSpyProp<Self, Args, Return>(
       funcOrConstOrSelf as (this: Self, ...args: Args) => Return
     );
   }
@@ -1085,14 +1085,14 @@ export function spy<Self, Args extends unknown[], Return>(
 /*###############################################(STUB)###############################################*/
 //#region stub
 /** An instance method replacement that records all calls made to it. */
-export interface Stub<
+export interface StubProp<
   // deno-lint-ignore no-explicit-any
   Self = any,
   // deno-lint-ignore no-explicit-any
   Args extends unknown[] = any[],
   // deno-lint-ignore no-explicit-any
   Return = any,
-> extends MethodSpy<Self, Args, Return> {
+> extends MethodSpyProp<Self, Args, Return> {
   /** The function that is used instead of the original. */
   fake: (this: Self, ...args: Args) => Return;
 }
@@ -1102,7 +1102,7 @@ export interface Stub<
 //#region stub
 
 /**
- * Replaces an instance method with a Stub with empty implementation.
+ * Replaces an instance method with a StubProp with empty implementation.
  *
  * @example Usage
  * ```ts
@@ -1137,9 +1137,13 @@ export interface Stub<
 export function stub<Self, Prop extends keyof Self>(
   self: Self,
   property: Prop
-): Stub<Self, GetParametersFromProp<Self, Prop>, GetReturnFromProp<Self, Prop>>;
+): StubProp<
+  Self,
+  GetParametersFromProp<Self, Prop>,
+  GetReturnFromProp<Self, Prop>
+>;
 /**
- * Replaces an instance method with a Stub with the given implementation.
+ * Replaces an instance method with a StubProp with the given implementation.
  *
  * @example Usage
  * ```ts
@@ -1171,12 +1175,16 @@ export function stub<Self, Prop extends keyof Self>(
     this: Self,
     ...args: GetParametersFromProp<Self, Prop>
   ) => GetReturnFromProp<Self, Prop>
-): Stub<Self, GetParametersFromProp<Self, Prop>, GetReturnFromProp<Self, Prop>>;
+): StubProp<
+  Self,
+  GetParametersFromProp<Self, Prop>,
+  GetReturnFromProp<Self, Prop>
+>;
 export function stub<Self, Args extends unknown[], Return>(
   self: Self,
   property: keyof Self,
   func?: (this: Self, ...args: Args) => Return
-): Stub<Self, Args, Return> {
+): StubProp<Self, Args, Return> {
   if (self[property] !== undefined && typeof self[property] !== "function") {
     throw new MockError("Cannot stub: property is not an instance method");
   }
@@ -1195,10 +1203,10 @@ export function stub<Self, Args extends unknown[], Return>(
     this: Self,
     ...args: Args
   ) => Return;
-  const calls: SpyCall<Self, Args, Return>[] = [];
+  const calls: SpyCallProp<Self, Args, Return>[] = [];
   let restoredTest = false;
   const stub = function (this: Self, ...args: Args): Return {
-    const call: SpyCall<Self, Args, Return> = { args };
+    const call: SpyCallProp<Self, Args, Return> = { args };
     if (this) call.self = this;
     try {
       call.returned = fake.apply(this, args);
@@ -1209,7 +1217,7 @@ export function stub<Self, Args extends unknown[], Return>(
     }
     calls.push(call);
     return call.returned;
-  } as Stub<Self, Args, Return>;
+  } as StubProp<Self, Args, Return>;
   Object.defineProperties(stub, {
     original: {
       enumerable: true,
@@ -1287,7 +1295,7 @@ export function stub<Self, Args extends unknown[], Return>(
  * @param expectedCalls The number of the expected calls.
  */
 export function assertSpyCalls<Self, Args extends unknown[], Return>(
-  spy: SpyLike<Self, Args, Return>,
+  spy: SpyLikeProp<Self, Args, Return>,
   expectedCalls: number
 ) {
   try {
@@ -1296,8 +1304,8 @@ export function assertSpyCalls<Self, Args extends unknown[], Return>(
     assertIsError(e);
     let message =
       spy.calls.length < expectedCalls
-        ? "Spy not called as much as expected:\n"
-        : "Spy called more than expected:\n";
+        ? "SpyProp not called as much as expected:\n"
+        : "SpyProp called more than expected:\n";
     message += e.message.split("\n").slice(1).join("\n");
     throw new AssertionError(message);
   }
@@ -1305,9 +1313,9 @@ export function assertSpyCalls<Self, Args extends unknown[], Return>(
 //#endregion assertSpyCalls
 
 /*###############################################(EXPECTED SPY CALL)###############################################*/
-//#region ExpectedSpyCall
+//#region ExpectedSpyCallProp
 /** Call information recorded by a spy. */
-export interface ExpectedSpyCall<
+export interface ExpectedSpyCallProp<
   // deno-lint-ignore no-explicit-any
   Self = any,
   // deno-lint-ignore no-explicit-any
@@ -1335,11 +1343,11 @@ export interface ExpectedSpyCall<
 }
 
 function getSpyCall<Self, Args extends unknown[], Return>(
-  spy: SpyLike<Self, Args, Return>,
+  spy: SpyLikeProp<Self, Args, Return>,
   callIndex: number
-): SpyCall {
+): SpyCallProp {
   if (spy.calls.length < callIndex + 1) {
-    throw new AssertionError("Spy not called as much as expected");
+    throw new AssertionError("SpyProp not called as much as expected");
   }
   return spy.calls[callIndex]!;
 }
@@ -1372,9 +1380,9 @@ function getSpyCall<Self, Args extends unknown[], Return>(
  * @param expected The expected spy call.
  */
 export function assertSpyCall<Self, Args extends unknown[], Return>(
-  spy: SpyLike<Self, Args, Return>,
+  spy: SpyLikeProp<Self, Args, Return>,
   callIndex: number,
-  expected?: ExpectedSpyCall<Self, Args, Return>
+  expected?: ExpectedSpyCallProp<Self, Args, Return>
 ) {
   const call = getSpyCall(spy, callIndex);
   if (expected) {
@@ -1384,7 +1392,7 @@ export function assertSpyCall<Self, Args extends unknown[], Return>(
       } catch (e) {
         assertIsError(e);
         throw new AssertionError(
-          "Spy not called with expected args:\n" +
+          "SpyProp not called with expected args:\n" +
             e.message.split("\n").slice(1).join("\n")
         );
       }
@@ -1396,8 +1404,8 @@ export function assertSpyCall<Self, Args extends unknown[], Return>(
       } catch (e) {
         assertIsError(e);
         let message = expected.self
-          ? "Spy not called as method on expected self:\n"
-          : "Spy not expected to be called as method on object:\n";
+          ? "SpyProp not called as method on expected self:\n"
+          : "SpyProp not expected to be called as method on object:\n";
         message += e.message.split("\n").slice(1).join("\n");
         throw new AssertionError(message);
       }
@@ -1411,7 +1419,7 @@ export function assertSpyCall<Self, Args extends unknown[], Return>(
       }
       if (call.error) {
         throw new AssertionError(
-          "Spy call did not return expected value, an error was thrown."
+          "SpyProp call did not return expected value, an error was thrown."
         );
       }
       try {
@@ -1419,7 +1427,7 @@ export function assertSpyCall<Self, Args extends unknown[], Return>(
       } catch (e) {
         assertIsError(e);
         throw new AssertionError(
-          "Spy call did not return expected value:\n" +
+          "SpyProp call did not return expected value:\n" +
             e.message.split("\n").slice(1).join("\n")
         );
       }
@@ -1428,7 +1436,7 @@ export function assertSpyCall<Self, Args extends unknown[], Return>(
     if ("error" in expected) {
       if ("returned" in call) {
         throw new AssertionError(
-          "Spy call did not throw an error, a value was returned."
+          "SpyProp call did not throw an error, a value was returned."
         );
       }
       assertIsError(
@@ -1470,9 +1478,9 @@ export function assertSpyCall<Self, Args extends unknown[], Return>(
  * @param expected The expected spy call.
  */
 export async function assertSpyCallAsync<Self, Args extends unknown[], Return>(
-  spy: SpyLike<Self, Args, Promise<Return>>,
+  spy: SpyLikeProp<Self, Args, Promise<Return>>,
   callIndex: number,
-  expected?: ExpectedSpyCall<Self, Args, Promise<Return> | Return>
+  expected?: ExpectedSpyCallProp<Self, Args, Promise<Return> | Return>
 ) {
   const expectedSync = expected && { ...expected };
   if (expectedSync) {
@@ -1484,12 +1492,12 @@ export async function assertSpyCallAsync<Self, Args extends unknown[], Return>(
 
   if (call.error) {
     throw new AssertionError(
-      "Spy call did not return a promise, an error was thrown."
+      "SpyProp call did not return a promise, an error was thrown."
     );
   }
   if (call.returned !== Promise.resolve(call.returned)) {
     throw new AssertionError(
-      "Spy call did not return a promise, a value was returned."
+      "SpyProp call did not return a promise, a value was returned."
     );
   }
 
@@ -1513,7 +1521,7 @@ export async function assertSpyCallAsync<Self, Args extends unknown[], Return>(
       try {
         resolved = await call.returned;
       } catch {
-        throw new AssertionError("Spy call returned promise was rejected");
+        throw new AssertionError("SpyProp call returned promise was rejected");
       }
 
       try {
@@ -1521,7 +1529,7 @@ export async function assertSpyCallAsync<Self, Args extends unknown[], Return>(
       } catch (e) {
         assertIsError(e);
         throw new AssertionError(
-          "Spy call did not resolve to expected value:\n" +
+          "SpyProp call did not resolve to expected value:\n" +
             e.message.split("\n").slice(1).join("\n")
         );
       }
@@ -1575,7 +1583,7 @@ export function assertSpyCallArg<
   Return,
   ExpectedArg,
 >(
-  spy: SpyLike<Self, Args, Return>,
+  spy: SpyLikeProp<Self, Args, Return>,
   callIndex: number,
   argIndex: number,
   expected: ExpectedArg
@@ -1625,7 +1633,7 @@ export function assertSpyCallArgs<
   Return,
   ExpectedArgs extends unknown[],
 >(
-  spy: SpyLike<Self, Args, Return>,
+  spy: SpyLikeProp<Self, Args, Return>,
   callIndex: number,
   expected: ExpectedArgs
 ): ExpectedArgs;
@@ -1666,7 +1674,7 @@ export function assertSpyCallArgs<
   Return,
   ExpectedArgs extends unknown[],
 >(
-  spy: SpyLike<Self, Args, Return>,
+  spy: SpyLikeProp<Self, Args, Return>,
   callIndex: number,
   argsStart: number,
   expected: ExpectedArgs
@@ -1709,7 +1717,7 @@ export function assertSpyCallArgs<
   Return,
   ExpectedArgs extends unknown[],
 >(
-  spy: SpyLike<Self, Args, Return>,
+  spy: SpyLikeProp<Self, Args, Return>,
   callIndex: number,
   argsStart: number,
   argsEnd: number,
@@ -1721,7 +1729,7 @@ export function assertSpyCallArgs<
   Return,
   Self,
 >(
-  spy: SpyLike<Self, Args, Return>,
+  spy: SpyLikeProp<Self, Args, Return>,
   callIndex: number,
   argsStart?: number | ExpectedArgs,
   argsEnd?: number | ExpectedArgs,
