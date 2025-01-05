@@ -64,6 +64,7 @@ A universal testing framework that works seamlessly across Deno, Node.js, and Bu
 - 🚫 Skip and Todo test support
 - 🧹 Automatic resource cleanup
 - 🔒 Type-safe with full TypeScript support
+- 🧪 Test Doubles (Mocks, Stubs, Spies, etc.)
 
 ## 🔮 Coming Soon
 
@@ -74,7 +75,6 @@ A universal testing framework that works seamlessly across Deno, Node.js, and Bu
 - 🤖 AI-Powered CI/CD Test Agent
 - 📝 Logging and Reporting
 - 🧩 BDD (Behavior Driven Development) Support
-- 🧪 Test Doubles (Mocks, Stubs, Spies, etc.)
 - 📸 Snapshot Testing
 - 📈 Benchmarking
 - 🏷️ Type Assertions (Assert & Expect) 
