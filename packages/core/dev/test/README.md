@@ -77,6 +77,8 @@ A universal testing framework that works seamlessly across Deno, Node.js, and Bu
 - 🧪 Test Doubles (Mocks, Stubs, Spies, etc.)
 - 📸 Snapshot Testing
 - 📈 Benchmarking
+- 🏷️ Type Assertions (Assert & Expect) 
+
 
 ## 🚀 Installation
 
