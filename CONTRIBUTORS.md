@@ -10,16 +10,7 @@ We would like to extend our gratitude to the following individuals for their con
 | Bela Bohlender | Developer | XR development | [bela.bohlender@inspatial.dev](mailto:bela.bela@bohlender.email) | [@bbohlender](https://github.com/bbohlender) | [@BelaBohlender](https://x.com/BelaBohlender) |
 | Lars-Erik Roald | Developer | ORM development | [lars.roald@gmail.com](mailto:lars-erik.roald@inspatialapp.com) | [@lroal](https://github.com/lroal) | [@lroal](https://x.com/lroal) |
 
-
-## Package Maintainers
-
-| Core Pipeline | Package | Maintainers |
-|---------|-------------------|----------------|---------|
-| Dev, Cloud, Store, App  | @inspatial/core | Ben Emma |
-| Dev  | @inspatial/xr, @inspatial/run | Bela Bohlender |
-| Cloud  | @inspatial/orm | Lars-Erik Roald |
-
-> **Note**: Each package can have one primary maintainer and multiple co-maintainers. Co-maintainers help with code review, bug fixes, and feature development.
+> **Note**: Each package usually has one primary maintainer and multiple co-maintainers. Co-maintainers help with code review, bug fixes, and feature development.
 
 ### Maintainer Responsibilities
 - **Primary Maintainer**: Leads package development, approves PRs, manages releases
