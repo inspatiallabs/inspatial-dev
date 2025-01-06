@@ -60,7 +60,7 @@ Choose the release channel that best fits your needs:
 | -------------- | ------------------------------------- | ------------------------------------- |
 | 🟢 **Stable**  | Production-ready release              | `deno install @inspatial/core`         |
 | 🟡 **Preview** | Usable early access                   | `deno install @inspatial/core@preview` |
-| 🔴 **Canary**  | Latest features, potentially unstable | `deno install @inspatial/core@canary`  |
+| 🔴 **Canary**  | Highly experimental, potentially unstable | `deno install @inspatial/core@canary`  |
 
 ### 🛠️ Quick Install Guide
 
