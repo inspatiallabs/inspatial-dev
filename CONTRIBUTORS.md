@@ -38,10 +38,10 @@ We would like to extend our gratitude to the following individuals for their con
 | Tier | Requirements | Badge |
 |------|-------------|-------|
 | 🌟 Core | Core team member | ![Core](https://img.shields.io/badge/Core-Team-gold) |
-| 💎 Diamond | 50+ accepted PRs | ![Diamond](https://img.shields.io/badge/Diamond-Contributor-blue) |
-| 🥇 Gold | 25+ accepted PRs | ![Gold](https://img.shields.io/badge/Gold-Contributor-yellow) |
-| 🥈 Silver | 10+ accepted PRs | ![Silver](https://img.shields.io/badge/Silver-Contributor-lightgrey) |
-| 🥉 Bronze | 1+ accepted PRs | ![Bronze](https://img.shields.io/badge/Bronze-Contributor-brown) |
+| 💎 Diamond | 100+ accepted PRs | ![Diamond](https://img.shields.io/badge/Diamond-Contributor-blue) |
+| 🥇 Gold | 50+ accepted PRs | ![Gold](https://img.shields.io/badge/Gold-Contributor-yellow) |
+| 🥈 Silver | 20+ accepted PRs | ![Silver](https://img.shields.io/badge/Silver-Contributor-lightgrey) |
+| 🥉 Bronze | 10+ accepted PRs | ![Bronze](https://img.shields.io/badge/Bronze-Contributor-brown) |
 
 ---
 
