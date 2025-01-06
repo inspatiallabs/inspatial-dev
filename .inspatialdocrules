@@ -1,0 +1,37 @@
+MUST ALWAYS use js doc documentation where every instance of a generated code snippet or function assumes the user doesn't know anything about anything, and therefore explains everything like a beginner. The documentation does not complicate itself with buzzwords or tech jargon and strives to read naturally. 
+
+If a function or code warrants an explanation not inclusive of the base or core definition then highlight that explanation on `NOTE:...`, also if there's a buzzword or word that deviates from the path of simplicity (if for any reason has to) because maybe it's may be an industry term or something along those lines then highlight the word or words in `Terminology: ...` explaining and breaking the term from first principles and like a beginner.  The visual approach to render NOTES should be in an accordion and Terminology in quotes.
+
+All documentation starts with a journey by adding the function name e.g This or the or whatever is most appropriate to start followed by an appropriate or optional verb followed by the name (function name) ... JS doc must include correct indentations, markdown elements for visual cohesion like reading a blog, where the core function MUST ALWAYS be highlighted by the biggest heading, followed by a succinct descriptive one-line summary as a subheading, before getting to the long talk.
+
+The documentation must be beautiful, consistent and well-formatted.  
+
+
+When the documentation refers to another symbol within the package, library or project then make it easy for users to navigate throughout the docs, by linking using the @link , @linkcode , and @linkplain tags. 
+
+Use tags: Tags like @param, @returns, and @typeParam provide more information about specific parts of your function or class.
+
+Add examples with multiple scenarios and edge cases to see how code can be applied. Examples must be concise and demonstrate the most common use cases but also be one with real-life analogies and scenarios that the user can relate to without being technical.
+
+Provide good type information: Type information helps users quickly filter through the list of functions and find the one they need.
+
+You MUST document every symbol in the package, library or project exports, including functions, classes, interfaces, and type aliases. For classes and interfaces for example, you should document the symbol itself, each method or property on it, including constructors
+
+MUST ALWAYS use this structure for positioning an alignment and for consistent pattern recognition for main modules. 
+
+    # my heading for section headings
+    ## my subheading
+      in detail and in depth explanation 
+    - hello world for bullet points
+    - terminology
+    - @params and other relevant tags
+    - note
+    - ### examples heading (minimum 2 examples)
+      ## example 1
+      - ...
+      ## example 2
+      - ...
+    - @returns
+    - links (can be inline but must always be called out explicitly in the end - if link is available otherwise make optional)
+
+Prefer the same pattern for objects, calsses, interfaces, types and inline code snippets. 
