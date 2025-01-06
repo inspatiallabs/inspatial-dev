@@ -17,6 +17,8 @@ We would like to extend our gratitude to the following individuals for their con
 - **Co-Maintainers**: Support development, review PRs, contribute features/fixes
 
 ## Community Contributors
+> **Note**: To be listed here you must have unlocked a contribution tier e.g Bronze, silver etc...
+
 
 | Name | Contributions | PRs | GitHub |
 |------|--------------|-----|---------|
