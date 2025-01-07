@@ -8,9 +8,7 @@
   "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
   "description": "InSpatial ORM",
   "keywords": ["orm", "object-relational-mapping"],
-  "imports": {
-    "orange-orm": "npm:orange-orm@^4.4.2"
-  },
+  "imports": {  },
   "exports": {
     ".": "./src/index.ts"
   }
