@@ -43,6 +43,8 @@ export * from "./farthest-point.ts";
 export * from "./difference.ts";
 export * from "./delay.ts";
 export * from "./backoff-jitter.ts"
+export * from "./get-package-version.ts";
+export * from "./abortable.ts";
 
 // export * from "./getletterspacing.ts";
 // export * from "./validated-auth.ts"; moved to InSpatial Auth

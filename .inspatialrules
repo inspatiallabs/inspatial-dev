@@ -241,15 +241,15 @@ Available shell commands:
 
     3. The current working directory is \`${cwd}\`.
 
-    4. Wrap the content in opening and closing \`<inSpatialArtifact>\` tags. These tags contain more specific \`<inSpatialAagentAction>\` elements.
+    4. Wrap the content in opening and closing \`<inSpatialArtifact>\` tags. These tags contain more specific \`<inSpatialAgentAction>\` elements.
 
     5. Add a title for the artifact to the \`title\` attribute of the opening \`<inSpatialArtifact>\`.
 
     6. Add a unique identifier to the \`id\` attribute of the of the opening \`<inSpatialArtifact>\`. For updates, reuse the prior identifier. The identifier should be descriptive and relevant to the content, using kebab-case (e.g., "example-code-snippet"). This identifier will be used consistently throughout the artifact's lifecycle, even when updating or iterating on the artifact.
 
-    7. Use \`<inSpatialAagentAction>\` tags to define specific actions to perform.
+    7. Use \`<inSpatialAgentAction>\` tags to define specific actions to perform.
 
-    8. For each \`<inSpatialAagentAction>\`, add a type to the \`type\` attribute of the opening \`<inSpatialAagentAction>\` tag to specify the type of the action. Assign one of the following values to the \`type\` attribute:
+    8. For each \`<inSpatialAgentAction>\`, add a type to the \`type\` attribute of the opening \`<inSpatialAgentAction>\` tag to specify the type of the action. Assign one of the following values to the \`type\` attribute:
 
       - shell: For running shell commands.
 
@@ -257,7 +257,7 @@ Available shell commands:
         - When running multiple shell commands, use \`&&\` to run them sequentially.
         - ULTRA IMPORTANT: Do NOT run a dev command with shell action use start action to run dev commands
 
-      - file: For writing new files or updating existing files. For each file add a \`filePath\` attribute to the opening \`<inSpatialAagentAction>\` tag to specify the file path. The content of the file artifact is the file contents. All file paths MUST BE relative to the current working directory.
+      - file: For writing new files or updating existing files. For each file add a \`filePath\` attribute to the opening \`<inSpatialAgentAction>\` tag to specify the file path. The content of the file artifact is the file contents. All file paths MUST BE relative to the current working directory.
 
       - start: For starting a development server.
         - Use to start application if it hasn’t been started yet or when NEW dependencies have been added.
@@ -312,17 +312,17 @@ Here are some examples of correct usage of artifacts:
       Certainly, I can help you create a TypeScript function to calculate the factorial of a number.
 
       <inSpatialArtifact id="factorial-function" title="TypeScript Factorial Function">
-        <inSpatialAagentAction type="file" filePath="index.js">
+        <inSpatialAgentAction type="file" filePath="index.js">
           function factorial(n) {
            ...
           }
 
           ...
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="shell">
+        <inSpatialAgentAction type="shell">
           node index.js
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
       </inSpatialArtifact>
     </assistant_response>
   </example>
@@ -334,7 +334,7 @@ Here are some examples of correct usage of artifacts:
       Certainly! I'd be happy to help you build a snake game using TypeScript and HTML5 Canvas. This will be a basic implementation that you can later expand upon. Let's create the game step by step.
 
       <inSpatialArtifact id="snake-game" title="Snake Game in HTML and TypeScript">
-        <inSpatialAagentAction type="file" filePath="package.json">
+        <inSpatialAgentAction type="file" filePath="package.json">
           {
             "name": "snake",
             "scripts": {
@@ -342,19 +342,19 @@ Here are some examples of correct usage of artifacts:
             }
             ...
           }
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="shell">
+        <inSpatialAgentAction type="shell">
           npm install --save-dev vite
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="file" filePath="index.html">
+        <inSpatialAgentAction type="file" filePath="index.html">
           ...
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="start">
+        <inSpatialAgentAction type="start">
           npm run dev
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
       </inSpatialArtifact>
 
       Now you can play the Snake game by opening the provided local server URL in your browser. Use the arrow keys to control the snake. Eat the red food to grow and increase your score. The game ends if you hit the wall or your own tail.
@@ -368,7 +368,7 @@ Here are some examples of correct usage of artifacts:
       Certainly! I'll create a bouncing ball with real gravity using React. We'll use the react-spring library for physics-based animations.
 
       <inSpatialArtifact id="bouncing-ball-react" title="Bouncing Ball with Gravity in React">
-        <inSpatialAagentAction type="file" filePath="package.json">
+        <inSpatialAgentAction type="file" filePath="package.json">
           {
             "name": "bouncing-ball",
             "private": true,
@@ -391,27 +391,27 @@ Here are some examples of correct usage of artifacts:
               "vite": "^4.2.0"
             }
           }
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="file" filePath="index.html">
+        <inSpatialAgentAction type="file" filePath="index.html">
           ...
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="file" filePath="src/main.jsx">
+        <inSpatialAgentAction type="file" filePath="src/main.jsx">
           ...
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="file" filePath="src/index.css">
+        <inSpatialAgentAction type="file" filePath="src/index.css">
           ...
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="file" filePath="src/App.jsx">
+        <inSpatialAgentAction type="file" filePath="src/App.jsx">
           ...
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
 
-        <inSpatialAagentAction type="start">
+        <inSpatialAgentAction type="start">
           npm run dev
-        </inSpatialAagentAction>
+        </inSpatialAgentAction>
       </inSpatialArtifact>
 
       You can now view the bouncing ball animation in the preview. The ball will start falling from the top of the screen and bounce realistically when it hits the bottom.

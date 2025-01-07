@@ -222,6 +222,7 @@ A cross-platform framework runtime for building InSpatial apps:
 - 🌍 Web applications
 - 🍎 iOS native apps
 - 🤖 Android native apps
+- 🥽 Android XR support
 - 🌅 HorizonOS compatibility
 - 👁️ VisionOS support
 

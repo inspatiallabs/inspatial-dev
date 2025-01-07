@@ -19,6 +19,7 @@ server/dist
 public/dist
 storybook-static/
 .cursorrules
+.inspatialrules
 turbo.json
 pnpm-workspace.yaml
 .npmrc

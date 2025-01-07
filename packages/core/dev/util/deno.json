@@ -45,7 +45,9 @@
     "./farthest-point": "./src/farthest-point.ts",
     "./difference": "./src/difference.ts",
     "./delay": "./src/delay.ts",
-    "./backoff-jitter": "./src/backoff-jitter.ts"
+    "./backoff-jitter": "./src/backoff-jitter.ts",
+    "./abortable": "./src/abortable.ts",
+    "./get-package-version": "./src/get-package-version.ts"
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
