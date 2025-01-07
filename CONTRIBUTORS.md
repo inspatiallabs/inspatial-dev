@@ -13,7 +13,7 @@ We would like to extend our gratitude to the following individuals for their con
 > **Note**: Each package usually has one primary maintainer and multiple co-maintainers. Co-maintainers help with code review, bug fixes, and feature development.
 
 ### Maintainer Responsibilities
-- **Primary Maintainer**: Leads package development, approves PRs, manages releases
+- **Core Maintainer**: Leads package development, approves PRs, manages releases
 - **Co-Maintainers**: Support development, review PRs, contribute features/fixes
 
 ## Community Contributors
