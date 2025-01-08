@@ -2,7 +2,9 @@
 node_modules
 .turbo
 .vscode
-.changeset
+**/.changeset
+**/.github
+**/.vscode
 **/node_modules
 **/dist
 *.log
