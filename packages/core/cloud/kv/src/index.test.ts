@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects, assertExists } from "@std/assert";
+import { assertEquals, assertRejects, assertExists } from "@inspatial/test";
 import {
   inSpatialKV,
   setKV,
@@ -13,6 +13,7 @@ import {
   createKVWatcher,
   type KvSchema,
 } from "./index.ts";
+
 
 // Define the schema types
 type UserSchema = {
