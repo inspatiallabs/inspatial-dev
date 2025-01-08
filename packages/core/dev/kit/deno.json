@@ -9,15 +9,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "imports": {
-    "@inspatial/xr": "jsr:@inspatial/xr@^0.1.0",
-    "@react-three/fiber": "npm:@react-three/fiber@^8.17.10",
-    "@react-three/xr": "npm:@react-three/xr@^6.4.12",
-    "@std/assert": "jsr:@std/assert@1",
-    "motion": "npm:motion@^11.13.1",
-    "react": "npm:react@^19.0.0",
-    "react-dom": "npm:react-dom@^19.0.0",
-    "react-strict-dom": "npm:react-strict-dom@^0.0.29",
-    "three": "npm:three@^0.171.0"
+    "motion": "npm:motion@^11.13.1"
   },
   "exports": {
     ".": "./src/index.ts",

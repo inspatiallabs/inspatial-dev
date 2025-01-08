@@ -27,11 +27,7 @@
     "native"
   ],
   "imports": {
-    "@react-three/fiber": "npm:@react-three/fiber@^8.17.10",
-    "@react-three/xr": "npm:@react-three/xr@^6.4.12",
-    "react": "npm:react@^19.0.0",
-    "react-dom": "npm:react-dom@^19.0.0",
-    "three": "npm:three@^0.171.0"
+
   },
   "exports": {
     ".": "./src/index.ts"

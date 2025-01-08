@@ -8,9 +8,7 @@
   "bugs": "https://github.com/InSpatial-Labs/inspatial-core/issues",
   "description": "InSpatial ECS",
   "keywords": ["ecs", "entity-component-system"],
-  "imports": {
-    "koota": "npm:koota@^0.1.7"
-  },
+  "imports": { },
   "exports": {
     ".": "./src/index.ts"
   }
