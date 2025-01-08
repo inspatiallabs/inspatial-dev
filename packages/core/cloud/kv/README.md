@@ -22,7 +22,7 @@
 _Reality is your canvas_
 
 <h3 align="center">
-  InSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) applications
+  InSpatial is a universal development environment (UDE) <br> for building cross-platform and spatial (AR/MR/VR) applications
 </h3>
 
 [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
