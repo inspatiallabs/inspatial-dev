@@ -9,11 +9,9 @@
 </p>
    </a>
 
-
-   <br>
    <br>
 
-  <h1 align="center">InSpatial Contribution Guide</h1>
+  <h1 align="center">InSpatial Contribution Guideline</h1>
 
 
   <h3 align="center">
@@ -33,6 +31,7 @@ First off, thank you for considering contributing to InSpatial! It's people like
 [![LinkedIn](https://img.shields.io/badge/linkedin-connect_with_us-0a66c2.svg?style=flat-square)](https://www.linkedin.com/company/inspatiallabs)
 
 </div>
+
 ---
 
 ## 📑 Table of Contents
@@ -43,10 +42,11 @@ First off, thank you for considering contributing to InSpatial! It's people like
 
   - [3️⃣ Syncing with Upstream](#3️⃣-syncing-with-upstream)
   - [4️⃣ Creating a Pull Request](#4️⃣-creating-a-pull-request)
+  - [5️⃣ Git Commit + Messages](#5️⃣-git-commit-+-messages)
   - [🔍 Review and Approval Process](#-review-and-approval-process)
 - [🌳 Branching Strategy](#-branching-strategy)
 - [💻 Development Setup](#-development-setup)
-- [🎨 Contribution Guidelines](#-contribution-guidelines)
+
  
 - [📦 Package Structure](#-package-structure)
 - [🚀 Release Channels](#-release-channels)
@@ -123,6 +123,83 @@ Then:
    - **Description**: Include details, screenshots, or diagrams
    - **Reviewers**: Assign domain maintainers
 
+### 5️⃣ Git Commit + Messages
+
+> 📝 **Template**
+```
+type(domain): InSpatial package-name - Short Summary
+
+[Optional Detailed Description]
+```
+
+> 💡 **For Example**
+
+```
+feat(cloud): InSpatial Auth - Add user profile page
+
+Implements a new user profile page with the following features:
+- Profile image upload
+- Bio editing
+- Social links integration
+```
+
+<details>
+<summary><strong>Available Types</strong></summary>
+
+- `feat` - A new feature
+- `fix` - A bug fix
+- `refactor` - Code changes that neither fix a bug nor add a feature
+- `docs` - Documentation updates
+- `test` - Adding or updating tests
+- `chore` - Maintenance tasks
+</details>
+
+<details>
+<summary><strong>Available Domains</strong></summary>
+
+- `cloud` - Cloud infrastructure and deployment
+- `store` - Marketplace features and integrations
+- `dev` - Developer tools and utilities
+- `app` - Application features and integrations
+</details>
+
+<details>
+<summary><strong>Available Packages</strong></summary>
+
+| Package | Description |
+|---------|------------|
+| `util` | Utility functions |
+| `xr` | XR functions |
+| `kit` | Kit functions |
+| `run` | Run functions |
+| `cache` | Cache functions |
+| `env` | Environment functions |
+| `router` | Router functions |
+| `server` | Server functions |
+| `ecs` | ECS functions |
+| `iss` | ISS functions |
+| `tw` | Tailwind functions |
+| `theme` | Theme functions |
+| `cli` | CLI functions |
+| `test` | Test functions |
+| `vfx` | VFX functions |
+| `icon` | Icon functions |
+| `inmoji` | Inmoji functions |
+| `kv` | KV functions |
+| `db` | DB functions |
+| `cms` | CMS functions |
+| `orm` | ORM functions |
+| `auth` | Auth functions |
+| `vault` | Vault functions |
+| `ratelimit` | Rate limit functions |
+| `infetch` | Infetch functions |
+| `cron` | Cron functions |
+| `live` | Live functions |
+| `deploy` | Deploy functions |
+</details>
+
+---   
+
 ### 🔍 Review and Approval Process
 
 #### Code Review Guidelines
@@ -144,6 +221,8 @@ Then:
    - Creates PR to `main`
    - Coordinates final reviews
    - Handles merge to production
+
+
 
 ## 🌳 Branching Strategy
 
@@ -188,11 +267,16 @@ main (production)
    The stable, production-ready branch. Changes here are fully tested and reviewed.
 2. **Domain Branches (e.g., `cloud-main`, `store-main`, `dev-main`, `app-main`)**  
    Each domain has its own branch for consolidating features and updates. These branches are owned by a designated domain maintainer.
-3. **Maintainer Branches (e.g., `cloud-ben`, `cloud-eli`)**  
+3. **Individual Branches (e.g., `cloud-ben`, `cloud-eli`)**  
    Individual contributors use these branches to develop features or experiment. 
 4. **Hotfix Branches (e.g., `hotfix-123`)**  
    These branches are used to fix critical bugs in the `main` branch. They are created from the `main` branch and merged back into it.
 
+
+### Branch Hierarchy
+<div align="center">
+    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/contribution-hierarchy.png" alt="InSpatial Contribution Hierarchy">
+</div>
 
 ---
 

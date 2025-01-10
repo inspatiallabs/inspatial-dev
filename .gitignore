@@ -32,3 +32,4 @@ pnpm-workspace.yaml
 tsconfig.json
 tsup.config.ts
 .eslintrc.js
+deno.lock
