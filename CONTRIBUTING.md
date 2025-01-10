@@ -2,78 +2,224 @@
 
 First off, thank you for considering contributing to InSpatial! It's people like you that make open source such a great medium for collaboration and innovation 🎉
 
+---
+
+## 📑 Table of Contents
+- [🌟 How Can I Contribute?](#-how-can-i-contribute)
+- [🌳 Branching Strategy](#-branching-strategy)
+- [💻 Development Setup](#-development-setup)
+- [🎨 Style Guide](#-style-guide)
+ 
+- [📦 Package Structure](#-package-structure)
+- [🚀 Release Channels](#-release-channels)
+- [📝 Documentation](#-documentation)
+- [🤝 Community](#-community)
+- [📜 License](#-license)
+
+
+---
+
 ## 🌟 How Can I Contribute?
 
 ### 🐛 Reporting Bugs
-
-1. **Use the GitHub issue tracker** - Check if the bug has already been reported.
-2. **Check the closed issues** - Your issue might have been resolved in a newer version.
-3. **Provide detailed information** - Include steps to reproduce, expected vs actual behavior, and your environment details.
+1. **Use the GitHub issue tracker** - Check if the bug has already been reported
+2. **Check the closed issues** - Your issue might have been resolved
+3. **Provide detailed information**:
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Environment details
+   - Screenshots if applicable
 
 ### 💡 Suggesting Enhancements
+1. **Use the GitHub issue tracker**
+2. **Be clear and descriptive**
+3. **Provide examples and use cases**
 
-1. **Use the GitHub issue tracker** - Check if the enhancement has already been suggested.
-2. **Be clear and descriptive** - Explain why this enhancement would be useful to most users.
-3. **Provide examples** - If applicable, share examples of how the feature would work.
+### 🛠️ Style Guide 
+1. **Follow coding conventions**
+2. **Run linting**: `deno lint`
+3. **Run formatting**: `deno fmt`
+4. **Write [Conventional Commits](https://www.conventionalcommits.org/)**
+5. **Include tests**
+see [STYLEGUIDE.md](STYLEGUIDE.md) for more information.
 
-### 🛠️ Pull Requests
+---
 
-1. **Fork the repo and create your branch** from `main`.
-2. **Follow our coding conventions** - Check our style guide below.
-3. **Make sure your code lints** - Run `deno lint` in the package you are changing before submitting.
-4. **Write meaningful commit messages** - Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
-5. **Include tests** - New features and bug fixes should include tests. - use `deno test` to run tests do not use external test runners.
+## Core Contribution Workflow
+
+### **1. Setting Up Your Environment**
+- Fork the repository and clone your fork:
+  ```bash
+  git clone https://github.com/YourUsername/InSpatial-Core.git
+
+    Add the upstream repository:
+
+    git remote add upstream https://github.com/InSpatial/InSpatial-Core.git
+
+2. Working on Features
+
+    Always start by creating a new branch off the relevant domain branch:
+
+git checkout -b cloud-ben cloud-main
+
+Commit changes regularly with descriptive messages:
+
+    git commit -m "Add feature X to cloud module"
+
+3. Syncing with the Upstream
+
+    Sync your branch with the latest changes from the domain branch:
+
+    git fetch upstream
+    git merge upstream/cloud-main
+
+4. Creating a Pull Request
+
+    Push your branch to GitHub:
+
+    git push origin cloud-ben
+
+    Open a pull request (PR) from your branch (cloud-ben) to the domain branch (cloud-main):
+        Title: Feature: [short description]
+        Description: Include details, screenshots, or diagrams if needed.
+        Assign reviewers from your domain (e.g., cloud-main maintainers).
+
+Review and Approval Process
+Code Review Guidelines
+
+    Self-Review: Before submitting a PR, check for:
+        Code readability and adherence to standards.
+        Comprehensive testing (manual and automated).
+    Peer Review: Reviewers will:
+        Validate functionality and style.
+        Suggest improvements or raise concerns.
+
+Merging Process
+
+    The domain maintainer approves and merges PRs into the domain branch (e.g., cloud-main).
+    Once stable, the domain maintainer creates a PR to main and coordinates final reviews.
+
+## 🌳 Branching Strategy
+
+### Domain Ownership and Decision Making
+Each domain in InSpatial Core has explicit ownership and decision-making authority:
+
+| Domain | Owner | Responsibilities |
+|--------|-------|-----------------|
+| Cloud | @cloud-maintainer | Final decisions on cloud infrastructure, deployment, and scaling |
+| Store | @store-maintainer | Final decisions on marketplace features and integrations |
+| Dev | @dev-maintainer | Final decisions on developer experience and tooling |
+| App | @app-maintainer | Final decisions on app features and integrations |
+
+- Domain owners are core-maintainers and have final say on:
+  - Feature acceptance/rejection
+  - Architecture decisions
+  - Breaking changes
+  - Release timing
+  - Technical direction
+- External Contributors should:
+  - Align proposals with domain owner's vision
+  - Seek early feedback on major changes
+  - Respect domain-specific guidelines
+  - Direct domain-specific questions to respective owners
+
+### Branch Hierarchy
+```
+main (production)
+├── cloud-main
+│   ├── cloud-ben
+│   └── cloud-eli
+├── store-main
+│   ├── store-sam
+│   └── store-alex
+└── dev-main
+    ├── dev-jay
+    └── dev-kim
+```
+
+### Branch Naming
+1. **`main`**  
+   The stable, production-ready branch. Changes here are fully tested and reviewed.
+2. **Domain Branches (e.g., `cloud-main`, `store-main`, `dev-main`, `app-main`)**  
+   Each domain has its own branch for consolidating features and updates. These branches are owned by a designated domain maintainer.
+3. **Maintainer Branches (e.g., `cloud-ben`, `cloud-eli`)**  
+   Individual contributors use these branches to develop features or experiment. 
+4. **Hotfix Branches (e.g., `hotfix-123`)**  
+   These branches are used to fix critical bugs in the `main` branch. They are created from the `main` branch and merged back into it.
+
+
+---
 
 ## 💻 Development Setup
 
-1. Fork and clone the repository
-2. Run `deno install` to install dependencies
-3. Create a branch for your changes
-4. Make your changes
-5. Run tests with `deno test` 
-6. Highlight the core package you are changing in your commit message e.g. `fix(dev): fix bug in @inspatial/kit package`
-7. Push your branch and submit a pull request
+```bash
+# Clone your fork
+git clone https://github.com/inspatiallabs/inspatial-core.git
 
-Read [Deno's JSR documentation](https://jsr.io/docs) for best practices for contributing to a package.
+# Install dependencies
+deno install
 
-## 🎨 Syntax and Style Guide
+# Set up pre-commit hooks
+deno run --allow-read --allow-write scripts/setup-hooks.ts
 
-- Use TypeScript for all code
-- ESM modules only: do not use CommonJS
-- Use Deno APIs over Node.js APIs where possible
-- Simple File Name: File names must be Windows and Unix compatible. This means that file names cannot contain characters like *, :, or ?. You may also not have multiple files with the same name, but different casing.
-- No “slow types” - see [Slow Types](https://jsr.io/docs/about-slow-types) for more information.
-- Always document your code by adding comments to the codebase - see [Writing Docs](https://jsr.io/docs/writing-docs) for more information.
-- If you are writing shaders make sure to use WebGPU Shading Language (WGSL) or supersets like Three Shading Language (TSL) with backwards compatibility for WebGL 2.0 (GLSL) - there are helpers in the [@inspatial/util](https://inspatial.dev/) package to help with this.
-- Follow functional and declarative programming patterns - see  [Patterns.dev](https://www.patterns.dev/) for more information.
-- Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`)
-- Structure files: exported component, subcomponents, helpers, static content, types
-- Use [InSpatial Kit](https://inspatial.dev/kit) for constructing components and [InSpatial ISS](https://inspatial.dev/iss) for styling
-- Use [Motion](https://motion.dev/) for animations and transitions
+# Run development server
+deno task dev
+```
 
+---
+
+## 📦 Package Structure
+```
+
+inspatial-core/
+├── dev/          # InSpatial Dev
+│   ├── core/     # Core functionality
+│   ├── kit/      # UI components
+│   ├── iss/      # Styling system
+│   └── util/     # Utilities
+├── cloud/        # InSpatial Cloud
+│   ├── core/     # Core functionality
+│   ├── kit/      # UI components
+│   ├── iss/      # Styling system
+│   └── util/     # Utilities
+└── store/        # InSpatial Store
+    ├── core/   # Core functionality
+    ├── kit/    # UI components
+    ├── iss/    # Styling system
+    └── util/   # Utilities
+```
+
+---
 
 ## 🚀 Release Channels
 
-Choose the release channel that best fits your needs:
+| Channel | Tag | Description | Command |
+|---------|-----|-------------|---------|
+| 🟢 **Stable** | `latest` | Production-ready | `deno install @inspatial/core` |
+| 🟡 **Preview** | `preview` | Beta features | `deno install @inspatial/core@preview` |
+| 🔴 **Canary** | `canary` | Experimental | `deno install @inspatial/core@canary` |
 
-| Channel        | Description                           | Installation                          |
-| -------------- | ------------------------------------- | ------------------------------------- |
-| 🟢 **Stable**  | Production-ready release              | `deno install @inspatial/core`         |
-| 🟡 **Preview** | Usable early access                   | `deno install @inspatial/core@preview` |
-| 🔴 **Canary**  | Highly experimental, potentially unstable | `deno install @inspatial/core@canary`  |
 
-### 🛠️ Quick Install Guide
+---
 
-## 🏆 Recognition
+## 📝 Documentation
 
-Contributors will be recognized in our [CONTRIBUTORS.md](CONTRIBUTORS.md) file. Thank you for your support!
+- Use JSDoc comments
+- Include code examples
+- Document breaking changes
+- Update README.md when needed
 
-## 📜 Code of Conduct
+---
 
-By participating in this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
+## 🤝 Community
 
-## 🤔 Questions?
+- Join our [Discord](https://discord.gg/inspatiallabs)
+- Follow us on [Twitter](https://twitter.com/inspatiallabs)
+- Follow on [LinkedIn](https://www.linkedin.com/company/inspatiallabs)
+---
 
-Don't hesitate to reach out if you have any questions. We're here to help!
+## 📜 License
+
+By contributing, you agree that your contributions will be licensed under the project's MIT License.
 
 Happy coding! 🎈

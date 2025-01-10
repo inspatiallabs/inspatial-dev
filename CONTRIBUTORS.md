@@ -4,12 +4,11 @@ We would like to extend our gratitude to the following individuals for their con
 
 ## All Contributors
 
-| Name | Role | Contributions | Contact | GitHub | Twitter |
+| Name | Role | Domain | Contact | Link |  |
 |------|------|--------------|----------|---------|---------|
-| Ben Emma | Lead Developer | Architecture design, core development, project management | [ben.emma@inspatial.dev](mailto:benemma@inspatialapp.com) | [@benemmaofficial](https://github.com/benemmaofficial) | [@benemmaofficial](https://x.com/ib3nnn) |
-| Bela Bohlender | Developer | XR development | [bela.bohlender@inspatial.dev](mailto:bela.bela@bohlender.email) | [@bbohlender](https://github.com/bbohlender) | [@BelaBohlender](https://x.com/BelaBohlender) |
-| Lars-Erik Roald | Developer | ORM development | [lars.roald@gmail.com](mailto:lars-erik.roald@inspatialapp.com) | [@lroal](https://github.com/lroal) | [@lroal](https://x.com/lroal) |
-
+| Ben Emma | 🌟 Core Maintainer | InSpatial Dev | [benemma@inspatiallabs.com](mailto:benemma@inspatiallabs.com) | [@benemmaofficial](https://github.com/benemmaofficial) |
+|  Eli Veffer | 🌟 Core Maintainer | InSpatial Cloud | [eliveffer@inspatiallabs.com](mailto:eliveffer@inspatiallabs.com) | [@eveffer](https://github.com/eveffer) |
+    
 > **Note**: Each package usually has one primary maintainer and multiple co-maintainers. Co-maintainers help with code review, bug fixes, and feature development.
 
 ### Maintainer Responsibilities
@@ -17,7 +16,7 @@ We would like to extend our gratitude to the following individuals for their con
 - **Co-Maintainers**: Support development, review PRs, contribute features/fixes
 
 ## Community Contributors
-> **Note**: To be listed here you must have unlocked a contribution tier e.g Bronze, silver etc...
+> **Note**: To be listed here you must have unlocked a contribution tier e.g Bronze, silver etc... core maintainers are excluded from this list.
 
 
 | Name | Contributions | PRs | GitHub |
@@ -30,7 +29,7 @@ We would like to extend our gratitude to the following individuals for their con
 
 | Tier | Requirements | Badge |
 |------|-------------|-------|
-| 🌟 Core | Core team member | ![Core](https://img.shields.io/badge/Core-Team-gold) |
+| 🌟 Core | Core maintainer | ![Core](https://img.shields.io/badge/Core-Team-gold) |
 | 💎 Diamond | 100+ accepted PRs | ![Diamond](https://img.shields.io/badge/Diamond-Contributor-blue) |
 | 🥇 Gold | 50+ accepted PRs | ![Gold](https://img.shields.io/badge/Gold-Contributor-yellow) |
 | 🥈 Silver | 20+ accepted PRs | ![Silver](https://img.shields.io/badge/Silver-Contributor-lightgrey) |
@@ -40,7 +39,7 @@ We would like to extend our gratitude to the following individuals for their con
 
 ## How to Contribute
 
-We welcome contributions from the community! Please follow these steps:
+We welcome external contributions from the community! Please follow these steps:
 
 1. **Fork the repository** on GitHub
 2. **Create a new branch** for your feature or bug fix
