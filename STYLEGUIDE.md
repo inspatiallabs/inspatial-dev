@@ -45,45 +45,45 @@
 
 ## 📚 Code Standards
 
-1. **ESM Modules Only**  
+1. ### ESM Modules Only  
    Avoid using CommonJS modules. Use ECMAScript Modules (ESM) for all imports and exports.
 
-2. **Prefer Deno APIs**  
+2. ### Prefer Deno APIs  
    Where applicable, use Deno APIs over Node.js APIs to align with modern, secure practices we provide abstractions to make it easier to use Deno APIs.
 
-3. **Simple File Names**  
+3. ### Simple File Names  
    File names must be compatible with both Windows and Unix. Avoid characters like `*`, `:`, or `?`. Files with the same name but different casing are not allowed.
 
-4. **No "Slow Types"**  
+4. ### No `"Slow Types"`  
    Avoid "slow types" as defined in [Slow Types](https://jsr.io/docs/about-slow-types).
 
-5. **No Native Binaries**  
+5. ### No Native Binaries  
    - Avoid dependencies that require native binaries or compilation
    - Use pure JavaScript/TypeScript alternatives where possible
    - Use WebAssembly (WASM) modules when native functionality is absolutely required
 
-6. **Shader Standards**  
+6. ### Shader Standards  
    - Use **WebGPU Shading Language (WGSL)** or supersets like **Three Shading Language (TSL)** with backwards compatibility for WebGL 2.0 (GLSL).  
    - Helpers in the [@inspatial/util](https://inspatial.dev/) package can assist with this.
 
-7. **Functional and Declarative Patterns**  
+7. ### Functional and Declarative Patterns  
    Adhere to functional and declarative programming patterns. Refer to [Patterns.dev](https://www.patterns.dev/) for guidance.
 
-8. **Descriptive Variable Names**  
+8. ### Descriptive Variable Names  
    Use meaningful names with auxiliary verbs (e.g., `isLoading`, `hasError`).
 
-9. **File Structure**  
+9. ### File Structure  
     - Exported components first
     - Subcomponents next
     - Helpers, static content, and types last
 
-10. **Use InSpatial Tools**  
+10. ### Use InSpatial Tooling 
     - For constructing components, use [InSpatial Kit](https://inspatial.dev/kit).  
     - For styling, use [InSpatial ISS](https://inspatial.dev/iss).
     - Use [InSpatial Util](https://inspatial.dev/util) for all utilities.
     - Use [InSpatial Infetch](https://inspatial.dev/infetch) for all HTTP requests.
 
-11. **Animations and Transitions**  
+11. ### Animations  
     Use [Motion](https://motion.dev/) for all animations and transitions(javascript only).
 
 ---
