@@ -29,6 +29,7 @@
     "jsr:@std/ulid@1.0.0": "1.0.0",
     "jsr:@std/yaml@^1.0.5": "1.0.5",
     "npm:@standard-schema/spec@*": "1.0.0-beta.4",
+    "npm:@standard-schema/spec@1.0.0-beta.4": "1.0.0-beta.4",
     "npm:@stylexjs/stylex@~0.9.3": "0.9.3",
     "npm:@tailwindcss/aspect-ratio@~0.4.2": "0.4.2_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:@tailwindcss/forms@~0.5.9": "0.5.9_tailwindcss@4.0.0-beta.6",

@@ -1,4 +1,4 @@
-import type { StandardSchemaV1 as v1 } from "npm:@standard-schema/spec";
+import type { StandardSchemaV1 as v1 } from "npm:@standard-schema/spec@1.0.0-beta.4";
 import { Prettify } from "@inspatial/util";
 
 export type SubjectSchema = Record<string, v1>;

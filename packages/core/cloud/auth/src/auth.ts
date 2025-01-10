@@ -623,7 +623,7 @@ export function inSpatialAuth<
       url.searchParams.set("error", oauth.error);
       url.searchParams.set("error_description", oauth.description);
       return c.redirect(url.toString());
-    } catch (e) {
+    } catch (_e) {
       // If we can't get authorization, return a JSON error
       return c.json(
         {
