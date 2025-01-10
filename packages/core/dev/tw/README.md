@@ -152,9 +152,9 @@ Choose the release channel that best fits your needs:
 
 | Channel        | Description                           | Installation                          |
 | -------------- | ------------------------------------- | ------------------------------------- |
-| 🟢 **Stable**  | Production-ready release              | `deno install @inspatial/tailwind-config`         |
-| 🟡 **Preview** | Usable early access                   | `deno install @inspatial/tailwind-config@preview` |
-| 🔴 **Canary**  | Latest features, potentially unstable | `deno install @inspatial/tailwind-config@canary`  |
+| 🟢 **Stable**  | Production-ready              | `deno install @inspatial/tailwind-config`         |
+| 🟡 **Preview** | Beta features                   | `deno install @inspatial/tailwind-config@preview` |
+| 🔴 **Canary**  | Experimental | `deno install @inspatial/tailwind-config@canary`  |
 
 ---
 

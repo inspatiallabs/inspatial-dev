@@ -1,19 +1,55 @@
-# 🚀 Contributing to InSpatial Core
+<div align="center">
+    <a href="https://inspatiallabs.com" target="_blank">
+    <p align="center">
+    <picture>
+    <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg">
+      <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-light.svg">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg" alt="InSpatial" width="300">
+    </picture>
+</p>
+   </a>
 
+
+   <br>
+   <br>
+
+  <h1 align="center">InSpatial Contribution Guide</h1>
+
+
+  <h3 align="center">
+    
 First off, thank you for considering contributing to InSpatial! It's people like you that make open source such a great medium for collaboration and innovation 🎉
+  </h3>
 
+
+[![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
+[![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud)
+[![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)
+[![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store)
+
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Discord](https://img.shields.io/badge/discord-join_us-5a66f6.svg?style=flat-square)](https://discord.gg/inspatiallabs)
+[![Twitter](https://img.shields.io/badge/twitter-follow_us-1d9bf0.svg?style=flat-square)](https://twitter.com/inspatiallabs)
+[![LinkedIn](https://img.shields.io/badge/linkedin-connect_with_us-0a66c2.svg?style=flat-square)](https://www.linkedin.com/company/inspatiallabs)
+
+</div>
 ---
 
 ## 📑 Table of Contents
 - [🌟 How Can I Contribute?](#-how-can-i-contribute)
+- [🌳 Core Contribution Workflow](#-core-contribution-workflow)
+  - [1️⃣ Setting Up Your Environment](#1️⃣-setting-up-your-environment)
+  - [2️⃣ Working on Features](#2️⃣-working-on-features)
+
+  - [3️⃣ Syncing with Upstream](#3️⃣-syncing-with-upstream)
+  - [4️⃣ Creating a Pull Request](#4️⃣-creating-a-pull-request)
+  - [🔍 Review and Approval Process](#-review-and-approval-process)
 - [🌳 Branching Strategy](#-branching-strategy)
 - [💻 Development Setup](#-development-setup)
-- [🎨 Style Guide](#-style-guide)
+- [🎨 Contribution Guidelines](#-contribution-guidelines)
  
 - [📦 Package Structure](#-package-structure)
 - [🚀 Release Channels](#-release-channels)
-- [📝 Documentation](#-documentation)
-- [🤝 Community](#-community)
 - [📜 License](#-license)
 
 
@@ -35,69 +71,79 @@ First off, thank you for considering contributing to InSpatial! It's people like
 2. **Be clear and descriptive**
 3. **Provide examples and use cases**
 
-### 🛠️ Style Guide 
-1. **Follow coding conventions**
-2. **Run linting**: `deno lint`
-3. **Run formatting**: `deno fmt`
-4. **Write [Conventional Commits](https://www.conventionalcommits.org/)**
-5. **Include tests**
-see [STYLEGUIDE.md](STYLEGUIDE.md) for more information.
+---
+
+### 🛠️ Contribution Guidelines
+1. **Run linting**: `deno lint`
+2. **Run formatting**: `deno fmt`
+3. **Include & run tests**: `deno test`
+4. **Follow [STYLEGUIDE.md](STYLEGUIDE.md) code conventions.**
+5. **Follow [InSpatial Doc Rules](.inspatialdocrules) for documentation.**
+6. **Write [Conventional Commits](https://www.conventionalcommits.org/)**
 
 ---
 
-## Core Contribution Workflow
+## 🔄 Core Contribution Workflow
 
-### **1. Setting Up Your Environment**
-- Fork the repository and clone your fork:
-  ```bash
-  git clone https://github.com/YourUsername/InSpatial-Core.git
+### 1️⃣ Setting Up Your Environment
+```bash
+# Fork the repository and clone your fork
+git clone https://github.com/YourUsername/InSpatial-Core.git
 
-    Add the upstream repository:
+# Add the upstream repository
+git remote add upstream https://github.com/InSpatial/InSpatial-Core.git
+```
 
-    git remote add upstream https://github.com/InSpatial/InSpatial-Core.git
-
-2. Working on Features
-
-    Always start by creating a new branch off the relevant domain branch:
-
+### 2️⃣ Working on Features
+```bash
+# Create a new branch off the relevant domain branch
 git checkout -b cloud-ben cloud-main
 
-Commit changes regularly with descriptive messages:
+# Commit changes regularly with descriptive messages
+git commit -m "feat(cloud): add feature X to cloud module"
+```
 
-    git commit -m "Add feature X to cloud module"
+### 3️⃣ Syncing with Upstream
+```bash
+# Sync your branch with the latest changes from the domain branch
+git fetch upstream
+git merge upstream/cloud-main
+```
 
-3. Syncing with the Upstream
+### 4️⃣ Creating a Pull Request
+```bash
+# Push your branch to GitHub
+git push origin cloud-ben
+```
 
-    Sync your branch with the latest changes from the domain branch:
+Then:
+1. Open a pull request (PR) from your branch to the domain branch
+2. Format your PR:
+   - **Title**: `feat(domain): short description`
+   - **Description**: Include details, screenshots, or diagrams
+   - **Reviewers**: Assign domain maintainers
 
-    git fetch upstream
-    git merge upstream/cloud-main
+### 🔍 Review and Approval Process
 
-4. Creating a Pull Request
+#### Code Review Guidelines
+- **Self-Review Checklist**:
+  - ✓ Code readability and standards compliance
+  - ✓ Comprehensive testing (manual and automated)
+  - ✓ Documentation updates if needed
+  
+- **Peer Review Focus**:
+  - ✓ Functionality validation
+  - ✓ Style adherence
+  - ✓ Performance implications
+  - ✓ Security considerations
 
-    Push your branch to GitHub:
-
-    git push origin cloud-ben
-
-    Open a pull request (PR) from your branch (cloud-ben) to the domain branch (cloud-main):
-        Title: Feature: [short description]
-        Description: Include details, screenshots, or diagrams if needed.
-        Assign reviewers from your domain (e.g., cloud-main maintainers).
-
-Review and Approval Process
-Code Review Guidelines
-
-    Self-Review: Before submitting a PR, check for:
-        Code readability and adherence to standards.
-        Comprehensive testing (manual and automated).
-    Peer Review: Reviewers will:
-        Validate functionality and style.
-        Suggest improvements or raise concerns.
-
-Merging Process
-
-    The domain maintainer approves and merges PRs into the domain branch (e.g., cloud-main).
-    Once stable, the domain maintainer creates a PR to main and coordinates final reviews.
+#### Merging Process
+1. Domain maintainer reviews and approves PR
+2. PR gets merged into domain branch (e.g., `cloud-main`)
+3. Once stable, domain maintainer:
+   - Creates PR to `main`
+   - Coordinates final reviews
+   - Handles merge to production
 
 ## 🌳 Branching Strategy
 
@@ -172,51 +218,29 @@ deno task dev
 ```
 
 inspatial-core/
-├── dev/          # InSpatial Dev
-│   ├── core/     # Core functionality
-│   ├── kit/      # UI components
-│   ├── iss/      # Styling system
-│   └── util/     # Utilities
-├── cloud/        # InSpatial Cloud
-│   ├── core/     # Core functionality
-│   ├── kit/      # UI components
-│   ├── iss/      # Styling system
-│   └── util/     # Utilities
-└── store/        # InSpatial Store
-    ├── core/   # Core functionality
-    ├── kit/    # UI components
-    ├── iss/    # Styling system
-    └── util/   # Utilities
+├── dev/          
+│   ├── .../            
+│   └── .../     
+├── cloud/       
+│   ├── .../          
+│   └── .../     
+└── store/       
+    ├── .../            
+    └── .../      
 ```
 
 ---
 
 ## 🚀 Release Channels
 
-| Channel | Tag | Description | Command |
-|---------|-----|-------------|---------|
-| 🟢 **Stable** | `latest` | Production-ready | `deno install @inspatial/core` |
-| 🟡 **Preview** | `preview` | Beta features | `deno install @inspatial/core@preview` |
-| 🔴 **Canary** | `canary` | Experimental | `deno install @inspatial/core@canary` |
+| Channel | Description | Command |
+|---------|-------------|---------|
+| 🟢 **Stable** | Production-ready | `deno install @inspatial/core` |
+| 🟡 **Preview** | Beta features | `deno install @inspatial/core@preview` |
+| 🔴 **Canary** | Experimental | `deno install @inspatial/core@canary` |
 
 
----
 
-## 📝 Documentation
-
-- Use JSDoc comments
-- Include code examples
-- Document breaking changes
-- Update README.md when needed
-
----
-
-## 🤝 Community
-
-- Join our [Discord](https://discord.gg/inspatiallabs)
-- Follow us on [Twitter](https://twitter.com/inspatiallabs)
-- Follow on [LinkedIn](https://www.linkedin.com/company/inspatiallabs)
----
 
 ## 📜 License
 

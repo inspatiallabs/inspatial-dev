@@ -172,9 +172,9 @@ Choose the release channel that best fits your needs:
 
 | Channel | Description | Installation |
 |---------|-------------|--------------|
-| 🟢 **Stable** | Production-ready release | `deno install @inspatial/infetch` |
-| 🟡 **Preview** | Usable early access | `deno install @inspatial/infetch@preview` |
-| 🔴 **Canary** | Latest features, potentially unstable | `deno install @inspatial/infetch@canary` |
+| 🟢 **Stable** | Production-ready | `deno install @inspatial/infetch` |
+| 🟡 **Preview** | Beta features | `deno install @inspatial/infetch@preview` |
+| 🔴 **Canary** | Experimental | `deno install @inspatial/infetch@canary` |
 
 ---
 
