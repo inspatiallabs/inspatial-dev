@@ -19,7 +19,7 @@
 _Reality is your canvas_
 
 <h3 align="center">
-  InSpatial Auth is a comprehensive authentication platform <br> for building secure and flexible authentication systems
+  InSpatial is a universal development environment (UDE) <br> for building cross-platform and spatial (AR/MR/VR) applications
 </h3>
 
 [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
@@ -38,7 +38,7 @@ _Reality is your canvas_
 
 ## 🛡️ InSpatial Auth (🔴 unstable)
 
-A versatile authentication framework designed to support a wide range of authentication methods and integrations.
+A universal and spatial authentication framework that provides cross-platform identity management with support for social logins, OTP, JWT tokens, and headless integration capabilities, designed to seamlessly work across web, mobile, and XR platforms while maintaining framework agnosticism.
 
 ## 🌟 Features
 
