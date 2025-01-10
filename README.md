@@ -325,8 +325,8 @@ bunx jsr add @inspatial/ecs
 | **KV** | Key-Value Store | `deno add jsr:@inspatial/kv` | [inspatial.kv](https://www.inspatial.kv) | 🟡 Preview |
 | **DB** | Database | `deno add jsr:@inspatial/db` | [inspatial.cloud/db](https://www.inspatial.cloud/db) | 🔴 Unstable |
 | **CMS** | Content Management System | `deno add jsr:@inspatial/cms` | [inspatial.cloud/cms](https://www.inspatial.cloud/cms) | 🔴 Unstable |
-| **ORM** | Object Relational Mapping | `deno add jsr:@inspatial/orm` | [inspatial.cloud/orm](https://www.inspatial.cloud/orm) | 🟡 Preview  |
-| **Auth** | Authentication | `deno add jsr:@inspatials/auth` | [inspatial.cloud/auth](https://www.inspatial.cloud/auth) | 🟡 Preview  |
+| **ORM** | Object Relational Mapping | `deno add jsr:@inspatial/orm` | [inspatial.cloud/orm](https://www.inspatial.cloud/orm) | 🔴 Unstable  |
+| **Auth** | Authentication | `deno add jsr:@inspatials/auth` | [inspatial.cloud/auth](https://www.inspatial.cloud/auth) | 🔴 Unstable  |
 | **Vault** | Asset Management | `deno add jsr:@inspatial/vault` | [inspatial.cloud/vault](https://www.inspatial.cloud/vault) | 🔴 Unstable |
 | **RateLimit** | Rate Limiter | `deno add jsr:@inspatial/ratelimit` | [inspatial.cloud/ratelimit](https://www.inspatial.cloud/ratelimit) | 🟡 Preview  |
 | **InFetch** | Data Fetching | `deno add jsr:@inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) | 🟡 Preview  |
