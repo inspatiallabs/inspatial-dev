@@ -36,17 +36,31 @@ _Reality is your canvas_
 
 ---
 
-## 🛡️ InSpatial Auth
+## 🛡️ InSpatial Auth (🔴 unstable)
 
 A versatile authentication framework designed to support a wide range of authentication methods and integrations.
 
 ## 🌟 Features
 
+- 🌐 Universal & Cross-Platform 
+- 📱 Works on Web, Mobile and XR
+- 🧩 Modular and headless authentication system 
+- 🔧 Framework agnostic 
+- ☁️ Seamless integration with InSpatial Cloud
+- 🔄 Enhanced Session Management
+- 📧 OTP/Pin Code via (Email)
+- 🔑 Social Login (Apple, Google, Facebook, X, etc.)
+- 🔌 Allows you to implement "login with myapp" 
+- 🎫 JWT
+
+
+## 🔮 Coming Soon
+
 - 🔑 Single Sign-On (SSO)
 - 💼 Wallet Login
 - 📞 Phone Authentication
 - 🛡️ Biometric Authentication
-- 👤 Anonymous Authentication
+- 👤 Anonymous/Guest Authentication
 - 🎮 Player Authentication
 - 🔌 Extension System
 - 🔐 Password Authentication
@@ -55,14 +69,13 @@ A versatile authentication framework designed to support a wide range of authent
 - 🎮 Steam
 - 🌐 Federated Authentication
 - 🗄️ Multiple Storage Adapters (e.g., InSpatial KV)
+- 🧑‍🤝‍🧑 User Management
+- 🏢 Organization and Workspace Management
+- 📱 OTP/Pin Code via (SMS, Phone)
+- 🔐 Two Factor Authentication (2FA)
+- 💾 InSpatial ORM/DB Adapter
 
-## 🔮 Coming Soon
 
-- 📱 Advanced Mobile Authentication
-- 🧩 Modular Plugin System
-- 🔄 Enhanced Session Management
-- 🔍 Advanced Security Features
-- 📊 Comprehensive Analytics and Reporting
 
 ## 🚀 Installation
 
@@ -84,7 +97,7 @@ pnpm dlx jsr add @inspatial/auth
 # bun
 bunx jsr add @inspatial/auth
 ```
-
+<!-- 
 ---
 
 ## 🛠️ Usage
@@ -97,13 +110,14 @@ Follow these steps to integrate **InSpatial Auth** into your application:
 
 ```typescript
 import { Auth } from "@inspatial/auth"
+import { getEnv, setEnv } from "@inspatial/env"
 
 // Initialize the auth instance with your configuration
 const auth = Auth({
   storage: {
     type: "kv", // Using InSpatial KV for storage
-    url: process.env.KV_URL,
-    token: process.env.KV_TOKEN
+    url: getEnv("KV_URL"),
+    token: getEnv("KV_TOKEN")
   }
 })
 ```
@@ -114,14 +128,14 @@ const auth = Auth({
 ```typescript
 // Setup OAuth2 providers
 auth.use("github", GithubAuth({
-  clientID: process.env.GITHUB_CLIENT_ID,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  clientID: getEnv("GITHUB_CLIENT_ID"),
+  clientSecret: getEnv("GITHUB_CLIENT_SECRET"),
   scopes: ["user", "user:email"]
 }))
 
 // Setup OpenID Connect providers
 auth.use("google", GoogleOidcAuth({
-  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientID: getEnv("GOOGLE_CLIENT_ID"),
   scopes: ["openid", "email", "profile"]
 }))
 ```
@@ -135,9 +149,9 @@ auth.use("email", OTPAuth({
   // Handle OTP UI rendering
   request: async (req, state, form, error) => {
     if (state.type === "start") {
-      return renderEmailForm() // Your UI component
+      return <EmailForm /> // Your UI component
     }
-    return renderCodeForm() // Your UI component
+    return <CodeForm /> // Your UI component
   },
   
   // Handle code sending
@@ -291,7 +305,7 @@ auth.on("login", (user) => {
   // user is typed as User
   console.log(user.profile?.name)
 })
-```
+``` -->
 
 ---
 
