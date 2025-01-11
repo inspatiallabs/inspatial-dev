@@ -37,29 +37,27 @@
 - [💫 Core Principles](#-core-principles)
 - [📚 Code Standards](#-code-standards)
 
-  - [📦 ESM Modules Only](#esm-modules-only)
-  - [🔒 Prefer Deno APIs](#prefer-deno-apis)
-  - [📝 Simple File Names](#simple-file-names)
-  - [⚡ No "Slow Types"](#no-slow-types)
-  - [🚫 No Native Binaries](#no-native-binaries)
-  - [🎨 Shader Standards](#shader-standards)
-  - [🔄 Functional and Declarative Patterns](#functional-and-declarative-patterns)
+  - [📦 ESM Modules Only](#-esm-modules-only)
+  - [🔒 Deno APIs](#-deno-apis)
+  - [📝 Simple File Names](#-simple-file-names)
+  - [⚡ Type Performance](#-type-performance)
+  - [🚫 Dependencies](#-dependencies)
   
-  - [✍️ Descriptive Variable Names](#descriptive-variable-names)
-  - [📁 File Structure](#file-structure)
-  - [🛠️ Use InSpatial Tooling](#use-inspatial-tooling)
-  - [🎬 Animations](#animations)
+  - [Technical Standards](#technical-standards)
+    - [🎨 Shaders](#-shaders)
+    - [🔄 Programming Patterns](#-programming-patterns)
+    - [✍️ Variable Naming](#️-variable-naming)
+    - [📁 File Structure](#-file-structure)
+  - [InSpatial Ecosystem](#inspatial-ecosystem)
 
 - [🏷️ Naming Conventions](#️-naming-conventions)
-
+  - [General Rules](#general-rules)
+  
 - [✏️ TypeScript](#-typescript)
-  - [📝 Type Definitions](#type-definitions)
-
-  - [⚙️ Compiler Configuration](#compiler-configuration)
-  - [✨ Best Practices](#best-practices)
-
+  - [Type Definitions](#type-definitions)
+  - [Compiler Configuration](#compiler-configuration)
+  - [Best Practices](#best-practices)
 - [🧪 Test Structure and Organization](#-test-structure-and-organization)
-
 - [💭 Comments](#-comments)
 
 ---
@@ -73,52 +71,37 @@
 | **Self-Explanatory Code** | Write intuitive code that requires minimal comments |
 | **Comprehensive Documentation** | Document following [InSpatial Doc Rules](.inspatialdocrules) |
 
----
 
 ## 📚 Code Standards
 
-1. ### ESM Modules Only  
-   Avoid using CommonJS modules. Use ECMAScript Modules (ESM) for all imports and exports.
+| Standard | Description | Guidelines |
+|----------|-------------|------------|
+| 📦 **ESM Modules** | Use ECMAScript Modules exclusively | • Avoid CommonJS modules<br>• Use `import/export` syntax |
+| 🔒 **Deno APIs** | Prefer Deno over Node.js APIs | • Use provided Deno API abstractions<br>• Follow secure practices |
+| 📝 **File Names** | Cross-platform compatible naming | • Avoid `*`, `:`, `?`<br>• No case-only differences<br>• Use kebab-case |
+| ⚡ **Type Performance** | Avoid "slow types" | • Follow [JSR slow types guide](https://jsr.io/docs/about-slow-types)<br>• Use efficient type patterns <br>• Follow [Typescript's Performance Rules](https://github.com/microsoft/TypeScript/wiki/Performance) |
+| 🚫 **Dependencies** | No native binary dependencies | • Pure TypeScript preferred<br>• Use WASM for native functionality |
 
-2. ### Prefer Deno APIs  
-   Where applicable, use Deno APIs over Node.js APIs to align with modern, secure practices we provide abstractions to make it easier to use Deno APIs.
+### Technical Standards
 
-3. ### Simple File Names  
-   File names must be compatible with both Windows and Unix. Avoid characters like `*`, `:`, or `?`. Files with the same name but different casing are not allowed.
+| Category | Guidelines | Tools & Resources |
+|----------|------------|-------------------|
+| 🎨 **Shaders** | • Use WGSL or TSL<br>• WebGL 2.0 compatibility | [@inspatial/util](https://inspatial.dev/) |
+| 🔄 **Programming Patterns** | • Functional programming<br>• Declarative patterns | [Patterns.dev](https://www.patterns.dev/) |
+| ✍️ **Variable Naming** | • Use auxiliary verbs<br>• Self-documenting names | Examples:<br>`isLoading`<br>`hasError` |
+| 📁 **File Structure** | 1. Exported components<br>2. Subcomponents<br>3. Helpers<br>4. Static content<br>5. Types | Keep consistent order |
 
-4. ### No `"Slow Types"`  
-   Avoid "slow types" as defined in [Slow Types](https://jsr.io/docs/about-slow-types).
+### InSpatial Ecosystem
 
-5. ### No Native Binaries  
-   - Avoid dependencies that require native binaries or compilation
-   - Use Typescript!
-   - Use WebAssembly (WASM) modules when native functionality is absolutely required
+| Tool | Purpose | Usage |
+|------|---------|-------|
+| [InSpatial Kit](https://inspatial.dev/kit) | Component Construction | Primary UI building blocks |
+| [InSpatial ISS](https://inspatial.dev/iss) | Styling | Styling system |
+| [InSpatial Util](https://inspatial.dev/util) | Utilities | Common utilities |
+| [InSpatial Infetch](https://inspatial.dev/infetch) | HTTP Requests | API communication |
+| [Motion](https://motion.dev/) | Animations | JavaScript animations & transitions |
 
-6. ### Shader Standards  
-   - Use **WebGPU Shading Language (WGSL)** or supersets like **Three Shading Language (TSL)** with backwards compatibility for WebGL 2.0 (GLSL).  
-   - Helpers in the [@inspatial/util](https://inspatial.dev/) package can assist with this.
-
-7. ### Functional and Declarative Patterns  
-   Adhere to functional and declarative programming patterns. Refer to [Patterns.dev](https://www.patterns.dev/) for guidance.
-
-8. ### Descriptive Variable Names  
-   Use meaningful names with auxiliary verbs (e.g., `isLoading`, `hasError`).
-
-9. ### File Structure  
-    - Exported components first
-    - Subcomponents next
-    - Helpers, static content, and types last
-
-10. ### Use InSpatial Tooling 
-    - For constructing components, use [InSpatial Kit](https://inspatial.dev/kit).  
-    - For styling, use [InSpatial ISS](https://inspatial.dev/iss).
-    - Use [InSpatial Util](https://inspatial.dev/util) for all utilities.
-    - Use [InSpatial Infetch](https://inspatial.dev/infetch) for all HTTP requests.
-
-11. ### Animations  
-    Use [Motion](https://motion.dev/) for all animations and transitions(javascript only).
-
-
+---
 
 ## 🏷️ Naming Conventions
 
