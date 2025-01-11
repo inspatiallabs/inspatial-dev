@@ -32,7 +32,39 @@
 
 ---
 
-## 🎯 Core Principles
+## 📋 Table of Contents
+
+- [💫 Core Principles](#-core-principles)
+- [📚 Code Standards](#-code-standards)
+
+  - [📦 ESM Modules Only](#esm-modules-only)
+  - [🔒 Prefer Deno APIs](#prefer-deno-apis)
+  - [📝 Simple File Names](#simple-file-names)
+  - [⚡ No "Slow Types"](#no-slow-types)
+  - [🚫 No Native Binaries](#no-native-binaries)
+  - [🎨 Shader Standards](#shader-standards)
+  - [🔄 Functional and Declarative Patterns](#functional-and-declarative-patterns)
+  
+  - [✍️ Descriptive Variable Names](#descriptive-variable-names)
+  - [📁 File Structure](#file-structure)
+  - [🛠️ Use InSpatial Tooling](#use-inspatial-tooling)
+  - [🎬 Animations](#animations)
+
+- [🏷️ Naming Conventions](#️-naming-conventions)
+
+- [✏️ TypeScript](#-typescript)
+  - [📝 Type Definitions](#type-definitions)
+
+  - [⚙️ Compiler Configuration](#compiler-configuration)
+  - [✨ Best Practices](#best-practices)
+
+- [🧪 Test Structure and Organization](#-test-structure-and-organization)
+
+- [💭 Comments](#-comments)
+
+---
+
+## 💫 Core Principles
 
 | Principle | Description |
 |-----------|-------------|
@@ -59,7 +91,7 @@
 
 5. ### No Native Binaries  
    - Avoid dependencies that require native binaries or compilation
-   - Use pure JavaScript/TypeScript alternatives where possible
+   - Use Typescript!
    - Use WebAssembly (WASM) modules when native functionality is absolutely required
 
 6. ### Shader Standards  
@@ -86,71 +118,83 @@
 11. ### Animations  
     Use [Motion](https://motion.dev/) for all animations and transitions(javascript only).
 
----
 
-## Typescript
-
-- Use **ES6+ syntax**: arrow functions, destructuring, template literals, etc.
-- Avoid `any` unless absolutely necessary. Use strict and explicit typing.
-
-
-**Example:**
-```typescript
-// ✅ Do: Use ES6+ syntax with strict typing
-const fetchData = (id: string): Promise<Data> => {
-  return inFetch(`/api/data/${id}`).then((response) => response.json());
-};
-
-// ❌ Don't: Use loose typing or older syntax
-function fetchData(id) {
-  return inFetch(`/api/data/${id}`).then((response) => response.json());
-}
-```
-
----
 
 ## 🏷️ Naming Conventions
 
+| Type | Convention | Example | Additional Rules |
+|------|------------|---------|-----------------|
+| Variables | camelCase | `userData` | Use descriptive names that convey intent |
+| Components | PascalCase | `UserProfile` | - |
+| Files/Directories | kebab-case | `user-profile.ts` | - |
+| Types/Interfaces | PascalCase + Prop | `UserProp` | Must start with uppercase letter |
+| Private Variables | underscore prefix | `_privateData` | - |
+| Functions | camelCase | `fetchUserData` | - |
+| Constants | SCREAMING_SNAKE_CASE | `MAX_RETRY_COUNT` | - |
+| Boolean Variables | camelCase with prefix | `isLoading`, `hasError` | Use prefixes: is, has, should, can, etc. |
+| Event Handlers | camelCase with 'handle' prefix | `handleClick` | - |
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Variables | camelCase | `userData` |
-| Components | PascalCase | `UserProfile` |
-| Files/Directories | kebab-case | `user-profile.ts` |
-| Types/Interfaces | PascalCase + Prop | `UserProp` |
-| Private Variables | underscore prefix | `_privateData` |
+
+### General Rules
+- Avoid abbreviations unless widely understood (e.g., `id` is fine, but `usr` is not)
+- Names should be self-documenting and clearly indicate purpose
+- Keep naming consistent across related entities
 
 ---
-- Use **descriptive names** that convey intent.
-- Avoid abbreviations unless widely understood (e.g., `id` is fine, but `usr` is not).
-- Prefix private variables with an underscore (`_`).
-- Start types and interfaces with uppercase letter (e.g., `User`)
-- Suffix types and interfaces with "Prop" keyword (e.g., `UserProp`)
-- Use camelCase for functions and variable names.
-- Use PascalCase for component names.
-- Use kebab-case for file and directory names.
 
-**@Typing:**
+## ✏️ TypeScript
+
+### Type Definitions
+| Practice | Do | Don't | Reason |
+|----------|----|----|--------|
+| Type Annotations | `function foo(): BazType` | `function foo()` | Helps compiler work faster with explicit types |
+| Type Composition | `interface Foo extends Bar, Baz` | `type Foo = Bar & Baz` | Interfaces create cached, flat object types |
+| Base Types | `interface Animal { ... }` | `type Animal = Dog \| Cat` | Reduces type comparison complexity |
+| Complex Types | `type ComplexType = { ... }` | Inline complex types | Named types are more compact and cacheable |
+
+### Compiler Configuration
+| Flag | Purpose | Impact |
+|------|---------|--------|
+| `--incremental` | Save compilation state | Recompiles only changed files |
+| `--skipLibCheck` | Skip `.d.ts` checking | Faster compilation by skipping verified types |
+| `--strictFunctionTypes` | Optimize type checks | Reduces assignability checks between types |
+
+### Best Practices
+- Use explicit return types on exported functions
+- Prefer interfaces over type intersections for better caching
+- Name complex types instead of using anonymous types
+- Use base types instead of large union types
+- Keep type hierarchies shallow when possible
+- Use **ES6+ syntax**: arrow functions, destructuring, template literals, etc.
+- Avoid `any` unless absolutely necessary. Use strict and explicit typing.
+- Follow [Typescript's Performance Rules](https://github.com/microsoft/TypeScript/wiki/Performance)
+
+### Example
 ```typescript
-// Good
-const userList: User[] = [];
-
-// Bad
-const ul: any = [];
-```
-
-**@Components:**
-```typescript
-// ✅ Do: Functional components
-export function Button({ label, onClick }: ButtonProps) {
-  return <button onClick={...}>{label}</button>
+// ✅ Do: Use interfaces and explicit types
+interface UserData {
+  id: string;
+  name: string;
 }
 
-// ❌ Don't: Class components
-class Button extends Component { ... }
+// ✅ Do: Use ES6+ syntax with strict typing
+function fetchUser(id: string): Promise<UserData> {
+  return inFetch(`/users/${id}`);
+}
 ```
 
----
+```typescript
+// ❌ Don't: Use type intersections and implicit types
+type UserData = BaseUser & {
+  extraData: unknown;
+}
+
+// ❌ Don't: Use type intersections and implicit types
+function fetchUser(id) {
+  return inFetch(`/users/${id}`);
+}
+```
+
 
 ## 🧪 Test Structure and Organization
 
@@ -200,7 +244,9 @@ describe('fetchUser', () => {
     await expect(fetchUser('')).rejects.toThrow('Invalid user ID');
   });
 });
+```
 
+```typescript
 // ❌ Don't: Vague test names or incomplete coverage
 test({
   name: "button test",
@@ -209,8 +255,6 @@ test({
   }
 });
 ```
-
----
 
 ## 📝 Comments
 - **When to Comment**:
@@ -227,7 +271,7 @@ test({
  * @returns A promise resolving to the user object.
  */
 function fetchUser(id: string): Promise<User> {
-  return api.get(`/users/${id}`);
+  return inFetch(`/users/${id}`);
 }
 ```
 
