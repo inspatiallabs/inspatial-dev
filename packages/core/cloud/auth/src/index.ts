@@ -1,6 +1,7 @@
 export { createSubjects } from "./session.ts";
 export { inSpatialAuth } from "./auth.ts";
 export { createClient } from "./client.ts";
+export { MemoryStorage } from "./storage/memory.ts"
 
 /*##########################(SOCIAL AUTH/OAUTH2)##########################*/
 
