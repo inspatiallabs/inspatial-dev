@@ -28,7 +28,7 @@ if ((globalThis as any).Deno) {
   runtime = "bun";
 } else if ((globalThis as any).process?.versions?.node) {
   runtime = "node";
-  node = import("node:test");
+  node = require("node:test");
 }
 
 export { runtime };
