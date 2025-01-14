@@ -1,9 +1,9 @@
 {
   "name": "@inspatial/test",
   "license": "Apache-2.0",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "imports": {
-    "@inspatial/util": "jsr:@inspatial/util@^0.0.4"
+    "@inspatial/util": "jsr:@inspatial/util@^0.0.8"
   },
   "exports": {
     ".": "./src/index.ts",
