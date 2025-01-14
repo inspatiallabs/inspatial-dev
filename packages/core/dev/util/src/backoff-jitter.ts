@@ -76,7 +76,7 @@ export function backoffJitter(
   attempt: number,
   multiplier: number,
   jitter: number
-) {
+): number {
   const exp = Math.min(cap, base * multiplier ** attempt);
   return (1 - jitter * Math.random()) * exp;
 }

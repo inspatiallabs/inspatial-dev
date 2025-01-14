@@ -2,7 +2,7 @@
  *
  * @access private
  */
-export async function getPackageVersion() {
+export async function getPackageVersion(): Promise<string> {
   try {
     // Try deno.json first
     const denoConfig = await Deno.readTextFile("deno.json");
