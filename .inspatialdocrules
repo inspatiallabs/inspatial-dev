@@ -156,8 +156,11 @@ IMPORTANT: Prefer this visual hierarchy and template whenever possible.
  * <details>
  * <summary>Click to learn more about edge cases</summary>
  * 
- * - Note 1: Important information about specific scenarios
- * - Note 2: Additional considerations to keep in mind
+ * > [!NOTE]
+ * > Important information about specific scenarios
+ * 
+ * > [!NOTE]
+ * > Additional considerations to keep in mind
  * </details>
  * 
  * ### 📝 Type Definitions

@@ -86,6 +86,7 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 | **CLI** | Command Line Interface | `deno add jsr:@inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) | 🔴 Unstable |
 | **Util** | Utility Functions | `deno add jsr:@inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) | 🟢 Stable |
 | **Test** | Test Framework | `deno add jsr:@inspatial/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🟡 Preview |
+| **Cache** | Cache System | `deno add jsr:@inspatial/cache` | [inspatial.dev/cache](https://www.inspatial.dev/cache) | 🔴 Unstable |
 | **VFX** | Visual Effects | `deno add jsr:@inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) | 🔴 Unstable |
 | **Icon** | Iconography | `deno add jsr:@inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) | 🔴 Unstable |
 | **InMoji** | InMoji | `deno add jsr:@inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) | 🔴 Unstable |
@@ -137,29 +138,6 @@ A universal UI library for crafting stunning user interfaces across multiple pla
 - Cursor Trails
 
 
-#### Install the InSpatial KIT:
-
-```bash
-deno add jsr:@inspatial/kit
-```
-##
-```bash
-npx jsr add @inspatial/kit
-```
-##
-```bash
-yarn dlx jsr add @inspatial/kit
-```
-##
-```bash
-pnpm dlx jsr add @inspatial/kit
-```
-##
-```bash
-bunx jsr add @inspatial/kit
-```
-
-
 ---
 
 <div align="center">
@@ -187,27 +165,6 @@ A progressive and native cross-platform AR/MR/VR renderer:
 - Gesture and voice input support
 - Spatial mapping and anchoring
 
-#### Install the InSpatial XR:
-
-```bash
-deno add jsr:@inspatial/xr
-```
-##
-```bash
-npx jsr add @inspatial/xr
-```
-##
-```bash
-yarn dlx jsr add @inspatial/xr
-```
-##
-```bash
-pnpm dlx jsr add @inspatial/xr
-```
-##
-```bash
-bunx jsr add @inspatial/xr
-```
 
 ---
 
@@ -238,28 +195,6 @@ A cross-platform framework runtime for building InSpatial apps:
 - Built-in state management
 - Seamless API integrations
 
-#### Install the InSpatial Run:
-
-```bash
-deno add jsr:@inspatial/run
-```
-##
-```bash
-npx jsr add @inspatial/run
-```
-##
-```bash
-yarn dlx jsr add @inspatial/run
-```
-##
-```bash
-pnpm dlx jsr add @inspatial/run
-```
-##
-```bash
-bunx jsr add @inspatial/run
-```
-
 ---
 
 <div align="center">
@@ -285,27 +220,6 @@ An Entity Component System architecture for building scalable and performant app
 - Easy integration with InSpatial Kit and XR
 - Scalable architecture for complex applications
 
-#### Install the InSpatial ECS:
-
-```bash
-deno add jsr:@inspatial/ecs
-```
-##
-```bash
-npx jsr add @inspatial/ecs
-```
-##
-```bash
-yarn dlx jsr add @inspatial/ecs
-```
-##
-```bash
-pnpm dlx jsr add @inspatial/ecs
-```
-##
-```bash
-bunx jsr add @inspatial/ecs
-```
 
 ---
 
@@ -331,8 +245,9 @@ bunx jsr add @inspatial/ecs
 | **RateLimit** | Rate Limiter | `deno add jsr:@inspatial/ratelimit` | [inspatial.cloud/ratelimit](https://www.inspatial.cloud/ratelimit) | 🟡 Preview  |
 | **InFetch** | Data Fetching | `deno add jsr:@inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) | 🟡 Preview  |
 | **Cron** | Cron Jobs | `deno add jsr:@inspatial/cron` | [inspatial.cloud/cron](https://www.inspatial.cloud/cron) | 🔴 Unstable |
-| **Analytics** | Analytics | `deno add jsr:@inspatial/analytics` | [inspatial.cloud/analytics](https://www.inspatial.cloud/analytics) | 🔴 Unstable |
-| **Live** | Realtime Infrastucture | `deno add jsr:@inspatial/live` | [inspatial.cloud/live](https://www.inspatial.cloud/live) | 🔴 Unstable |
+| **Queue** | Queue System | `deno add jsr:@inspatial/queue` | [inspatial.cloud/queue](https://www.inspatial.cloud/queue) | 🔴 Unstable |
+| **InSight** | Analytics, Observability, Monitoring, Telemetry, Logs | `deno add jsr:@inspatial/insights` | [inspatial.cloud/insights](https://www.inspatial.cloud/insights) | 🔴 Unstable |
+| **Realtime** | Realtime Infrastucture | `deno add jsr:@inspatial/realtime` | [inspatial.cloud/realtime](https://www.inspatial.cloud/realtime) | 🔴 Unstable |
 | **Deploy** | Serverless Edge Deployment | `deno add jsr:@inspatial/deploy` | [inspatial.cloud/deploy](https://www.inspatial.cloud/deploy) | 🔴 Unstable |
 
 
@@ -351,29 +266,10 @@ A powerful, type-safe key-value store built with schema validation at compile ti
 - 🧩 Utility functions for common operations
 - 🛠️ Flexible and extensible architecture
 - 💪 Full TypeScript support
+- 🔄 Atomic operations and transactions
+- 📊 Queue processing with middleware support
+- 👀 Real-time data watching capabilities
 
-
-#### Install the InSpatial KV:
-
-```bash
-deno add jsr:@inspatial/kv
-```
-##
-```bash
-npx jsr add @inspatial/kv
-```
-##
-```bash
-yarn dlx jsr add @inspatial/kv
-```
-##
-```bash
-pnpm dlx jsr add @inspatial/kv
-```
-##
-```bash
-bunx jsr add @inspatial/kv
-```
 
 ---
 
