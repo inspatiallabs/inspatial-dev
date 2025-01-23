@@ -64,6 +64,43 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 ---
  
  <div align="center">
+  <a href="https://www.inspatial.app#gh-dark-mode-only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-light.svg"  alt="InSpatial App" height="45">
+  </a>
+  <a href="https://www.inspatial.app#gh-light-mode- only" target="_blank">
+      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-dark.svg"  alt="InSpatial App" height="45">
+  </a>
+
+  <br>
+
+   InSpatial App is a no-code/low-code platform as a service for building cross-platform and spatial (AR/MR/VR) applications.
+ </div>
+
+ <br>
+
+
+
+
+
+
+
+<div align="center">
+    <a href="https://inspatiallabs.com" target="_blank">
+    <p align="center">
+    <picture>
+    <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-banner-blur.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-banner-blur.png">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-banner-blur.png" alt="InSpatial App" width="100%">
+    </picture>
+</p>
+   </a>
+</div>
+
+
+
+---
+ 
+ <div align="center">
   <a href="https://www.inspatial.dev#gh-dark-mode-only" target="_blank">
       <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-light.svg"  alt="InSpatial Dev" height="45">
   </a>
