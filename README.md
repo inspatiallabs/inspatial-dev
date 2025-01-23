@@ -85,7 +85,7 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 
 
 <div align="center">
-    <a href="https://inspatiallabs.com" target="_blank">
+    <a href="https://inspatial.app" target="_blank">
     <p align="center">
     <picture>
     <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-banner-blur.png">
