@@ -1,4 +1,14 @@
 // deno-lint-ignore-file ban-types
+declare global {
+  namespace JSX {
+    interface Element extends Node {}
+
+    interface IntrinsicElements {
+      [elemName: string]: Record<string, any>;
+    }
+  }
+}
+
 type Props = Record<string, any>;
 type Children = (Node | string | number | boolean | null | undefined)[];
 
@@ -79,7 +89,8 @@ function handleProps(el: HTMLElement, props: Props | null): void {
   });
 }
 
-function createElement(
+// Main createElement function for JSX
+function h(
   type: string | Function,
   props: Props | null,
   ...children: Children
@@ -100,20 +111,15 @@ function createElement(
   return element;
 }
 
-export const Fragment = ({
-  children,
-}: {
-  children: Children;
-}): DocumentFragment => {
+// Fragment implementation
+function Fragment({ children }: { children: Children }): DocumentFragment {
   const fragment = document.createDocumentFragment();
   parseChildren(children).forEach((child) => fragment.appendChild(child));
   return fragment;
-};
+}
 
-// Export the JSX factory
-export const jsx = createElement;
-export const jsxs = createElement; // For static children
-export const jsxDEV = createElement; // For development
+// Export for Deno's JSX precompile
+export { h as jsx, h as jsxDEV, h as jsxs, Fragment };
 
 // Example usage:
 /*
