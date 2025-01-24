@@ -12,20 +12,26 @@ export interface BaseNode {
 }
 
 export interface DOMNode extends BaseNode {
-  target: "dom";
+  target: Extract<DirectiveRenderTargetProp, "dom">;
   element: Node;
 }
 
 export interface GPUNode extends BaseNode {
-  target: "gpu";
-  geometry?: any;
-  material?: any;
+  target: Extract<DirectiveRenderTargetProp, "gpu">;
+  geometry?: GPUBuffer;
+  material?: GPUShaderModule;
+  pipeline?: GPURenderPipeline;
+  bindGroup?: GPUBindGroup;
+  vertices?: Float32Array;
+  indices?: Uint16Array;
+  uniforms?: GPUBuffer;
   children?: GPUNode[];
 }
 
 export interface NativeNode extends BaseNode {
-  target: "native";
-  view: any;
+  target: Extract<DirectiveRenderTargetProp, "native">;
+  view: any; // NativeScript View type
+  children?: NativeNode[];
 }
 
 export type RenderNode = DOMNode | GPUNode | NativeNode;

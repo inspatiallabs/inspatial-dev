@@ -1,5 +1,7 @@
 import { currentTarget } from "./directive.ts";
 import { DOMRenderer } from "./dom.ts";
+import { GPURenderer } from "./gpu.ts";
+import { NativeRenderer } from "./native.ts";
 import {
   DirectiveRenderTargetProp,
   DOMNode,
@@ -29,7 +31,6 @@ type DelegatedEventHandler = {
 
 const _delegatedEvents = new Map<string, Set<DelegatedEventHandler>>();
 
-
 export function setDirectiveRenderTargetProp(
   target: DirectiveRenderTargetProp
 ): void {
@@ -37,7 +38,7 @@ export function setDirectiveRenderTargetProp(
 }
 
 // Main JSX factory function
-export function h(
+export function render(
   type: string | Function,
   props: Record<string, any> | null,
   ...children: any[]
@@ -46,9 +47,9 @@ export function h(
     case "dom":
       return DOMRenderer.getInstance().createElement(type, props, ...children);
     case "gpu":
-      throw new Error("GPU renderer not implemented");
+      return GPURenderer.getInstance().createElement(type, props);
     case "native":
-      throw new Error("Native renderer not implemented");
+      return NativeRenderer.getInstance().createElement(type, props);
     default:
       throw new Error(`Unknown render target: ${currentTarget}`);
   }
@@ -72,7 +73,7 @@ export function Fragment({ children }: { children: any[] }): RenderNode {
 }
 
 // Export for JSX
-export { h as jsx, h as jsxDEV, h as jsxs };
+export { render as jsx, render as jsxDEV, render as jsxs };
 
 // Declare global JSX namespace
 declare global {
