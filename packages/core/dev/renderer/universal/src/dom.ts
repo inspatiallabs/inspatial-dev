@@ -1,25 +1,8 @@
+import { SVG_NAMESPACE } from "./const.ts";
+import { SVG_ELEMENTS } from "./const.ts";
+import { DOMNode } from "./types.ts";
 
-// Constants
-export const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
-export const SVG_ELEMENTS = new Set([
-  "svg",
-  "path",
-  "circle",
-  "rect",
-  "g",
-  "polygon",
-  "polyline",
-  "line",
-  "text",
-  "tspan",
-  "defs",
-  "pattern",
-  "mask",
-  "use",
-  "clipPath",
-]);
-
-
+// DOM Renderer
 export class DOMRenderer {
   private static instance: DOMRenderer;
   private eventListenersInitialized = false;
