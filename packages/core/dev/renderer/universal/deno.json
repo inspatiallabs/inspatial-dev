@@ -1,0 +1,13 @@
+{
+  "name": "@inspatial/renderer",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "description": "InSptial Universal Renderer (GPU, DOM, Native)",
+  "imports": {},
+  "exports": {
+    ".": "./src/index.ts",
+    "./gpu": "./src/gpu.ts",
+    "./dom": "./src/dom.ts",
+    "./native": "./src/native.ts"
+  }
+}

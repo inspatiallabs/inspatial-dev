@@ -4,10 +4,12 @@
     "jsr:@hono/hono@^4.6.13": "4.6.16",
     "jsr:@inspatial/kv@*": "0.0.2",
     "jsr:@inspatial/kv@^0.0.2": "0.0.2",
-    "jsr:@inspatial/util@*": "0.0.5",
+    "jsr:@inspatial/test@^0.0.7": "0.0.7",
+    "jsr:@inspatial/util@*": "0.0.7",
     "jsr:@inspatial/util@^0.0.4": "0.0.4",
     "jsr:@inspatial/util@^0.0.5": "0.0.5",
     "jsr:@inspatial/util@^0.0.7": "0.0.7",
+    "jsr:@inspatial/util@^0.0.8": "0.0.8",
     "jsr:@standard-schema/spec@^1.0.0-beta.4": "1.0.0-beta.4",
     "jsr:@std/assert@1": "1.0.10",
     "jsr:@std/assert@^1.0.10": "1.0.10",
@@ -37,6 +39,7 @@
     "npm:@tailwindcss/aspect-ratio@~0.4.2": "0.4.2_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:@tailwindcss/forms@~0.5.9": "0.5.9_tailwindcss@4.0.0-beta.6",
     "npm:@types/node@*": "22.5.4",
+    "npm:@types/three@0.172": "0.172.0",
     "npm:@xpd/tailwind-3dtransforms@^1.0.3": "1.0.3",
     "npm:arctic@^2.3.1": "2.3.1",
     "npm:clsx@^2.1.1": "2.1.1",
@@ -52,6 +55,7 @@
     "npm:tailwind-scrollbar@^3.1.0": "3.1.0_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:tailwind-variants@~0.2.1": "0.2.1_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:tailwindcss@next": "4.0.0-beta.6",
+    "npm:three@0.172": "0.172.0",
     "npm:vinxi@0.5": "0.5.1_@babel+core@7.26.0"
   },
   "jsr": {
@@ -66,6 +70,17 @@
     },
     "@inspatial/kv@0.0.2": {
       "integrity": "1c29a1f9c8cbb48b5de6c2121d7dca5546db81621634e85b15bd1d5f80cac854"
+    },
+    "@inspatial/test@0.0.7": {
+      "integrity": "ca63fb1554127a58c54db2d0bb68f42ea2c9093d55bbdab4eb0ed52e9cb1f9f8",
+      "dependencies": [
+        "jsr:@inspatial/util@^0.0.4",
+        "jsr:@inspatial/util@^0.0.7",
+        "jsr:@std/expect",
+        "jsr:@std/html",
+        "jsr:@std/http",
+        "npm:highlight.js"
+      ]
     },
     "@inspatial/util@0.0.4": {
       "integrity": "64a4524820c97435a35ed9dcf1223f42775066b6c284f168f68aabe51e80fdac",
@@ -97,6 +112,20 @@
     },
     "@inspatial/util@0.0.7": {
       "integrity": "965084e6c604c863f8720ae34a4dbd03fe9d979cd386117d2c4cdca17ab1ac21",
+      "dependencies": [
+        "jsr:@std/collections@1.0.9",
+        "jsr:@std/csv",
+        "jsr:@std/datetime",
+        "jsr:@std/encoding",
+        "jsr:@std/front-matter",
+        "jsr:@std/text",
+        "jsr:@std/ulid",
+        "npm:clsx",
+        "npm:tailwind-merge@^1.14.0"
+      ]
+    },
+    "@inspatial/util@0.0.8": {
+      "integrity": "e51160a12d4322b5dfa1f4b7fbb1f44b58f6faa9bf55baa5cf375fc237a1ba73",
       "dependencies": [
         "jsr:@std/collections@1.0.9",
         "jsr:@std/csv",
@@ -897,6 +926,9 @@
         "tailwindcss@4.0.0-beta.6"
       ]
     },
+    "@tweenjs/tween.js@23.1.3": {
+      "integrity": "sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA=="
+    },
     "@types/braces@3.0.4": {
       "integrity": "sha512-0WR3b8eaISjEW7RpZnclONaLFDf7buaowRHdqLp4vLj54AsSAYWfh3DRbfiYJY9XDxMgx1B4sE1Afw2PGpuHOA=="
     },
@@ -923,6 +955,23 @@
     },
     "@types/resolve@1.20.2": {
       "integrity": "sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q=="
+    },
+    "@types/stats.js@0.17.3": {
+      "integrity": "sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ=="
+    },
+    "@types/three@0.172.0": {
+      "integrity": "sha512-LrUtP3FEG26Zg5WiF0nbg8VoXiKokBLTcqM2iLvM9vzcfEiYmmBAPGdBgV0OYx9fvWlY3R/3ERTZcD9X5sc0NA==",
+      "dependencies": [
+        "@tweenjs/tween.js",
+        "@types/stats.js",
+        "@types/webxr",
+        "@webgpu/types",
+        "fflate",
+        "meshoptimizer"
+      ]
+    },
+    "@types/webxr@0.5.20": {
+      "integrity": "sha512-JGpU6qiIJQKUuVSKx1GtQnHJGxRjtfGIhzO2ilq43VZZS//f1h1Sgexbdk+Lq+7569a6EYhOWrUpIruR/1Enmg=="
     },
     "@vercel/nft@0.27.7_rollup@4.28.0_acorn@8.14.0": {
       "integrity": "sha512-FG6H5YkP4bdw9Ll1qhmbxuE8KwW2E/g8fJpM183fWQLeVDGqzeywMIeJ9h2txdWZ03psgWMn6QymTxaDLmdwUg==",
@@ -962,6 +1011,9 @@
         "untun",
         "uqr"
       ]
+    },
+    "@webgpu/types@0.1.52": {
+      "integrity": "sha512-eI883Nlag2hGIkhXxAnq8s4APpqXWuPL3Gbn2ghiU12UjLvfCbVqHK4XfXl3eLRTatqcMmeK7jws7IwWsGfbzw=="
     },
     "@xpd/tailwind-3dtransforms@1.0.3": {
       "integrity": "sha512-LEKfNj57djZAucQ1itu/zinRkYnkhzNjAMhz8DkbguTyBcTDHF1R6CuXO536BFE/YGyHDCYd7tDF5ghSrViUgQ=="
@@ -1559,6 +1611,9 @@
         "picomatch@4.0.2"
       ]
     },
+    "fflate@0.8.2": {
+      "integrity": "sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A=="
+    },
     "file-uri-to-path@1.0.0": {
       "integrity": "sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw=="
     },
@@ -2052,6 +2107,9 @@
     },
     "merge2@1.4.1": {
       "integrity": "sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg=="
+    },
+    "meshoptimizer@0.18.1": {
+      "integrity": "sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw=="
     },
     "micromatch@4.0.8": {
       "integrity": "sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==",
@@ -2921,6 +2979,9 @@
         "any-promise"
       ]
     },
+    "three@0.172.0": {
+      "integrity": "sha512-6HMgMlzU97MsV7D/tY8Va38b83kz8YJX+BefKjspMNAv0Vx6dxMogHOrnRl/sbMIs3BPUKijPqDqJ/+UwJbIow=="
+    },
     "tinyglobby@0.2.10_picomatch@4.0.2": {
       "integrity": "sha512-Zc+8eJlFMvgatPZTl6A9L/yht8QqdmUNtURHaKZLmKBE12hNPSrqNkUp2cs3M/UKmNVVAMFQYSjYIVHDjW5zew==",
       "dependencies": [
@@ -3274,9 +3335,15 @@
           "npm:vinxi@0.5"
         ]
       },
+      "packages/core/dev/sdf": {
+        "dependencies": [
+          "npm:@types/three@0.172",
+          "npm:three@0.172"
+        ]
+      },
       "packages/core/dev/test": {
         "dependencies": [
-          "jsr:@inspatial/util@^0.0.4"
+          "jsr:@inspatial/util@^0.0.8"
         ]
       },
       "packages/core/dev/tw": {
