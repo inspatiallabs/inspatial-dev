@@ -281,23 +281,23 @@ export class SceneManager {
 }
 
 // Usage Example
-async function main() {
-  const canvas = document.querySelector("canvas") as HTMLCanvasElement;
-  const adapter = await navigator.gpu.requestAdapter();
-  const device = await adapter!.requestDevice();
+// async function main() {
+//   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
+//   const adapter = await navigator.gpu.requestAdapter();
+//   const device = await adapter!.requestDevice();
 
-  const renderer = new GPURenderer(device);
-  await renderer.initialize(canvas);
+//   const renderer = new GPURenderer(device);
+//   await renderer.initialize(canvas);
 
-  const sceneManager = new SceneManager(renderer);
-  const mesh = sceneManager.createElement("mesh", {
-    vertices: [
-      /*...*/
-    ],
-  });
-  sceneManager.addToScene(mesh);
+//   const sceneManager = new SceneManager(renderer);
+//   const mesh = sceneManager.createElement("mesh", {
+//     vertices: [
+//       /*...*/
+//     ],
+//   });
+//   sceneManager.addToScene(mesh);
 
-  sceneManager.renderScene();
-}
+//   sceneManager.renderScene();
+// }
 
-main();
+// main();
