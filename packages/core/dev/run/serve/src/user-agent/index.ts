@@ -94,7 +94,7 @@ export interface EngineProp {
 }
 
 /** The OS as described by a user agent string. */
-export interface platformOSProp {
+export interface PlatformOSProp {
   /** The OS name. */
   readonly name: string | undefined;
   /** The OS version. */
@@ -927,14 +927,14 @@ const matchers: Matchers = {
  * #### Internal References
  * - {@link BrowserProp} - Browser information interface
  * - {@link DeviceProp} - Device information interface
- * - {@link platformOSProp} - Operating system information interface
+ * - {@link PlatformOSProp} - Operating system information interface
  */
 export class UserAgent {
   private _browser: BrowserProp | undefined;
   private _cpu: CPUProp | undefined;
   private _device: DeviceProp | undefined;
   private _engine: EngineProp | undefined;
-  private _platformOS: platformOSProp | undefined;
+  private _platformOS: PlatformOSProp | undefined;
   private _ua: string;
 
   /**
@@ -1061,7 +1061,7 @@ export class UserAgent {
    *
    * @returns An object with information about the user agent's OS.
    */
-  get platformOS(): platformOSProp {
+  get platformOS(): PlatformOSProp {
     if (!this._platformOS) {
       this._platformOS = { name: undefined, version: undefined };
       mapper(this._platformOS, this._ua, matchers.os);
@@ -1109,7 +1109,7 @@ export class UserAgent {
     cpu: CPUProp;
     device: DeviceProp;
     engine: EngineProp;
-    os: platformOSProp;
+    os: PlatformOSProp;
     ua: string;
   } {
     const { browser, cpu, device, engine, platformOS: os, ua } = this;
