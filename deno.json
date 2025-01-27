@@ -57,13 +57,7 @@
       "deno.unstable",
       "deno.worker",
       "deno.window"
-    ],
-    "jsx": "precompile",
-    "jsxImportSource": "custom",
-    "jsxFragmentFactory": "Fragment"
-  },
-  "imports": {
-    "custom": "./packages/core/dev/renderer/jsx-dom/src/index.ts"
+    ]
   },
   "unstable": [
     "cron",

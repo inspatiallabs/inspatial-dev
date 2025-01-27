@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { GPURenderer, RenderTarget } from "@inspatial/renderer/gpu";
+import { GPURendererMini, RenderTarget } from "@inspatial/renderer/gpu";
 import lighting from "./shaders/lighting.glsl";
 import raymarcherFragment from "./shaders/raymarcher.frag";
 import raymarcherVertex from "./shaders/raymarcher.vert";
@@ -52,7 +52,7 @@ const _size = new THREE.Vector2();
 const _sphere = new THREE.Sphere();
 
 class Raymarcher extends THREE.Mesh {
-  private renderer: GPURenderer | THREE.WebGLRenderer;
+  private renderer: GPURendererMini | THREE.WebGLRenderer;
   private gpuRenderTarget: RenderTarget | null = null;
   private gpuBindGroups: Map<string, GPUBindGroup> = new Map();
   private uniformBuffers: Map<string, GPUBuffer> = new Map();
@@ -211,7 +211,7 @@ class Raymarcher extends THREE.Mesh {
 
     // Initialize renderer and appropriate setup
     this.initRenderer().then(() => {
-      if (this.renderer instanceof GPURenderer) {
+      if (this.renderer instanceof GPURendererMini) {
         this.initializeWebGPU({
           blending,
           conetracing,
@@ -230,7 +230,7 @@ class Raymarcher extends THREE.Mesh {
         const adapter = await navigator.gpu.requestAdapter();
         if (!adapter) throw new Error("No adapter found");
         const device = await adapter.requestDevice();
-        this.renderer = new GPURenderer(device);
+        this.renderer = new GPURendererMini(device);
         return;
       }
     } catch (e) {
@@ -247,7 +247,7 @@ class Raymarcher extends THREE.Mesh {
     metalness: number;
     roughness: number;
   }) {
-    if (!(this.renderer instanceof GPURenderer)) return;
+    if (!(this.renderer instanceof GPURendererMini)) return;
 
     // Create uniform buffers
     const cameraUniformBuffer = this.renderer.getDevice().createBuffer({
@@ -331,7 +331,7 @@ class Raymarcher extends THREE.Mesh {
     scene: THREE.Scene,
     camera: THREE.Camera
   ): void {
-    if (this.renderer instanceof GPURenderer) {
+    if (this.renderer instanceof GPURendererMini) {
       this.renderWebGPU(camera);
     } else {
       this.renderWebGL(renderer, camera);
@@ -339,7 +339,7 @@ class Raymarcher extends THREE.Mesh {
   }
 
   private updateUniformBuffers(camera: THREE.Camera) {
-    if (!(this.renderer instanceof GPURenderer)) return;
+    if (!(this.renderer instanceof GPURendererMini)) return;
 
     const device = this.renderer.getDevice();
 
@@ -377,7 +377,7 @@ class Raymarcher extends THREE.Mesh {
   }
 
   private updateEntityBuffer() {
-    if (!(this.renderer instanceof GPURenderer)) return;
+    if (!(this.renderer instanceof GPURendererMini)) return;
 
     const device = this.renderer.getDevice();
     const entityBuffer = this.entityBuffers.get("entities");
@@ -416,7 +416,7 @@ class Raymarcher extends THREE.Mesh {
   }
 
   private renderWebGPU(camera: THREE.Camera) {
-    if (!this.gpuRenderTarget || !(this.renderer instanceof GPURenderer))
+    if (!this.gpuRenderTarget || !(this.renderer instanceof GPURendererMini))
       return;
 
     const device = this.renderer.getDevice();
@@ -604,7 +604,7 @@ class Raymarcher extends THREE.Mesh {
     target.depthTexture.dispose();
     target.texture.dispose();
 
-    if (this.renderer instanceof GPURenderer) {
+    if (this.renderer instanceof GPURendererMini) {
       this.uniformBuffers.forEach((buffer) => buffer.destroy());
       this.entityBuffers.forEach((buffer) => buffer.destroy());
       this.uniformBuffers.clear();

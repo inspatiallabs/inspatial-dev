@@ -8,8 +8,14 @@
     "lint": "eslint \"src/**/*.ts*\"",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
+  "compilerOptions": {
+    "jsx": "precompile",
+    "jsxImportSource": "custom",
+    "jsxFragmentFactory": "Fragment"
+  },
   "imports": {
-    "motion": "npm:motion@^11.13.1"
+    "motion": "npm:motion@^11.13.1",
+    "custom": "./packages/core/dev/renderer/jsx-dom/src/index.ts" 
   },
   "exports": {
     ".": "./src/index.ts",
