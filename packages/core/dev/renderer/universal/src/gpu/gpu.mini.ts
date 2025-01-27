@@ -1,4 +1,6 @@
-// Core Rendering Engine (Renderer 2)
+import { GPUNode } from "../types.ts";
+
+// Mini GPU Rendering Engine
 export interface RenderTarget {
   colorTexture: GPUTexture;
   depthTexture: GPUTexture;
@@ -19,15 +21,28 @@ export interface PipelineConfig {
   bindGroupLayouts?: GPUBindGroupLayout[];
 }
 
-export class GPURenderer {
+export class GPURendererMini {
+  private static instance: GPURendererMini;
   private device: GPUDevice;
   private context: GPUCanvasContext | null = null;
   private pipelines: Map<string, GPURenderPipeline> = new Map();
   private bindGroups: Map<string, GPUBindGroup> = new Map();
   private renderTargets: Map<string, RenderTarget> = new Map();
 
-  constructor(device: GPUDevice) {
+  private constructor(device: GPUDevice) {
     this.device = device;
+  }
+
+  static getInstance(device?: GPUDevice): GPURendererMini {
+    if (!GPURendererMini.instance) {
+      if (!device) {
+        throw new Error(
+          "Device must be provided for the first initialization."
+        );
+      }
+      GPURendererMini.instance = new GPURendererMini(device);
+    }
+    return GPURendererMini.instance;
   }
 
   async initialize(canvas: HTMLCanvasElement) {
@@ -43,6 +58,14 @@ export class GPURenderer {
     };
 
     context.configure(configuration);
+  }
+
+  createElement(type: string, props: any, ...children: any[]): GPUNode {
+    return {
+      type,
+      props: { ...props, children },
+      target: "gpu",
+    };
   }
 
   createRenderTarget(id: string, width: number, height: number): RenderTarget {
@@ -182,19 +205,11 @@ export class GPURenderer {
   }
 }
 
-// Higher-Level Abstractions (Renderer 1)
-export interface GPUNode {
-  type: string;
-  props: any;
-  target: string;
-  children?: GPUNode[];
-}
-
 export class SceneManager {
-  private renderer: GPURenderer;
+  private renderer: GPURendererMini;
   private sceneGraph: GPUNode[] = [];
 
-  constructor(renderer: GPURenderer) {
+  constructor(renderer: GPURendererMini) {
     this.renderer = renderer;
   }
 
@@ -286,7 +301,9 @@ export class SceneManager {
 //   const adapter = await navigator.gpu.requestAdapter();
 //   const device = await adapter!.requestDevice();
 
-//   const renderer = new GPURenderer(device);
+//   setDirectiveRenderTargetProp("gpu"); // Set the render target to GPU
+
+//   const renderer = GPURendererMini.getInstance(device);
 //   await renderer.initialize(canvas);
 
 //   const sceneManager = new SceneManager(renderer);

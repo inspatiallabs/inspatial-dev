@@ -1,6 +1,6 @@
-import { SVG_NAMESPACE } from "./const.ts";
-import { SVG_ELEMENTS } from "./const.ts";
-import { DOMNode } from "./types.ts";
+import { SVG_NAMESPACE } from "../const.ts";
+import { SVG_ELEMENTS } from "../const.ts";
+import { DOMNode } from "../types.ts";
 
 // DOM Renderer
 export class DOMRenderer {

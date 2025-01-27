@@ -6,8 +6,8 @@
   "imports": {},
   "exports": {
     ".": "./src/index.ts",
-    "./gpu": "./src/gpu.ts",
-    "./dom": "./src/dom.ts",
-    "./native": "./src/native.ts"
+    "./gpu": "./src/gpu/gpu.mini.ts",
+    "./dom": "./src/dom/dom.ts",
+    "./native": "./src/native/native.ts"
   }
 }

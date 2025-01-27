@@ -1,7 +1,7 @@
 import { currentTarget } from "./directive.ts";
-import { DOMRenderer } from "./dom.ts";
-import { GPURenderer } from "./gpu.ts";
-import { NativeRenderer } from "./native.ts";
+import { DOMRenderer } from "./dom/dom.ts";
+import { GPURendererMini } from "./gpu/gpu.mini.ts";
+import { NativeRenderer } from "./native/native.ts";
 import {
   DirectiveRenderTargetProp,
   DOMNode,
@@ -43,13 +43,32 @@ export function render(
   props: Record<string, any> | null,
   ...children: any[]
 ): RenderNode {
+  if (!currentTarget) {
+    throw new Error(
+      "Render target not set. Use setDirectiveRenderTargetProp to set the target."
+    );
+  }
+
+  if (typeof type === "function") {
+    // Handle functional components
+    return type({ ...props, children });
+  }
+
   switch (currentTarget) {
     case "dom":
       return DOMRenderer.getInstance().createElement(type, props, ...children);
     case "gpu":
-      return GPURenderer.getInstance().createElement(type, props);
+      return GPURendererMini.getInstance().createElement(
+        type,
+        props,
+        ...children
+      );
     case "native":
-      return NativeRenderer.getInstance().createElement(type, props);
+      return NativeRenderer.getInstance().createElement(
+        type,
+        props,
+        ...children
+      );
     default:
       throw new Error(`Unknown render target: ${currentTarget}`);
   }
@@ -57,23 +76,13 @@ export function render(
 
 // Fragment implementation
 export function Fragment({ children }: { children: any[] }): RenderNode {
-  const fragment = document.createDocumentFragment();
-  children.flat().forEach((child) => {
-    if (child != null) {
-      fragment.appendChild(DOMRenderer.getInstance().parseChild(child));
-    }
-  });
-
   return {
     type: "fragment",
-    props: {},
-    target: "dom",
-    element: fragment,
+    props: { children },
+    target: currentTarget || "dom", // Default to "dom" if no target is set
+    element: null, // This will be handled by the renderer
   };
 }
-
-// Export for JSX
-export { render as jsx, render as jsxDEV, render as jsxs };
 
 // Declare global JSX namespace
 declare global {
