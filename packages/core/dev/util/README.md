@@ -149,6 +149,7 @@ InSpatial util includes the following utility functions:
 38. `sameStart`: Checks if two strings start with the same sequence.
 39. `farthestPoint`: Finds the farthest point in a dataset.
 40. `difference`: Calculates the difference between two datasets.
+41. `convertImageToBase64DOM`: Converts an image file to a base64 string using the DOM.
 
 For detailed usage and parameters of each utility, please refer to the source code or our comprehensive documentation.
 
