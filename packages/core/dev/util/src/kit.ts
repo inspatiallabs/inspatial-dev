@@ -324,7 +324,8 @@ function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
   };
 }
 
-const variantSystem = createVariantSystem();
+// Add explicit type annotation for variantSystem
+const variantSystem: VariantSystemReturn = createVariantSystem();
 
 /*##############################################(KIT)##############################################*/
 /**
