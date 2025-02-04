@@ -1,6 +1,6 @@
 /*##############################################(TYPES)##############################################*/
 
-type ClassValue =
+type ClassValueProp =
   | ClassArray
   | ClassDictionary
   | string
@@ -10,7 +10,7 @@ type ClassValue =
   | boolean
   | undefined;
 type ClassDictionary = Record<string, any>;
-type ClassArray = ClassValue[];
+type ClassArray = ClassValueProp[];
 
 type OmitUndefined<T> = T extends undefined ? never : T;
 type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
@@ -94,6 +94,8 @@ const TW_PROPERTIES: Record<string, boolean> = {
   origin: true,
 };
 
+/*##############################################(SPLIT-TAILWIND-CLASS)##############################################*/
+
 function splitTailwindClass(className: string): [string, string, string] {
   // Handle pseudo-classes and breakpoints
   const [variants, ...rest] = className.split(":").reverse();
@@ -106,6 +108,8 @@ function splitTailwindClass(className: string): [string, string, string] {
   const [, property, value = ""] = matches;
   return [base, property, value];
 }
+
+/*##############################################(MERGE-CLASSES)##############################################*/
 
 function mergeClasses(classes: string[]): string {
   const classMap: Record<string, Record<string, string>> = {};
@@ -137,7 +141,8 @@ function mergeClasses(classes: string[]): string {
     .join(" ");
 }
 
-function toVal(mix: ClassValue): string {
+/*##############################################(TO-VAL)##############################################*/
+function toVal(mix: ClassValueProp): string {
   let str = "";
 
   if (typeof mix === "string" || typeof mix === "number") {
@@ -165,7 +170,8 @@ function toVal(mix: ClassValue): string {
   return str;
 }
 
-function kitUtil(...inputs: ClassValue[]): string {
+/*##############################################(KIT-UTIL)##############################################*/
+function kitUtil(...inputs: ClassValueProp[]): string {
   let str = "";
   for (let i = 0; i < inputs.length; i++) {
     const tmp = inputs[i];
@@ -180,12 +186,13 @@ function kitUtil(...inputs: ClassValue[]): string {
   return str;
 }
 
+/*##############################################(FALSY-TO-STRING)##############################################*/
 const falsyToString = <T extends unknown>(value: T) =>
   typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
 
 /*##############################################(VARIANT-SYSTEM)##############################################*/
 
-interface VariantConfigOptions {
+interface VariantConfigProp {
   hooks?: {
     onComplete?: (className: string) => string;
   };
@@ -203,39 +210,45 @@ interface ComposeVariantProp {
         >
       | undefined
     ) & {
-      class?: ClassValue;
-      className?: ClassValue;
-      css?: ClassValue;
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
     }
   ) => string;
 }
 
-type VariantShape = Record<string, Record<string, ClassValue>>;
-type VariantSchema<V extends VariantShape> = {
+type VariantShapeProp = Record<string, Record<string, ClassValueProp>>;
+type VariantSchemaProp<V extends VariantShapeProp> = {
   [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | undefined;
 };
 
 interface VariantProp {
-  <V extends VariantShape>(config: {
-    base?: ClassValue;
+  <V extends VariantShapeProp>(config: {
+    base?: ClassValueProp;
     variants?: V;
-    compoundVariants?: (VariantSchema<V> & {
-      class?: ClassValue;
-      className?: ClassValue;
-      css?: ClassValue;
+    compoundVariants?: (VariantSchemaProp<V> & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
     })[];
-    defaultVariants?: VariantSchema<V>;
+    defaultVariants?: VariantSchemaProp<V>;
   }): (
-    props?: VariantSchema<V> & {
-      class?: ClassValue;
-      className?: ClassValue;
-      css?: ClassValue;
+    props?: VariantSchemaProp<V> & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
     }
   ) => string;
 }
 
-function createVariantSystem(options?: VariantConfigOptions) {
-  const kit = (...inputs: ClassValue[]): string => {
+interface VariantSystemReturn {
+  kit: (...inputs: ClassValueProp[]) => string;
+  variant: VariantProp;
+  composeVariant: ComposeVariantProp;
+}
+
+function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
+  const kit = (...inputs: ClassValueProp[]): string => {
     const className = kitUtil(inputs);
     return (
       options?.hooks?.onComplete?.(className) ??
@@ -277,7 +290,7 @@ function createVariantSystem(options?: VariantConfigOptions) {
       });
 
       return matches ? [...acc, cvClass, cvClassName, cvCss] : acc;
-    }, [] as ClassValue[]);
+    }, [] as ClassValueProp[]);
 
     return kit(
       config.base,
@@ -305,52 +318,65 @@ function createVariantSystem(options?: VariantConfigOptions) {
     };
 
   return {
-    /**
-     * # Kit
-     * #### A utility for intelligent class name composition and conflict resolution
-     *
-     * Kit combines CSS classes with intelligent conflict resolution, working like a smart
-     * style manager that knows how to combine css classes without conflicts.
-     *
-     * @since 0.1.1
-     * @category InSpatial Util
-     * @module Kit
-     * @kind utility
-     * @access public
-     *
-     * @example
-     * ### Basic Usage
-     * ```typescript
-     * import { kit } from '@inspatial/util/kit';
-     *
-     * // Combining simple classes
-     * const className = kit('bg-pop-500 text-white', 'hover:bg-pop-600');
-     *
-     * // With conditional classes
-     * const buttonClass = kit(
-     *   'px-4 py-2 rounded',
-     *   isActive ? 'bg-pop-500' : 'bg-damp-200'
-     * );
-     * ```
-     *
-     * @example
-     * ### Handling Class Conflicts
-     * ```typescript
-     * // Kit automatically resolves Tailwind conflicts
-     * const element = kit(
-     *   'p-4',           // Base padding
-     *   'p-6',           // This will override the previous padding
-     *   'dark:p-8'       // Dark mode padding remains separate
-     * );
-     * // Result: 'p-6 dark:p-8'
-     * ```
-     *
-     * @param {...ClassValue[]} inputs - Accepts any number of class values to be combined
-     * @returns {string} A merged string of CSS classes with conflicts resolved
-     */
     kit,
-    /**
+    variant,
+    composeVariant,
+  };
+}
+
+const variantSystem = createVariantSystem();
+
+/*##############################################(KIT)##############################################*/
+/**
+ * # Kit
+ * #### A utility for intelligent class name composition and conflict resolution
+ *
+ * Kit combines CSS classes with intelligent conflict resolution, working like a smart
+ * style manager that knows how to combine css classes without conflicts.
+ *
+ * @since 0.1.1
+ * @category InSpatial Util
+ * @module Kit
+ * @kind utility
+ * @access public
+ *
+ * @example
+ * ### Basic Usage
+ * ```typescript
+ * import { kit } from '@inspatial/util/kit';
+ *
+ * // Combining simple classes
+ * const className = kit('bg-pop-500 text-white', 'hover:bg-pop-600');
+ *
+ * // With conditional classes
+ * const buttonClass = kit(
+ *   'px-4 py-2 rounded',
+ *   isActive ? 'bg-pop-500' : 'bg-damp-200'
+ * );
+ * ```
+ *
+ * @example
+ * ### Handling Class Conflicts
+ * ```typescript
+ * // Kit automatically resolves Tailwind conflicts
+ * const element = kit(
+ *   'p-4',           // Base padding
+ *   'p-6',           // This will override the previous padding
+ *   'dark:p-8'       // Dark mode padding remains separate
+ * );
+ * // Result: 'p-6 dark:p-8'
+ * ```
+ *
+ * @param {...ClassValueProp[]} inputs - Accepts any number of class values to be combined
+ * @returns {string} A merged string of CSS classes with conflicts resolved
+ */
+
+export const kit = variantSystem.kit;
+
+/*##############################################(VARIANT)##############################################*/
+/**
      * # InSpatial Variant System
+
      * #### A powerful utility for managing component variants
      *
      * The Variant System is like a smart wardrobe organizer for your UI components,
@@ -395,10 +421,13 @@ function createVariantSystem(options?: VariantConfigOptions) {
      * - Prefer static variants over dynamic ones
      * - Cache variant results for frequently used combinations
      */
-    variant,
 
-    /**
+export const variant = variantSystem.variant;
+
+/*##############################################(COMPOSE-VARIANT)##############################################*/
+/**
      * # ComposeVariant
+
      * #### A utility for combining multiple variant components
      *
      * ComposeVariant allows you to merge multiple variant components into a single
@@ -443,20 +472,16 @@ function createVariantSystem(options?: VariantConfigOptions) {
      * - Limit the number of composed variants for better performance
      * - Consider memoizing frequently used compositions
      */
-    composeVariant,
-  };
-}
+export const composeVariant = variantSystem.composeVariant;
 
-/*##############################################(EXPORTS)##############################################*/
-
-export const { kit, variant, composeVariant } = createVariantSystem();
-
+/*##############################################(CREATE-VARIANT)##############################################*/
 /**
  * # CreateVariant
  * #### A factory function that creates a customizable variant styling system
  *
  * The `createVariant` function is like a style system factory. Think of it as a custom
  * clothing designer that lets you create your own styling rules and combinations.
+
  *
  * @since 0.1.1
  * @category InSpatial Util
@@ -532,16 +557,16 @@ export const { kit, variant, composeVariant } = createVariantSystem();
  * - Reuse the same variant system across related components
  * - Memoize frequently used variant combinations
  *
- * @param {VariantConfigOptions} [options] - Configuration options for the variant system
+ * @param {VariantConfigProp} [options] - Configuration options for the variant system
  * @returns {{ kit: Function, variant: VariantProp, composeVariant: ComposeVariantProp }}
  * Returns an object containing the core styling utilities
  */
 export const createVariant = createVariantSystem;
 
 export type {
-  ClassValue,
+  ClassValueProp,
   VariantProps,
-  VariantShape,
-  VariantSchema,
-  VariantConfigOptions,
+  VariantShapeProp,
+  VariantSchemaProp,
+  VariantConfigProp,
 };
