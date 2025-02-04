@@ -1,5 +1,5 @@
 export * from "./capitalize.ts";
-export * from "./kit.ts";
+export * from "./kit.ts"; //NOTE: This kit variant system utility may be moved to the @inspatial/theme package.
 export * from "./shuffle.ts";
 export * from "./shuffled.ts";
 export * from "./focus-input.ts";

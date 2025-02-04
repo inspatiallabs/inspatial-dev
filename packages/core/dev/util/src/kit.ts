@@ -1,27 +1,152 @@
-import { twMerge } from "npm:tailwind-merge@^1.14.0";
-
 /*##############################################(TYPES)##############################################*/
 
-type ClassValue = string | number | Record<string, boolean> | ClassValue[];
+type ClassValue =
+  | ClassArray
+  | ClassDictionary
+  | string
+  | number
+  | bigint
+  | null
+  | boolean
+  | undefined;
+type ClassDictionary = Record<string, any>;
+type ClassArray = ClassValue[];
 
-/*##############################################(GENERAL-KIT-UTILITY)##############################################*/
+type OmitUndefined<T> = T extends undefined ? never : T;
+type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+  k: infer I
+) => void
+  ? I
+  : never;
 
-/*************************************(Functions)*************************************/
+type VariantProps<Component extends (...args: any) => any> = Omit<
+  OmitUndefined<Parameters<Component>[0]>,
+  "class" | "className" | "css"
+>;
+
+/*##############################################(UTILITIES)##############################################*/
+
+// Tailwind-style class merging
+const TW_PROPERTIES: Record<string, boolean> = {
+  float: true,
+  clear: true,
+  position: true,
+  top: true,
+  right: true,
+  bottom: true,
+  left: true,
+  z: true,
+  order: true,
+  grid: true,
+  flex: true,
+  basis: true,
+  grow: true,
+  shrink: true,
+  m: true,
+  mx: true,
+  my: true,
+  mt: true,
+  mr: true,
+  mb: true,
+  ml: true,
+  p: true,
+  px: true,
+  py: true,
+  pt: true,
+  pr: true,
+  pb: true,
+  pl: true,
+  w: true,
+  "min-w": true,
+  "max-w": true,
+  h: true,
+  "min-h": true,
+  "max-h": true,
+  text: true,
+  font: true,
+  tracking: true,
+  leading: true,
+  list: true,
+  decoration: true,
+  underline: true,
+  "line-through": true,
+  "no-underline": true,
+  bg: true,
+  from: true,
+  via: true,
+  to: true,
+  border: true,
+  rounded: true,
+  divide: true,
+  shadow: true,
+  opacity: true,
+  "mix-blend": true,
+  blur: true,
+  transition: true,
+  duration: true,
+  ease: true,
+  delay: true,
+  scale: true,
+  rotate: true,
+  translate: true,
+  skew: true,
+  origin: true,
+};
+
+function splitTailwindClass(className: string): [string, string, string] {
+  // Handle pseudo-classes and breakpoints
+  const [variants, ...rest] = className.split(":").reverse();
+  const base = rest.length ? rest.reverse().join(":") : "";
+
+  // Extract property and value
+  const matches = variants.match(/^([a-zA-Z0-9-]+)(?:-(.+))?$/);
+  if (!matches) return ["", "", variants];
+
+  const [, property, value = ""] = matches;
+  return [base, property, value];
+}
+
+function mergeClasses(classes: string[]): string {
+  const classMap: Record<string, Record<string, string>> = {};
+
+  classes.forEach((cls) => {
+    if (!cls) return;
+    const classNames = cls.split(" ");
+
+    classNames.forEach((className) => {
+      const [variant, prop, value] = splitTailwindClass(className);
+      const key = `${variant}:${prop}`;
+
+      // Only merge if it's a Tailwind property we know about
+      if (prop in TW_PROPERTIES) {
+        if (!classMap[key]) classMap[key] = {};
+        classMap[key][value] = className;
+      } else {
+        // For unknown properties, keep all values
+        if (!classMap["arbitrary"]) classMap["arbitrary"] = {};
+        classMap["arbitrary"][className] = className;
+      }
+    });
+  });
+
+  // Combine all unique classes
+  return Object.values(classMap)
+    .map((group) => Object.values(group))
+    .flat()
+    .join(" ");
+}
 
 function toVal(mix: ClassValue): string {
   let str = "";
-  let k: number;
-  let y: string | number;
-  let len: number;
 
   if (typeof mix === "string" || typeof mix === "number") {
     str += mix;
   } else if (typeof mix === "object") {
     if (Array.isArray(mix)) {
-      len = mix.length;
-      for (k = 0; k < len; k++) {
+      for (let k = 0; k < mix.length; k++) {
         if (mix[k]) {
-          y = toVal(mix[k]);
+          const y = toVal(mix[k]);
           if (y) {
             str && (str += " ");
             str += y;
@@ -29,24 +154,18 @@ function toVal(mix: ClassValue): string {
         }
       }
     } else {
-      for (y in mix) {
-        if (mix && typeof mix === "object" && mix[y]) {
+      for (const key in mix) {
+        if (mix && typeof mix === "object" && mix[key]) {
           str && (str += " ");
-          str += y;
+          str += key;
         }
       }
     }
   }
-
   return str;
 }
 
-/*************************************(Return)*************************************/
-/**
- * Combines classes in a smart way.
- * @example cKit("bg-surface", { "text-primary": true, "text-secondary": false })
- */
-function kitClassUtil(...inputs: ClassValue[]): string {
+function kitUtil(...inputs: ClassValue[]): string {
   let str = "";
   for (let i = 0; i < inputs.length; i++) {
     const tmp = inputs[i];
@@ -61,48 +180,368 @@ function kitClassUtil(...inputs: ClassValue[]): string {
   return str;
 }
 
-/*##############################################(KIT-UTILITY)##############################################*/
+const falsyToString = <T extends unknown>(value: T) =>
+  typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
 
-/*************************************(Return)*************************************/
+/*##############################################(VARIANT-SYSTEM)##############################################*/
+
+interface VariantConfigOptions {
+  hooks?: {
+    onComplete?: (className: string) => string;
+  };
+}
+
+interface ComposeVariantProp {
+  <T extends ReturnType<VariantProp>[]>(
+    ...components: [...T]
+  ): (
+    props?: (
+      | UnionToIntersection<
+          {
+            [K in keyof T]: VariantProps<T[K]>;
+          }[number]
+        >
+      | undefined
+    ) & {
+      class?: ClassValue;
+      className?: ClassValue;
+      css?: ClassValue;
+    }
+  ) => string;
+}
+
+type VariantShape = Record<string, Record<string, ClassValue>>;
+type VariantSchema<V extends VariantShape> = {
+  [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | undefined;
+};
+
+interface VariantProp {
+  <V extends VariantShape>(config: {
+    base?: ClassValue;
+    variants?: V;
+    compoundVariants?: (VariantSchema<V> & {
+      class?: ClassValue;
+      className?: ClassValue;
+      css?: ClassValue;
+    })[];
+    defaultVariants?: VariantSchema<V>;
+  }): (
+    props?: VariantSchema<V> & {
+      class?: ClassValue;
+      className?: ClassValue;
+      css?: ClassValue;
+    }
+  ) => string;
+}
+
+function createVariantSystem(options?: VariantConfigOptions) {
+  const kit = (...inputs: ClassValue[]): string => {
+    const className = kitUtil(inputs);
+    return (
+      options?.hooks?.onComplete?.(className) ??
+      mergeClasses(className.split(" "))
+    );
+  };
+
+  const variant: VariantProp = (config) => (props) => {
+    if (!config.variants) {
+      return kit(config.base, props?.class, props?.className, props?.css);
+    }
+
+    const { variants, defaultVariants } = config;
+
+    // Process variant classes
+    const variantClasses = Object.keys(variants).map((variant) => {
+      const prop = props?.[variant as keyof typeof props];
+      const defaultProp = defaultVariants?.[variant];
+      const value = falsyToString(prop ?? defaultProp);
+      const variantObj = variants[variant];
+      return variantObj[value as keyof typeof variantObj];
+    });
+
+    // Process compound variants
+    const compoundClasses = config.compoundVariants?.reduce((acc, cv) => {
+      const {
+        class: cvClass,
+        className: cvClassName,
+        css: cvCss,
+        ...conditions
+      } = cv;
+      const matches = Object.entries(conditions).every(([key, value]) => {
+        const propValue =
+          props?.[key as keyof typeof props] ??
+          defaultVariants?.[key as keyof typeof defaultVariants];
+        return Array.isArray(value)
+          ? value.includes(propValue)
+          : propValue === value;
+      });
+
+      return matches ? [...acc, cvClass, cvClassName, cvCss] : acc;
+    }, [] as ClassValue[]);
+
+    return kit(
+      config.base,
+      variantClasses,
+      compoundClasses,
+      props?.class,
+      props?.className,
+      props?.css
+    );
+  };
+
+  const composeVariant: ComposeVariantProp =
+    (...components) =>
+    (props) => {
+      const { class: cls, className, css, ...variantProps } = props || {};
+
+      return kit(
+        components.map(
+          (component) => component(variantProps as any) // Type assertion needed for component props intersection
+        ),
+        cls,
+        className,
+        css
+      );
+    };
+
+  return {
+    /**
+     * # Kit
+     * #### A utility for intelligent class name composition and conflict resolution
+     *
+     * Kit combines CSS classes with intelligent conflict resolution, working like a smart
+     * style manager that knows how to combine css classes without conflicts.
+     *
+     * @since 0.1.1
+     * @category InSpatial Util
+     * @module Kit
+     * @kind utility
+     * @access public
+     *
+     * @example
+     * ### Basic Usage
+     * ```typescript
+     * import { kit } from '@inspatial/util/kit';
+     *
+     * // Combining simple classes
+     * const className = kit('bg-pop-500 text-white', 'hover:bg-pop-600');
+     *
+     * // With conditional classes
+     * const buttonClass = kit(
+     *   'px-4 py-2 rounded',
+     *   isActive ? 'bg-pop-500' : 'bg-damp-200'
+     * );
+     * ```
+     *
+     * @example
+     * ### Handling Class Conflicts
+     * ```typescript
+     * // Kit automatically resolves Tailwind conflicts
+     * const element = kit(
+     *   'p-4',           // Base padding
+     *   'p-6',           // This will override the previous padding
+     *   'dark:p-8'       // Dark mode padding remains separate
+     * );
+     * // Result: 'p-6 dark:p-8'
+     * ```
+     *
+     * @param {...ClassValue[]} inputs - Accepts any number of class values to be combined
+     * @returns {string} A merged string of CSS classes with conflicts resolved
+     */
+    kit,
+    /**
+     * # InSpatial Variant System
+     * #### A powerful utility for managing component variants
+     *
+     * The Variant System is like a smart wardrobe organizer for your UI components,
+     * helping you combine and manage different styles and variants.
+     *
+     * @since 0.0.1
+     * @category InSpatial Util
+     * @module Variant
+     * @kind utility
+     * @access public
+     *
+     * ### 💡 Core Concepts
+
+     * - Variant-based styling
+     * - Compound variants for complex style combinations
+     * - Default variant support
+     *
+     * @example
+     * ### Basic Usage
+     * ```typescript
+     * const button = variant({
+     *   base: "px-4 py-2 rounded",
+     *   variants: {
+     *     size: {
+     *       sm: "text-sm",
+     *       lg: "text-lg"
+     *     },
+     *     color: {
+     *       blue: "bg-blue-500 hover:bg-blue-600",
+     *       red: "bg-red-500 hover:bg-red-600"
+     *     }
+     *   },
+     *   defaultVariants: {
+     *     size: "sm",
+     *     color: "blue"
+     *   }
+     * });
+     * ```
+     *
+     * ### ⚡ Performance Tips
+     * - Use compound variants sparingly
+     * - Prefer static variants over dynamic ones
+     * - Cache variant results for frequently used combinations
+     */
+    variant,
+
+    /**
+     * # ComposeVariant
+     * #### A utility for combining multiple variant components
+     *
+     * ComposeVariant allows you to merge multiple variant components into a single
+     * component while maintaining proper type safety and style composition.
+     *
+     * @since 0.1.1
+     * @category InSpatial Util
+     * @module ComposeVariant
+     * @kind utility
+     * @access public
+     *
+     * ### 💡 Core Concepts
+
+     * - Combine multiple variant components
+     * - Maintain type safety across compositions
+     * - Intelligent style merging
+     *
+     * @example
+     * ### Basic Usage
+     * ```typescript
+     * const baseButton = variant({
+     *   base: "px-4 py-2 rounded",
+     *   variants: {
+     *     size: { sm: "text-sm", lg: "text-lg" }
+     *   }
+     * });
+     *
+     * const colorButton = variant({
+     *   variants: {
+     *     color: { blue: "bg-blue-500", red: "bg-red-500" }
+     *   }
+     * });
+     *
+     * const composedButton = composeVariant(baseButton, colorButton);
+     *
+     * // Use with combined props
+     * const className = composedButton({ size: "sm", color: "blue" });
+     * ```
+     *
+     * ### ⚡ Performance Tips
+     * - Compose variants at component definition time, not render time
+     * - Limit the number of composed variants for better performance
+     * - Consider memoizing frequently used compositions
+     */
+    composeVariant,
+  };
+}
+
+/*##############################################(EXPORTS)##############################################*/
+
+export const { kit, variant, composeVariant } = createVariantSystem();
 
 /**
- * # Kit
- * #### Combines CSS classes with intelligent conflict resolution
+ * # CreateVariant
+ * #### A factory function that creates a customizable variant styling system
  *
- * This function works like a smart style manager that knows how to combine css
- * classes without conflicts. Imagine it as a fashion expert who knows which styles
- * can work together and which ones would clash.
+ * The `createVariant` function is like a style system factory. Think of it as a custom
+ * clothing designer that lets you create your own styling rules and combinations.
+ *
+ * @since 0.1.1
+ * @category InSpatial Util
+ * @module Kit
+ * @kind function
+ * @access public
+ *
+ * ### 💡 Core Concepts
+
+ * - Custom variant system creation
+ * - Configurable style hooks
+ * - Tailwind-compatible class merging
+ *
+ * ### 📚 Terminology
+ * > **Variant System**: A structured way to manage different style variations of a component
+ * > **Style Hooks**: Functions that can modify the final output of class names
  *
  * @example
- * ### Basic Usage
+ * ### Basic Custom System
  * ```typescript
- * import { kit } from '@inspatial/util/kit';
+ * import { createVariant } from '@inspatial/util/kit';
  *
- * // Combining simple classes
- * const className = kit('bg-blue-500 text-white', 'hover:bg-blue-600');
+ * // Create a custom variant system with a class name transformer
+ * const { variant, kit } = createVariant({
+ *   hooks: {
+ *     onComplete: (className) => `my-prefix-${className}`
+ *   }
+ * });
  *
- * // With conditional classes
- * const buttonClass = kit(
- *   'px-4 py-2 rounded',
- *   isActive ? 'bg-blue-500' : 'bg-gray-200'
- * );
+ * // Use the custom variant system
+ * const button = variant({
+ *   base: "rounded-md",
+ *   variants: {
+ *     size: {
+ *       sm: "text-sm px-2",
+ *       lg: "text-lg px-4"
+ *     }
+ *   }
+ * });
  * ```
  *
  * @example
- * ### Handling Class Conflicts
+ * ### Advanced Configuration
  * ```typescript
- * // Kit automatically resolves Tailwind conflicts
- * const element = kit(
- *   'p-4',           // Base padding
- *   'p-6',           // This will override the previous padding
- *   'dark:p-8'       // Dark mode padding remains separate
- * );
- * // Result: 'p-6 dark:p-8'
+ * // Create a system with custom class processing
+ * const customSystem = createVariant({
+ *   hooks: {
+ *     onComplete: (className) => {
+ *       // Add RTL support
+ *       const isRTL = document.dir === 'rtl';
+ *       return isRTL
+ *         ? className.replace('left', 'right').replace('right', 'left')
+ *         : className;
+ *     }
+ *   }
+ * });
+ *
+ * // Use the custom system
+ * const { variant } = customSystem;
+ * const card = variant({
+ *   base: "p-4 shadow-md",
+ *   variants: {
+ *     align: {
+ *       start: "ml-4",  // Will be converted to mr-4 in RTL
+ *       end: "mr-4"     // Will be converted to ml-4 in RTL
+ *     }
+ *   }
+ * });
  * ```
  *
- * @param {...ClassValue[]} inputs - Accepts any number of class values to be combined
- * @returns {string} A merged string of CSS classes with conflicts resolved
+ * ### ⚡ Performance Tips
+ * - Create variant systems at module level, not within components
+ * - Reuse the same variant system across related components
+ * - Memoize frequently used variant combinations
+ *
+ * @param {VariantConfigOptions} [options] - Configuration options for the variant system
+ * @returns {{ kit: Function, variant: VariantProp, composeVariant: ComposeVariantProp }}
+ * Returns an object containing the core styling utilities
  */
-export default function kit(...inputs: ClassValue[]): string {
-  return twMerge(kitClassUtil(inputs));
-}
+export const createVariant = createVariantSystem;
+
+export type {
+  ClassValue,
+  VariantProps,
+  VariantShape,
+  VariantSchema,
+  VariantConfigOptions,
+};
