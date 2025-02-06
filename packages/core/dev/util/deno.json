@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/util",
   "license": "Apache-2.0",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "exports": {
     ".": "./src/index.ts",
     "./capitalize": "./src/capitalize.ts",
@@ -48,8 +48,11 @@
     "./backoff-jitter": "./src/backoff-jitter.ts",
     "./abortable": "./src/abortable.ts",
     "./get-package-version": "./src/get-package-version.ts",
-    "./convert-image-to-base-64-dom": "./src/convert-image-to-base-64-dom.ts"
+    "./convert-image-to-base-64-dom": "./src/convert-image-to-base-64-dom.ts",
+    "./svg-to-tiny-data-uri": "./src/svg-to-tiny-data-uri.ts",
+    "./svg-to-src-set": "./src/svg-to-src-set.ts"
   },
+
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   }

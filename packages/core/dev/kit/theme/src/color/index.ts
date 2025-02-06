@@ -41,29 +41,168 @@ interface Code {
   close: string;
   regexp: RegExp;
 }
-// InSpatial HEX (Color Palette)
+/**
+ * inspatialColors is for reference and direct use of colors,
+ * it is not recommended to use it in the code.
+ *
+ * @example Usage
+ * ```ts no-assert
+ * import { inspatialColors } from "@inspatial/theme/color";
+ * ```
+ * const blueColor = inspatialColors.blue;  // Returns "#009FE3"
+ */
 export const inspatialColors = {
-  white: {
-    light: "#ffffff",
-    dark: "#1b2240",
-  },
+  azure: "#f0ffff",
+  beige: "#f5f5dc",
+  bisque: "#ffe4c4",
   black: {
     light: "#1b2240",
     dark: "#ffffff",
   },
-  skyblack: "#03082E",
-  damp: "#D4DCEF",
-  lav: "#F9FAFC",
-  pop: "#9000FF",
-  trackloud: "#EF0381",
-  pink: "#CE17D6",
   blue: "#009FE3",
-  green: "#0DEB57",
-  red: "#D9251D",
-  yellow: "#FFC837",
-  eve: "#E9592B",
-  lime: "#8FF808",
+  brown: "#a52a2a",
+  coral: "#ff7f50",
+  cornsilk: "#fff8dc",
+  crimson: "#dc143c",
   crystal: "#8BD8F4",
+  cyan: "#00ffff",
+  damp: "#D4DCEF",
+  darkblue: "#00008b",
+  darkcyan: "#008b8b",
+  darkgrey: "#a9a9a9",
+  darkred: "#8b0000",
+  deeppink: "#ff1493",
+  dimgrey: "#696969",
+  eve: "#E9592B",
+  gold: "#ffd700",
+  green: "#0DEB57",
+  grey: "#808080",
+  honeydew: "#f0fff0",
+  hotpink: "#ff69b4",
+  indigo: "#4b0082",
+  ivory: "#fffff0",
+  khaki: "#f0e68c",
+  lav: "#F9FAFC",
+  lavender: "#e6e6fa",
+  lime: "#8FF808",
+  linen: "#faf0e6",
+  maroon: "#800000",
+  moccasin: "#ffe4b5",
+  navy: "#000080",
+  oldlace: "#fdf5e6",
+  olive: "#808000",
+  orange: "#ffa500",
+  orchid: "#da70d6",
+  peru: "#cd853f",
+  pink: "#CE17D6",
+  plum: "#dda0dd",
+  pop: "#9000FF",
+  purple: "#800080",
+  red: "#D9251D",
+  salmon: "#fa8072",
+  seagreen: "#2e8b57",
+  seashell: "#fff5ee",
+  sienna: "#a0522d",
+  silver: "#c0c0c0",
+  skyblack: "#03082E",
+  skyblue: "#87ceeb",
+  snow: "#fffafa",
+  tan: "#d2b48c",
+  teal: "#008080",
+  thistle: "#d8bfd8",
+  tomato: "#ff6347",
+  trackloud: "#EF0381",
+  violet: "#ee82ee",
+  wheat: "#f5deb3",
+  white: {
+    light: "#ffffff",
+    dark: "#1b2240",
+  },
+  yellow: "#FFC837",
+};
+
+// Common pattern for hex colors with optional alpha
+const HEX_PATTERN = (hex: string) => new RegExp(`#${hex}(ff)?(?!\\w)`, "gi");
+
+/**
+ * inspatialColorPatterns is for finding and manipulating colors within text/code
+ *
+ * @example Usage
+ * ```ts no-assert
+ * import { inspatialColorPatterns } from "@inspatial/theme/color";
+ *
+ * const hasBlue = inspatialColorPatterns.blue.test("#009FE3");  // Returns true
+ * const replaced = someString.replace(inspatialColorPatterns.blue, 'blue');
+ * ```
+ */
+export const inspatialColorPatterns = {
+  azure: HEX_PATTERN("f0ffff"),
+  beige: HEX_PATTERN("f5f5dc"),
+  bisque: HEX_PATTERN("ffe4c4"),
+  black: {
+    light: HEX_PATTERN("1b2240"),
+    dark: HEX_PATTERN("ffffff"),
+  },
+  blue: HEX_PATTERN("009FE3"),
+  brown: HEX_PATTERN("a52a2a"),
+  coral: HEX_PATTERN("ff7f50"),
+  cornsilk: HEX_PATTERN("fff8dc"),
+  crimson: HEX_PATTERN("dc143c"),
+  crystal: HEX_PATTERN("8BD8F4"),
+  cyan: HEX_PATTERN("00ffff"),
+  damp: HEX_PATTERN("D4DCEF"),
+  darkblue: HEX_PATTERN("00008b"),
+  darkcyan: HEX_PATTERN("008b8b"),
+  darkgrey: HEX_PATTERN("a9a9a9"),
+  darkred: HEX_PATTERN("8b0000"),
+  deeppink: HEX_PATTERN("ff1493"),
+  dimgrey: HEX_PATTERN("696969"),
+  eve: HEX_PATTERN("E9592B"),
+  gold: HEX_PATTERN("ffd700"),
+  green: HEX_PATTERN("0DEB57"),
+  grey: HEX_PATTERN("808080"),
+  honeydew: HEX_PATTERN("f0fff0"),
+  hotpink: HEX_PATTERN("ff69b4"),
+  indigo: HEX_PATTERN("4b0082"),
+  ivory: HEX_PATTERN("fffff0"),
+  khaki: HEX_PATTERN("f0e68c"),
+  lav: HEX_PATTERN("F9FAFC"),
+  lavender: HEX_PATTERN("e6e6fa"),
+  lime: HEX_PATTERN("8FF808"),
+  linen: HEX_PATTERN("faf0e6"),
+  maroon: HEX_PATTERN("800000"),
+  moccasin: HEX_PATTERN("ffe4b5"),
+  navy: HEX_PATTERN("000080"),
+  oldlace: HEX_PATTERN("fdf5e6"),
+  olive: HEX_PATTERN("808000"),
+  orange: HEX_PATTERN("ffa500"),
+  orchid: HEX_PATTERN("da70d6"),
+  peru: HEX_PATTERN("cd853f"),
+  pink: HEX_PATTERN("CE17D6"),
+  plum: HEX_PATTERN("dda0dd"),
+  pop: HEX_PATTERN("9000FF"),
+  purple: HEX_PATTERN("800080"),
+  red: HEX_PATTERN("D9251D"),
+  salmon: HEX_PATTERN("fa8072"),
+  seagreen: HEX_PATTERN("2e8b57"),
+  seashell: HEX_PATTERN("fff5ee"),
+  sienna: HEX_PATTERN("a0522d"),
+  silver: HEX_PATTERN("c0c0c0"),
+  skyblack: HEX_PATTERN("03082E"),
+  skyblue: HEX_PATTERN("87ceeb"),
+  snow: HEX_PATTERN("fffafa"),
+  tan: HEX_PATTERN("d2b48c"),
+  teal: HEX_PATTERN("008080"),
+  thistle: HEX_PATTERN("d8bfd8"),
+  tomato: HEX_PATTERN("ff6347"),
+  trackloud: HEX_PATTERN("EF0381"),
+  violet: HEX_PATTERN("ee82ee"),
+  wheat: HEX_PATTERN("f5deb3"),
+  white: {
+    light: HEX_PATTERN("ffffff"),
+    dark: HEX_PATTERN("1b2240"),
+  },
+  yellow: HEX_PATTERN("FFC837"),
 };
 
 /**
@@ -920,8 +1059,7 @@ export function bgRgb8(str: string, color: number): string {
  *
  * rgb24("foo", 0xff00ff);
  * rgb24("foo", {r: 255, g: 0, b: 255});
- * ```
- * @param str The text color to apply 24bit rgb to
+ * ``` * @param str The text color to apply 24bit rgb to
  * @param color The color code
  * @returns The text with 24bit rgb color
  */

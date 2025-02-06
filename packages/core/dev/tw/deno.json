@@ -5,9 +5,7 @@
   "description": "Tailwind CSS presets for Inspatial Apps",
   "imports": {
     "tailwindcss": "npm:tailwindcss@next",
-    "@tailwindcss/aspect-ratio": "npm:@tailwindcss/aspect-ratio@^0.4.2",
     "@tailwindcss/forms": "npm:@tailwindcss/forms@^0.5.9",
-    "@xpd/tailwind-3dtransforms": "npm:@xpd/tailwind-3dtransforms@^1.0.3",
     "mini-svg-data-uri": "npm:mini-svg-data-uri@^1.4.4",
     "tailwind-merge": "npm:tailwind-merge@^2.5.3",
     "tailwind-scrollbar": "npm:tailwind-scrollbar@^3.1.0",

@@ -25,7 +25,6 @@ export * from "./open-link.ts";
 export * from "./print-page.ts";
 export * from "./replace-non-digits.ts";
 export * from "./currency.ts";
-// export * from "./platformOS.ts"; moved to InSpatial Run as part of the Framework Runtime
 export * from "./share.ts";
 export * from "./date-time.ts";
 export * from "./ulid.ts";
@@ -46,7 +45,8 @@ export * from "./backoff-jitter.ts"
 export * from "./get-package-version.ts";
 export * from "./abortable.ts";
 export * from "./convert-image-to-base-64-dom.ts";
+export * from "./svg-to-tiny-data-uri.ts";
+export * from "./svg-to-src-set.ts";
 
 // export * from "./getletterspacing.ts";
-// export * from "./validated-auth.ts"; moved to InSpatial Auth
 // export * from "./server-action.ts"; moved to InSpatial Run as part of the Framework Runtime

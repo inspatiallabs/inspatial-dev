@@ -11,7 +11,6 @@ import {
 } from "./plugins/index.ts";
 import { withTV } from "tailwind-variants/transformer";
 import tailwindForms from "@tailwindcss/forms";
-import tailwindAspectRatio from "@tailwindcss/aspect-ratio";
 import tailwindScrollbar from "tailwind-scrollbar";
 
 /*******************************************************************************
@@ -96,7 +95,6 @@ const inSpatialTailwindConfig = withTV({
 
     // Other Plugins
     tailwindForms,
-    tailwindAspectRatio,
     tailwindScrollbar,
   ],
 
