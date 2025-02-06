@@ -56,11 +56,12 @@ InSpatial util is your Swiss Army knife for universal and spatial application de
 ## 🚀 Features
 
 - 🧰 Comprehensive set of utility functions for common tasks, enhancing productivity and efficiency.
-- 🎨 Tailwind CSS class merging with `kit` and `cKit` for seamless styling.
+- 🎨 CSS class and string merging with `kit` and `variant` for seamless styling.
 - 📅 Advanced calendar and date manipulation utilities for precise time management.
 - 🔢 Array and mathematical helpers to simplify complex operations.
 - 🔍 Focus and input styling utilities to improve user interface interactions.
 - 🔀 Array shuffling and manipulation functions for dynamic data handling.
+
 - 📄 Extensive text and data formatting utilities for clean and readable outputs.
 - 🌐 Domain and URL utilities for robust web application development.
 - 🔧 TypeScript type utilities for safer and more reliable code.
@@ -110,7 +111,7 @@ bunx jsr add @inspatial/util
 InSpatial util includes the following utility functions:
 
 1. `capitalize`: Capitalizes the first letter of a string.
-2. `kit` and `cKit`: Tailwind CSS class and styled merging utilities.
+2. `kit` and `variant`: CSS class and string merging utilities.
 3. `shuffle`: Randomly shuffles an array.
 4. `shuffled`: Returns a new array with shuffled elements.
 5. `focusInput`, `hasErrorInput`, `focusRing`: Input styling utilities for focus and error states.
@@ -150,12 +151,15 @@ InSpatial util includes the following utility functions:
 39. `farthestPoint`: Finds the farthest point in a dataset.
 40. `difference`: Calculates the difference between two datasets.
 41. `convertImageToBase64DOM`: Converts an image file to a base64 string using the DOM.
+42. `svgToTinyDataUri`: Converts an SVG to a tiny data URI.
+43. `svgToSrcSet`: Converts an SVG to a srcset-compatible data URI.
 
 For detailed usage and parameters of each utility, please refer to the source code or our comprehensive documentation.
 
 ---
 
 ## 🚀 Getting Started
+
 
 To begin your journey with InSpatial Core, visit our comprehensive documentation at [inspatial.dev](https://www.inspatial.dev).
 
