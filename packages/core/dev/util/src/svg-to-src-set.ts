@@ -1,6 +1,8 @@
 import svgToTinyDataUri from "./svg-to-tiny-data-uri.ts";
 
 /**
+
+/**
  * # SVG To Src set
  * #### Converts SVG data URIs into srcset-compatible format for responsive images
  *
