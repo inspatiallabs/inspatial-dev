@@ -10,7 +10,6 @@ import {
   addBaseComponents,
 } from "./plugins/index.ts";
 import { withTV } from "tailwind-variants/transformer";
-import tailwind3dTransforms from "@xpd/tailwind-3dtransforms";
 import tailwindForms from "@tailwindcss/forms";
 import tailwindAspectRatio from "@tailwindcss/aspect-ratio";
 import tailwindScrollbar from "tailwind-scrollbar";
@@ -96,7 +95,6 @@ const inSpatialTailwindConfig = withTV({
     addBaseComponents,
 
     // Other Plugins
-    tailwind3dTransforms,
     tailwindForms,
     tailwindAspectRatio,
     tailwindScrollbar,
@@ -278,14 +276,6 @@ const inSpatialTailwindConfig = withTV({
     },
 
     /*===============================================================================
-     * BACKGROUND OPACITY:
-     *===============================================================================*/
-
-    backgroundOpacity: ({ theme }) => ({
-      ...theme("opacity"),
-    }),
-
-    /*===============================================================================
      * BACKGROUND POSITION:
      *===============================================================================*/
     backgroundPosition: {
@@ -330,10 +320,6 @@ const inSpatialTailwindConfig = withTV({
     borderColor: ({ theme }) => ({
       ...theme("colors"),
       DEFAULT: theme("colors.muted", "currentColor"),
-    }),
-
-    borderOpacity: ({ theme }) => ({
-      ...theme("opacity"),
     }),
 
     borderRadius: {
@@ -736,9 +722,6 @@ const inSpatialTailwindConfig = withTV({
      * DIVIDE:
      *===============================================================================*/
 
-    divideOpacity: ({ theme }) => ({
-      ...theme("borderOpacity"),
-    }),
     divideWidth: ({ theme }) => ({
       ...theme("borderWidth"),
     }),
@@ -808,16 +791,6 @@ const inSpatialTailwindConfig = withTV({
       "11/12": "91.666667%",
       full: "100%",
     }),
-
-    flexGrow: {
-      0: "0",
-      DEFAULT: "1",
-    },
-
-    flexShrink: {
-      0: "0",
-      DEFAULT: "1",
-    },
 
     /*===============================================================================
      * FONT (TYPOGRAPHY):
@@ -1649,9 +1622,6 @@ const inSpatialTailwindConfig = withTV({
       ...theme("colors"),
     }),
 
-    placeholderOpacity: ({ theme }) => ({
-      ...theme("opacity"),
-    }),
 
     /*===============================================================================
      * RING:
@@ -1671,10 +1641,7 @@ const inSpatialTailwindConfig = withTV({
       4: "4px",
       8: "8px",
     },
-    ringOpacity: ({ theme }) => ({
-      DEFAULT: "0.5",
-      ...theme("opacity"),
-    }),
+
     ringWidth: {
       DEFAULT: "0px",
       0: "0px",
@@ -1859,10 +1826,6 @@ const inSpatialTailwindConfig = withTV({
     },
     textIndent: ({ theme }) => ({
       ...theme("spacing"),
-    }),
-
-    textOpacity: ({ theme }) => ({
-      ...theme("opacity"),
     }),
 
     textUnderlineOffset: {
