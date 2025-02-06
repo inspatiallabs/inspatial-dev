@@ -1,4 +1,4 @@
-import { inspatialColorPatterns } from "jsr:@inspatial/theme/color";
+import { inspatialColorPatterns } from "jsr:@inspatial/theme@^0.0.3/color";
 
 // Define types for our color patterns
 type ColorPattern = RegExp | { light: RegExp; dark: RegExp };
