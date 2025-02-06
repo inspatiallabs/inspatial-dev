@@ -121,7 +121,11 @@ export const inspatialColors = {
   yellow: "#FFC837",
 };
 
-// Common pattern for hex colors with optional alpha
+/**
+ * Creates a case-insensitive RegExp pattern for matching hex color codes, optionally including alpha channel (ff)
+ * @param hex - The hexadecimal color value without the '#' prefix
+ * @returns A RegExp that matches the hex color with optional alpha channel
+ */
 const HEX_PATTERN = (hex: string) => new RegExp(`#${hex}(ff)?(?!\\w)`, "gi");
 
 /**

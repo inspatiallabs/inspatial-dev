@@ -6,7 +6,6 @@
   "imports": {
     "tailwindcss": "npm:tailwindcss@next",
     "@tailwindcss/forms": "npm:@tailwindcss/forms@^0.5.9",
-    "mini-svg-data-uri": "npm:mini-svg-data-uri@^1.4.4",
     "tailwind-merge": "npm:tailwind-merge@^2.5.3",
     "tailwind-scrollbar": "npm:tailwind-scrollbar@^3.1.0",
     "tailwind-variants": "npm:tailwind-variants@^0.2.1"
