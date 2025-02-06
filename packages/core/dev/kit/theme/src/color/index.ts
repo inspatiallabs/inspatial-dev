@@ -126,7 +126,8 @@ export const inspatialColors = {
  * @param hex - The hexadecimal color value without the '#' prefix
  * @returns A RegExp that matches the hex color with optional alpha channel
  */
-const HEX_PATTERN = (hex: string) => new RegExp(`#${hex}(ff)?(?!\\w)`, "gi");
+const HEX_PATTERN = (hex: string): RegExp =>
+  new RegExp(`#${hex}(ff)?(?!\\w)`, "gi");
 
 /**
  * inspatialColorPatterns is for finding and manipulating colors within text/code
@@ -139,7 +140,10 @@ const HEX_PATTERN = (hex: string) => new RegExp(`#${hex}(ff)?(?!\\w)`, "gi");
  * const replaced = someString.replace(inspatialColorPatterns.blue, 'blue');
  * ```
  */
-export const inspatialColorPatterns = {
+export const inspatialColorPatterns: Record<
+  keyof typeof inspatialColors,
+  RegExp | { light: RegExp; dark: RegExp }
+> = {
   azure: HEX_PATTERN("f0ffff"),
   beige: HEX_PATTERN("f5f5dc"),
   bisque: HEX_PATTERN("ffe4c4"),

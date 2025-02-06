@@ -227,11 +227,12 @@ const styles = {
 
 ### Color System
 
-- `inspatialColors`: InSpatial's built-in HEX color palette
+- `inspatialColors`/`inspatialColorPatterns`: InSpatial's built-in HEX color palette/patterns
 - `generateColorVariables`: Generate theme-aware CSS variables
 - `rgb24`: 24-bit RGB color manipulation
 - `rgb8`: 8-bit RGB color manipulation
 - `stripAnsiCode`: Remove ANSI color codes
+
   ...
 
 ## 🎯 Best Practices
