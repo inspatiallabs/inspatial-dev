@@ -1,10 +1,11 @@
-import { inspatialColorPatterns } from "../../kit/theme/src/color/index.ts";
+import { inspatialColorPatterns } from "jsr:@inspatial/theme/color";
 
 // Define types for our color patterns
 type ColorPattern = RegExp | { light: RegExp; dark: RegExp };
 type ColorPatterns = Record<string, ColorPattern>;
 
 // RegExp constants
+
 const REGEX = {
   whitespace: /\s+/g,
   urlHexPairs: /%[\dA-F]{2}/g,
