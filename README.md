@@ -115,9 +115,9 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 |---------|------------|----------|-------|--------|
 | **XR** | XR Renderer | `deno add jsr:@inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) | 🔴 Unstable |
 | **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
-| **Run** | Framework Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
+| **Run** | Server Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
 | **Renderer** | Universal Renderer | `deno add jsr:@inspatial/renderer` | [inspatial.dev/renderer](https://www.inspatial.dev/renderer) | 🔴 Unstable |
-| **Type** | Universal Runtime Validation | `deno add jsr:@inspatial/type` | [inspatial.dev/type](https://www.inspatial.dev/type) | 🔴 Unstable |
+| **Type** | Runtime Validation | `deno add jsr:@inspatial/type` | [inspatial.dev/type](https://www.inspatial.dev/type) | 🔴 Unstable |
 | **ECS** | Entity Component System | `deno add jsr:@inspatial/ecs` | [inspatial.dev/ecs](https://www.inspatial.dev/ecs) | 🔴 Unstable |
 | **ISS** | InSpatial Style Sheet | `deno add jsr:@inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) | 🔴 Unstable |
 | **TW** | Tailwind CSS Presets | `deno add jsr:@inspatial/tw` | [inspatial.dev/tw](https://www.inspatial.dev/tw) | 🟡 Preview |
