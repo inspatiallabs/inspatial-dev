@@ -153,6 +153,7 @@ InSpatial util includes the following utility functions:
 41. `convertImageToBase64DOM`: Converts an image file to a base64 string using the DOM.
 42. `svgToTinyDataUri`: Converts an SVG to a tiny data URI.
 43. `svgToSrcSet`: Converts an SVG to a srcset-compatible data URI.
+44. `stringify`: Converts an object to a string.
 
 For detailed usage and parameters of each utility, please refer to the source code or our comprehensive documentation.
 
