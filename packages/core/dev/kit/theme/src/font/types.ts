@@ -4,14 +4,6 @@ import { type GoogleFontTypes } from "./google/fonts.ts";
 
 export type AllFontVariants = GoogleFontTypes | PrimitiveFontTypes;
 
-//##############################################(VARIANTS)##############################################//
-
-// TODO(@benemma): Add variants (system) with InSpatial Theme Variants
-export interface TypographyVariants {
-  variant: "text" | "quote" | "code";
-  format?: "base";
-}
-
 //##############################################(TYPES)##############################################//
 
 export type TypographyFamilyProps = PrimitiveFontTypes;
@@ -76,41 +68,3 @@ export type TypographyWeightProps =
   | "medium"
   | "bold"
   | "black";
-
-export interface TypographyProps extends TypographyVariants {
-  /*******************************************/
-  //*********configure with className*********/
-  /*******************************************/
-  /**
-   * @access className
-   */
-  font?: {
-    heading: AllFontVariants;
-    body: AllFontVariants;
-  };
-  /**
-   * @access className
-   */
-  size?: TypographySizeProps;
-  /**
-   * @access className
-   */
-  weight?: TypographyWeightProps;
-
-  /*******************************************/
-  //***********configure with style***********/
-  /*******************************************/
-
-  /**
-   * @access style
-   */
-  lineHeight?: TypographyLineHeightProps;
-  /**
-   * @access style
-   */
-  letterSpacing?: TypographyLetterSpacingProps;
-  /**
-   * @access style
-   */
-  transform?: TypographyTransformProps;
-}

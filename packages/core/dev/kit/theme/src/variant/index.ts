@@ -225,13 +225,13 @@ type VariantSchemaProp<V extends VariantShapeProp> = {
 interface VariantProp {
   <V extends VariantShapeProp>(config: {
     base?: ClassValueProp;
-    variants?: V;
-    compoundVariants?: (VariantSchemaProp<V> & {
+    settings?: V;
+    composition?: (VariantSchemaProp<V> & {
       class?: ClassValueProp;
       className?: ClassValueProp;
       css?: ClassValueProp;
     })[];
-    defaultVariants?: VariantSchemaProp<V>;
+    defaultSettings?: VariantSchemaProp<V>;
   }): (
     props?: VariantSchemaProp<V> & {
       class?: ClassValueProp;
@@ -254,10 +254,10 @@ interface VariantSystemReturn {
 export interface InSpatialVariantConfig<V extends VariantShapeProp> {
   /** Base classes applied to all instances */
   base?: ClassValueProp;
-  
+
   /** Variant definitions mapping variant names to their possible values */
   variants: V;
-  
+
   /** Compound variants for complex combinations */
   compoundVariants?: Array<
     {
@@ -268,13 +268,12 @@ export interface InSpatialVariantConfig<V extends VariantShapeProp> {
       css?: ClassValueProp;
     }
   >;
-  
+
   /** Default values for variants */
   defaultVariants?: {
     [K in keyof V]?: keyof V[K];
   };
 }
-
 
 function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
   const kit = (...inputs: ClassValueProp[]): string => {
@@ -286,23 +285,23 @@ function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
   };
 
   const variant: VariantProp = (config) => (props) => {
-    if (!config.variants) {
+    if (!config.settings) {
       return kit(config.base, props?.class, props?.className, props?.css);
     }
 
-    const { variants, defaultVariants } = config;
+    const { settings, defaultSettings } = config;
 
     // Process variant classes
-    const variantClasses = Object.keys(variants).map((variant) => {
+    const variantClasses = Object.keys(settings).map((variant) => {
       const prop = props?.[variant as keyof typeof props];
-      const defaultProp = defaultVariants?.[variant];
+      const defaultProp = defaultSettings?.[variant];
       const value = falsyToString(prop ?? defaultProp);
-      const variantObj = variants[variant];
+      const variantObj = settings[variant];
       return variantObj[value as keyof typeof variantObj];
     });
 
     // Process compound variants
-    const compoundClasses = config.compoundVariants?.reduce((acc, cv) => {
+    const compoundClasses = config.composition?.reduce((acc, cv) => {
       const {
         class: cvClass,
         className: cvClassName,
@@ -312,7 +311,7 @@ function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
       const matches = Object.entries(conditions).every(([key, value]) => {
         const propValue =
           props?.[key as keyof typeof props] ??
-          defaultVariants?.[key as keyof typeof defaultVariants];
+          defaultSettings?.[key as keyof typeof defaultSettings];
         return Array.isArray(value)
           ? value.includes(propValue)
           : propValue === value;
@@ -364,16 +363,16 @@ const variantSystem: VariantSystemReturn = createVariantSystem();
  * Kit combines CSS classes with intelligent conflict resolution, working like a smart
  * style manager that knows how to combine css classes without conflicts.
  *
- * @since 0.1.1
- * @category InSpatial Util
- * @module Kit
- * @kind utility
+ * @since 0.0.4
+ * @category InSpatial Theme
+ * @module Variant
+ * @kind theme
  * @access public
  *
  * @example
  * ### Basic Usage
  * ```typescript
- * import { kit } from '@inspatial/util/kit';
+ * import { kit } from '@inspatial/theme/variant';
  *
  * // Combining simple classes
  * const className = kit('bg-pop-500 text-white', 'hover:bg-pop-600');
@@ -413,9 +412,9 @@ export const kit = variantSystem.kit;
      * helping you combine and manage different styles and variants.
      *
      * @since 0.0.1
-     * @category InSpatial Util
+     * @category InSpatial Theme
      * @module Variant
-     * @kind utility
+     * @kind theme
      * @access public
      *
      * ### 💡 Core Concepts
@@ -463,10 +462,10 @@ export const variant = variantSystem.variant;
      * ComposeVariant allows you to merge multiple variant components into a single
      * component while maintaining proper type safety and style composition.
      *a
-     * @since 0.1.1
-     * @category InSpatial Util
+     * @since 0.0.4
+     * @category InSpatial Theme
      * @module ComposeVariant
-     * @kind utility
+     * @kind theme
      * @access public
      *
      * ### 💡 Core Concepts
@@ -505,7 +504,6 @@ export const variant = variantSystem.variant;
 export const composeVariant = variantSystem.composeVariant;
 
 /*##############################################(CREATE-VARIANT)##############################################*/
-/*##############################################(CREATE-VARIANT)##############################################*/
 /**
  * # CreateVariant
  * #### A factory function that creates a customizable variant styling system
@@ -513,9 +511,9 @@ export const composeVariant = variantSystem.composeVariant;
  * The `createVariant` function is like a style system factory. Think of it as a custom
  * clothing designer that lets you create your own styling rules and combinations.
  *
- * @since 0.1.1
- * @category InSpatial Util
- * @module Kit
+ * @since 0.0.4
+ * @category InSpatial Theme
+ * @module Variant
  * @kind function
  * @access public
  *
@@ -529,10 +527,32 @@ export const composeVariant = variantSystem.composeVariant;
  * > **Variant System**: A structured way to manage different style variations of a component
  * > **Style Hooks**: Functions that can modify the final output of class names
  *
- * @example
- * ### Basic Custom System
+ * @example 
+ * ### Basic Configuration
+ * 
+ * import { createVariant } from "@inspatial/theme/variant";
+ * import type { VariantProps } from "@inspatial/theme/variant";
+ * 
  * ```typescript
- * import { createVariant } from '@inspatial/util/kit';
+ * const ComponentVariant = createVariant({
+ *   settings: {
+ *     variant: {
+ *       size: { sm: "text-sm px-2", lg: "text-lg px-4" },
+ *       theme: { light: "bg-white text-black", dark: "bg-black text-white" }
+ *     }
+ *   }
+ * });
+ * 
+ * // type inference
+ * type ComponentVariantProps = VariantProps<typeof ComponentVariant.__variant> & {
+ *   // Add any additional props here that are not part of the variant system (optional)
+ * }
+ *
+ * ```
+ * 
+ * ### Custom System
+ * ```typescript
+ * import { createVariant } from '@inspatial/theme/variant';
  *
  * // Create a custom variant system with a class name transformer
  * const { variant, kit } = createVariant({
@@ -552,13 +572,11 @@ export const composeVariant = variantSystem.composeVariant;
  *   }
  * });
  * ```
+ * 
  *
  * @param {VariantConfigProp} [options] - Configuration options for the variant system
  * @returns {{ kit: Function, variant: VariantProp, composeVariant: ComposeVariantProp }}
  * Returns an object containing the core styling utilities
- */
-/**
- * Function overload for creating a variant system with just hooks
  */
 export function createVariant(options?: VariantConfigProp): VariantSystemReturn;
 
@@ -593,7 +611,11 @@ export function createVariant<V extends VariantShapeProp>(
 /**
  * Implementation of createVariant that handles both overloads
  */
-export function createVariant(options?: VariantConfigProp | (InSpatialVariantConfig<any> & VariantConfigProp)): any {
+export function createVariant(
+  options?:
+    | VariantConfigProp
+    | (InSpatialVariantConfig<any> & VariantConfigProp)
+): any {
   const kit = (...inputs: ClassValueProp[]): string => {
     const className = kitUtil(inputs);
     return (
@@ -603,23 +625,23 @@ export function createVariant(options?: VariantConfigProp | (InSpatialVariantCon
   };
 
   const variant: VariantProp = (config) => (props) => {
-    if (!config.variants) {
+    if (!config.settings) {
       return kit(config.base, props?.class, props?.className, props?.css);
     }
 
-    const { variants, defaultVariants } = config;
+    const { settings, defaultSettings } = config;
 
     // Process variant classes
-    const variantClasses = Object.keys(variants).map((variant) => {
+    const variantClasses = Object.keys(settings).map((variant) => {
       const prop = props?.[variant as keyof typeof props];
-      const defaultProp = defaultVariants?.[variant];
+      const defaultProp = defaultSettings?.[variant];
       const value = falsyToString(prop ?? defaultProp);
-      const variantObj = variants[variant];
+      const variantObj = settings[variant];
       return variantObj[value as keyof typeof variantObj];
     });
 
     // Process compound variants
-    const compoundClasses = config.compoundVariants?.reduce((acc, cv) => {
+    const compoundClasses = config.composition?.reduce((acc, cv) => {
       const {
         class: cvClass,
         className: cvClassName,
@@ -629,7 +651,7 @@ export function createVariant(options?: VariantConfigProp | (InSpatialVariantCon
       const matches = Object.entries(conditions).every(([key, value]) => {
         const propValue =
           props?.[key as keyof typeof props] ??
-          defaultVariants?.[key as keyof typeof defaultVariants];
+          defaultSettings?.[key as keyof typeof defaultSettings];
         return Array.isArray(value)
           ? value.includes(propValue)
           : propValue === value;
@@ -664,10 +686,10 @@ export function createVariant(options?: VariantConfigProp | (InSpatialVariantCon
     };
 
   // If options is an InSpatialVariantConfig, create a variant function with it
-  if (options && 'variants' in options) {
+  if (options && "variants" in options) {
     const config = options as any;
     const variantFn = variant(config);
-    
+
     return {
       kit,
       variant,
@@ -683,10 +705,6 @@ export function createVariant(options?: VariantConfigProp | (InSpatialVariantCon
     composeVariant,
   };
 }
-
-// Type helper for extracting variant props
-export type ExtractVariantProps<T> = T extends (props?: infer P) => string ? P : never;
-
 
 export type {
   ClassValueProp,
