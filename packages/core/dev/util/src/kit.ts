@@ -247,6 +247,35 @@ interface VariantSystemReturn {
   composeVariant: ComposeVariantProp;
 }
 
+/**
+ * Type definition for variant configuration objects
+ * For type inference and IDE autocompletion
+ */
+export interface InSpatialVariantConfig<V extends VariantShapeProp> {
+  /** Base classes applied to all instances */
+  base?: ClassValueProp;
+  
+  /** Variant definitions mapping variant names to their possible values */
+  variants: V;
+  
+  /** Compound variants for complex combinations */
+  compoundVariants?: Array<
+    {
+      [K in keyof V]?: keyof V[K];
+    } & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
+    }
+  >;
+  
+  /** Default values for variants */
+  defaultVariants?: {
+    [K in keyof V]?: keyof V[K];
+  };
+}
+
+
 function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
   const kit = (...inputs: ClassValueProp[]): string => {
     const className = kitUtil(inputs);
@@ -433,7 +462,7 @@ export const variant = variantSystem.variant;
      *
      * ComposeVariant allows you to merge multiple variant components into a single
      * component while maintaining proper type safety and style composition.
-     *
+     *a
      * @since 0.1.1
      * @category InSpatial Util
      * @module ComposeVariant
@@ -476,13 +505,13 @@ export const variant = variantSystem.variant;
 export const composeVariant = variantSystem.composeVariant;
 
 /*##############################################(CREATE-VARIANT)##############################################*/
+/*##############################################(CREATE-VARIANT)##############################################*/
 /**
  * # CreateVariant
  * #### A factory function that creates a customizable variant styling system
  *
  * The `createVariant` function is like a style system factory. Think of it as a custom
  * clothing designer that lets you create your own styling rules and combinations.
-
  *
  * @since 0.1.1
  * @category InSpatial Util
@@ -524,45 +553,140 @@ export const composeVariant = variantSystem.composeVariant;
  * });
  * ```
  *
- * @example
- * ### Advanced Configuration
- * ```typescript
- * // Create a system with custom class processing
- * const customSystem = createVariant({
- *   hooks: {
- *     onComplete: (className) => {
- *       // Add RTL support
- *       const isRTL = document.dir === 'rtl';
- *       return isRTL
- *         ? className.replace('left', 'right').replace('right', 'left')
- *         : className;
- *     }
- *   }
- * });
- *
- * // Use the custom system
- * const { variant } = customSystem;
- * const card = variant({
- *   base: "p-4 shadow-md",
- *   variants: {
- *     align: {
- *       start: "ml-4",  // Will be converted to mr-4 in RTL
- *       end: "mr-4"     // Will be converted to ml-4 in RTL
- *     }
- *   }
- * });
- * ```
- *
- * ### ⚡ Performance Tips
- * - Create variant systems at module level, not within components
- * - Reuse the same variant system across related components
- * - Memoize frequently used variant combinations
- *
  * @param {VariantConfigProp} [options] - Configuration options for the variant system
  * @returns {{ kit: Function, variant: VariantProp, composeVariant: ComposeVariantProp }}
  * Returns an object containing the core styling utilities
  */
-export const createVariant = createVariantSystem;
+/**
+ * Function overload for creating a variant system with just hooks
+ */
+export function createVariant(options?: VariantConfigProp): VariantSystemReturn;
+
+/**
+ * Function overload for creating a variant system with direct variant configuration
+ */
+export function createVariant<V extends VariantShapeProp>(
+  config: InSpatialVariantConfig<V> & VariantConfigProp
+): {
+  kit: (...inputs: ClassValueProp[]) => string;
+  variant: <T extends VariantShapeProp>(
+    config: InSpatialVariantConfig<T>
+  ) => (
+    props?: VariantSchemaProp<T> & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
+    }
+  ) => string;
+  composeVariant: ComposeVariantProp;
+  config: InSpatialVariantConfig<V>;
+  // The directly created variant function
+  __variant: (
+    props?: VariantSchemaProp<V> & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
+    }
+  ) => string;
+};
+
+/**
+ * Implementation of createVariant that handles both overloads
+ */
+export function createVariant(options?: VariantConfigProp | (InSpatialVariantConfig<any> & VariantConfigProp)): any {
+  const kit = (...inputs: ClassValueProp[]): string => {
+    const className = kitUtil(inputs);
+    return (
+      options?.hooks?.onComplete?.(className) ??
+      mergeClasses(className.split(" "))
+    );
+  };
+
+  const variant: VariantProp = (config) => (props) => {
+    if (!config.variants) {
+      return kit(config.base, props?.class, props?.className, props?.css);
+    }
+
+    const { variants, defaultVariants } = config;
+
+    // Process variant classes
+    const variantClasses = Object.keys(variants).map((variant) => {
+      const prop = props?.[variant as keyof typeof props];
+      const defaultProp = defaultVariants?.[variant];
+      const value = falsyToString(prop ?? defaultProp);
+      const variantObj = variants[variant];
+      return variantObj[value as keyof typeof variantObj];
+    });
+
+    // Process compound variants
+    const compoundClasses = config.compoundVariants?.reduce((acc, cv) => {
+      const {
+        class: cvClass,
+        className: cvClassName,
+        css: cvCss,
+        ...conditions
+      } = cv;
+      const matches = Object.entries(conditions).every(([key, value]) => {
+        const propValue =
+          props?.[key as keyof typeof props] ??
+          defaultVariants?.[key as keyof typeof defaultVariants];
+        return Array.isArray(value)
+          ? value.includes(propValue)
+          : propValue === value;
+      });
+
+      return matches ? [...acc, cvClass, cvClassName, cvCss] : acc;
+    }, [] as ClassValueProp[]);
+
+    return kit(
+      config.base,
+      variantClasses,
+      compoundClasses,
+      props?.class,
+      props?.className,
+      props?.css
+    );
+  };
+
+  const composeVariant: ComposeVariantProp =
+    (...components) =>
+    (props) => {
+      const { class: cls, className, css, ...variantProps } = props || {};
+
+      return kit(
+        components.map(
+          (component) => component(variantProps as any) // Type assertion needed for component props intersection
+        ),
+        cls,
+        className,
+        css
+      );
+    };
+
+  // If options is an InSpatialVariantConfig, create a variant function with it
+  if (options && 'variants' in options) {
+    const config = options as any;
+    const variantFn = variant(config);
+    
+    return {
+      kit,
+      variant,
+      composeVariant,
+      config,
+      __variant: variantFn,
+    } as any;
+  }
+
+  return {
+    kit,
+    variant,
+    composeVariant,
+  };
+}
+
+// Type helper for extracting variant props
+export type ExtractVariantProps<T> = T extends (props?: infer P) => string ? P : never;
+
 
 export type {
   ClassValueProp,

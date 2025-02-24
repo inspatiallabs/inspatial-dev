@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/util",
   "license": "Apache-2.0",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "exports": {
     ".": "./src/index.ts",
     "./capitalize": "./src/capitalize.ts",

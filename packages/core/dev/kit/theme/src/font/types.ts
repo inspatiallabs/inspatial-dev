@@ -6,7 +6,7 @@ export type AllFontVariants = GoogleFontTypes | PrimitiveFontTypes;
 
 //##############################################(VARIANTS)##############################################//
 
-// TODO(@benemma): Add variants (system) with ISS (StyleX) Variants
+// TODO(@benemma): Add variants (system) with InSpatial Theme Variants
 export interface TypographyVariants {
   variant: "text" | "quote" | "code";
   format?: "base";
