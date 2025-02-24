@@ -1,9 +1,31 @@
 /*##############################################(CAPITALIZE-UTILITY)##############################################*/
 
 /**
- * A Spatial kit utility function that capitalizes the first letter of a string
- * @example capitalize("hello") // "Hello"
+ * @name capitalize
+ * @description Transforms a string by capitalizing its first letter and converting the rest to lowercase
+ * @category String Utilities
+ * @version 1.0.0
+ *
+ * @param {string} string - The input string to be capitalized
+ * @returns {string} The transformed string with first letter capitalized
+ *
+ * @example
+ * ```ts
+ * capitalize("hello") // Returns "Hello"
+ * capitalize("WORLD") // Returns "World"
+ * capitalize("javaScript") // Returns "Javascript"
+ * ```
+ *
+ * @throws {TypeError} If the input is not a string
+ * @since 1.0.0
  */
 export function capitalize(string: string): string {
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  /** Extract and uppercase the first character of the input string */
+  const firstChar = string.charAt(0).toUpperCase();
+
+  /** Convert the remaining characters to lowercase */
+  const restOfString = string.slice(1).toLowerCase();
+
+  /** Concatenate the uppercase first character with the lowercase remainder */
+  return firstChar + restOfString;
 }

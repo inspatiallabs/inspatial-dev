@@ -62,26 +62,8 @@ _Reality is your canvas_
 InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere in every device, rendering environment and platform.
 
 ---
- 
- <!-- <div align="center"> -->
-  <!-- <a href="https://www.inspatial.app#gh-dark-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-light.svg"  alt="InSpatial App" height="45">
-  </a> -->
-  <!-- <a href="https://www.inspatial.app#gh-light-mode- only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-dark.svg"  alt="InSpatial App" height="45">
-  </a> -->
-
-  <!-- <br>
-
-   InSpatial App is a no-code/low-code platform as a service for building cross-platform and spatial (AR/MR/VR) applications.
- </div> -->
 
  <br>
-
-
-
-
-
 
 
 <div align="center">

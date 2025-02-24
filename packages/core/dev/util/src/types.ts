@@ -99,6 +99,7 @@ export interface SharedProps extends DOMAttributes {
   children?: unknown; //React.ReactNode - Note: using unknown keeps the type independent of framework
   asChild?: boolean;
   disabled?: boolean;
+  debug?: boolean;
 }
 
 /**********************************(Theme Props)**********************************/

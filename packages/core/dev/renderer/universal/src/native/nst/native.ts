@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import { NativeNode } from "../types.ts";
+
+import { NativeNode } from "../../types.ts";
 
 // NativeScript Renderer
 export class NativeRenderer {

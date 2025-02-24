@@ -1,0 +1,9 @@
+---
+description: Code Documentation
+globs: *.tsx, *.ts, *.glsl, *.wgsl, *.frag, *.vert, *.wat
+---
+# Your rule content
+
+- add comments in code
+- inline comments must start with /** ... **/
+- use [.inspatialdocrules](mdc:.inspatialdocrules) only for the main or default function or class module

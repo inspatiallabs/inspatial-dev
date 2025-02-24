@@ -1,6 +1,6 @@
-export * from "./gpu/gpu.mini.ts";
+export * from "./gpu/gpu.web.mini.ts";
 export * from "./dom/dom.ts";
-export * from "./native/native.ts";
+export * from "./native/nst/native.ts";
 export {
   render as jsx,
   render as jsxDEV,

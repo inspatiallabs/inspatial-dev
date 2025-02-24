@@ -1,7 +1,7 @@
 import { currentTarget } from "./directive.ts";
 import { DOMRenderer } from "./dom/dom.ts";
-import { GPURendererMini } from "./gpu/gpu.mini.ts";
-import { NativeRenderer } from "./native/native.ts";
+import { GPURendererMini } from "./gpu/gpu.web.mini.ts";
+import { NativeRenderer } from "./native/nst/native.ts";
 import {
   DirectiveRenderTargetProp,
   DOMNode,
