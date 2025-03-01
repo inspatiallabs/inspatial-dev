@@ -16,6 +16,7 @@
     "./packages/core/dev/kit/*",
     "./packages/core/dev/xr/*",
     "./packages/core/dev/run/*",
+    "./packages/core/dev/renderer/*",
     "./packages/core/dev/iss/*",
     "./packages/core/dev/ecs/*",
     "./packages/core/dev/tw/*",

@@ -1,24 +1,17 @@
 {
-  "name": "@inspatial/run",
+  "name": "@inspatial/dom",
   "license": "Apache-2.0",
   "version": "0.0.1",
-  "imports": {
-    "@inspatial/run": "./src/index.ts"
-  },
   "exports": {
     ".": "./src/index.ts",
-    "./jsx": "./src/jsx/index.ts",
-    "./itx": "./src/itx/index.ts",
-    "./xml": "./src/xml/index.ts"
+    "./dom": "./src/dom.ts",
+    "./render": "./src/render.ts",
+    "./diff-stream": "./src/diff-stream.ts"
   },
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
-  },
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "@inspatial/run"
   }
 }

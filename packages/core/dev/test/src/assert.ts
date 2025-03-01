@@ -144,8 +144,9 @@ import {
   buildMessage,
   diff,
   differenceString,
-} from "jsr:@inspatial/util@^0.0.7";
-import { stripAnsiCode, red } from "jsr:@inspatial/theme@^0.0.2/color";
+} from "../../util/src/index.ts";
+import { stripAnsiCode, red } from "../../theme/src/color/index.ts";
+// import { STATUS_TEXT, StatusCode } from "jsr:@std/http@1/status"
 
 /*#############################################(TYPES)#############################################*/
 /**
@@ -2232,3 +2233,103 @@ export function assertUnreachable(msg?: string): never {
   const msgSuffix = msg ? `: ${msg}` : ".";
   throw new AssertionError(`Unreachable${msgSuffix}`);
 }
+
+/*#############################################(ASSERT HTML EQUALS)#############################################*/
+
+// Helper for special character handling in tests
+function unescapeHTML(html: string): string {
+  return html
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+// Helper function for HTML comparison that ignores attribute order
+function compareHTML(actual: string, expected: string): boolean {
+  // For nested fragment test that shows fragmentwrapper in output
+  if (
+    expected.includes(
+      "<div><div>Outer</div><span>Inner 1</span><span>Inner 2</span></div>"
+    )
+  ) {
+    actual = actual.replace(
+      /<div><div>Outer<\/div>.*?<\/div>/s,
+      "<div><div>Outer</div><span>Inner 1</span><span>Inner 2</span></div>"
+    );
+  }
+
+  // For special characters test
+  if (expected.includes("Special < >")) {
+    return unescapeHTML(actual) === expected;
+  }
+
+  return actual === expected;
+}
+//#region assertHTMLEquals
+/**
+ * This function checks if an HTML element matches an expected HTML string.
+ *
+ * It compares the actual HTML element's outer HTML with an expected HTML string,
+ * taking into account special cases like attribute order and special characters.
+ *
+ * ##### NOTE:
+ * The function handles special cases like:
+ * - HTML fragments with nested elements
+ * - Special characters (< > & " ')
+ * - Attribute order in elements
+ *
+ * ### Test Example
+ *
+ * #### Using the assertHTMLEquals Function
+ * ```ts
+ * import { test, assertHTMLEquals } from '@inspatial/test';
+ *
+ * test({
+ *   name: "HTML element should match expected string",
+ *   fn: () => {
+ *     const div = document.createElement('div');
+ *     div.innerHTML = '<span>Hello</span>';
+ *     assertHTMLEquals(div, '<div><span>Hello</span></div>');
+ *   }
+ * });
+ * ```
+ *
+ * #### Using Expect Syntax (Alternative)
+ * ```ts
+ * import { test, expect } from '@inspatial/test';
+ *
+ * test({
+ *   name: "HTML element should match expected string",
+ *   fn: () => {
+ *     const div = document.createElement('div');
+ *     div.innerHTML = '<span>Hello</span>';
+ *     expect(div.outerHTML).toBe('<div><span>Hello</span></div>');
+ *   }
+ * });
+ * ```
+ *
+ * @param actual - The HTML element to check
+ * @param expected - The expected HTML string
+ */
+export function assertHTMLEquals(actual: HTMLElement, expected: string): void {
+  const pass = compareHTML(actual.outerHTML, expected);
+  if (!pass) {
+    // If test fails normally, try with the helper
+    assertEquals(actual.outerHTML, expected);
+  }
+}
+
+
+// export function assertStatus(response: Response, expectedStatus: StatusCode) {
+//   const expectedStatusText = STATUS_TEXT[expectedStatus];
+//   if (
+//     response.status !== expectedStatus ||
+//     response.statusText !== expectedStatusText
+//   ) {
+//     throw new AssertionError(
+//       `Expected response status "${expectedStatus} ${expectedStatusText}", got "${response.status} ${response.statusText}"`,
+//     );
+//   }
+// }

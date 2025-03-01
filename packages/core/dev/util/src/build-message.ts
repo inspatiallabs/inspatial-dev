@@ -6,7 +6,7 @@ import {
   green,
   red,
   white,
-} from "jsr:@inspatial/theme@^0.0.2/color";
+} from "../../theme/src/color/index.ts";
 import { DiffResultProp, DiffTypeProp } from "./difference.ts";
 
 /**
