@@ -1,4 +1,21 @@
+// @ts-ignore - Ignoring TS extension import error
 import { GPUNode } from "../types.ts";
+
+// WebGPU type definitions
+// These are placeholders until proper WebGPU types are available
+type GPUTexture = any;
+type GPUCanvasContext = any;
+type GPUDevice = any;
+type GPUShaderModule = any;
+type GPUVertexBufferLayout = any;
+type GPUColorTargetState = any;
+type GPUDepthStencilState = any;
+type GPUBindGroupLayout = any;
+type GPUBindGroupEntry = any;
+type GPUCommandEncoder = any;
+type GPUColor = any;
+type GPURenderPipeline = any;
+type GPUBindGroup = any;
 
 // Mini GPU Rendering Engine
 export interface RenderTarget {
@@ -46,20 +63,32 @@ export class GPURendererMini {
   }
 
   async initialize(canvas: HTMLCanvasElement) {
-    const context = canvas.getContext("webgpu");
-    if (!context) throw new Error("WebGPU context not available");
+    // First check if WebGPU is available
+    if (!('gpu' in navigator)) {
+      throw new Error("WebGPU is not supported in this browser");
+    }
+  
+    // Use a double assertion via unknown to satisfy TypeScript's type checking
+    const context = canvas.getContext('webgpu') as unknown as GPUCanvasContext;
+    
+    // Still do a runtime check to make sure we actually got a context
+    if (!context) {
+      throw new Error("WebGPU context not available");
+    }
+    
     this.context = context;
-
+  
     const format = navigator.gpu.getPreferredCanvasFormat();
     const configuration: GPUCanvasConfiguration = {
       device: this.device,
       format,
       alphaMode: "premultiplied",
     };
-
+  
     context.configure(configuration);
   }
 
+  
   createElement(type: string, props: any, ...children: any[]): GPUNode {
     return {
       type,

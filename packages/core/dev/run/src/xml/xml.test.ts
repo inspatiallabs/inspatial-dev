@@ -1,6 +1,6 @@
 // src/xml.test.ts
 import { assertEquals, test } from "../../../test/src/index.ts";
-import { jsx } from "../jsx/index.ts";
+import { jsx } from "../jsx/jsx-runtime.ts";
 import {
   xml,
   registerNamespace,

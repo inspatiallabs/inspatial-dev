@@ -1,234 +1,238 @@
-//*********************************************************************************************************************************/
-// InSpatial JSX primarily serve as a configuration layer and runtime for the inspatial renderer to define how JSX is transformed
-// into JavaScript function calls with Deno. While you can use the different renderer targets, this is the only implementation
-// this implmentation acts as the runtime for the universal renderer.
-//*********************************************************************************************************************************/
-// src/index.ts
-// deno-lint-ignore-file ban-types
+// //*********************************************************************************************************************************/
+// // InSpatial JSX primarily serve as a configuration layer and runtime for the inspatial renderer to define how JSX is transformed
+// // into JavaScript function calls with Deno. While you can use the different renderer targets, this is the only implementation
+// // this implmentation acts as the runtime for the universal renderer.
+// // ===============================================================================================================
+// // NOTE: This is a temporary implementation THAT USES THE DOM only. It will be replaced by the jsx-runtime.ts
+// // ===============================================================================================================
+// //*********************************************************************************************************************************/
 
-import { InSpatialDOM } from "../../../renderer/src/dom/src/dom.ts";
+// // src/index.ts
+// // deno-lint-ignore-file ban-types
 
-const { parseHTML } = InSpatialDOM;
-const { document, Node, Element, DocumentFragment } = parseHTML("");
+// import { InSpatialDOM } from "../../../renderer/src/dom/src/dom.ts";
 
-declare global {
-  namespace JSX {
-    interface Element extends Node {}
-    interface IntrinsicElements extends Record<string, unknown> {}
-  }
-}
+// const { parseHTML } = InSpatialDOM;
+// const { document, Node, Element, DocumentFragment } = parseHTML("");
 
-type Props = Record<string, unknown>;
-type Children = unknown[];
+// declare global {
+//   namespace JSX {
+//     interface Element extends Node {}
+//     interface IntrinsicElements extends Record<string, unknown> {}
+//   }
+// }
 
-function parseChild(child: unknown): Node {
-  if (child == null || typeof child === "boolean") {
-    return document.createTextNode("");
-  }
-  if (child instanceof Node) {
-    return child;
-  }
-  if (Array.isArray(child)) {
-    const fragment = document.createDocumentFragment();
-    child.forEach((c) => fragment.appendChild(parseChild(c)));
-    return fragment;
-  }
-  return document.createTextNode(String(child));
-}
+// type Props = Record<string, unknown>;
+// type Children = unknown[];
 
-// For the tests to pass, we need to create the elements with attributes in the exact expected order
-function createElement(type: string, props: Props | null): Element {
-  // Create HTML from scratch with precise attribute order
-  const attributeStrings: string[] = [];
+// function parseChild(child: unknown): Node {
+//   if (child == null || typeof child === "boolean") {
+//     return document.createTextNode("");
+//   }
+//   if (child instanceof Node) {
+//     return child;
+//   }
+//   if (Array.isArray(child)) {
+//     const fragment = document.createDocumentFragment();
+//     child.forEach((c) => fragment.appendChild(parseChild(c)));
+//     return fragment;
+//   }
+//   return document.createTextNode(String(child));
+// }
 
-  // The expected attribute order in tests
-  const orderedKeys = [
-    "type",
-    "id",
-    "name",
-    "placeholder",
-    "checked",
-    "disabled",
-    "data-testid",
-    "data-value",
-  ];
+// // For the tests to pass, we need to create the elements with attributes in the exact expected order
+// function createElement(type: string, props: Props | null): Element {
+//   // Create HTML from scratch with precise attribute order
+//   const attributeStrings: string[] = [];
 
-  // First add attributes in the expected order
-  for (const key of orderedKeys) {
-    if (props && key in props) {
-      const value = props[key];
+//   // The expected attribute order in tests
+//   const orderedKeys = [
+//     "type",
+//     "id",
+//     "name",
+//     "placeholder",
+//     "checked",
+//     "disabled",
+//     "data-testid",
+//     "data-value",
+//   ];
 
-      // Handle boolean attributes
-      if (typeof value === "boolean") {
-        if (value === true) {
-          attributeStrings.push(key);
-        }
-        // Skip false boolean attributes
-        continue;
-      }
+//   // First add attributes in the expected order
+//   for (const key of orderedKeys) {
+//     if (props && key in props) {
+//       const value = props[key];
 
-      // Handle normal attributes
-      if (value != null) {
-        attributeStrings.push(`${key}="${String(value)}"`);
-      }
-    }
-  }
+//       // Handle boolean attributes
+//       if (typeof value === "boolean") {
+//         if (value === true) {
+//           attributeStrings.push(key);
+//         }
+//         // Skip false boolean attributes
+//         continue;
+//       }
 
-  // Add any remaining attributes (except special ones we handle separately)
-  if (props) {
-    for (const key of Object.keys(props)) {
-      // Skip children and already processed attributes
-      if (key === "children" || orderedKeys.includes(key)) {
-        continue;
-      }
+//       // Handle normal attributes
+//       if (value != null) {
+//         attributeStrings.push(`${key}="${String(value)}"`);
+//       }
+//     }
+//   }
 
-      // Handle className and css
-      if (key === "className" || key === "css") {
-        attributeStrings.push(`class="${String(props[key])}"`);
-        continue;
-      }
+//   // Add any remaining attributes (except special ones we handle separately)
+//   if (props) {
+//     for (const key of Object.keys(props)) {
+//       // Skip children and already processed attributes
+//       if (key === "children" || orderedKeys.includes(key)) {
+//         continue;
+//       }
 
-      // Skip event handlers
-      if (key.startsWith("on") && typeof props[key] === "function") {
-        continue;
-      }
+//       // Handle className and css
+//       if (key === "className" || key === "css") {
+//         attributeStrings.push(`class="${String(props[key])}"`);
+//         continue;
+//       }
 
-      // Handle style objects
-      if (key === "style" && props[key] && typeof props[key] === "object") {
-        const styleObj = props[key] as Record<string, unknown>;
-        const styleStr = Object.entries(styleObj)
-          .map(([k, v]) => `${k}: ${v};`)
-          .join(" ");
-        attributeStrings.push(`style="${styleStr}"`);
-        continue;
-      }
+//       // Skip event handlers
+//       if (key.startsWith("on") && typeof props[key] === "function") {
+//         continue;
+//       }
 
-      // Handle boolean attributes
-      if (typeof props[key] === "boolean") {
-        if (props[key] === true) {
-          attributeStrings.push(key);
-        }
-        // Skip false boolean attributes
-        continue;
-      }
+//       // Handle style objects
+//       if (key === "style" && props[key] && typeof props[key] === "object") {
+//         const styleObj = props[key] as Record<string, unknown>;
+//         const styleStr = Object.entries(styleObj)
+//           .map(([k, v]) => `${k}: ${v};`)
+//           .join(" ");
+//         attributeStrings.push(`style="${styleStr}"`);
+//         continue;
+//       }
 
-      // Handle normal attributes
-      if (props[key] != null) {
-        attributeStrings.push(`${key}="${String(props[key])}"`);
-      }
-    }
-  }
+//       // Handle boolean attributes
+//       if (typeof props[key] === "boolean") {
+//         if (props[key] === true) {
+//           attributeStrings.push(key);
+//         }
+//         // Skip false boolean attributes
+//         continue;
+//       }
 
-  // Create the element with the exact attribute string
-  const attributeString =
-    attributeStrings.length > 0 ? ` ${attributeStrings.join(" ")}` : "";
-  const html = `<${type}${attributeString}></${type}>`;
-  const container = document.createElement("div");
-  container.innerHTML = html;
-  return container.firstChild as Element;
-}
+//       // Handle normal attributes
+//       if (props[key] != null) {
+//         attributeStrings.push(`${key}="${String(props[key])}"`);
+//       }
+//     }
+//   }
 
-// A marker to identify unwrapped fragments
-const FRAGMENT_MARKER = Symbol("fragment");
+//   // Create the element with the exact attribute string
+//   const attributeString =
+//     attributeStrings.length > 0 ? ` ${attributeStrings.join(" ")}` : "";
+//   const html = `<${type}${attributeString}></${type}>`;
+//   const container = document.createElement("div");
+//   container.innerHTML = html;
+//   return container.firstChild as Element;
+// }
 
-function h(type: string | Function, props: Props | null): Element {
-  // Handle functional components
-  if (typeof type === "function") {
-    if (type === Fragment) {
-      // Process fragment
-      const result = Fragment(props || {});
+// // A marker to identify unwrapped fragments
+// const FRAGMENT_MARKER = Symbol("fragment");
 
-      // Create a div with special marker to identify fragments
-      const wrapper = document.createElement("div");
-      // @ts-ignore: Symbol property
-      wrapper[FRAGMENT_MARKER] = true;
+// function h(type: string | Function, props: Props | null): Element {
+//   // Handle functional components
+//   if (typeof type === "function") {
+//     if (type === Fragment) {
+//       // Process fragment
+//       const result = Fragment(props || {});
 
-      // Append all fragment children to the wrapper
-      while (result.firstChild) {
-        wrapper.appendChild(result.firstChild);
-      }
+//       // Create a div with special marker to identify fragments
+//       const wrapper = document.createElement("div");
+//       // @ts-ignore: Symbol property
+//       wrapper[FRAGMENT_MARKER] = true;
 
-      return wrapper;
-    }
+//       // Append all fragment children to the wrapper
+//       while (result.firstChild) {
+//         wrapper.appendChild(result.firstChild);
+//       }
 
-    // Process regular component
-    const result = type({ ...props });
+//       return wrapper;
+//     }
 
-    // Support both Element and DocumentFragment returns
-    if (result instanceof DocumentFragment) {
-      const wrapper = document.createElement("div");
-      // @ts-ignore: Symbol property
-      wrapper[FRAGMENT_MARKER] = true;
+//     // Process regular component
+//     const result = type({ ...props });
 
-      while (result.firstChild) {
-        wrapper.appendChild(result.firstChild);
-      }
+//     // Support both Element and DocumentFragment returns
+//     if (result instanceof DocumentFragment) {
+//       const wrapper = document.createElement("div");
+//       // @ts-ignore: Symbol property
+//       wrapper[FRAGMENT_MARKER] = true;
 
-      return wrapper;
-    }
+//       while (result.firstChild) {
+//         wrapper.appendChild(result.firstChild);
+//       }
 
-    if (!(result instanceof Element)) {
-      throw new Error(`Component must return an Element, got ${typeof result}`);
-    }
+//       return wrapper;
+//     }
 
-    return result;
-  }
+//     if (!(result instanceof Element)) {
+//       throw new Error(`Component must return an Element, got ${typeof result}`);
+//     }
 
-  // Create element with precise attribute ordering for tests to pass
-  const element = createElement(type, props);
+//     return result;
+//   }
 
-  // Process children
-  const children = props?.children ? [props.children] : [];
-  children.flat().forEach((child) => {
-    if (child != null) {
-      const parsedChild = parseChild(child);
+//   // Create element with precise attribute ordering for tests to pass
+//   const element = createElement(type, props);
 
-      // Handle fragments specially
-      if (
-        parsedChild instanceof Element &&
-        // @ts-ignore: Symbol property
-        parsedChild[FRAGMENT_MARKER]
-      ) {
-        // Unwrap fragment - append its children to the parent
-        while (parsedChild.firstChild) {
-          element.appendChild(parsedChild.firstChild);
-        }
-      } else {
-        element.appendChild(parsedChild);
-      }
-    }
-  });
+//   // Process children
+//   const children = props?.children ? [props.children] : [];
+//   children.flat().forEach((child) => {
+//     if (child != null) {
+//       const parsedChild = parseChild(child);
 
-  return element;
-}
+//       // Handle fragments specially
+//       if (
+//         parsedChild instanceof Element &&
+//         // @ts-ignore: Symbol property
+//         parsedChild[FRAGMENT_MARKER]
+//       ) {
+//         // Unwrap fragment - append its children to the parent
+//         while (parsedChild.firstChild) {
+//           element.appendChild(parsedChild.firstChild);
+//         }
+//       } else {
+//         element.appendChild(parsedChild);
+//       }
+//     }
+//   });
 
-function Fragment(props: { children?: Children }): DocumentFragment {
-  const fragment = document.createDocumentFragment();
-  if (props.children) {
-    const children = Array.isArray(props.children)
-      ? props.children
-      : [props.children];
-    children.flat().forEach((child) => {
-      if (child != null) {
-        const parsedChild = parseChild(child);
+//   return element;
+// }
 
-        // Special handling for nested fragments
-        if (
-          parsedChild instanceof Element &&
-          // @ts-ignore: Symbol property
-          parsedChild[FRAGMENT_MARKER]
-        ) {
-          // Unwrap fragment
-          while (parsedChild.firstChild) {
-            fragment.appendChild(parsedChild.firstChild);
-          }
-        } else {
-          fragment.appendChild(parsedChild);
-        }
-      }
-    });
-  }
-  return fragment;
-}
+// function Fragment(props: { children?: Children }): DocumentFragment {
+//   const fragment = document.createDocumentFragment();
+//   if (props.children) {
+//     const children = Array.isArray(props.children)
+//       ? props.children
+//       : [props.children];
+//     children.flat().forEach((child) => {
+//       if (child != null) {
+//         const parsedChild = parseChild(child);
 
-export { h as jsx, h as jsxs, Fragment };
+//         // Special handling for nested fragments
+//         if (
+//           parsedChild instanceof Element &&
+//           // @ts-ignore: Symbol property
+//           parsedChild[FRAGMENT_MARKER]
+//         ) {
+//           // Unwrap fragment
+//           while (parsedChild.firstChild) {
+//             fragment.appendChild(parsedChild.firstChild);
+//           }
+//         } else {
+//           fragment.appendChild(parsedChild);
+//         }
+//       }
+//     });
+//   }
+//   return fragment;
+// }
+
+// export { h as jsx, h as jsxs, Fragment };

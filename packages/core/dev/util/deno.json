@@ -50,7 +50,9 @@
     "./convert-image-to-base-64-dom": "./src/convert-image-to-base-64-dom.ts",
     "./svg-to-tiny-data-uri": "./src/svg-to-tiny-data-uri.ts",
     "./svg-to-src-set": "./src/svg-to-src-set.ts",
-    "./stringify": "./src/stringify.ts"
+    "./stringify": "./src/stringify.ts",
+    "./hyphenize": "./src/hyphenize.ts",
+    "./escape-html": "./src/escape-html.ts"
   },
 
   "publish": {

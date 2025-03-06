@@ -1,3 +1,4 @@
+// @ts-ignore - Ignoring TS extension import error
 import { DirectiveRenderTargetProp } from "./types.ts";
 
 // Global target state

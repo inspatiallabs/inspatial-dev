@@ -1,3 +1,4 @@
+// @ts-ignore - Using npm import via Deno syntax
 import * as InSpatialDOM from "npm:linkedom@^0.18.9";
 
 export {
@@ -29,7 +30,8 @@ export {
    * import { InSpatialDOM } from '@inspatial/dom';
    *
    * // Create a document
-   * const { Document, Node } = InSpatialDOM;
+   * const { parseHTML } = InSpatialDOM;
+   * const { document, Node, Element, DocumentFragment } = parseHTML("");
    *
    * // Create and append an element
    * const div = document.createElement('div');
@@ -42,6 +44,5 @@ export {
    * **NOTE:** InSpatial DOM is designed for environments that require **direct DOM manipulation** without the overhead of diffing algorithms. This makes it well-suited for **pre-rendering 3D/XR environments**, generating DOM structures for WebGPU, and handling **offscreen DOM processing**.
    *
    */
-
   InSpatialDOM,
 };

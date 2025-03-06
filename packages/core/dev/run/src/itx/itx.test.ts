@@ -1,7 +1,7 @@
 // src/template.test.ts
 import { assertEquals, test } from "jsr:@inspatial/test";
 import { itx, defineComponent } from "./itx.ts";
-import { jsx } from "../index.ts";
+import { jsx } from "../jsx/jsx-runtime.ts";
 
 test("Basic interpolation works", () => {
   const Template = itx`<div class="test">{{ message }}</div>`({

@@ -1,35 +1,56 @@
-import { InSpatialDOM } from "../src/dom.ts";
+/** @module InSpatialDOM
+ * Provides functionality for efficiently diffing and updating DOM nodes based on HTML streams.
+ * This module is crucial for InSpatial DOM implementation and streaming updates.
+ */
+
+import { InSpatialDOM } from "../dom.ts";
 
 const { parseHTML } = InSpatialDOM;
 
-type Walker = {
+/** Interface for the DOM tree walker used in streaming updates */
+interface InWalkerType {
   root: Node | null;
   [FIRST_CHILD]: (node: Node) => Promise<Node | null>;
   [NEXT_SIBLING]: (node: Node) => Promise<Node | null>;
   [APPLY_TRANSITION]: (v: () => void) => void;
-};
+}
 
-type NextNodeCallback = (node: Node) => void;
+/** Type definition for node traversal callback */
+type NextNodeCallbackType = (node: Node) => void;
 
-type Options = {
-  onNextNode?: NextNodeCallback;
+/** Interface for configuration options in the diffing process */
+interface InOptionsType {
+  onNextNode?: NextNodeCallbackType;
   transition?: boolean;
   shouldIgnoreNode?: (node: Node | null) => boolean;
-};
+}
 
+/** DOM node type constants */
 const ELEMENT_TYPE = 1;
 const DOCUMENT_TYPE = 9;
 const DOCUMENT_FRAGMENT_TYPE = 11;
+
+/** Walker operation constants */
 const APPLY_TRANSITION = 0;
 const FIRST_CHILD = 1;
 const NEXT_SIBLING = 2;
+
+/** Special HTML tags that require specific handling */
 const SPECIAL_TAGS = new Set(["HTML", "HEAD", "BODY"]);
+
+/** Utility function to wait for the next animation frame */
 const wait = () => new Promise((resolve) => requestAnimationFrame(resolve));
 
+/** 
+ * Main function to diff and update DOM nodes based on an HTML stream
+ * @param oldNode - The existing DOM node to update
+ * @param stream - ReadableStream containing the new HTML content
+ * @param options - Configuration options for the diffing process
+ */
 export async function diffStream(
   oldNode: Node,
   stream: ReadableStream,
-  options?: Options
+  options?: InOptionsType
 ) {
   const walker = await htmlStreamWalker(stream, options);
   const newNode = walker.root!;
@@ -45,10 +66,13 @@ export async function diffStream(
   }
 }
 
-/**
- * Updates a specific htmlNode and does whatever it takes to convert it to another one.
+/** 
+ * Updates a single node by comparing and applying changes from the new node
+ * @param oldNode - The existing DOM node to update
+ * @param newNode - The new node to diff against
+ * @param walker - Walker instance for traversing the DOM tree
  */
-async function updateNode(oldNode: Node, newNode: Node, walker: Walker) {
+async function updateNode(oldNode: Node, newNode: Node, walker: InWalkerType) {
   if (oldNode.nodeType !== newNode.nodeType) {
     return walker[APPLY_TRANSITION](() =>
       oldNode.parentNode!.replaceChild(newNode.cloneNode(true), oldNode)
@@ -79,8 +103,10 @@ async function updateNode(oldNode: Node, newNode: Node, walker: Walker) {
   }
 }
 
-/**
- * Utility that will update one list of attributes to match another.
+/** 
+ * Updates attributes of an element by comparing old and new attribute sets
+ * @param oldAttributes - Current attributes of the element
+ * @param newAttributes - New attributes to apply
  */
 function setAttributes(
   oldAttributes: NamedNodeMap,
@@ -105,7 +131,6 @@ function setAttributes(
     name = oldAttribute.localName;
     newAttribute = oldAttributes.getNamedItemNS(namespace, name);
 
-    // Avoid register already registered server action in frameworks like Brisa
     if (oldAttribute.name === "data-action") continue;
 
     if (!newAttribute) {
@@ -119,10 +144,13 @@ function setAttributes(
   }
 }
 
-/**
- * Utility that will nodes childern to match another nodes children.
+/** 
+ * Recursively updates child nodes of a parent element
+ * @param oldParent - The existing parent node
+ * @param newParent - The new parent node to diff against
+ * @param walker - Walker instance for traversing the DOM tree
  */
-async function setChildNodes(oldParent: Node, newParent: Node, walker: Walker) {
+async function setChildNodes(oldParent: Node, newParent: Node, walker: InWalkerType) {
   let checkOld;
   let oldKey;
   let newKey;
@@ -201,17 +229,25 @@ async function setChildNodes(oldParent: Node, newParent: Node, walker: Walker) {
   });
 }
 
+/** 
+ * Retrieves the key identifier for a node
+ * @param node - The node to get the key from
+ * @returns The key value from either the 'key' attribute or id
+ */
 function getKey(node: Node) {
   return (node as Element)?.getAttribute?.("key") || (node as Element).id;
 }
 
-/**
- * Utility that will walk a html stream and call a callback for each node.
+/** 
+ * Creates a walker for traversing an HTML stream
+ * @param stream - ReadableStream containing HTML content
+ * @param options - Configuration options for the walker
+ * @returns Walker instance for DOM traversal
  */
 async function htmlStreamWalker(
   stream: ReadableStream,
-  options: Options = {}
-): Promise<Walker> {
+  options: InOptionsType = {}
+): Promise<InWalkerType> {
   // Use InSpatial DOM to parse the HTML stream
   const { document: doc } = parseHTML("");
 
@@ -280,9 +316,6 @@ async function htmlStreamWalker(
       parent = parent.parentElement;
     }
 
-    // Related issues to this ternary (hard to reproduce in a test):
-    // https://github.com/brisa-build/diff-dom-streaming/pull/15
-    // https://github.com/brisa-build/brisa/issues/739
     return waitChildren
       ? streamInProgress && !node.hasChildNodes?.()
       : streamInProgress;
