@@ -1,14 +1,18 @@
 import { type PrimitiveFontTypes } from "./primitive/types.ts";
 //@ts-expect-error
 import { type GoogleFontTypes } from "./google/fonts.ts";
-import { createVariant, VariantProps } from "../variant/index.ts";
+import {
+  createVariant,
+  VariantProps,
+  VariantReturnType,
+} from "../variant/index.ts";
 
 export type AllFontVariants = GoogleFontTypes | PrimitiveFontTypes;
 
 //##############################################(VARIANT)##############################################//
 
 // Define the variant shape for better type inference
-type TypographyVariantType = {
+type TypographyVariantShape = {
   variant: {
     text: string;
     quote: string;
@@ -19,23 +23,25 @@ type TypographyVariantType = {
   };
 };
 
-export const TypographyVariant = createVariant<TypographyVariantType>({
-  base: "inline-flex",
-  settings: {
-    variant: {
-      text: "font-system",
-      quote: "font-serif italic",
-      code: "font-mono",
+// Add explicit type annotation using VariantReturnType
+export const TypographyVariant: VariantReturnType<TypographyVariantShape> =
+  createVariant<TypographyVariantShape>({
+    base: "inline-flex",
+    settings: {
+      variant: {
+        text: "font-sans",
+        quote: "font-serif italic",
+        code: "font-mono",
+      },
+      format: {
+        base: "text-base",
+      },
     },
-    format: {
-      base: "text-base",
+    defaultSettings: {
+      variant: "text",
+      format: "base",
     },
-  },
-  defaultSettings: {
-    variant: "text",
-    format: "base",
-  },
-}) as any;
+  });
 
 // Export the props type for variant
 export type TypographyVariantProps = VariantProps<
