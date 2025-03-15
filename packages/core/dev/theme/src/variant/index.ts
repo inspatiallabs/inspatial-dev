@@ -428,7 +428,7 @@ export const kit = variantSystem.kit;
      * ```typescript
      * const button = variant({
      *   base: "px-4 py-2 rounded",
-     *   variants: {
+     *   settings: {
      *     size: {
      *       sm: "text-sm",
      *       lg: "text-lg"
@@ -438,7 +438,7 @@ export const kit = variantSystem.kit;
      *       red: "bg-red-500 hover:bg-red-600"
      *     }
      *   },
-     *   defaultVariants: {
+     *   defaultSettings: {
      *     size: "sm",
      *     color: "blue"
      *   }
@@ -446,7 +446,7 @@ export const kit = variantSystem.kit;
      * ```
      *
      * ### ⚡ Performance Tips
-     * - Use compound variants sparingly
+     * - Use composition sparingly
      * - Prefer static variants over dynamic ones
      * - Cache variant results for frequently used combinations
      */
@@ -536,10 +536,8 @@ export const composeVariant = variantSystem.composeVariant;
  * ```typescript
  * const ComponentVariant = createVariant({
  *   settings: {
- *     variant: {
- *       size: { sm: "text-sm px-2", lg: "text-lg px-4" },
- *       theme: { light: "bg-white text-black", dark: "bg-black text-white" }
- *     }
+ *     size: { sm: "text-sm px-2", lg: "text-lg px-4" },
+ *     theme: { light: "bg-white text-black", dark: "bg-black text-white" }
  *   }
  * });
  * 
@@ -564,7 +562,7 @@ export const composeVariant = variantSystem.composeVariant;
  * // Use the custom variant system
  * const button = variant({
  *   base: "rounded-md",
- *   variants: {
+ *   settings: {
  *     size: {
  *       sm: "text-sm px-2",
  *       lg: "text-lg px-4"
@@ -686,7 +684,7 @@ export function createVariant(
     };
 
   // If options is an InSpatialVariantConfig, create a variant function with it
-  if (options && "variants" in options) {
+  if (options && "settings" in options) {
     const config = options as any;
     const variantFn = variant(config);
 

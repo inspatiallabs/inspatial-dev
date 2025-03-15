@@ -1,4 +1,4 @@
-// TODO: get ISSSelector from @inspatial/iss which is a wrapper around css-select
+// TODO: get Selector from @inspatial/theme which is a wrapper around css-select
 import * as CSSselect from 'css-select'; 
 import {ELEMENT_NODE, TEXT_NODE} from './constants.ts';
 import {ignoreCase} from './util/utils.ts';
