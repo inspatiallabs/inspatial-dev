@@ -19,7 +19,7 @@
 _Reality is your canvas_
 
 <h3 align="center">
-  InSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) applications
+    InSpatial is a universal development environment (UDE) <br> for building cross-platform and spatial (AR/MR/VR) applications
 </h3>
 
 [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
@@ -43,8 +43,8 @@ InSpatial DOM is a high-performance, **DOM-less** environment designed for
 
 ## 🚀 Features
 
-- **Universal Rendering**: Works across browsers, WebGPU, WebXR, Deno/Node.js, and
-  native environments.
+- **Universal Rendering**: Works across browsers, WebGPU, WebXR, Deno/Node.js,
+  and native environments.
 - **Virtual DOM-like API**: Provides an efficient document structure with query
   selectors, element creation, and tree manipulation.
 - **Headless DOM Parsing**: Enables parsing and manipulation of XML, HTML, and
@@ -76,21 +76,22 @@ InSpatial DOM is a high-performance, **DOM-less** environment designed for
 
 ---
 
-
 ## 🆚 InSpatial DOM vs Virtual-DOM?
 
-Unlike traditional approaches that rely on a **Virtual DOM (VDOM)**, InSpatial DOM takes a radically different approach:
+Unlike traditional approaches that rely on a **Virtual DOM (VDOM)**, InSpatial
+DOM takes a radically different approach:
 
+| Feature          | Virtual DOM                                                           | InSpatial DOM                                                                          |
+| ---------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Concept**      | A lightweight representation of the real DOM that updates efficiently | A complete **DOM-less** environment optimized for **universal rendering**              |
+| **Performance**  | Still requires **diffing** and **reconciliation**                     | **No diffing or reconciliation** overhead, leading to **faster rendering**             |
+| **Rendering**    | **Batch updates** to the real DOM                                     | **Directly constructs & renders structures** without a real DOM                        |
+| **Memory Usage** | Can be **memory-intensive** due to retained structures                | **Minimal memory overhead**, as it avoids retaining unused structures                  |
+| **Use Cases**    | Traditional web applications using React-like frameworks              | **Universal applications, including XR (AR/MR/VR), gaming, and server-side rendering** |
 
-| Feature            | Virtual DOM                    | InSpatial DOM                 |
-|--------------------|--------------------------------|--------------------------------|
-| **Concept**       | A lightweight representation of the real DOM that updates efficiently | A complete **DOM-less** environment optimized for **universal rendering** |
-| **Performance**   | Still requires **diffing** and **reconciliation** | **No diffing or reconciliation** overhead, leading to **faster rendering** |
-| **Rendering**     | **Batch updates** to the real DOM | **Directly constructs & renders structures** without a real DOM |
-| **Memory Usage**  | Can be **memory-intensive** due to retained structures | **Minimal memory overhead**, as it avoids retaining unused structures |
-| **Use Cases**     | Traditional web applications using React-like frameworks | **Universal applications, including XR (AR/MR/VR), gaming, and server-side rendering** |
-
-By eliminating the reliance on both the **real DOM** and the **Virtual DOM**, InSpatial DOM provides an unparalleled foundation for rendering across **web, native, and XR** environments.
+By eliminating the reliance on both the **real DOM** and the **Virtual DOM**,
+InSpatial DOM provides an unparalleled foundation for rendering across **web,
+native, and XR** environments.
 
 ---
 
@@ -125,8 +126,8 @@ import { DOMParser } from "@inspatial/dom";
 
 const parser = new DOMParser();
 const document = parser.parseFromString(
-    "<html><body><h1>Hello, InSpatial!</h1></body></html>",
-    "text/html",
+  "<html><body><h1>Hello, InSpatial!</h1></body></html>",
+  "text/html",
 );
 
 console.log(document.querySelector("h1").textContent); // "Hello, InSpatial!"

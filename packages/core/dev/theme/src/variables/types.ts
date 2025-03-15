@@ -1,4 +1,4 @@
-import { ITypographyProps } from "../font/types.ts";
+import { ITypographyProps, TypographyVariantProps } from "../font/types.ts";
 
 /**********************************(Theme Props)**********************************/
 
@@ -6,11 +6,11 @@ import { ITypographyProps } from "../font/types.ts";
 export interface ThemeProps {
   variant: ThemeVariantProps;
   format: ThemeFormatProps;
-  mode: ThemeModeProps;
-  // spacing: ThemeSpacingProps;
-  cursor: ThemeCursorProps;
-  radius: ThemeRadiusProps;
-  typography?: ITypographyProps; 
+  mode?: ThemeModeProps;
+  spacing?: ThemeSpacingProps;
+  cursor?: ThemeCursorProps;
+  radius?: ThemeRadiusProps;
+  typography?: ITypographyProps | TypographyVariantProps; 
 }
 
 export type ThemeSizeScaleProps =

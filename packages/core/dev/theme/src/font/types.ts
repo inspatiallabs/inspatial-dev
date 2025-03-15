@@ -1,8 +1,36 @@
 import { type PrimitiveFontTypes } from "./primitive/types.ts";
 //@ts-expect-error
 import { type GoogleFontTypes } from "./google/fonts.ts";
+import { createVariant, VariantProps } from "../variant/index.ts"
 
 export type AllFontVariants = GoogleFontTypes | PrimitiveFontTypes;
+
+
+//##############################################(VARIANT)##############################################//
+
+export const TypographyVariant = createVariant({
+  base: ["inline-flex"],
+  variants: {
+    variant: {
+      text: "",
+      quote: "",
+      code: "",
+    },
+    format: {
+      base: "",
+    },
+  },
+  defaultVariants: {
+    variant: "text",
+    format: "base",
+  },
+});
+
+export type TypographyVariantProps = VariantProps<
+  typeof TypographyVariant.__variant
+// deno-lint-ignore ban-types
+> & {};
+
 
 //##############################################(TYPES)##############################################//
 
