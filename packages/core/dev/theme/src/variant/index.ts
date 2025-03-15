@@ -255,11 +255,11 @@ export interface InSpatialVariantConfig<V extends VariantShapeProp> {
   /** Base classes applied to all instances */
   base?: ClassValueProp;
 
-  /** Variant definitions mapping variant names to their possible values */
-  variants: V;
+  /** Variant settings definitions mapping variant names to their possible values */
+  settings: V;
 
-  /** Compound variants for complex combinations */
-  compoundVariants?: Array<
+  /** Compound variants composition for complex combinations */
+  composition?: Array<
     {
       [K in keyof V]?: keyof V[K];
     } & {
@@ -269,8 +269,8 @@ export interface InSpatialVariantConfig<V extends VariantShapeProp> {
     }
   >;
 
-  /** Default values for variants */
-  defaultVariants?: {
+  /** Default settings for variants */
+  defaultSettings?: {
     [K in keyof V]?: keyof V[K];
   };
 }
