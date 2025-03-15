@@ -24,6 +24,7 @@ export const TypographyVariant = createVariant({
     variant: "text",
     format: "base",
   },
+  compoundVariants: [],
 });
 
 export type TypographyVariantProps = VariantProps<
