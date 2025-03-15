@@ -192,7 +192,7 @@ const falsyToString = <T extends unknown>(value: T) =>
 
 /*##############################################(VARIANT-SYSTEM)##############################################*/
 
-interface VariantConfigProp {
+type VariantConfigProp = InSpatialVariantConfig<any> & {
   hooks?: {
     onComplete?: (className: string) => string;
   };
@@ -253,16 +253,14 @@ interface VariantSystemReturn {
  */
 export interface InSpatialVariantConfig<V extends VariantShapeProp> {
   /** Base classes applied to all instances */
-  base?: ClassValueProp;
+  base: ClassValueProp;
 
   /** Variant settings definitions mapping variant names to their possible values */
-  settings: V;
+  settings?: V;
 
   /** Compound variants composition for complex combinations */
   composition?: Array<
-    {
-      [K in keyof V]?: keyof V[K];
-    } & {
+    VariantSchemaProp<V> & {
       class?: ClassValueProp;
       className?: ClassValueProp;
       css?: ClassValueProp;
@@ -270,8 +268,12 @@ export interface InSpatialVariantConfig<V extends VariantShapeProp> {
   >;
 
   /** Default settings for variants */
-  defaultSettings?: {
-    [K in keyof V]?: keyof V[K];
+  defaultSettings?: VariantSchemaProp<V>;
+
+  /** Hooks for customizing the output class names */
+  hooks?: {
+    /** Function called after generating the final className */
+    onComplete?: (className: string) => string;
   };
 }
 
@@ -479,13 +481,13 @@ export const variant = variantSystem.variant;
      * ```typescript
      * const baseButton = variant({
      *   base: "px-4 py-2 rounded",
-     *   variants: {
+     *   settings: {
      *     size: { sm: "text-sm", lg: "text-lg" }
      *   }
      * });
      *
      * const colorButton = variant({
-     *   variants: {
+     *   settings: {
      *     color: { blue: "bg-blue-500", red: "bg-red-500" }
      *   }
      * });
@@ -518,7 +520,6 @@ export const composeVariant = variantSystem.composeVariant;
  * @access public
  *
  * ### 💡 Core Concepts
-
  * - Custom variant system creation
  * - Configurable style hooks
  * - Tailwind-compatible class merging
@@ -576,43 +577,26 @@ export const composeVariant = variantSystem.composeVariant;
  * @returns {{ kit: Function, variant: VariantProp, composeVariant: ComposeVariantProp }}
  * Returns an object containing the core styling utilities
  */
+
+/**
+ * Basic overload for options-only variant system
+ */
 export function createVariant(options?: VariantConfigProp): VariantSystemReturn;
 
 /**
  * Function overload for creating a variant system with direct variant configuration
  */
 export function createVariant<V extends VariantShapeProp>(
-  config: InSpatialVariantConfig<V> & VariantConfigProp
-): {
-  kit: (...inputs: ClassValueProp[]) => string;
-  variant: <T extends VariantShapeProp>(
-    config: InSpatialVariantConfig<T>
-  ) => (
-    props?: VariantSchemaProp<T> & {
-      class?: ClassValueProp;
-      className?: ClassValueProp;
-      css?: ClassValueProp;
-    }
-  ) => string;
-  composeVariant: ComposeVariantProp;
-  config: InSpatialVariantConfig<V>;
-  // The directly created variant function
-  __variant: (
-    props?: VariantSchemaProp<V> & {
-      class?: ClassValueProp;
-      className?: ClassValueProp;
-      css?: ClassValueProp;
-    }
-  ) => string;
-};
+  config: InSpatialVariantConfig<V>
+): VariantReturnType<V>;
 
 /**
- * Implementation of createVariant that handles both overloads
+ * Implementation of the createVariant function
  */
 export function createVariant(
   options?:
     | VariantConfigProp
-    | (InSpatialVariantConfig<any> & VariantConfigProp)
+    | InSpatialVariantConfig<any>
 ): any {
   const kit = (...inputs: ClassValueProp[]): string => {
     const className = kitUtil(inputs);
@@ -638,7 +622,7 @@ export function createVariant(
       return variantObj[value as keyof typeof variantObj];
     });
 
-    // Process compound variants
+    // Process composition
     const compoundClasses = config.composition?.reduce((acc, cv) => {
       const {
         class: cvClass,
@@ -683,18 +667,17 @@ export function createVariant(
       );
     };
 
-  // If options is an InSpatialVariantConfig, create a variant function with it
-  if (options && "settings" in options) {
-    const config = options as any;
-    const variantFn = variant(config);
-
+  // If options has settings, create a variant function with it
+  if (options && 'settings' in options) {
+    const variantFn = variant(options as InSpatialVariantConfig<any>);
+    
     return {
       kit,
       variant,
       composeVariant,
-      config,
+      config: options,
       __variant: variantFn,
-    } as any;
+    };
   }
 
   return {
@@ -704,10 +687,53 @@ export function createVariant(
   };
 }
 
+/**
+ * Return type for createVariant when used with a configuration
+ */
+export type VariantReturnType<V extends VariantShapeProp> = {
+  /** Utility for combining classes with intelligent conflict resolution */
+  kit: (...inputs: ClassValueProp[]) => string;
+  
+  /** Creates variant functions with configurable styles */
+  variant: <T extends VariantShapeProp>(
+    config: InSpatialVariantConfig<T>
+  ) => (
+    props?: VariantSchemaProp<T> & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
+    }
+  ) => string;
+  
+  /** Utility for combining multiple variant components */
+  composeVariant: ComposeVariantProp;
+  
+  /** The configuration object used to create this variant */
+  config: InSpatialVariantConfig<V>;
+  
+  /** The variant function created from the provided configuration */
+  __variant: (
+    props?: VariantSchemaProp<V> & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
+    }
+  ) => string;
+};
+
 export type {
+  /** Type for CSS class values that can be used in the variant system */
   ClassValueProp,
+  
+  /** Utility type for extracting props from a variant component */
   VariantProps,
+  
+  /** Type for defining the shape of variants in a component */
   VariantShapeProp,
+  
+  /** Type for the schema of variant props based on a variant shape */
   VariantSchemaProp,
+  
+  /** Configuration options for the variant system */
   VariantConfigProp,
 };

@@ -8,7 +8,7 @@ export type AllFontVariants = GoogleFontTypes | PrimitiveFontTypes;
 //##############################################(VARIANT)##############################################//
 
 export const TypographyVariant = createVariant({
-  base: ["inline-flex"],
+  base: "inline-flex",
   settings: {
     variant: {
       text: "",
@@ -25,12 +25,11 @@ export const TypographyVariant = createVariant({
   },
   composition: [],
   hooks: {},
-}) as any;
+});
 
 export type TypographyVariantProps = VariantProps<
   typeof TypographyVariant.variant
-  // deno-lint-ignore ban-types
-> & {};
+>;
 
 //##############################################(TYPES)##############################################//
 
