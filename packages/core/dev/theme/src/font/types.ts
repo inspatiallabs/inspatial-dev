@@ -35,7 +35,7 @@ export const TypographyVariant = createVariant<TypographyVariantType>({
     variant: "text",
     format: "base",
   },
-});
+}) as any;
 
 // Export the props type for variant
 export type TypographyVariantProps = VariantProps<
