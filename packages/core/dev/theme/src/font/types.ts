@@ -7,28 +7,39 @@ export type AllFontVariants = GoogleFontTypes | PrimitiveFontTypes;
 
 //##############################################(VARIANT)##############################################//
 
-export const TypographyVariant = createVariant({
+// Define the variant shape for better type inference
+type TypographyVariantType = {
+  variant: {
+    text: string;
+    quote: string;
+    code: string;
+  };
+  format: {
+    base: string;
+  };
+};
+
+export const TypographyVariant = createVariant<TypographyVariantType>({
   base: "inline-flex",
   settings: {
     variant: {
-      text: "",
-      quote: "",
-      code: "",
+      text: "font-system",
+      quote: "font-serif italic",
+      code: "font-mono",
     },
     format: {
-      base: "",
+      base: "text-base",
     },
   },
   defaultSettings: {
     variant: "text",
     format: "base",
   },
-  composition: [],
-  hooks: {},
 });
 
+// Export the props type for variant
 export type TypographyVariantProps = VariantProps<
-  typeof TypographyVariant.variant
+  typeof TypographyVariant.__variant
 >;
 
 //##############################################(TYPES)##############################################//
