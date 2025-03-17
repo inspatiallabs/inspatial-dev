@@ -43,7 +43,7 @@ import generateThemeMode from "../helpers.ts";
  * @property {Object} format.dark - Dark mode colors (same structure as light)
  * @property {string} format.light.window - Window color
  * @property {string} format.dark.window - Window color
- * 
+ *
  * @example
  * const theme = ThemeVariable[0]; // Default theme
  * const isDark = theme.mode === 'dark';
