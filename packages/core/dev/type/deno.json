@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/type",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "Apache-2.0",
   "description": "Universal Runtime (Type) Validation",
   "exports": "./src/index.ts"
