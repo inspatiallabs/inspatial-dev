@@ -76,8 +76,8 @@ test({
     });
 
     const validData = {
-      name: "John Doe",
-      email: "john@example.com",
+      name: "Ben Emma",
+      email: "ben@inspatiallabs.com",
     };
 
     const invalidData = {

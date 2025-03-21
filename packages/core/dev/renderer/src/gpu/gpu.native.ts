@@ -108,7 +108,7 @@
         Opaque: 1,
         Premultiplied: 2,
       },
-      CreatePipelineAsyncStatus: {
+      createTypePipelineAsyncStatus: {
         Success: 0,
         ValidationError: 1,
         InternalError: 2,
@@ -1191,7 +1191,7 @@
       return WebGPU.mgrBindGroup.create(device.createBindGroup(desc));
     },
   
-    wgpuDeviceCreatePipelineLayout: (deviceId, descriptor) => {
+    wgpuDevicecreateTypePipelineLayout: (deviceId, descriptor) => {
       {{{ gpu.makeCheckDescriptor('descriptor') }}}
       var bglCount = {{{ gpu.makeGetU32('descriptor', C_STRUCTS.WGPUPipelineLayoutDescriptor.bindGroupLayoutCount) }}};
       var bglPtr = {{{ makeGetValue('descriptor', C_STRUCTS.WGPUPipelineLayoutDescriptor.bindGroupLayouts, '*') }}};
@@ -1208,7 +1208,7 @@
       if (labelPtr) desc["label"] = UTF8ToString(labelPtr);
   
       var device = WebGPU.mgrDevice.get(deviceId);
-      return WebGPU.mgrPipelineLayout.create(device.createPipelineLayout(desc));
+      return WebGPU.mgrPipelineLayout.create(device.createTypePipelineLayout(desc));
     },
   
     wgpuDeviceCreateQuerySet: (deviceId, descriptor) => {
@@ -1291,7 +1291,7 @@
         {{{ runtimeKeepalivePop() }}}
         callUserCallback(() => {
           var pipelineId = WebGPU.mgrComputePipeline.create(pipeline);
-          {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.CreatePipelineAsyncStatus.Success }}}, pipelineId, 0, userdata);
+          {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.createTypePipelineAsyncStatus.Success }}}, pipelineId, 0, userdata);
         });
       }, (pipelineError) => {
         {{{ runtimeKeepalivePop() }}}
@@ -1299,11 +1299,11 @@
           var sp = stackSave();
           var messagePtr = stringToUTF8OnStack(pipelineError.message);
           if (pipelineError.reason === 'validation') {
-            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.CreatePipelineAsyncStatus.ValidationError }}}, 0, messagePtr, userdata);
+            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.createTypePipelineAsyncStatus.ValidationError }}}, 0, messagePtr, userdata);
           } else if (pipelineError.reason === 'internal') {
-            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.CreatePipelineAsyncStatus.InternalError }}}, 0, messagePtr, userdata);
+            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.createTypePipelineAsyncStatus.InternalError }}}, 0, messagePtr, userdata);
           } else {
-            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.CreatePipelineAsyncStatus.Unknown }}}, 0, messagePtr, userdata);
+            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.createTypePipelineAsyncStatus.Unknown }}}, 0, messagePtr, userdata);
           }
           stackRestore(sp);
         });
@@ -1531,7 +1531,7 @@
         {{{ runtimeKeepalivePop() }}}
         callUserCallback(() => {
           var pipelineId = WebGPU.mgrRenderPipeline.create(pipeline);
-          {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.CreatePipelineAsyncStatus.Success }}}, pipelineId, 0, userdata);
+          {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.createTypePipelineAsyncStatus.Success }}}, pipelineId, 0, userdata);
         });
       }, (pipelineError) => {
         {{{ runtimeKeepalivePop() }}}
@@ -1539,11 +1539,11 @@
           var sp = stackSave();
           var messagePtr = stringToUTF8OnStack(pipelineError.message);
           if (pipelineError.reason === 'validation') {
-            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.CreatePipelineAsyncStatus.ValidationError }}}, 0, messagePtr, userdata);
+            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.createTypePipelineAsyncStatus.ValidationError }}}, 0, messagePtr, userdata);
           } else if (pipelineError.reason === 'internal') {
-            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.CreatePipelineAsyncStatus.InternalError }}}, 0, messagePtr, userdata);
+            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.createTypePipelineAsyncStatus.InternalError }}}, 0, messagePtr, userdata);
           } else {
-            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.CreatePipelineAsyncStatus.Unknown }}}, 0, messagePtr, userdata);
+            {{{ makeDynCall('vippp', 'callback') }}}({{{ gpu.createTypePipelineAsyncStatus.Unknown }}}, 0, messagePtr, userdata);
           }
           stackRestore(sp);
         });

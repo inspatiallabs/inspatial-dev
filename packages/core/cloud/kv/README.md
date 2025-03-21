@@ -142,8 +142,8 @@ import { closeKV, deleteKV, getKV, listKV, setKV } from "@inspatial/kv"
 // Store data
 await setKV(kv, ["user", 123], {
   id: "user123",
-  name: "John Doe",
-  email: "john@example.com",
+  name: "Ben Emma",
+  email: "ben@inspatiallabs.com",
 })
 
 // Retrieve data
@@ -176,7 +176,7 @@ import { atomic, transaction } from "@inspatial/kv"
 // Simple atomic operation
 const result = await atomic(kv)
   .check({ key: ["user", 1], versionstamp: "v1" })
-  .set(["user", 1], { id: "123", name: "John", email: "john@example.com" })
+  .set(["user", 1], { id: "123", name: "John", email: "ben@inspatiallabs.com" })
   .delete(["user", 2])
   .commit()
 
@@ -236,8 +236,8 @@ await processor.start()
 // Enqueue data for processing
 await enqueueKV(kv, {
   id: "user123",
-  name: "John Doe",
-  email: "john@example.com",
+  name: "Ben Emma",
+  email: "ben@inspatiallabs.com",
 }, {
   delay: 1000, // 1 second delay
   backoffSchedule: [1000, 5000, 10000], // Retry after 1s, 5s, 10s

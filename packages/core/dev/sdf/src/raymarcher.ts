@@ -303,7 +303,7 @@ class Raymarcher extends THREE.Mesh {
     );
 
     // Create pipelines
-    await this.renderer.createPipeline("raymarcher", {
+    await this.renderer.createTypePipeline("raymarcher", {
       shader: await this.renderer.loadShader(raymarcherWGSL, raymarcherWGSL),
       bindGroupLayouts: [bindGroupLayout],
       depthStencil: {
@@ -313,7 +313,7 @@ class Raymarcher extends THREE.Mesh {
       },
     });
 
-    await this.renderer.createPipeline("screen", {
+    await this.renderer.createTypePipeline("screen", {
       shader: await this.renderer.loadShader(screenWGSL, screenWGSL),
       bindGroupLayouts: [bindGroupLayout],
     });

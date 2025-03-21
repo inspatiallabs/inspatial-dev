@@ -117,9 +117,9 @@ export class GPURendererMini {
     return renderTarget;
   }
 
-  async createPipeline(id: string, config: PipelineConfig) {
+  async createTypePipeline(id: string, config: PipelineConfig) {
     const pipeline = await this.device.createRenderPipelineAsync({
-      layout: this.device.createPipelineLayout({
+      layout: this.device.createTypePipelineLayout({
         bindGroupLayouts: config.bindGroupLayouts || [],
       }),
       vertex: {

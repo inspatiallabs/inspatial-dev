@@ -54,8 +54,8 @@ Deno.test("InSpatial KV Tests", async (t) => {
     await t.step("should create and retrieve a user", async () => {
       const user: UserSchema["schema"] = {
         id: "user1",
-        name: "John Doe",
-        email: "john@example.com",
+        name: "Ben Emma",
+        email: "ben@inspatiallabs.com",
       };
 
       await setKV(kv, ["user", 1], user);
@@ -69,7 +69,7 @@ Deno.test("InSpatial KV Tests", async (t) => {
       const updatedUser: UserSchema["schema"] = {
         id: "user1",
         name: "John Updated",
-        email: "john@example.com",
+        email: "ben@inspatiallabs.com",
       };
 
       await setKV(kv, ["user", 1], updatedUser);
