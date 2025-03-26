@@ -4,6 +4,7 @@
   "version": "0.0.9",
   "imports": {
     "@inspatial/util": "jsr:@inspatial/util@^0.0.8",
+    "@inspatial/theme": "jsr:@inspatial/theme@^0.0.9",
     "@std/path": "jsr:@std/path@^1.0.8",
     "@std/fs": "jsr:@std/fs@^1.0.15"
   },

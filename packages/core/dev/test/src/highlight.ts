@@ -13,7 +13,7 @@ import {
   stripAnsiCode,
   underline,
   yellow,
-} from "../../theme/src/color/index.ts";
+} from "@inspatial/theme";
 import { unescape } from "jsr:/@std/html@1/entities";
 hljs.registerLanguage("typescript", typescript);
 
