@@ -108,7 +108,7 @@ import { fromFileUrl } from "@std/path/from-file-url";
 import { parse } from "@std/path/parse";
 import { resolve } from "@std/path/resolve";
 import { toFileUrl } from "@std/path/to-file-url";
-import { ensureFile, ensureFileSync } from "jsr:@std/fs/ensure-file";
+import { ensureFile, ensureFileSync } from "@std/fs/ensure-file";
 import { assert, assertEqual as equal, AssertionError } from "../assert.ts";
 import {
   buildMessage,

@@ -5,7 +5,7 @@
  */
 
 import { stripAnsiCode } from "../../../theme/src/color/index.ts";
-import { dirname, fromFileUrl, join, toFileUrl } from "jsr:@std/path";
+import { dirname, fromFileUrl, join, toFileUrl } from "@std/path";
 import {
   assert,
   assertInstanceOf,
@@ -15,7 +15,7 @@ import {
 } from "../assert.ts";
 import { test } from "../runtime.ts";
 import { assertSnapshot, createAssertSnapshot, serialize } from "./index.ts";
-import { ensureDir } from "jsr:@std/fs/ensure-dir";
+import { ensureDir } from "@std/fs/ensure-dir";
 
 // Define the testContext type for Deno
 interface testContext {
