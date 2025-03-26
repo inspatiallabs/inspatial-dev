@@ -144,7 +144,7 @@ import {
   buildMessage,
   diff,
   differenceString,
-} from "../../util/src/index.ts";
+} from "@inspatial/util";
 import { stripAnsiCode, red } from "@inspatial/theme";
 
 /*#############################################(TYPES)#############################################*/
