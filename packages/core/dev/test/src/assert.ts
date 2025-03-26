@@ -145,8 +145,7 @@ import {
   diff,
   differenceString,
 } from "../../util/src/index.ts";
-import { stripAnsiCode, red } from "../../theme/src/color/index.ts";
-// import { STATUS_TEXT, StatusCode } from "jsr:@std/http@1/status"
+import { stripAnsiCode, red } from "@inspatial/theme";
 
 /*#############################################(TYPES)#############################################*/
 /**
