@@ -5,7 +5,7 @@
  * that combines client-side WebAssembly with server-side gVisor containers.
  */
 
-import { type } from "@inspatial/type"
+import { type, Type } from "@inspatial/type"
 
 /**
  * Container execution environment types
@@ -109,7 +109,7 @@ export const ContainerEventType = type({
 /**
  * Security context for container execution
  */
-export const SecurityContextType = type({
+export const SecurityContextType: Type<any> = type({
   userId: "string",
   "permissions?": "string[]",
   "securityTokens?": "Record<string, string>",
