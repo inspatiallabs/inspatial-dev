@@ -114,7 +114,7 @@ import {
   buildMessage,
   differenceString as diffStr,
   diff,
-} from "../../../util/src/index.ts";
+} from "@inspatial/util";
 
 const SNAPSHOT_DIR = "inspatial_snapshots";
 const SNAPSHOT_EXT = "snap";
