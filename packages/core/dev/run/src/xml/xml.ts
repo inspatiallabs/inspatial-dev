@@ -1,8 +1,8 @@
 // deno-lint-ignore-file ban-types
 
-import { InSpatialDOM } from "../../../renderer/src/dom/src/dom.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { parseHTML } from "../../../dom/src/dom.ts";
 
-const { parseHTML } = InSpatialDOM;
 const { document, Node, Element } = parseHTML("");
 
 // XML namespace registry

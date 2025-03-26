@@ -18,7 +18,9 @@
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   },
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "@inspatial/run"
+    "jsxImportSource": "@inspatial/run",
+    "lib": ["dom", "dom.iterable", "esnext"]
   }
 }

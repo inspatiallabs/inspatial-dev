@@ -1,6 +1,11 @@
-// @ts-ignore - Ignoring TS extension import error
-export * from "./gpu/gpu.web.mini.ts";
-// @ts-ignore - Ignoring TS extension import error
-export * from "./dom/src/dom.ts";
-// @ts-ignore - Ignoring TS extension import error
-export * from "./native/nst/native.ts";
+/**
+ * @file index.ts
+ * @description Core exports for the coordinated renderer system
+ */
+
+export * from "./types.ts";
+export * from "./interfaces.ts";
+export * from "./registry.ts";
+export * from "./directive.ts";
+export * from "./render.ts";
+export * from "./event-bridge.ts";

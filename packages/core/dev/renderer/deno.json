@@ -1,13 +1,24 @@
 {
   "name": "@inspatial/renderer",
-  "version": "0.0.1",
   "license": "Apache-2.0",
-  "description": "InSptial Universal Renderer (GPU, DOM, Native)",
+  "version": "0.1.0",
+  "description": "InSpatial Universal Renderer (GPU, DOM, Native)",
   "imports": {},
   "exports": {
-    ".": "./src/index.ts",
-    "./gpu": "./src/gpu/gpu.mini.ts",
-    "./dom": "./src/dom/dom.ts",
-    "./native": "./src/native/native.ts"
+    ".": "./src/index.ts"
+  },
+  "tasks": {
+    "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-all ./src/**/*.test.ts"
+  },
+  "compilerOptions": {
+    "checkJs": false,
+    "jsx": "react",
+    "jsxFactory": "createElement",
+    "jsxFragmentFactory": "Fragment",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "strict": false
+  },
+  "publish": {
+    "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   }
 }

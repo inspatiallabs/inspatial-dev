@@ -3,17 +3,23 @@
   "license": "Apache-2.0",
   "version": "0.0.9",
   "imports": {
-    "@inspatial/util": "jsr:@inspatial/util@^0.0.8"
+    "@inspatial/util": "jsr:@inspatial/util@^0.0.8",
+    "@std/path": "jsr:@std/path@^1.0.8",
+    "@std/fs": "jsr:@std/fs@^1.0.15"
   },
   "exports": {
     ".": "./src/index.ts",
     "./assert": "./src/assert.ts",
     "./expect": "./src/expect.ts",
     "./mock": "./src/mock.ts",
-    "./log": "./src/log/index.ts"
+    "./log": "./src/log/index.ts",
+    "./snapshot": "./src/snapshot/index.ts"
   },
   "tasks": {
-    "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"
+    "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime",
+    "test:snapshot": "deno test --allow-env --allow-read --allow-write ./src/snapshot/index.test.ts",
+    "test:snapshot:update": "deno test --allow-env --allow-read --allow-write ./src/snapshot/index.test.ts -- -u",
+    "test:all": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime"
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]

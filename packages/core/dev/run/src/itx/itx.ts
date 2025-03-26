@@ -12,12 +12,12 @@
  * ╚════════════════════════════════════════════════════╝
  */
 
+// @ts-ignore - Ignoring TS extension import error
+import { parseHTML } from "../../../dom/src/dom.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { universalRenderer } from "../../../renderer/src/render.ts";
 
-import { InSpatialDOM } from "../../../renderer/src/dom/src/dom.ts";
-
-const { parseHTML } = InSpatialDOM;
-
-// Create a new HTML document using linkedom
+// Create a new HTML document using the upstreamed DOM implementation
 const { document, window, Node, Element } =
   parseHTML(`<!DOCTYPE html><html><body></body></html>`);
 
@@ -384,7 +384,7 @@ export function itx(
     } = {}
   ) {
     // Create the component function that will be used with JSX
-    return function (props: Record<string, any> = {}) {
+    return async function (props: Record<string, any> = {}) {
       // Parse the template
       const container = document.createElement("div");
       container.innerHTML = templateString.trim();
@@ -405,7 +405,7 @@ export function itx(
 
       // Process all root elements in the template
       Array.from(container.childNodes).forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node && typeof node === 'object' && 'nodeType' in node && node.nodeType === Node.ELEMENT_NODE) {
           const result = processElement(
             node as Element,
             reactiveData,
@@ -431,7 +431,13 @@ export function itx(
       const wrapper = document.createElement("div");
       wrapper.appendChild(fragment);
 
-      return wrapper.firstChild || wrapper;
+      // Create a RenderNode using the UniversalRenderer
+      return universalRenderer.createElement("itx-component", {
+        element: wrapper.firstChild || wrapper,
+        template: templateString,
+        data: reactiveData,
+        ...props
+      });
     };
   };
 }
@@ -449,9 +455,14 @@ export function defineComponent(options: {
     raw: [options.template],
   });
   const templateFn = itx(templateArray, "");
-  return templateFn({
-    data: options.data,
-    methods: options.methods,
-    props: options.props,
-  });
+  return async function(props: Record<string, any> = {}) {
+    // Create a component using the UniversalRenderer
+    return universalRenderer.createElement("itx-component", {
+      template: options.template,
+      data: options.data ? options.data() : {},
+      methods: options.methods || {},
+      props: options.props || [],
+      passedProps: props
+    });
+  };
 }

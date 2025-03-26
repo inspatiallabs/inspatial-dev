@@ -1,0 +1,341 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+<div align="center">
+    <a href="https://inspatiallabs.com" target="_blank">
+    <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-light.svg">
+        <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg" alt="InSpatial" width="300"/>
+    </picture>
+    </a>
+
+<br>
+   <br>
+
+<a href="https://inspatiallabs.com" target="_blank">
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg">
+        <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" height="75" alt="InSpatial">
+    </picture>
+</p>
+</a>
+
+_Reality is your canvas_
+
+<h3 align="center">
+    InSpatial is a universal development environment (UDE) <br> for building cross-platform and spatial (AR/MR/VR) applications
+  </h3>
+
+[![InSpatial Dev](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
+[![InSpatial Cloud](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud)
+[![InSpatial App](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)
+[![InSpatial Store](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store)
+
+[![License](mdc:https:/img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Discord](mdc:https:/img.shields.io/badge/discord-join_us-5a66f6.svg?style=flat-square)](https://discord.gg/inspatiallabs)
+[![Twitter](mdc:https:/img.shields.io/badge/twitter-follow_us-1d9bf0.svg?style=flat-square)](https://twitter.com/inspatiallabs)
+[![LinkedIn](mdc:https:/img.shields.io/badge/linkedin-connect_with_us-0a66c2.svg?style=flat-square)](https://www.linkedin.com/company/inspatiallabs)
+
+</div>
+
+##
+
+<div align="center">
+
+| InSpatial                                        | Description                          | Link             |
+| ------------------------------------------------ | ------------------------------------ | ---------------- |
+| [![InSpatial Dev](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)     | Universal Libraries & Frameworks     | [inspatial.dev](mdc:https:/www.inspatial.dev)   |
+| [![InSpatial Cloud](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud) | Backend APIs and SDKs                | [inspatial.cloud](mdc:https:/www.inspatial.cloud) |
+| [![InSpatial App](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)     | Build and manage your InSpatial apps | [inspatial.app](mdc:https:/www.inspatial.app)   |
+| [![InSpatial Store](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store) | Deploy and discover InSpatial apps   | [inspatial.store](mdc:https:/www.inspatial.store) |
+
+</div>
+
+---
+
+## 🔍 InSpatial [COMPONENT_NAME] (🟡 Preview)
+
+[BRIEF_DESCRIPTION_OF_COMPONENT]
+
+## 🌟 Features
+
+- 🌍 [FEATURE_1]
+- 🔍 [FEATURE_2]
+- 🎮 [FEATURE_3]
+- 📝 [FEATURE_4]
+- 🎯 [FEATURE_5]
+- ⚡ [FEATURE_6]
+- 🔄 [FEATURE_7]
+- 🔍 [FEATURE_8]
+- 🎨 [FEATURE_9]
+- 🛡️ [FEATURE_10]
+- 🔄 [FEATURE_11]
+- 🧪 [FEATURE_12]
+- 📝 [FEATURE_13]
+- 🧩 [FEATURE_14]
+- 📸 [FEATURE_15]
+- 📈 [FEATURE_16]
+- 📦 [FEATURE_17]
+
+## 🔮 Coming Soon
+
+- 🎮 [UPCOMING_FEATURE_1]
+- 🌐 [UPCOMING_FEATURE_2]
+- 📊 [UPCOMING_FEATURE_3]
+- 🤖 [UPCOMING_FEATURE_4]
+
+## ✨ Advanced Features ✨
+
+<table>
+  <tr>
+    <td>
+      <h4>🔄 [FEATURE_SYSTEM_1]</h4>
+      <p>[FEATURE_SYSTEM_1_DESCRIPTION]</p>
+      <pre><code>[FEATURE_SYSTEM_1_CODE_EXAMPLE]</code></pre>
+    </td>
+    <td>
+      <h4>🧩 [FEATURE_SYSTEM_2]</h4>
+      <p>[FEATURE_SYSTEM_2_DESCRIPTION]</p>
+      <pre><code>[FEATURE_SYSTEM_2_CODE_EXAMPLE]</code></pre>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h4>⚡ [FEATURE_SYSTEM_3]</h4>
+      <p>[FEATURE_SYSTEM_3_DESCRIPTION]</p>
+      <pre><code>[FEATURE_SYSTEM_3_CODE_EXAMPLE]</code></pre>
+    </td>
+    <td>
+      <h4>📋 [FEATURE_SYSTEM_4]</h4>
+      <p>[FEATURE_SYSTEM_4_DESCRIPTION]</p>
+      <pre><code>[FEATURE_SYSTEM_4_CODE_EXAMPLE]</code></pre>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <h4>📚 [FEATURE_SYSTEM_5]</h4>
+      <p>[FEATURE_SYSTEM_5_DESCRIPTION]</p>
+      <pre><code>[FEATURE_SYSTEM_5_CODE_EXAMPLE]</code></pre>
+    </td>
+  </tr>
+</table>
+
+<div align="center">
+  <h4>🚀 Keep reading to learn how to use all these amazing features! 🚀</h4>
+</div>
+
+## 📦 Install InSpatial [COMPONENT_NAME]:
+
+Choose your preferred package manager:
+
+```bash
+deno install jsr:@inspatial/[COMPONENT_NAME_LOWERCASE]
+```
+
+##
+
+```bash
+npx jsr add @inspatial/[COMPONENT_NAME_LOWERCASE]
+```
+
+##
+
+```bash
+yarn dlx jsr add @inspatial/[COMPONENT_NAME_LOWERCASE]
+```
+
+##
+
+```bash
+pnpm dlx jsr add @inspatial/[COMPONENT_NAME_LOWERCASE]
+```
+
+##
+
+```bash
+bunx jsr add @inspatial/[COMPONENT_NAME_LOWERCASE]
+```
+
+## 🛠️ Step-by-Step Usage Guide
+
+Here are the essential usage patterns for working with InSpatial [COMPONENT_NAME]:
+
+### 1. **[USAGE_PATTERN_1]**
+
+```typescript
+import { [IMPORT_ITEMS] } from "@inspatial/[COMPONENT_NAME_LOWERCASE]"
+
+// [CODE_EXAMPLE_1]
+```
+
+### 2. **[USAGE_PATTERN_2]**
+
+```typescript
+// [CODE_EXAMPLE_2]
+```
+
+### 3. **[USAGE_PATTERN_3]**
+
+```typescript
+// [CODE_EXAMPLE_3]
+```
+
+### 4. **Advanced Features Overview**
+
+InSpatial [COMPONENT_NAME] includes several advanced capabilities:
+
+- **[ADVANCED_FEATURE_1]**: [ADVANCED_FEATURE_1_DESCRIPTION]
+- **[ADVANCED_FEATURE_2]**: [ADVANCED_FEATURE_2_DESCRIPTION]
+- **[ADVANCED_FEATURE_3]**: [ADVANCED_FEATURE_3_DESCRIPTION]
+- **[ADVANCED_FEATURE_4]**: [ADVANCED_FEATURE_4_DESCRIPTION]
+- **[ADVANCED_FEATURE_5]**: [ADVANCED_FEATURE_5_DESCRIPTION]
+
+See the API Reference below for detailed documentation of these features.
+
+## 🎯 API Reference
+
+### Core Functions
+
+| Function         | Description              |
+| ---------------- | ------------------------ |
+| `[FUNCTION_1]()` | [FUNCTION_1_DESCRIPTION] |
+| `[FUNCTION_2]()` | [FUNCTION_2_DESCRIPTION] |
+| `[FUNCTION_3]()` | [FUNCTION_3_DESCRIPTION] |
+| `[FUNCTION_4]()` | [FUNCTION_4_DESCRIPTION] |
+| `[FUNCTION_5]`   | [FUNCTION_5_DESCRIPTION] |
+| `[FUNCTION_6]`   | [FUNCTION_6_DESCRIPTION] |
+| `[FUNCTION_7]`   | [FUNCTION_7_DESCRIPTION] |
+
+### [API_SECTION_1]
+
+| Class/Type  | Description           |
+| ----------- | --------------------- |
+| `[CLASS_1]` | [CLASS_1_DESCRIPTION] |
+| `[CLASS_2]` | [CLASS_2_DESCRIPTION] |
+
+### [API_SECTION_2]
+
+| Feature       | Description             |
+| ------------- | ----------------------- |
+| `[FEATURE_1]` | [FEATURE_1_DESCRIPTION] |
+| `[FEATURE_2]` | [FEATURE_2_DESCRIPTION] |
+| `[FEATURE_3]` | [FEATURE_3_DESCRIPTION] |
+
+### 🔄 [FEATURE_SYSTEM_1] - [FEATURE_SYSTEM_1_SHORT_DESCRIPTION]
+
+[FEATURE_SYSTEM_1_DETAILED_DESCRIPTION]
+
+```typescript
+import { [FEATURE_SYSTEM_1_IMPORTS] } from "@inspatial/[COMPONENT_NAME_LOWERCASE]"
+
+// [FEATURE_SYSTEM_1_CODE_EXAMPLE_DETAILED]
+```
+
+#### [FEATURE_SYSTEM_1] Functions
+
+| Function                        | Description                               |
+| ------------------------------- | ----------------------------------------- |
+| `[FEATURE_SYSTEM_1_FUNCTION_1]` | [FEATURE_SYSTEM_1_FUNCTION_1_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_FUNCTION_2]` | [FEATURE_SYSTEM_1_FUNCTION_2_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_FUNCTION_3]` | [FEATURE_SYSTEM_1_FUNCTION_3_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_FUNCTION_4]` | [FEATURE_SYSTEM_1_FUNCTION_4_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_FUNCTION_5]` | [FEATURE_SYSTEM_1_FUNCTION_5_DESCRIPTION] |
+
+#### [FEATURE_SYSTEM_1] Methods
+
+| Method                        | Description                             |
+| ----------------------------- | --------------------------------------- |
+| `[FEATURE_SYSTEM_1_METHOD_1]` | [FEATURE_SYSTEM_1_METHOD_1_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_METHOD_2]` | [FEATURE_SYSTEM_1_METHOD_2_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_METHOD_3]` | [FEATURE_SYSTEM_1_METHOD_3_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_METHOD_4]` | [FEATURE_SYSTEM_1_METHOD_4_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_METHOD_5]` | [FEATURE_SYSTEM_1_METHOD_5_DESCRIPTION] |
+| `[FEATURE_SYSTEM_1_METHOD_6]` | [FEATURE_SYSTEM_1_METHOD_6_DESCRIPTION] |
+
+### 🧩 [FEATURE_SYSTEM_2] - [FEATURE_SYSTEM_2_SHORT_DESCRIPTION]
+
+[FEATURE_SYSTEM_2_DETAILED_DESCRIPTION]
+
+```typescript
+import {
+  [FEATURE_SYSTEM_2_IMPORTS]
+} from "@inspatial/[COMPONENT_NAME_LOWERCASE]"
+
+// [FEATURE_SYSTEM_2_CODE_EXAMPLE_DETAILED]
+```
+
+#### [FEATURE_SYSTEM_2] Functions
+
+| Function                        | Description                               |
+| ------------------------------- | ----------------------------------------- |
+| `[FEATURE_SYSTEM_2_FUNCTION_1]` | [FEATURE_SYSTEM_2_FUNCTION_1_DESCRIPTION] |
+| `[FEATURE_SYSTEM_2_FUNCTION_2]` | [FEATURE_SYSTEM_2_FUNCTION_2_DESCRIPTION] |
+| `[FEATURE_SYSTEM_2_FUNCTION_3]` | [FEATURE_SYSTEM_2_FUNCTION_3_DESCRIPTION] |
+| `[FEATURE_SYSTEM_2_FUNCTION_4]` | [FEATURE_SYSTEM_2_FUNCTION_4_DESCRIPTION] |
+
+### ⚡ [FEATURE_SYSTEM_3] - [FEATURE_SYSTEM_3_SHORT_DESCRIPTION]
+
+[FEATURE_SYSTEM_3_DETAILED_DESCRIPTION]
+
+```typescript
+import {
+  [FEATURE_SYSTEM_3_IMPORTS]
+} from "@inspatial/[COMPONENT_NAME_LOWERCASE]"
+
+// [FEATURE_SYSTEM_3_CODE_EXAMPLE_DETAILED]
+```
+
+#### [FEATURE_SYSTEM_3] Functions
+
+| Function                        | Description                               |
+| ------------------------------- | ----------------------------------------- |
+| `[FEATURE_SYSTEM_3_FUNCTION_1]` | [FEATURE_SYSTEM_3_FUNCTION_1_DESCRIPTION] |
+| `[FEATURE_SYSTEM_3_FUNCTION_2]` | [FEATURE_SYSTEM_3_FUNCTION_2_DESCRIPTION] |
+| `[FEATURE_SYSTEM_3_FUNCTION_3]` | [FEATURE_SYSTEM_3_FUNCTION_3_DESCRIPTION] |
+
+### [ADDITIONAL_SECTIONS_AS_NEEDED]
+
+[ADDITIONAL_SECTIONS_CONTENT]
+
+## TypeScript Interfaces
+
+This package exports the following TypeScript interfaces and types:
+
+| Interface        | Description                |
+| ---------------- | -------------------------- |
+| `[INTERFACE_1]`  | [INTERFACE_1_DESCRIPTION]  |
+| `[INTERFACE_2]`  | [INTERFACE_2_DESCRIPTION]  |
+| `[INTERFACE_3]`  | [INTERFACE_3_DESCRIPTION]  |
+| `[INTERFACE_4]`  | [INTERFACE_4_DESCRIPTION]  |
+| `[INTERFACE_5]`  | [INTERFACE_5_DESCRIPTION]  |
+| `[INTERFACE_6]`  | [INTERFACE_6_DESCRIPTION]  |
+| `[INTERFACE_7]`  | [INTERFACE_7_DESCRIPTION]  |
+| `[INTERFACE_8]`  | [INTERFACE_8_DESCRIPTION]  |
+| `[INTERFACE_9]`  | [INTERFACE_9_DESCRIPTION]  |
+| `[INTERFACE_10]` | [INTERFACE_10_DESCRIPTION] |
+| `[INTERFACE_11]` | [INTERFACE_11_DESCRIPTION] |
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Please read our [Contributing Guidelines](mdc:CONTRIBUTING.md) to get started.
+
+---
+
+## 📄 License
+
+InSpatial Core is released under the Apache 2.0 License. See the [LICENSE](mdc:LICENSE) file for details.
+
+---
+
+<div align="center">
+  <strong>Ready to shape the future of spatial computing?</strong>
+  <br>
+  <a href="https://www.inspatiallabs.com">Start Building with InSpatial</a>
+</div>
