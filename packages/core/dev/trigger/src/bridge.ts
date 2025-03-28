@@ -12,10 +12,10 @@ import {
 } from "./types.ts";
 
 /**
- * TriggerBridge - Provides a unified event system across platforms
+ * TriggerBridgeClass - Provides a unified event system across platforms
  */
-export class TriggerBridge {
-  private static instance: TriggerBridge;
+export class TriggerBridgeClass {
+  private static instance: TriggerBridgeClass;
 
   // Event registry maps target platforms to node IDs to event names to handlers
   private eventRegistry: EventRegistry = {};
@@ -27,7 +27,7 @@ export class TriggerBridge {
   private isProcessingQueue: boolean = false;
 
   // Registry of platform adapters
-  private adapters: Map<PlatformType, PlatformAdapter> = new Map();
+  private adapters: Map<PlatformType, PlatformTriggerAdapterClass> = new Map();
 
   // Registry of event mappings between platform types
   private eventMappings: Record<string, Record<string, string>> = {
@@ -99,17 +99,17 @@ export class TriggerBridge {
   /**
    * Get the singleton instance
    */
-  public static init(): TriggerBridge {
-    if (!TriggerBridge.instance) {
-      TriggerBridge.instance = new TriggerBridge();
+  public static init(): TriggerBridgeClass {
+    if (!TriggerBridgeClass.instance) {
+      TriggerBridgeClass.instance = new TriggerBridgeClass();
     }
-    return TriggerBridge.instance;
+    return TriggerBridgeClass.instance;
   }
 
   /**
    * Register a platform adapter
    */
-  public registerTriggerExtension(adapter: PlatformAdapter): void {
+  public registerTriggerExtension(adapter: PlatformTriggerAdapterClass): void {
     this.adapters.set(adapter.platformType, adapter);
     adapter.setBridge(this);
     console.log(`[TriggerBridge] Registered ${adapter.platformType} adapter`);
@@ -118,7 +118,7 @@ export class TriggerBridge {
   /**
    * Get a platform adapter
    */
-  public getAdapter(platform: PlatformType): PlatformAdapter | undefined {
+  public getAdapter(platform: PlatformType): PlatformTriggerAdapterClass | undefined {
     return this.adapters.get(platform);
   }
 
@@ -543,15 +543,15 @@ export class TriggerBridge {
 /**
  * Abstract class for platform-specific adapters
  */
-export abstract class PlatformAdapter {
-  protected bridge: TriggerBridge | null = null;
+export abstract class PlatformTriggerAdapterClass {
+  protected bridge: TriggerBridgeClass | null = null;
 
   constructor(public readonly platformType: PlatformType) {}
 
   /**
    * Set the bridge reference
    */
-  public setBridge(bridge: TriggerBridge): void {
+  public setBridge(bridge: TriggerBridgeClass): void {
     this.bridge = bridge;
   }
 
@@ -577,7 +577,7 @@ export abstract class PlatformAdapter {
 /**
  * DOM Platform Adapter Implementation
  */
-export class DOMAdapter extends PlatformAdapter {
+export class DomTriggerAdapterClass extends PlatformTriggerAdapterClass {
   private nodeElements: Map<string, HTMLElement> = new Map();
   private nodeListeners: Map<string, Map<string, (event: Event) => void>> =
     new Map();
@@ -599,7 +599,7 @@ export class DOMAdapter extends PlatformAdapter {
   public connectNode(nodeId: string, eventName: string): void {
     const element = this.nodeElements.get(nodeId);
     if (!element) {
-      console.warn(`[DOMAdapter] No element registered for node ${nodeId}`);
+      console.warn(`[DomTriggerAdapter] No element registered for node ${nodeId}`);
       return;
     }
 
@@ -687,7 +687,7 @@ export class DOMAdapter extends PlatformAdapter {
     const element = this.nodeElements.get(message.destinationNodeId!);
     if (!element) {
       console.warn(
-        `[DOMAdapter] Cannot find element for node ${message.destinationNodeId}`
+        `[DomTriggerAdapter] Cannot find element for node ${message.destinationNodeId}`
       );
       return;
     }
@@ -763,7 +763,7 @@ export class DOMAdapter extends PlatformAdapter {
 /**
  * InReal Platform Adapter Implementation
  */
-export class InRealAdapter extends PlatformAdapter {
+export class InRealTriggerAdapterClass extends PlatformTriggerAdapterClass {
   private sceneObjects: Map<string, any> = new Map();
   private objectListeners: Map<string, Map<string, (event: any) => void>> =
     new Map();
@@ -785,7 +785,7 @@ export class InRealAdapter extends PlatformAdapter {
   public connectNode(nodeId: string, eventName: string): void {
     const object = this.sceneObjects.get(nodeId);
     if (!object) {
-      console.warn(`[InRealAdapter] No object registered for node ${nodeId}`);
+      console.warn(`[InRealTriggerAdapter] No object registered for node ${nodeId}`);
       return;
     }
 
@@ -879,7 +879,7 @@ export class InRealAdapter extends PlatformAdapter {
     const object = this.sceneObjects.get(message.destinationNodeId!);
     if (!object) {
       console.warn(
-        `[InRealAdapter] Cannot find object for node ${message.destinationNodeId}`
+        `[InRealTriggerAdapter] Cannot find object for node ${message.destinationNodeId}`
       );
       return;
     }
@@ -895,7 +895,7 @@ export class InRealAdapter extends PlatformAdapter {
         break;
       default:
         console.log(
-          `[InRealAdapter] Handling ${mappedEventName} for node ${message.destinationNodeId}`
+          `[InRealTriggerAdapter] Handling ${mappedEventName} for node ${message.destinationNodeId}`
         );
       // Would implement more specialized handling here
     }
@@ -910,7 +910,7 @@ export class InRealAdapter extends PlatformAdapter {
     payload: any
   ): void {
     // This would use InReal Engines APIs in a real implementation
-    console.log(`[InRealAdapter] Simulating ${eventType} on 3D object`);
+    console.log(`[InRealTriggerAdapter] Simulating ${eventType} on 3D object`);
 
     // Example: create a synthetic event object
     const syntheticEvent = {
@@ -937,43 +937,41 @@ export class InRealAdapter extends PlatformAdapter {
 /**
  * Create and export a singleton instance
  */
-export const triggerBridge = TriggerBridge.init();
+export const triggerBridge = TriggerBridgeClass.init();
 
 /**
  * Helper function to initialize the entire system
+ * 
+ * This synchronous version initializes only what's directly available,
+ * skipping dynamic imports for better compatibility.
  */
 export function initTriggerBridge(
-  domAdapter?: boolean,
+  domTriggerAdapter?: boolean,
   nativeAdapter?: boolean,
   inrealEngine?: any
-): TriggerBridge {
-  const bridge = TriggerBridge.init();
+): TriggerBridgeClass {
+  const bridge = TriggerBridgeClass.init();
 
   // Register DOM adapter if requested
   if (
-    domAdapter &&
+    domTriggerAdapter &&
     typeof window !== "undefined" &&
     typeof document !== "undefined"
   ) {
-    const adapter = new DOMAdapter();
+    const adapter = new DomTriggerAdapterClass();
     bridge.registerTriggerExtension(adapter);
   }
 
-  // Register Hierarchical Native adapter if requested
-  if (nativeAdapter) {
-    // Import the hierarchical adapter factory function
-    const { createHierarchicalNativeAdapter } = require("./hpa.ts");
-    const adapter = createHierarchicalNativeAdapter();
-    bridge.registerTriggerExtension(adapter);
-  }
-
+  // For the native adapter, caller needs to import and pass it directly
+  // This avoids dynamic import issues in different environments
+  
   // Register InReal adapter if engine provided
   if (inrealEngine) {
-    const adapter = new InRealAdapter(inrealEngine);
+    const adapter = new InRealTriggerAdapterClass(inrealEngine);
     bridge.registerTriggerExtension(adapter);
   }
 
-  console.log("[TriggerBridge] System initialized with hierarchical support");
+  console.log("[TriggerBridge] System initialized");
 
   return bridge;
 }
@@ -981,8 +979,13 @@ export function initTriggerBridge(
 /**
  * Example usage:
  *
- * // Initialize the bridge with hierarchical support
- * const bridge = initTriggerBridge(true, true, inrealEngine);
+ * // Initialize the bridge
+ * const bridge = initTriggerBridge(true, false, inrealEngine);
+ *
+ * // If you need to use the hierarchical native adapter:
+ * // import { createNativeTriggerAdapter } from "./hpa.ts";
+ * // const nativeAdapter = createNativeTriggerAdapter();  
+ * // bridge.registerTriggerExtension(nativeAdapter);
  *
  * // Set up platform-specific event mappings
  * bridge.setHierarchicalEventMapping(
@@ -993,17 +996,17 @@ export function initTriggerBridge(
  * );
  *
  * // Get adapters
- * const domAdapter = bridge.getAdapter('dom') as DOMAdapter;
- * const nativeAdapter = bridge.getAdapter('native') as HierarchicalNativeAdapter;
+ * const domTriggerAdapter = bridge.getAdapter('dom') as DomTriggerAdapterClass;
+ * // const nativeAdapter = bridge.getAdapter('native') as HierarchicalNativeAdapter;
  *
  * // Register elements/views
- * if (domAdapter) {
- *   domAdapter.registerElement('button1', document.getElementById('myButton')!);
+ * if (domTriggerAdapter) {
+ *   domTriggerAdapter.registerElement('button1', document.getElementById('myButton')!);
  * }
  *
- * if (nativeAdapter) {
- *   nativeAdapter.registerView('spatialButton', mySpatialButton);
- * }
+ * // if (nativeAdapter) {
+ * //   nativeAdapter.registerView('spatialButton', mySpatialButton);
+ * // }
  *
  * // Create event links with hierarchical platform types
  * bridge.createEventLink(

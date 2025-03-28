@@ -1153,9 +1153,7 @@
       "packages/core/dev/container": {
         "dependencies": [
           "jsr:@inspatial/test@^0.0.8",
-          "jsr:@inspatial/type@~0.1.2",
-          "jsr:@std/fs@0.1",
-          "jsr:@std/path@0.1"
+          "jsr:@inspatial/type@~0.1.2"
         ]
       },
       "packages/core/dev/iss": {

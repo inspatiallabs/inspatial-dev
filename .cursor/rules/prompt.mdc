@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+IMPORTANT - Before any implementation always fully explore and understand the context of the existing codebase. 
+
+IMPORTANT - Never write code immediately on every propmt always deeply understand what's currently happening first.
+
+IMPORTANT - Spend as much time as you need to deeply reason about how a world-class engineer would approach solving the problem. 
+
+IMPORTANT - Generate ideas, critique them, refine your thinking, and then propose an excellent final plan. I'll approve or request changes before implentation.
+
+IMPORTANT - Always understand the environment you are operating in to reduce risk of hallucination

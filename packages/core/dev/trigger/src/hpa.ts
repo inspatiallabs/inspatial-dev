@@ -3,13 +3,20 @@
  * @description Enhanced platform adapter system with hierarchical platform types
  */
 
-import { EventMessage, PlatformType, NativeSubPlatformType, HierarchicalPlatformType } from "./types.ts";
+import {
+  EventMessageType,
+  PlatformType,
+  NativeSubPlatformType,
+  HierarchicalPlatformType,
+} from "./types.ts";
 
+// Don't import PlatformTriggerAdapterClass from bridge.ts to avoid circular dependency
+// Instead, use the abstract class defined here that matches bridge.ts
 
 /**
  * Platform capabilities interface
  */
-export interface PlatformCapabilities {
+export interface PlatformTriggerCapabilitiesType {
   supportsSpatial: boolean;
   supportsHandTracking: boolean;
   supportsEyeTracking: boolean;
@@ -20,10 +27,10 @@ export interface PlatformCapabilities {
 }
 
 /**
- * Base abstract class for platform adapters
+ * Abstract class for platform-specific adapters (must match bridge.ts definition)
  */
-export abstract class PlatformAdapter {
-  protected bridge: any = null; // Will be set to TriggerBridge
+export abstract class PlatformTriggerAdapterClass {
+  protected bridge: any | null = null;
 
   constructor(public readonly platformType: PlatformType) {}
 
@@ -48,7 +55,7 @@ export abstract class PlatformAdapter {
    * Handle an incoming message from the bridge
    */
   public abstract handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string
   ): Promise<void>;
 }
@@ -56,24 +63,28 @@ export abstract class PlatformAdapter {
 /**
  * Enhanced native adapter supporting sub-platforms
  */
-export class HierarchicalNativeAdapter extends PlatformAdapter {
+export class NativeTriggerAdapterClass extends PlatformTriggerAdapterClass {
   // Registry of specific platform adapters
-  private subAdapters: Map<NativeSubPlatformType, SubPlatformAdapter> =
-    new Map();
+  private subAdapters: Map<
+    NativeSubPlatformType,
+    SubPlatformTriggerAdapterClass
+  > = new Map();
 
   // Current detected sub-platform
   private detectedPlatform: NativeSubPlatformType | null = null;
 
   // Registry of platform capabilities
-  private capabilities: Map<NativeSubPlatformType, PlatformCapabilities> =
-    new Map();
+  private capabilities: Map<
+    NativeSubPlatformType,
+    PlatformTriggerCapabilitiesType
+  > = new Map();
 
   // Node to platform-specific view mapping
   private nodeViews: Map<string, any> = new Map();
 
   constructor() {
     super("native");
-    this.initializePlatformCapabilities();
+    this.initializePlatformTriggerCapabilitiesType();
     this.detectPlatform();
     this.initializeSubAdapters();
   }
@@ -81,7 +92,7 @@ export class HierarchicalNativeAdapter extends PlatformAdapter {
   /**
    * Initialize capability definitions for each platform
    */
-  private initializePlatformCapabilities(): void {
+  private initializePlatformTriggerCapabilitiesType(): void {
     this.capabilities.set("ios", {
       supportsSpatial: false,
       supportsHandTracking: false,
@@ -151,18 +162,18 @@ export class HierarchicalNativeAdapter extends PlatformAdapter {
    */
   private createSubAdapter(
     platform: NativeSubPlatformType
-  ): SubPlatformAdapter | null {
+  ): SubPlatformTriggerAdapterClass | null {
     switch (platform) {
       case "ios":
-        return new IOSAdapter(this);
+        return new IOSTriggerAdapterClass(this);
       case "visionos":
-        return new VisionOSAdapter(this);
+        return new VisionOSTriggerAdapterClass(this);
       case "android":
-        return new AndroidAdapter(this);
+        return new AndroidTriggerAdapterClass(this);
       case "androidxr":
-        return new AndroidXRAdapter(this);
+        return new AndroidXRTriggerAdapterClass(this);
       case "horizonos":
-        return new HorizonOSAdapter(this);
+        return new HorizonOSTriggerAdapterClass(this);
       default:
         console.warn(
           `[HierarchicalNativeAdapter] No adapter available for ${platform}`
@@ -175,25 +186,29 @@ export class HierarchicalNativeAdapter extends PlatformAdapter {
    * Detect the current native platform
    */
   private detectPlatform(): void {
-    // This would use platform-specific APIs to detect the current environment
-    // This is a simplified example - real implementation would use native platform detection
+    // Simple platform detection based on global objects
+    // In a real implementation, this would use more robust detection
+    if (typeof window !== "undefined") {
+      // Running in a web context
+      const ua = navigator.userAgent.toLowerCase();
 
-    if (typeof global !== "undefined") {
-      if ((global as any).__APPLE__) {
-        // Check if VisionOS
-        if ((global as any).__VISIONOS__) {
+      if (ua.includes("iphone") || ua.includes("ipad")) {
+        if (ua.includes("visionos")) {
           this.detectedPlatform = "visionos";
         } else {
           this.detectedPlatform = "ios";
         }
-      } else if ((global as any).__ANDROID__) {
-        // Check if AndroidXR
-        if ((global as any).__ANDROIDXR__) {
+      } else if (ua.includes("android")) {
+        if (
+          ua.includes("quest") ||
+          ua.includes("oculus") ||
+          ua.includes("xr")
+        ) {
           this.detectedPlatform = "androidxr";
         } else {
           this.detectedPlatform = "android";
         }
-      } else if ((global as any).__HORIZONOS__) {
+      } else if (typeof (window as any)._HORIZONOS_ !== "undefined") {
         this.detectedPlatform = "horizonos";
       }
     }
@@ -206,7 +221,7 @@ export class HierarchicalNativeAdapter extends PlatformAdapter {
   /**
    * Get the current platform capabilities
    */
-  public getCurrentCapabilities(): PlatformCapabilities | null {
+  public getCurrentCapabilities(): PlatformTriggerCapabilitiesType | null {
     if (!this.detectedPlatform) return null;
     return this.capabilities.get(this.detectedPlatform) || null;
   }
@@ -292,7 +307,7 @@ export class HierarchicalNativeAdapter extends PlatformAdapter {
    * Delegates to the appropriate sub-adapter
    */
   public async handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string
   ): Promise<void> {
     const view = this.nodeViews.get(message.destinationNodeId!);
@@ -349,14 +364,14 @@ export class HierarchicalNativeAdapter extends PlatformAdapter {
 /**
  * Base class for platform-specific sub-adapters
  */
-export abstract class SubPlatformAdapter {
+export abstract class SubPlatformTriggerAdapterClass {
   // Map of node IDs to native views
   protected views: Map<string, any> = new Map();
 
   // Map of node IDs to event listeners
   protected listeners: Map<string, Map<string, any>> = new Map();
 
-  constructor(protected parent: HierarchicalNativeAdapter) {}
+  constructor(protected parent: NativeTriggerAdapterClass) {}
 
   /**
    * Register a view with a node ID
@@ -383,7 +398,7 @@ export abstract class SubPlatformAdapter {
    * Handle an incoming message from the bridge
    */
   public abstract handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string,
     view: any
   ): Promise<void>;
@@ -391,27 +406,18 @@ export abstract class SubPlatformAdapter {
   /**
    * Map generic event name to platform-specific event name
    */
-  protected abstract mapToPlatformEvent(eventName: string): string;
-
-  /**
-   * Map platform-specific event name to generic event name
-   */
-  protected abstract mapFromPlatformEvent(platformEventName: string): string;
-
-  /**
-   * Extract data from platform-specific events
-   */
-  protected abstract extractEventData(
-    platformEventName: string,
-    args: any,
-    view: any
-  ): any;
+  protected mapEventName(
+    eventName: string,
+    mappings: Record<string, string>
+  ): string {
+    return mappings[eventName] || eventName;
+  }
 }
 
 /**
  * iOS-specific adapter implementation
  */
-export class IOSAdapter extends SubPlatformAdapter {
+export class IOSTriggerAdapterClass extends SubPlatformTriggerAdapterClass {
   // iOS event mappings
   private eventMappings: Record<string, string> = {
     tap: "touchUpInside",
@@ -591,7 +597,7 @@ export class IOSAdapter extends SubPlatformAdapter {
    * Handle incoming messages from other platforms
    */
   public async handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string,
     view: any
   ): Promise<void> {
@@ -628,7 +634,7 @@ export class IOSAdapter extends SubPlatformAdapter {
 /**
  * VisionOS-specific adapter implementation
  */
-export class VisionOSAdapter extends SubPlatformAdapter {
+export class VisionOSTriggerAdapterClass extends SubPlatformTriggerAdapterClass {
   // VisionOS event mappings
   private eventMappings: Record<string, string> = {
     tap: "indirectTap",
@@ -824,7 +830,7 @@ export class VisionOSAdapter extends SubPlatformAdapter {
    * Handle incoming messages from other platforms
    */
   public async handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string,
     view: any
   ): Promise<void> {
@@ -862,7 +868,7 @@ export class VisionOSAdapter extends SubPlatformAdapter {
 /**
  * Android-specific adapter implementation
  */
-export class AndroidAdapter extends SubPlatformAdapter {
+export class AndroidTriggerAdapterClass extends SubPlatformTriggerAdapterClass {
   // Android event mappings
   private eventMappings: Record<string, string> = {
     tap: "onClick",
@@ -906,7 +912,7 @@ export class AndroidAdapter extends SubPlatformAdapter {
   }
 
   public async handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string,
     view: any
   ): Promise<void> {
@@ -917,7 +923,7 @@ export class AndroidAdapter extends SubPlatformAdapter {
 /**
  * AndroidXR-specific adapter implementation
  */
-export class AndroidXRAdapter extends SubPlatformAdapter {
+export class AndroidXRTriggerAdapterClass extends SubPlatformTriggerAdapterClass {
   // AndroidXR event mappings
   private eventMappings: Record<string, string> = {
     tap: "onRayClick",
@@ -959,7 +965,7 @@ export class AndroidXRAdapter extends SubPlatformAdapter {
   }
 
   public async handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string,
     view: any
   ): Promise<void> {
@@ -970,7 +976,7 @@ export class AndroidXRAdapter extends SubPlatformAdapter {
 /**
  * HorizonOS-specific adapter implementation
  */
-export class HorizonOSAdapter extends SubPlatformAdapter {
+export class HorizonOSTriggerAdapterClass extends SubPlatformTriggerAdapterClass {
   // HorizonOS event mappings
   private eventMappings: Record<string, string> = {
     tap: "onPinchTap",
@@ -1013,7 +1019,7 @@ export class HorizonOSAdapter extends SubPlatformAdapter {
   }
 
   public async handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string,
     view: any
   ): Promise<void> {
@@ -1048,8 +1054,8 @@ export interface TriggerBridgeExtensions {
 /**
  * Factory function to create a hierarchical native adapter
  */
-export function createHierarchicalNativeAdapter(): HierarchicalNativeAdapter {
-  return new HierarchicalNativeAdapter();
+export function createNativeTriggerAdapter(): NativeTriggerAdapterClass {
+  return new NativeTriggerAdapterClass();
 }
 
 /**
@@ -1059,7 +1065,7 @@ export function createHierarchicalNativeAdapter(): HierarchicalNativeAdapter {
  * const bridge = TriggerBridge.init();
  *
  * // Create and register hierarchical adapter
- * const nativeAdapter = createHierarchicalNativeAdapter();
+ * const nativeAdapter = createNativeTriggerAdapter();
  * bridge.registerTriggerExtension(nativeAdapter);
  *
  * // Check platform-specific capabilities

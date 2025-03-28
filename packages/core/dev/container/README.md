@@ -97,88 +97,252 @@ _Reality is your canvas_
 
 ## ✨ Advanced Features ✨
 
-<table>
-  <tr>
-    <td>
-      <h4>🔄 Differential State Synchronization</h4>
-      <p>Efficiently synchronize state changes between client and server with minimal data transfer</p>
-      <pre><code>// Synchronize critical state with minimal overhead
+<div class="features-grid">
+  <div class="feature-tile" onclick="showFeatureDetails('differential-sync')">
+    <span class="feature-icon">🔄</span>
+    <h4>Differential State Synchronization</h4>
+    <p class="feature-brief">Efficiently synchronize state changes with minimal data transfer</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('container-lifecycle')">
+    <span class="feature-icon">🧩</span>
+    <h4>Container Lifecycle Management</h4>
+    <p class="feature-brief">Complete control over container creation, execution, and termination</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('command-execution')">
+    <span class="feature-icon">⚡</span>
+    <h4>Command Execution</h4>
+    <p class="feature-brief">Execute commands within containers with full input/output control</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('event-system')">
+    <span class="feature-icon">📋</span>
+    <h4>Event System</h4>
+    <p class="feature-brief">Subscribe to container lifecycle events for real-time monitoring</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('security-monitoring')">
+    <span class="feature-icon">🔒</span>
+    <h4>Security Monitoring & Analysis</h4>
+    <p class="feature-brief">Real-time detection of suspicious activities with automated responses</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('secure-filesystem')">
+    <span class="feature-icon">🗄️</span>
+    <h4>Secure File System</h4>
+    <p class="feature-brief">Virtual file system with granular access controls</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('conflict-resolution')">
+    <span class="feature-icon">📚</span>
+    <h4>Conflict Resolution</h4>
+    <p class="feature-brief">Smart handling of conflicting state changes with customizable strategies</p>
+  </div>
+</div>
+
+<div id="feature-details-container">
+  <div class="feature-detail" id="differential-sync">
+    <h4>🔄 Differential State Synchronization</h4>
+    <p>Efficiently synchronize state changes between client and server with minimal data transfer</p>
+    <pre><code>// Synchronize critical state with minimal overhead
 const sync = createStateSynchronizer(connectionManager);
 await sync.initializeSync(containerId);
 await sync.updateState(containerId, "editor", { cursor: { line: 10, column: 5 } });</code></pre>
-    </td>
-    <td>
-      <h4>🧩 Container Lifecycle Management</h4>
-      <p>Complete control over container creation, execution, and termination</p>
-      <pre><code>// Create and manage containers
+    <ul class="feature-benefits">
+      <li>Minimizes network overhead by sending only what changed</li>
+      <li>Automatically handles synchronization conflicts</li>
+      <li>Works seamlessly with connection disruptions</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="container-lifecycle">
+    <h4>🧩 Container Lifecycle Management</h4>
+    <p>Complete control over container creation, execution, and termination</p>
+    <pre><code>// Create and manage containers
 const container = createContainerManager();
 const id = await container.createContainer({
   name: "dev-environment",
   environment: { type: "client" }
 }, { userId: "user-123" });</code></pre>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h4>⚡ Command Execution</h4>
-      <p>Execute commands within containers with full input/output control</p>
-      <pre><code>// Run commands in containers
+    <ul class="feature-benefits">
+      <li>Full lifecycle management (create, start, suspend, resume, terminate)</li>
+      <li>Consistent API across browser and server environments</li>
+      <li>Fine-grained control over container resources and permissions</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="command-execution">
+    <h4>⚡ Command Execution</h4>
+    <p>Execute commands within containers with full input/output control</p>
+    <pre><code>// Run commands in containers
 const result = await container.executeCommand(
   containerId,
   "echo",
   ["Hello", "World"]
 );</code></pre>
-    </td>
-    <td>
-      <h4>📋 Event System</h4>
-      <p>Subscribe to container lifecycle events for real-time monitoring</p>
-      <pre><code>// Monitor container events
+    <ul class="feature-benefits">
+      <li>Run any supported command in the container environment</li>
+      <li>Structured arguments handling prevents command injection</li>
+      <li>Full capture of output and error streams</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="event-system">
+    <h4>📋 Event System</h4>
+    <p>Subscribe to container lifecycle events for real-time monitoring</p>
+    <pre><code>// Monitor container events
 container.addEventListener(
   ["created", "started", "terminated"],
   (event) => console.log(`Container ${event.containerId}: ${event.type}`)
 );</code></pre>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h4>🔒 Security Monitoring & Analysis</h4>
-      <p>Real-time detection of suspicious activities with automated responses</p>
-      <pre><code>// Configure security monitoring
+    <ul class="feature-benefits">
+      <li>Real-time notifications for all container state changes</li>
+      <li>Filter events by type for targeted handling</li>
+      <li>Clean event handling with automatic cleanup</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="security-monitoring">
+    <h4>🔒 Security Monitoring & Analysis</h4>
+    <p>Real-time detection of suspicious activities with automated responses</p>
+    <pre><code>// Configure security monitoring
 const security = container.getSecurityManager();
 security.enableBehaviorAnalysis({
   autoBlockThreshold: "high",
   sensitivePathPatterns: ["/etc/*", "/sys/*"],
   rules: ["path-traversal", "high-frequency-access"]
 });</code></pre>
-    </td>
-    <td>
-      <h4>🗄️ Secure File System</h4>
-      <p>Virtual file system with granular access controls</p>
-      <pre><code>// Configure secure file access
+    <ul class="feature-benefits">
+      <li>Proactive monitoring for suspicious activity patterns</li>
+      <li>Configurable security thresholds based on your risk tolerance</li>
+      <li>Automated responses to potential threats</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="secure-filesystem">
+    <h4>🗄️ Secure File System</h4>
+    <p>Virtual file system with granular access controls</p>
+    <pre><code>// Configure secure file access
 const fs = container.getFileSystem();
 fs.mountDirectory("/host/data", "/data", { 
   readOnly: true,
   allowedOperations: ["read", "stat"]
 });</code></pre>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center">
-      <h4>📚 Conflict Resolution</h4>
-      <p>Smart handling of conflicting state changes with customizable strategies</p>
-      <pre><code>// Resolve state conflicts
+    <ul class="feature-benefits">
+      <li>Fine-grained access control for container file operations</li>
+      <li>Secure mounting of host directories with permission limits</li>
+      <li>Path-based rules for read/write access</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="conflict-resolution">
+    <h4>📚 Conflict Resolution</h4>
+    <p>Smart handling of conflicting state changes with customizable strategies</p>
+    <pre><code>// Resolve state conflicts
 await sync.resolveConflict(containerId, "document",
   { clientWins: true, serverWins: false }
 );</code></pre>
-    </td>
-  </tr>
-</table>
+    <ul class="feature-benefits">
+      <li>Automatically detect and handle conflicting state changes</li>
+      <li>Configurable resolution strategies (client wins, server wins, etc.)</li>
+      <li>Customizable per state category for optimal handling</li>
+    </ul>
+  </div>
+</div>
+
+<style>
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.feature-tile {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.feature-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  background-color: #fff;
+}
+
+.feature-icon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.feature-brief {
+  color: #555;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+#feature-details-container {
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.feature-detail {
+  display: none;
+  animation: fadeIn 0.5s;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  margin-bottom: 20px;
+}
+
+.feature-detail h4 {
+  margin-top: 0;
+}
+
+.feature-benefits {
+  margin-top: 15px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+</style>
+
+<script>
+function showFeatureDetails(featureId) {
+  // Hide all feature details
+  document.querySelectorAll('.feature-detail').forEach(detail => {
+    detail.style.display = 'none';
+  });
+  
+  // Show the selected feature detail
+  const selectedFeature = document.getElementById(featureId);
+  if (selectedFeature) {
+    selectedFeature.style.display = 'block';
+    selectedFeature.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// Show the first feature by default
+document.addEventListener('DOMContentLoaded', function() {
+  showFeatureDetails('differential-sync');
+});
+</script>
 
 <div align="center">
   <h4>🚀 Keep reading to learn how to use all these amazing features! 🚀</h4>
 </div>
 
 ---
+## 🔄 Comparison: InSpatial Dev Container vs. Replit & WebContainers
+If you're deciding between different container solutions, here's how InSpatial Container compares:
 
 ### InSpatial Dev Container vs. Replit
 
@@ -688,7 +852,7 @@ deno test --allow-run ./src/server/test/integration/gvisor-integration.test.ts
 
 ---
 
-## 🤔 Common Questions
+## 🤔 FAQ
 
 ### "Do I need to know about containers to use this?"
 No! We handle all the complex container technology behind the scenes. You just use simple functions like `createContainer()` and `executeCommand()`.
@@ -705,9 +869,6 @@ No special setup needed for basic use. For advanced server features, we provide 
 ### "How much do I need to change my existing code?"
 Very little! Many apps can add InSpatial Container with just a few lines of code.
 
-## 🔄 Comparison: InSpatial Container vs. Replit and Web Containers
-
-If you're deciding between different container solutions, here's how InSpatial Container compares:
 
 
 ## 🎯 API Reference
