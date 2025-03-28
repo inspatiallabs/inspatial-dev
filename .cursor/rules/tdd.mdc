@@ -70,5 +70,23 @@ alwaysApply: true
 
 
 
+<!-- // ======================================================
+// TESTING PATTERN
+// ======================================================
+
+/**
+ * # Test Naming Pattern
+ * - Use descriptive test names
+ * - Append "Test" to test file names
+ * - Structure: "should [expected behavior] when [condition]"
+ */
+// Example in user-class.test.ts:
+// 
+// describe('UserClass', () => {
+//   it('should return the correct name when getName is called', () => {
+//     const user = new UserClass('John');
+//     expect(user.getName()).toBe('John');
+//   });
+// }); --> -->
 
 

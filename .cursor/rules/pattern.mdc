@@ -1,0 +1,182 @@
+---
+description: Naming Rules for syntax
+globs: *.tsx, *.ts
+alwaysApply: true
+---
+// ================================================/ NAMING PATTERNS / ======================================================
+
+/**
+ * # Class Naming Pattern
+ * - Append "Class" to all class names
+ * - Use PascalCase for the base name
+ * Example: UserClass, AuthenticationClass, HttpClientClass
+ */
+class UserClass {
+  private name: string;
+  
+  constructor(name: string) {
+    this.name = name;
+  }
+  
+  getName(): string {
+    return this.name;
+  }
+}
+
+/**
+ * # Type Naming Pattern
+ * - Append "Type" to all types (including interfaces, type aliases, etc.)
+ * - Use PascalCase for the base name
+ * Example: UserType, ConfigType, ResponseType
+ */
+type UserType = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+interface ConfigType {
+  apiUrl: string;
+  timeout: number;
+}
+
+// ======================================================
+// API DESIGN PATTERNS
+// ======================================================
+
+/**
+ * # InSpatial Type Pattern
+ * 1. Define schema with InSpatial Type for runtime validation
+ *    - Use "In" prefix + Name + "Type" suffix
+ *    - Always define in index.ts
+ * 
+ * 2. Extract TypeScript type for static type checking
+ *    - Use Name + "Type" suffix
+ */
+
+// Step 1: Define with InSpatial Type for runtime validation
+const InUserType = type({
+  id: "string",
+  name: "string",
+  email: "string"
+});
+
+// Step 2: Extract TypeScript type for static checking
+type UserType = typeof InUserType.infer;
+
+/**
+ * # Function Naming Pattern
+ * - Use camelCase for function names
+ * - Verb + Noun structure for clarity
+ * - Include return type annotations
+ */
+function getUserById(id: number): UserType {
+  // Implementation...
+  return { id, name: "John Doe", email: "john@example.com" };
+}
+
+// ======================================================
+// ADVANCED PATTERNS
+// ======================================================
+
+/**
+ * # Generic Type Pattern
+ * - Append "Type" to generic type names
+ * - Use descriptive T-prefixed names for type parameters
+ */
+type ResponseType<TData> = {
+  data: TData;
+  status: number;
+  message: string;
+};
+
+/**
+ * # Union Type Pattern
+ * - Append "Type" to union type names
+ * - Use descriptive names that represent the union concepts
+ */
+type StatusType = "pending" | "active" | "completed" | "failed";
+
+/**
+ * # Enum Pattern
+ * - Append "Enum" to enum names
+ * - Use PascalCase for enum values
+ */
+enum StatusEnum {
+  Pending = "PENDING",
+  Active = "ACTIVE",
+  Completed = "COMPLETED",
+  Failed = "FAILED",
+}
+
+// ======================================================
+// VALIDATION PATTERNS
+// ======================================================
+
+/**
+ * # Validation Pattern
+ * - Prefix validators with "validate"
+ * - Return boolean or throw specific error
+ */
+function validateUserType(user: unknown): user is UserType {
+  const validator = InUserType.validate(user);
+  return validator.success;
+}
+
+/**
+ * # Assertion Pattern
+ * - Prefix assertions with "assert"
+ * - Throw specific, descriptive errors
+ */
+function assertUserType(user: unknown): asserts user is UserType {
+  const validation = InUserType.validate(user);
+  if (!validation.success) {
+    throw new Error(`Invalid user: ${validation.error}`);
+  }
+}
+
+// ======================================================
+// MODULE ORGANIZATION PATTERN
+// ======================================================
+
+/**
+ * # Barrel Export Pattern
+ * - Use index.ts files to re-export components
+ * - Group related functionality
+ * 
+ * Example structure:
+ * /users
+ *   /models
+ *     - UserType.ts
+ *     - index.ts (exports all types)
+ *   /services
+ *     - UserServiceClass.ts
+ *     - index.ts (exports all services)
+ *   - index.ts (re-exports from models and services)
+ */
+
+// In /users/index.ts:
+// export * from './models';
+// export * from './services';
+
+// ======================================================
+// ERROR HANDLING PATTERN
+// ======================================================
+
+/**
+ * # Error Class Pattern
+ * - Append "Error" to error class names
+ * - Extend Error class
+ * - Include meaningful error codes
+ */
+class ValidationErrorClass extends Error {
+  code: string;
+  
+  constructor(message: string, code: string) {
+    super(message);
+    this.name = 'ValidationErrorClass';
+    this.code = code;
+  }
+}
+
+

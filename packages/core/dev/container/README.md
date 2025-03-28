@@ -23,7 +23,7 @@
 _Reality is your canvas_
 
 <h3 align="center">
-    InSpatial Container is a universal development environment (UDE) <br> component for resilient hybrid containers across client and server
+        InSpatial is a universal development environment (UDE) <br> for building cross-platform and spatial (AR/MR/VR) applications
   </h3>
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -50,7 +50,18 @@ _Reality is your canvas_
 
 ## 🔍 InSpatial Container (🟡 Preview)
 
-InSpatial Container is a stateless hybrid container system that combines client-side WebAssembly with server-side gVisor containers, providing intelligent state synchronization and seamless workload distribution for resilient application execution.
+**What is `InSpatial Container` AKA `Dev Container`?** Think of it as a special box that can run your code safely in a web browser or on a server. It keeps your code and data secure while making sure your app keeps working even if your internet connection drops.
+
+
+
+### 👨‍💻 What Can I Do With InSpatial Dev Container?
+
+- **Safe Third-Party Code**: Run untrusted code in a secure sandbox 
+- **Universal Applications**: Write code once that works consistently across platforms
+- **Offline Applications**: Build apps that continues to function even when internet connection is lost
+- **State Preservation**: Keep application state intact during connectivity changes
+- **Enhanced Data Security**: Protect sensitive information with multiple security layers
+
 
 ## 🌟 Features
 
@@ -66,12 +77,14 @@ InSpatial Container is a stateless hybrid container system that combines client-
 - 🛡️ **Multi-Layer Sandbox Isolation** - Complete security containment with configurable isolation levels
 - 🔄 **Three-Tier State Architecture** - Critical, Operational, and Non-Critical state prioritization
 - 🧪 **Runtime Security Monitoring** - Real-time behavioral analysis with anomaly detection
+- 🌍 **Runtime Agnostic** (Deno)
 - 📝 **Secure Virtual File System** - DirectFS with permission controls and mount point security
 - 🧩 **Comprehensive Security Profiles** - Customizable security policies for different workloads
 - 📸 **Automated Threat Response** - Auto-blocking for critical security events
 
 ## 🔮 Coming Soon
 
+- 🌍 **Runtime Agnostic** (Bun & Node.js)
 - 🌐 **Advanced Network Virtualization** - Full network namespace isolation with inter-container communication
 - 📊 **Real-time Resource Analytics** - Detailed resource usage metrics and visualization
 - 🤖 **AI-Enhanced Security Posture** - ML models for predictive threat detection and anomaly classification
@@ -79,6 +92,8 @@ InSpatial Container is a stateless hybrid container system that combines client-
 - 🔄 **Continuous State Checkpoint** - Automated state backup with point-in-time recovery
 - 🔌 **Extension API** - Framework for third-party security and monitoring plugins
 - 📱 **Mobile Device Support** - Extended WASM client support for iOS and Android WebViews
+- 🗄️ **GPU Workload support**
+
 
 ## ✨ Advanced Features ✨
 
@@ -162,6 +177,52 @@ await sync.resolveConflict(containerId, "document",
 <div align="center">
   <h4>🚀 Keep reading to learn how to use all these amazing features! 🚀</h4>
 </div>
+
+---
+
+### InSpatial Dev Container vs. Replit
+
+| Feature | InSpatial Dev Container | Replit |
+|---------|---------------------|--------|
+| **Open Source** | ✅ 100% | ❌ 0% |
+| **Offline Support** | ✅ Built-in offline functionality with automatic sync | ❌ Requires internet connection |
+| **Execution Environment** | ✅ Dual-mode (browser + server) | ✅ Server-side only |
+| **State Management** | ✅ Differential state sync with priority-based recovery | ❌ Full state reload required |
+| **Security Model** | ✅ Zero-trust with behavioral analysis | ✅ Basic isolation |
+| **Development Experience** | ✅ Same container works in development and production | ❌ Different environments |
+| **Resource Usage** | ✅ Intelligent workload distribution | ❌ Fixed resource allocation |
+| **Deployment Speed** | ✅ Instant local execution + progressive server sync | ⚠️ Deployment queue system |
+| **Cross-Platform Support** | ✅ Works across any WebAssembly target | ⚠️ Limited to supported platforms |
+
+### InSpatial Dev Container vs. StackBlitz WebContainers
+
+| Feature | InSpatial Dev Container | StackBlitz Web Container |
+|---------|---------------------|----------------------|
+| **Open Source** | ✅ 100% | ❌ 0% |
+| **Runtime Flexibility** | ✅ WebAssembly + gVisor containers | ⚠️ Browser-only Node.js runtime |
+| **Offline Sync** | ✅ Offline changes sync when reconnected | ✅ Works offline but limited sync |
+| **System Support** | ✅ General-purpose computing | ⚠️ Node.js-focused environment |
+| **Security Model** | ✅ Multi-layered with behavioral analysis | ✅ Browser sandbox isolation |
+| **Server-Side Integration** | ✅ Seamless client-server transitions | ❌ Browser-only execution |
+| **Resource Efficiency** | ✅ Intelligent workload distribution | ⚠️ Limited by browser resources |
+| **Persistent State** | ✅ Three-tier state architecture | ❌ Lost on page refresh |
+| **Network Resilience** | ✅ Built-in resilience and recovery | ⚠️ Limited recovery capabilities |
+| **Startup Speed** | ✅ Near-instant (milliseconds) | ✅ Fast startup (milliseconds) |
+
+
+### Why Choose InSpatial Dev Container?
+
+1. **Open Source**
+2. **True Hybrid Execution**: Run the same code seamlessly in browser and server
+3. **Built for Resilience**: Keep working even when connections fail
+4. **Smarter Security**: Advanced protections that learn and adapt
+5. **Efficiency First**: Smaller, faster, and more resource-efficient
+6. **Developer Friendly**: Simple API that abstracts complexity
+
+InSpatial Container combines the best aspects of browser-based WebAssembly and server-side containers with intelligent state synchronization - something neither Replit nor StackBlitz WebContainers currently offer.
+
+
+---
 
 ## 📦 Install InSpatial Container:
 
@@ -351,64 +412,7 @@ const removeListener = containerManager.addEventListener(
 // Remove listener when no longer needed
 removeListener();
 ```
-
-### 5. **Advanced Features Overview**
-
-InSpatial Container includes several advanced capabilities:
-
-- **Container Reconnection**: Seamless handling of connection loss and recovery
-- **Differential Sync**: Efficient state updates with minimal data transfer
-- **Priority-Based Sync**: Critical state is synchronized first
-- **Multi-Layer Security**: Sandboxed execution environment
-- **Execution Isolation**: Complete separation of code execution from data
-
-See the API Reference below for detailed documentation of these features.
-
-## 🎯 API Reference
-
-### Core Functions
-
-| Function                    | Description                                                         |
-| --------------------------- | ------------------------------------------------------------------- |
-| `createContainerManager()`  | Creates a container manager appropriate for the current environment |
-| `createStateSynchronizer()` | Creates a state synchronization manager                             |
-| `createSecurityManager()`   | Creates a security manager for monitoring and threat detection      |
-| `createVirtualFileSystem()` | Creates a virtual file system with security controls                |
-
-### Container Management
-
-| Class/Type               | Description                                  |
-| ------------------------ | -------------------------------------------- |
-| `InContainerManager`     | Interface for container lifecycle management |
-| `ClientContainerManager` | Client-side WASM container implementation    |
-| `ServerContainerManager` | Server-side gVisor container implementation  |
-
-### State Synchronization
-
-| Feature                         | Description                                          |
-| ------------------------------- | ---------------------------------------------------- |
-| `InStateSynchronizer`           | Interface for state synchronization                  |
-| `DifferentialStateSynchronizer` | Implementation of differential state synchronization |
-| `StateSyncConfig`               | Configuration options for state synchronization      |
-
-### Security System
-
-| Feature             | Description                                            |
-| ------------------- | ------------------------------------------------------ |
-| `InSecurityManager` | Interface for security monitoring and management       |
-| `BehaviorAnalyzer`  | Analyzes container behavior for suspicious patterns    |
-| `FsSecurityMonitor` | Monitors file system operations for security threats   |
-| `SecurityProfile`   | Configurable security policies for different use cases |
-| `IsolationLevel`    | Configurable security isolation levels                 |
-
-### Virtual File System
-
-| Feature               | Description                                       |
-| --------------------- | ------------------------------------------------- |
-| `InVirtualFileSystem` | Interface for virtual file system operations      |
-| `DirectFS`            | High-performance file system with security checks |
-| `PathPermissionCheck` | Path-based permission validation                  |
-| `MountPoint`          | Secure mount point with read-only options         |
+---
 
 ### 🔄 Differential Synchronization - Efficient State Updates
 
@@ -544,33 +548,6 @@ const file = await fs.openFile("/data/config.json", "r");
 const content = await file.readAll();
 await file.close();
 ```
-
-## TypeScript Interfaces
-
-This package exports the following TypeScript interfaces and types:
-
-| Interface                | Description                                              |
-| ------------------------ | -------------------------------------------------------- |
-| `InContainerManager`     | Interface for container lifecycle management             |
-| `InStateSynchronizer`    | Interface for state synchronization                      |
-| `InSecurityManager`      | Interface for container security operations              |
-| `InConnectionManager`    | Interface for connection management                      |
-| `InVirtualFileSystem`    | Interface for virtual file system operations             |
-| `InSecurityMonitor`      | Interface for security monitoring and alerting           |
-| `ContainerConfig`        | Container configuration options                          |
-| `ContainerState`         | Container lifecycle states                               |
-| `ContainerRuntimeInfo`   | Container runtime information                            |
-| `ContainerEvent`         | Container event data                                     |
-| `SecurityContext`        | Security context for container operations                |
-| `SyncPriority`           | Priority levels for state synchronization                |
-| `StateSyncConfig`        | Configuration for state synchronization                  |
-| `BehaviorAnalyzerConfig` | Configuration for behavior analysis and threat detection |
-| `SecurityProfile`        | Security profile with isolation levels and permissions   |
-| `FileSystemConfig`       | Configuration for virtual file system                    |
-| `PathPermissions`        | Path-based access control permissions                    |
-| `MountOptions`           | Options for mounting directories                         |
-| `SecurityEvent`          | Security event data with severity and details            |
-
 ---
 
 ## 🔍 Security/Performance Tradeoffs
@@ -608,7 +585,68 @@ Consider using InSpatial Container's enhanced security features for:
 
 For maximum performance with less stringent security requirements, you can configure InSpatial Container to use lower isolation levels.
 
----
+## 🛡️ How gVisor Powers InSpatial Container Security
+
+InSpatial Container leverages [gVisor](https://gvisor.dev/) on the server side to provide industry-leading security isolation. Here's what makes gVisor special and why we chose it:
+
+### What is gVisor?
+
+gVisor is an application kernel, written in Go, that implements a substantial portion of the Linux system call interface. It provides a strong isolation boundary between the container and the host operating system by intercepting all container system calls and handling them within a userspace sandbox.
+
+### How gVisor Works (Simplified)
+
+Unlike traditional containers that share the host kernel, gVisor:
+
+1. **Intercepts System Calls**: When your container code makes a system call, gVisor catches it before it reaches the host kernel
+2. **Acts as a Virtual Kernel**: gVisor processes the system call in its own memory space, using its own implementation
+3. **Provides Defense in Depth**: It uses multiple isolation techniques together for layered security
+
+```
+┌────────────────┐     ┌────────────────┐
+│  Container A   │     │  Container B   │
+└───────┬────────┘     └────────┬───────┘
+        │                       │
+┌───────▼───────────────────────▼───────┐
+│             gVisor Sandbox            │
+│  ┌─────────────────────────────────┐  │
+│  │   Application Kernel (in Go)    │  │
+│  └──────────────────┬──────────────┘  │
+│                     │                 │
+│  ┌──────────────────▼──────────────┐  │
+│  │  Minimal Host System Interface  │  │
+│  └──────────────────┬──────────────┘  │
+└─────────────────────┼─────────────────┘
+                      │
+┌─────────────────────▼───────────────┐
+│           Host Linux Kernel         │
+└─────────────────────────────────────┘
+```
+
+### Why gVisor is Essential for InSpatial Dev Container
+
+1. **Strong Security Isolation**: Protects against container escape vulnerabilities and kernel exploits
+   
+2. **Fast Performance**: Starts in milliseconds with minimal overhead, unlike full VMs
+
+3. **Memory Safety**: Written in Go, eliminating whole classes of memory corruption vulnerabilities
+
+4. **Checkpoint & Restore**: Allows capture and restore of container state, perfect for our state synchronization model
+
+5. **Reduced Attack Surface**: Minimizes the exposure to the host kernel by implementing system calls in userspace
+
+6. **Runs Untrusted Code Safely**: Perfect for running third-party or user-submitted code
+
+### gVisor in the InSpatial Dev Container Architecture
+
+InSpatial Container uses gVisor differently than traditional deployments:
+
+- **Stateless Design**: We use gVisor in a stateless configuration, storing state externally
+- **Hybrid Execution**: Seamlessly integrates with our WebAssembly client runtime
+- **Custom Security Profiles**: We've configured gVisor with enhanced security profiles specific to different workload types
+- **Integrated Behavioral Analysis**: Our security system works with gVisor to detect and respond to anomalous behaviors
+
+This architecture gives you the best of both worlds—the security isolation of a VM with the resource efficiency and speed of containers.
+
 
 ## 🧪 Testing
 
@@ -647,6 +685,103 @@ deno test --allow-run ./src/server/test/integration/gvisor-integration.test.ts
 ```
 
 > Note: All regular tests will continue to work even without gVisor installed by using our mock implementations, so you don't need to install gVisor for normal development.
+
+---
+
+## 🤔 Common Questions
+
+### "Do I need to know about containers to use this?"
+No! We handle all the complex container technology behind the scenes. You just use simple functions like `createContainer()` and `executeCommand()`.
+
+### "Will my app work if the user goes offline?"
+Yes! Your app will continue to work in the browser. When the user comes back online, any changes they made will automatically sync.
+
+### "Is it secure to run user-submitted code?"
+Yes! InSpatial Container uses multiple security layers to safely run code, whether it's yours or from users.
+
+### "Do I need a special server setup?"
+No special setup needed for basic use. For advanced server features, we provide simple setup instructions.
+
+### "How much do I need to change my existing code?"
+Very little! Many apps can add InSpatial Container with just a few lines of code.
+
+## 🔄 Comparison: InSpatial Container vs. Replit and Web Containers
+
+If you're deciding between different container solutions, here's how InSpatial Container compares:
+
+
+## 🎯 API Reference
+
+### Core Functions
+
+| Function                    | Description                                                         |
+| --------------------------- | ------------------------------------------------------------------- |
+| `createContainerManager()`  | Creates a container manager appropriate for the current environment |
+| `createStateSynchronizer()` | Creates a state synchronization manager                             |
+| `createSecurityManager()`   | Creates a security manager for monitoring and threat detection      |
+| `createVirtualFileSystem()` | Creates a virtual file system with security controls                |
+
+### Container Management
+
+| Class/Type               | Description                                  |
+| ------------------------ | -------------------------------------------- |
+| `InContainerManager`     | Interface for container lifecycle management |
+| `ClientContainerManager` | Client-side WASM container implementation    |
+| `ServerContainerManager` | Server-side gVisor container implementation  |
+
+### State Synchronization
+
+| Feature                         | Description                                          |
+| ------------------------------- | ---------------------------------------------------- |
+| `InStateSynchronizer`           | Interface for state synchronization                  |
+| `DifferentialStateSynchronizer` | Implementation of differential state synchronization |
+| `StateSyncConfig`               | Configuration options for state synchronization      |
+
+### Security System
+
+| Feature             | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| `InSecurityManager` | Interface for security monitoring and management       |
+| `BehaviorAnalyzer`  | Analyzes container behavior for suspicious patterns    |
+| `FsSecurityMonitor` | Monitors file system operations for security threats   |
+| `SecurityProfile`   | Configurable security policies for different use cases |
+| `IsolationLevel`    | Configurable security isolation levels                 |
+
+### Virtual File System
+
+| Feature               | Description                                       |
+| --------------------- | ------------------------------------------------- |
+| `InVirtualFileSystem` | Interface for virtual file system operations      |
+| `DirectFS`            | High-performance file system with security checks |
+| `PathPermissionCheck` | Path-based permission validation                  |
+| `MountPoint`          | Secure mount point with read-only options         |
+
+
+### TypeScript Interfaces
+
+This package exports the following TypeScript interfaces and types:
+
+| Interface                | Description                                              |
+| ------------------------ | -------------------------------------------------------- |
+| `InContainerManager`     | Interface for container lifecycle management             |
+| `InStateSynchronizer`    | Interface for state synchronization                      |
+| `InSecurityManager`      | Interface for container security operations              |
+| `InConnectionManager`    | Interface for connection management                      |
+| `InVirtualFileSystem`    | Interface for virtual file system operations             |
+| `InSecurityMonitor`      | Interface for security monitoring and alerting           |
+| `ContainerConfig`        | Container configuration options                          |
+| `ContainerState`         | Container lifecycle states                               |
+| `ContainerRuntimeInfo`   | Container runtime information                            |
+| `ContainerEvent`         | Container event data                                     |
+| `SecurityContext`        | Security context for container operations                |
+| `SyncPriority`           | Priority levels for state synchronization                |
+| `StateSyncConfig`        | Configuration for state synchronization                  |
+| `BehaviorAnalyzerConfig` | Configuration for behavior analysis and threat detection |
+| `SecurityProfile`        | Security profile with isolation levels and permissions   |
+| `FileSystemConfig`       | Configuration for virtual file system                    |
+| `PathPermissions`        | Path-based access control permissions                    |
+| `MountOptions`           | Options for mounting directories                         |
+| `SecurityEvent`          | Security event data with severity and details            |
 
 ---
 

@@ -1,0 +1,96 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+<!-- 
+
+// =========================================================================================
+// INSPATIAL RUNTIME I.E (JSX) COMPONENT PATTERN WITH ATOMIC DESIGN AND DUAL TYPE VALIDATION
+// =========================================================================================
+
+/**
+ * # Atomic Design Component Pattern**
+ * - Structure components following atomic design methodology
+ * - Categorize components as Atoms, Molecules, Widgets, Templates (Organisms), or Windows (Pages)
+ * - Append component category and "Component" to names
+ * - Define prop types with the same prefix and "Type" suffix
+ */
+
+/**
+ * # Atoms (Basic building blocks)
+ * - No Prefix: ""
+ * - Simplest components that can't be broken down further
+ * - Examples: buttons, inputs, labels, icons
+ * - Use InSpatial Type for runtime validation and TypeScript inference
+ */
+
+/**
+ * # Molecules (Combinations of atoms)
+ * - Prefix: "Molecule"
+ * - Simple groups of UI elements functioning together
+ * - Examples: form fields (label + input), search bars (input + button)
+ * - Use InSpatial Type for runtime validation and TypeScript inference
+ */
+
+/**
+ * # Widgets (AKA Organisms - Complex UI components)
+ * - Prefix: "Widget"
+ * - Relatively complex components composed of molecules and/or atoms
+ * - Examples: navigation bars, user profiles, product cards
+ * - Use InSpatial Type for runtime validation and TypeScript inference
+ */
+/
+/**
+ * # Templates (Window layouts without content)
+ * - Prefix: "Template"
+ * - Layout structures that arrange organisms and molecules
+ * - Focus on structure rather than content
+ * - Use InSpatial Type for runtime validation and TypeScript inference
+ */
+
+/**
+ * # Windows (Specific instances of templates)
+ * - Surfix: "Window"
+ * - Complete pages that implement templates with specific content
+ * - Usually connected to data sources and routes
+ * - Use InSpatial Type for runtime validation and TypeScript inference
+ */
+
+
+Example
+
+const InButtonType = type({
+  text: "string",
+  onClick: "function",
+  disabled: "boolean?",
+  variant: "(primary|secondary|tertiary)?",
+  size: "(small|medium|large)?"
+});
+
+// Extract TypeScript type from InSpatial Type
+type ButtonType = typeof InButtonType.infer;
+
+function ButtonComponent(props: ButtonType) {
+  // Validate props at runtime
+  const validation = InButtonType.validate(props);
+  if (!validation.success) {
+    console.error('Invalid ButtonComponent props:', validation.message);
+    // Could throw or handle error differently based on needs
+  }
+  
+  // Destructure with defaults after validation
+  const { 
+    text, 
+    onClick, 
+    disabled = false,
+    variant = 'primary',
+    size = 'medium'
+  } = props;
+  return (
+    <Button>
+      {text}
+    </Button>
+  );
+}

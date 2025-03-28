@@ -1,13 +1,11 @@
 {
   "name": "@inspatial/container",
   "license": "Apache-2.0",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "InSpatial Hybrid Container System",
   "imports": {
     "@inspatial/type": "jsr:@inspatial/type@^0.1.2",
     "@inspatial/test": "jsr:@inspatial/test@^0.0.8",
-    "@std/path": "jsr:@std/path@^0.1.0",
-    "@std/fs": "jsr:@std/fs@^0.1.0",
     "events": "node:events"
   },
   "exports": {
