@@ -228,10 +228,11 @@ export class TriggerConfigManagerClass {
         typeof source[k] === 'object' &&
         !Array.isArray(source[k])
       ) {
+        // Use type assertion to tell TypeScript this is safe
         result[k] = {
           ...result[k],
-          ...source[k],
-        };
+          ...(source[k] as any)
+        } as any;
       } else if (source[k] !== undefined) {
         (result as any)[k] = source[k];
       }

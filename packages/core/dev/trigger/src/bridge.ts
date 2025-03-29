@@ -3,12 +3,12 @@
  * @description Cross-platform event system with hierarchical platform support
  */
 import {
-  EventMessage,
+  EventMessageType,
   PlatformType,
   NativeSubPlatformType,
-  EventRegistry,
+  TriggerEventRegistryType,
   HierarchicalPlatformType,
-  EventHandler,
+  EventHandlerType,
 } from "./types.ts";
 
 /**
@@ -18,10 +18,10 @@ export class TriggerBridgeClass {
   private static instance: TriggerBridgeClass;
 
   // Event registry maps target platforms to node IDs to event names to handlers
-  private eventRegistry: EventRegistry = {};
+  private eventRegistry: TriggerEventRegistryType = {};
 
   // Event message queue for batched processing
-  private messageQueue: EventMessage[] = [];
+  private messageQueue: EventMessageType[] = [];
 
   // Processing status flag
   private isProcessingQueue: boolean = false;
@@ -118,7 +118,9 @@ export class TriggerBridgeClass {
   /**
    * Get a platform adapter
    */
-  public getAdapter(platform: PlatformType): PlatformTriggerAdapterClass | undefined {
+  public getAdapter(
+    platform: PlatformType
+  ): PlatformTriggerAdapterClass | undefined {
     return this.adapters.get(platform);
   }
 
@@ -134,7 +136,7 @@ export class TriggerBridgeClass {
     target: PlatformType | HierarchicalPlatformType,
     nodeId: string,
     eventName: string,
-    handler: EventHandler
+    handler: EventHandlerType
   ): void {
     // Get the base platform type for registry
     const basePlatform = this.getBasePlatform(target);
@@ -198,7 +200,7 @@ export class TriggerBridgeClass {
     payload: any,
     destinationPlatform?: PlatformType | HierarchicalPlatformType,
     destinationNodeId?: string
-  ): EventMessage {
+  ): EventMessageType {
     // Extract base platform types for compatibility
     const sourceBase = this.getBasePlatform(sourcePlatform);
     const destinationBase = destinationPlatform
@@ -283,7 +285,7 @@ export class TriggerBridgeClass {
   /**
    * Process a single message
    */
-  private async processMessage(message: EventMessage): Promise<void> {
+  private async processMessage(message: EventMessageType): Promise<void> {
     // If specific destination is set, route directly
     if (message.destinationTarget && message.destinationNodeId) {
       // Determine if we need to use hierarchical mapping
@@ -569,7 +571,7 @@ export abstract class PlatformTriggerAdapterClass {
    * Handle an incoming message from the bridge
    */
   public abstract handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string
   ): Promise<void>;
 }
@@ -599,7 +601,9 @@ export class DomTriggerAdapterClass extends PlatformTriggerAdapterClass {
   public connectNode(nodeId: string, eventName: string): void {
     const element = this.nodeElements.get(nodeId);
     if (!element) {
-      console.warn(`[DomTriggerAdapter] No element registered for node ${nodeId}`);
+      console.warn(
+        `[DomTriggerAdapter] No element registered for node ${nodeId}`
+      );
       return;
     }
 
@@ -681,7 +685,7 @@ export class DomTriggerAdapterClass extends PlatformTriggerAdapterClass {
    * Handle messages from other platforms
    */
   public async handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string
   ): Promise<void> {
     const element = this.nodeElements.get(message.destinationNodeId!);
@@ -785,7 +789,9 @@ export class InRealTriggerAdapterClass extends PlatformTriggerAdapterClass {
   public connectNode(nodeId: string, eventName: string): void {
     const object = this.sceneObjects.get(nodeId);
     if (!object) {
-      console.warn(`[InRealTriggerAdapter] No object registered for node ${nodeId}`);
+      console.warn(
+        `[InRealTriggerAdapter] No object registered for node ${nodeId}`
+      );
       return;
     }
 
@@ -873,7 +879,7 @@ export class InRealTriggerAdapterClass extends PlatformTriggerAdapterClass {
    * Handle messages from other platforms
    */
   public async handleMessage(
-    message: EventMessage,
+    message: EventMessageType,
     mappedEventName: string
   ): Promise<void> {
     const object = this.sceneObjects.get(message.destinationNodeId!);
@@ -941,7 +947,7 @@ export const triggerBridge = TriggerBridgeClass.init();
 
 /**
  * Helper function to initialize the entire system
- * 
+ *
  * This synchronous version initializes only what's directly available,
  * skipping dynamic imports for better compatibility.
  */
@@ -964,7 +970,7 @@ export function initTriggerBridge(
 
   // For the native adapter, caller needs to import and pass it directly
   // This avoids dynamic import issues in different environments
-  
+
   // Register InReal adapter if engine provided
   if (inrealEngine) {
     const adapter = new InRealTriggerAdapterClass(inrealEngine);
@@ -984,7 +990,7 @@ export function initTriggerBridge(
  *
  * // If you need to use the hierarchical native adapter:
  * // import { createNativeTriggerAdapter } from "./hpa.ts";
- * // const nativeAdapter = createNativeTriggerAdapter();  
+ * // const nativeAdapter = createNativeTriggerAdapter();
  * // bridge.registerTriggerExtension(nativeAdapter);
  *
  * // Set up platform-specific event mappings
