@@ -2,7 +2,7 @@
  * @file config.ts
  * @description Configuration system for TriggerBridge
  */
-import { LogSeverityEnum } from "./errors.ts";
+import { LogSeverityEnum } from "./types.ts";
 
 /**
  * Configuration options for TriggerBridge

@@ -57,9 +57,9 @@ _Reality is your canvas_
 
 ---
 
-## 🌟 Welcome to InSpatial Core
+## 🌟 Welcome to InSpatial Dev
 
-InSpatial Core is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere in every device, rendering environment and platform.
+InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere in every device, rendering environment and platform.
 
 ---
 
@@ -96,11 +96,11 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 | Package | Description | Install | Link | Status |
 |---------|------------|----------|-------|--------|
 | **XR** | XR Renderer | `deno add jsr:@inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) | 🔴 Unstable |
+| **AI** | Artificial Intelligence | `deno add jsr:@inspatial/ai` | [inspatial.ai](https://www.inspatial.ai) | 🔴 Unstable |
 | **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
 | **Run** | Dev Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
-| **Renderer** | Universal Renderer | `deno add jsr:@inspatial/renderer` | [inspatial.dev/renderer](https://www.inspatial.dev/renderer) | 🔴 Unstable |
 | **Type** | Runtime Validation | `deno add jsr:@inspatial/type` | [inspatial.dev/type](https://www.inspatial.dev/type) | 🟡 Preview |
-| **ECS** | Entity Component System | `deno add jsr:@inspatial/ecs` | [inspatial.dev/ecs](https://www.inspatial.dev/ecs) | 🔴 Unstable |
+| **State** | State Management | `deno add jsr:@inspatial/state` | [inspatial.dev/state](https://www.inspatial.dev/state) | 🔴 Unstable |
 | **ISS** | InSpatial Style Sheet | `deno add jsr:@inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) | 🔴 Unstable |
 | **TW** | Tailwind CSS Presets | `deno add jsr:@inspatial/tw` | [inspatial.dev/tw](https://www.inspatial.dev/tw) | 🟡 Preview |
 | **Theme** | Theme System | `deno add jsr:@inspatial/theme` | [inspatial.dev/kit/theme](https://www.inspatial.dev/kit/theme) | 🟡 Preview |
@@ -110,6 +110,8 @@ InSpatial Core is a comprehensive suite of cross-platform tools and infrastructu
 | **VFX** | Visual Effects | `deno add jsr:@inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) | 🔴 Unstable |
 | **Icon** | Iconography | `deno add jsr:@inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) | 🔴 Unstable |
 | **InMoji** | InMoji | `deno add jsr:@inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) | 🔴 Unstable |
+| **Renderer** | Universal Renderer | `deno add jsr:@inspatial/renderer` | [inspatial.dev/renderer](https://www.inspatial.dev/renderer) | 🔴 Unstable |
+| **Container** | Dev Environment | `deno add jsr:@inspatial/container` | [inspatial.dev/container](https://www.inspatial.dev/container) | 🟡 Preview |
 
 
 ---
@@ -239,57 +241,6 @@ An Entity Component System architecture for building scalable and performant app
 - High-performance data management
 - Easy integration with InSpatial Kit and XR
 - Scalable architecture for complex applications
-
-
----
-
-<div align="center">
-  <a href="https://www.inspatial.cloud#gh-dark-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-light.svg"  alt="InSpatial Cloud" height="45">
-  </a>
-  <a href="https://www.inspatial.cloud#gh-light-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-cloud-dark.svg"  alt="InSpatial Cloud" height="45">
-  </a>
-</div>
-
- <br>
-
-| Package | Description | Install | Link | Status |
-|---------|------------|----------|-------|--------|
-| **KV** | Key-Value Store | `deno add jsr:@inspatial/kv` | [inspatial.kv](https://www.inspatial.kv) | 🟡 Preview |
-| **DB** | Database | `deno add jsr:@inspatial/db` | [inspatial.cloud/db](https://www.inspatial.cloud/db) | 🔴 Unstable |
-| **CMS** | Content Management System | `deno add jsr:@inspatial/cms` | [inspatial.cloud/cms](https://www.inspatial.cloud/cms) | 🔴 Unstable |
-| **ORM** | Object Relational Mapping | `deno add jsr:@inspatial/orm` | [inspatial.cloud/orm](https://www.inspatial.cloud/orm) | 🔴 Unstable  |
-| **Auth** | Authentication | `deno add jsr:@inspatials/auth` | [inspatial.cloud/auth](https://www.inspatial.cloud/auth) | 🔴 Unstable  |
-| **Vault** | Asset Management | `deno add jsr:@inspatial/vault` | [inspatial.cloud/vault](https://www.inspatial.cloud/vault) | 🔴 Unstable |
-| **RateLimit** | Rate Limiter | `deno add jsr:@inspatial/ratelimit` | [inspatial.cloud/ratelimit](https://www.inspatial.cloud/ratelimit) | 🟡 Preview  |
-| **InFetch** | Data Fetching | `deno add jsr:@inspatial/infetch` | [inspatial.cloud/infetch](https://www.inspatial.cloud/infetch) | 🟡 Preview  |
-| **Cache** | Cache System | `deno add jsr:@inspatial/cache` | [inspatial.cloud/cache](https://www.inspatial.cloud/cache) | 🔴 Unstable |
-| **Cron** | Cron Jobs | `deno add jsr:@inspatial/cron` | [inspatial.cloud/cron](https://www.inspatial.cloud/cron) | 🔴 Unstable |
-| **Queue** | Queue System | `deno add jsr:@inspatial/queue` | [inspatial.cloud/queue](https://www.inspatial.cloud/queue) | 🔴 Unstable |
-| **InSight** | Analytics, Observability, Monitoring, Telemetry, Logs | `deno add jsr:@inspatial/insights` | [inspatial.cloud/insights](https://www.inspatial.cloud/insights) | 🔴 Unstable |
-| **Realtime** | Realtime Infrastucture | `deno add jsr:@inspatial/realtime` | [inspatial.cloud/realtime](https://www.inspatial.cloud/realtime) | 🔴 Unstable |
-| **Deploy** | Serverless Edge Deployment | `deno add jsr:@inspatial/deploy` | [inspatial.cloud/deploy](https://www.inspatial.cloud/deploy) | 🔴 Unstable |
-
-
----
-
-
-### 1. InSpatial KV
-
-A powerful, type-safe key-value store built with schema validation at compile time and utility functions for seamless data management optimized for Spatial and Universal Apps
-
-**Key Features:**
-
-- 📦 Type-safe key-value operations with schema validation
-- 🔒 Built-in schema validation at compile time
-- 🚀 High-performance operations built on Deno KV
-- 🧩 Utility functions for common operations
-- 🛠️ Flexible and extensible architecture
-- 💪 Full TypeScript support
-- 🔄 Atomic operations and transactions
-- 📊 Queue processing with middleware support
-- 👀 Real-time data watching capabilities
 
 
 ---

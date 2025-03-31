@@ -6,7 +6,7 @@
   "repository": "https://github.com/InSpatiallabs/inspatial-dev",
   "author": "InSpatial Labs",
   "bugs": "https://github.com/InSpatiallabs/inspatial-dev/issues",
-  "description": "InSpatial Trigger Bridge",
+  "description": "InSpatial Trigger is a universal trigger (event listener) bridge system that works seamlessly across different platforms (Web, Native & 3D environments). It allows events to propagate between platforms with automatic mapping and transformation.",
   "keywords": [
     "trigger",
     "trigger system",

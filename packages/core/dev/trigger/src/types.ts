@@ -20,6 +20,85 @@ export type HierarchicalPlatformType =
   | `${Extract<PlatformType, "native">}:${NativeSubPlatformType}`;
 
 /**
+ * Trigger categories enumeration
+ */
+export enum TriggerCategoryEnum {
+  TOUCH = "Touch",
+  SENSOR = "Sensor",
+  MOUSE = "Mouse",
+  KEYBOARD = "Keyboard",
+  SCENE = "Scene",
+  LOGIC = "Logic",
+  AREA = "Area",
+  GENERIC = "Generic",
+  GESTURE = "Gesture",
+  PHYSICS = "Physics",
+  TIME = "Time",
+  CUSTOM = "Custom",
+}
+
+/**
+ * Trigger parameter definition
+ */
+export interface TriggerParameterType {
+  name: string;
+  type: "string" | "number" | "boolean" | "object" | "function";
+  description: string;
+  required: boolean;
+  default?: any;
+  options?: any[];
+}
+
+/**
+ * Trigger definition type
+ */
+export interface TriggerDefinitionType {
+  id: string;
+  name: string;
+  category: TriggerCategoryEnum;
+  description: string;
+  compatiblePlatforms: Array<PlatformType | HierarchicalPlatformType>;
+  parameters?: TriggerParameterType[];
+  defaultConfig?: Record<string, any>;
+  internal?: boolean;
+}
+
+/**
+ * Trigger instance type
+ */
+export interface TriggerInstanceType {
+  id: string;
+  type: string;
+  enabled: boolean;
+  params?: Record<string, any>;
+  disable: () => void;
+  enable: () => void;
+  destroy: () => void;
+  update: (newParams: Record<string, any>) => void;
+  fire: (customPayload?: any) => void;
+}
+
+/**
+ * Trigger configuration options
+ */
+export interface TriggerConfigType {
+  type: string;
+  target?: any;
+  nodeId?: string;
+  action: (payload: any) => void;
+  platform?: PlatformType | HierarchicalPlatformType;
+  throttle?: number;
+  debounce?: number;
+  once?: boolean;
+  condition?: (state: any) => boolean;
+  fallbacks?: Record<HierarchicalPlatformType, Partial<TriggerConfigType>>;
+  priority?: number;
+  tags?: string[];
+  id?: string;
+  [key: string]: any;
+}
+
+/**
  * Event priority levels
  */
 export enum TriggerEventPriorityType {
@@ -39,6 +118,47 @@ export enum TriggerEventDeliveryStatusType {
   FAILED = "failed",
   DROPPED = "dropped",
   CANCELLED = "cancelled",
+}
+
+/**
+ * Severity levels for errors and logs
+ */
+export enum LogSeverityEnum {
+  DEBUG = "debug",
+  INFO = "info",
+  WARNING = "warning",
+  ERROR = "error",
+  FATAL = "fatal",
+}
+
+/**
+ * Error codes for specific error scenarios
+ */
+export enum ErrorCodeEnum {
+  // General errors
+  GENERAL_ERROR = "TRIGGER_GENERAL_ERROR",
+
+  // Registration errors
+  ADAPTER_ALREADY_REGISTERED = "TRIGGER_ADAPTER_ALREADY_REGISTERED",
+  INVALID_ADAPTER = "TRIGGER_INVALID_ADAPTER",
+  NODE_REGISTRATION_FAILED = "TRIGGER_NODE_REGISTRATION_FAILED",
+
+  // Event handling errors
+  EVENT_DISPATCH_FAILED = "TRIGGER_EVENT_DISPATCH_FAILED",
+  EVENT_HANDLING_FAILED = "TRIGGER_EVENT_HANDLING_FAILED",
+  EVENT_MAPPING_FAILED = "TRIGGER_EVENT_MAPPING_FAILED",
+
+  // Message processing errors
+  MESSAGE_PROCESSING_FAILED = "TRIGGER_MESSAGE_PROCESSING_FAILED",
+  QUEUE_PROCESSING_FAILED = "TRIGGER_QUEUE_PROCESSING_FAILED",
+
+  // Platform errors
+  PLATFORM_DETECTION_FAILED = "TRIGGER_PLATFORM_DETECTION_FAILED",
+  PLATFORM_SPECIFIC_ERROR = "TRIGGER_PLATFORM_SPECIFIC_ERROR",
+
+  // Parameter validation errors
+  INVALID_PARAMETER = "TRIGGER_INVALID_PARAMETER",
+  MISSING_REQUIRED_PARAMETER = "TRIGGER_MISSING_REQUIRED_PARAMETER",
 }
 
 /**
