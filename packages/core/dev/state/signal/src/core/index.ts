@@ -1,34 +1,79 @@
-export { ContextNotFoundError, NoOwnerError, NotReadyError, type ErrorHandler } from "./error.js";
+export type {
+  // Types from core.ts
+  SignalOptionsType,
+} from "./core.ts";
+export type {
+  // Types from error.ts
+  ErrorHandlerType,
+} from "./error.ts";
+export type {
+  // Types from flags.ts
+  FlagsType,
+} from "./flags.ts";
+export type {
+  // Types from owner.ts
+  ContextType,
+  ContextRecordType,
+  DisposableType,
+} from "./owner.ts";
+export type {
+  // Types from scheduler.ts
+  IQueueType,
+} from "./scheduler.ts";
+
 export {
-  Owner,
-  createContext,
-  getContext,
-  setContext,
-  hasContext,
-  getOwner,
-  onCleanup,
-  type Context,
-  type ContextRecord,
-  type Disposable
-} from "./owner.js";
-export {
-  Computation,
+  // Values/Classes from core.ts
+  ComputationClass,
+  UNCHANGED,
+  compute,
   createBoundary,
+  flatten,
   getObserver,
   isEqual,
   untrack,
+  runWithObserver,
   hasUpdated,
   isPending,
   latest,
-  flatten,
   catchError,
-  UNCHANGED,
-  compute,
-  runWithObserver,
-  type SignalOptions
-} from "./core.js";
-export { Effect, EagerComputation } from "./effect.js";
-export { flushSync, getClock, incrementClock, type IQueue, Queue } from "./scheduler.js";
-export { createSuspense } from "./suspense.js";
-export { SUPPORTS_PROXY } from "./constants.js";
-export * from "./flags.js";
+} from "./core.ts";
+export {
+  // Errors from error.ts
+  NotReadyErrorClass,
+  ContextNotFoundErrorClass,
+  NoOwnerErrorClass,
+  EffectErrorClass,
+} from "./error.ts";
+export {
+  // Flags from flags.ts
+  DEFAULT_FLAGS,
+  ERROR_BIT,
+  LOADING_BIT,
+  UNINITIALIZED_BIT,
+} from "./flags.ts";
+export {
+  // Values/Classes from owner.ts
+  OwnerClass,
+  createContext,
+  getContext,
+  hasContext,
+  setContext,
+  getOwner,
+  onCleanup,
+  setOwner,
+} from "./owner.ts";
+export {
+  // Values/Classes from scheduler.ts
+  flushSync,
+  getClock,
+  globalQueue,
+  incrementClock,
+  QueueClass,
+} from "./scheduler.ts";
+export {
+  // Values/Classes from suspense.ts
+  SuspenseQueueClass,
+  createSuspense,
+} from "./suspense.ts";
+export {} from // Values from effect.ts (assuming EffectClass/EagerComputationClass are internal)
+"./effect.ts";

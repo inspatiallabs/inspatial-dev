@@ -4,10 +4,10 @@ import {
   EFFECT_USER,
   STATE_CLEAN,
   STATE_DISPOSED
-} from "./constants.js";
-import type { Computation } from "./core.js";
-import type { Effect } from "./effect.js";
-import type { Owner } from "./owner.js";
+} from "./constants.ts";
+import type { ComputationClass } from "./core.ts";
+import type { EffectClass } from "./effect.ts";
+import type { OwnerClass } from "./owner.ts";
 
 let clock = 0;
 export function getClock() {
@@ -24,21 +24,21 @@ function schedule() {
   if (!globalQueue._running) queueMicrotask(flushSync);
 }
 
-export interface IQueue {
-  enqueue<T extends Computation | Effect>(type: number, node: T): void;
+export interface IQueueType {
+  enqueue<T extends ComputationClass | EffectClass>(type: number, node: T): void;
   run(type: number): boolean | void;
   flush(): void;
-  addChild(child: IQueue): void;
-  removeChild(child: IQueue): void;
+  addChild(child: IQueueType): void;
+  removeChild(child: IQueueType): void;
   created: number;
 }
 
-export class Queue implements IQueue {
+export class QueueClass implements IQueueType {
   _running: boolean = false;
-  _queues: [Computation[], Effect[], Effect[]] = [[], [], []];
-  _children: IQueue[] = [];
+  _queues: [ComputationClass[], EffectClass[], EffectClass[]] = [[], [], []];
+  _children: IQueueType[] = [];
   created = clock;
-  enqueue<T extends Computation | Effect>(type: number, node: T): void {
+  enqueue<T extends ComputationClass | EffectClass>(type: number, node: T): void {
     this._queues[0].push(node as any);
     if (type) this._queues[type].push(node as any);
     schedule();
@@ -46,10 +46,10 @@ export class Queue implements IQueue {
   run(type: number) {
     if (this._queues[type].length) {
       if (type === EFFECT_PURE) {
-        runPureQueue(this._queues[type]);
+        runPureQueue(this._queues[type] as ComputationClass[]);
         this._queues[type] = [];
       } else {
-        const effects = this._queues[type] as Effect[];
+        const effects = this._queues[type] as EffectClass[];
         this._queues[type] = [];
         runEffectQueue(effects);
       }
@@ -73,16 +73,16 @@ export class Queue implements IQueue {
       this._running = false;
     }
   }
-  addChild(child: IQueue) {
+  addChild(child: IQueueType) {
     this._children.push(child);
   }
-  removeChild(child: IQueue) {
+  removeChild(child: IQueueType) {
     const index = this._children.indexOf(child);
     if (index >= 0) this._children.splice(index, 1);
   }
 }
 
-export const globalQueue = new Queue();
+export const globalQueue = new QueueClass();
 
 /**
  * By default, changes are batched on the microtask queue which is an async process. You can flush
@@ -102,12 +102,12 @@ export function flushSync(): void {
  * See tests/createEffect: "should run parent effect before child effect" and "should run parent
  * memo before child effect"
  */
-function runTop(node: Computation): void {
-  const ancestors: Computation[] = [];
+function runTop(node: ComputationClass): void {
+  const ancestors: ComputationClass[] = [];
 
-  for (let current: Owner | null = node; current !== null; current = current._parent) {
+  for (let current: OwnerClass | null = node; current !== null; current = current._parent) {
     if (current._state !== STATE_CLEAN) {
-      ancestors.push(current as Computation);
+      ancestors.push(current as ComputationClass);
     }
   }
 
@@ -116,12 +116,12 @@ function runTop(node: Computation): void {
   }
 }
 
-function runPureQueue(queue: Computation[]) {
+function runPureQueue(queue: ComputationClass[]) {
   for (let i = 0; i < queue.length; i++) {
     if (queue[i]._state !== STATE_CLEAN) runTop(queue[i]);
   }
 }
 
-function runEffectQueue(queue: Effect[]) {
+function runEffectQueue(queue: EffectClass[]) {
   for (let i = 0; i < queue.length; i++) queue[i]._runEffect();
 }

@@ -7,34 +7,42 @@ import {
   STORE_NODE,
   STORE_VALUE,
   unwrap,
-  wrap
-} from "./store.js";
+  wrap,
+  StoreNodeType,
+} from "./store.ts";
 
-function applyState(next: any, state: any, keyFn: (item: NonNullable<any>) => any) {
-  const target = state?.[$TARGET];
+function applyState(
+  next: any,
+  state: any,
+  keyFn: (item: NonNullable<any>) => any
+) {
+  const target = state?.[$TARGET] as StoreNodeType | undefined;
   if (!target) return;
   const previous = target[STORE_VALUE];
   if (next === previous) return;
 
   // swap
   Object.defineProperty(next, $PROXY, {
-    value: previous[$PROXY],
-    writable: true
+    value: (previous as any)[$PROXY],
+    writable: true,
   });
-  previous[$PROXY] = null;
+  (previous as any)[$PROXY] = null;
   target[STORE_VALUE] = next;
 
   // merge
   if (Array.isArray(previous)) {
     let changed = false;
     if (next.length && previous.length && next[0] && keyFn(next[0]) != null) {
-      let i, j, start, end, newEnd, item, newIndicesNext, keyVal; // common prefix
+      let i, j, start, end, newEnd, item, keyVal;
+      let newIndicesNext: number[] = [];
 
       for (
         start = 0, end = Math.min(previous.length, next.length);
         start < end &&
         (previous[start] === next[start] ||
-          (previous[start] && next[start] && keyFn(previous[start]) === keyFn(next[start])));
+          (previous[start] &&
+            next[start] &&
+            keyFn(previous[start]) === keyFn(next[start])));
         start++
       ) {
         applyState(next[start], wrap(previous[start]), keyFn);
@@ -48,7 +56,9 @@ function applyState(next: any, state: any, keyFn: (item: NonNullable<any>) => an
         end >= start &&
         newEnd >= start &&
         (previous[end] === next[newEnd] ||
-          (previous[end] && next[newEnd] && keyFn(previous[end]) === keyFn(next[newEnd])));
+          (previous[end] &&
+            next[newEnd] &&
+            keyFn(previous[end]) === keyFn(next[newEnd])));
         end--, newEnd--
       ) {
         temp[newEnd] = previous[end];
@@ -57,18 +67,19 @@ function applyState(next: any, state: any, keyFn: (item: NonNullable<any>) => an
       if (start > newEnd || start > end) {
         for (j = start; j <= newEnd; j++) {
           changed = true;
-          target[STORE_NODE][j]?.write(wrap(next[j]));
+          target[STORE_NODE]?.[j]?.write(wrap(next[j]));
         }
 
         for (; j < next.length; j++) {
           changed = true;
           const wrapped = wrap(temp[j]);
-          target[STORE_NODE][j]?.write(wrapped);
+          target[STORE_NODE]?.[j]?.write(wrapped);
           applyState(next[j], wrapped, keyFn);
         }
 
-        changed && target[STORE_NODE][$TRACK]?.write(void 0);
-        previous.length !== next.length && target[STORE_NODE].length?.write(next.length);
+        changed && target[STORE_NODE]?.[$TRACK]?.write(void 0);
+        previous.length !== next.length &&
+          target[STORE_NODE]?.length?.write(next.length);
         return;
       }
 
@@ -97,22 +108,23 @@ function applyState(next: any, state: any, keyFn: (item: NonNullable<any>) => an
       for (j = start; j < next.length; j++) {
         if (j in temp) {
           const wrapped = wrap(temp[j]);
-          target[STORE_NODE][j]?.write(wrapped);
+          target[STORE_NODE]?.[j]?.write(wrapped);
           applyState(next[j], wrapped, keyFn);
-        } else target[STORE_NODE][j]?.write(wrap(next[j]));
+        } else target[STORE_NODE]?.[j]?.write(wrap(next[j]));
       }
       if (start < next.length) changed = true;
     } else if (previous.length && next.length) {
       for (let i = 0, len = next.length; i < len; i++) {
-        isWrappable(previous[i]) && applyState(next[i], wrap(previous[i]), keyFn);
+        isWrappable(previous[i]) &&
+          applyState(next[i], wrap(previous[i]), keyFn);
       }
     }
 
     if (previous.length !== next.length) {
       changed = true;
-      target[STORE_NODE].length?.write(next.length);
+      target[STORE_NODE]?.length?.write(next.length);
     }
-    changed && target[STORE_NODE][$TRACK]?.write(void 0);
+    changed && target[STORE_NODE]?.[$TRACK]?.write(void 0);
     return;
   }
 
@@ -123,12 +135,13 @@ function applyState(next: any, state: any, keyFn: (item: NonNullable<any>) => an
     for (let i = 0, len = keys.length; i < len; i++) {
       const node = nodes[keys[i]];
       const previousValue = unwrap(previous[keys[i]], false);
-      let nextValue = unwrap(next[keys[i]], false);
+      const nextValue = unwrap(next[keys[i]], false);
       if (previousValue === nextValue) continue;
       if (
         !previousValue ||
         !isWrappable(previousValue) ||
-        (keyFn(previousValue) != null && keyFn(previousValue) !== keyFn(nextValue))
+        (keyFn(previousValue) != null &&
+          keyFn(previousValue) !== keyFn(nextValue))
       )
         node.write(isWrappable(nextValue) ? wrap(nextValue) : nextValue);
       else applyState(nextValue, wrap(previousValue), keyFn);
@@ -149,7 +162,8 @@ export function reconcile<T extends U, U>(
   key: string | ((item: NonNullable<any>) => any)
 ) {
   return (state: U) => {
-    const keyFn = typeof key === "string" ? item => item[key] : key;
+    const keyFn =
+      typeof key === "string" ? (item: NonNullable<any>) => item[key] : key;
     if (keyFn(value) !== keyFn(state))
       throw new Error("Cannot reconcile states with different identity");
     applyState(value, state, keyFn);

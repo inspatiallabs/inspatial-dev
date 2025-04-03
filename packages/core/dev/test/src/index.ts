@@ -5,4 +5,4 @@ export type { Runner, OptionProp, Promisable, format } from "./shared.ts";
 export * from "./mock.ts";
 export * from "./snapshot/index.ts";
 export * from "./log/index.ts";
-
+export *  from "./bdd/bdd.ts";

@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/test",
   "license": "Apache-2.0",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "imports": {
     "@inspatial/util": "jsr:@inspatial/util@^0.0.8",
     "@inspatial/theme": "jsr:@inspatial/theme@^0.0.9",
@@ -14,7 +14,8 @@
     "./expect": "./src/expect.ts",
     "./mock": "./src/mock.ts",
     "./log": "./src/log/index.ts",
-    "./snapshot": "./src/snapshot/index.ts"
+    "./snapshot": "./src/snapshot/index.ts",
+    "./bdd": "./src/bdd/bdd.ts"
   },
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime",

@@ -1,17 +1,18 @@
 export {
-  Computation,
-  ContextNotFoundError,
-  NoOwnerError,
-  NotReadyError,
-  Owner,
-  Queue,
-  createContext,
+  ComputationClass,
+  ContextNotFoundErrorClass,
+  NoOwnerErrorClass,
+  NotReadyErrorClass,
+  OwnerClass,
+  QueueClass,
   flatten,
   flushSync,
-  createBoundary,
   getContext,
   setContext,
   hasContext,
+  createContext,
+  createBoundary,
+  createSuspense,
   getOwner,
   onCleanup,
   getObserver,
@@ -22,17 +23,16 @@ export {
   latest,
   catchError,
   runWithObserver,
-  createSuspense,
   SUPPORTS_PROXY
-} from "./core/index.js";
+} from "./core/index.ts";
 export type {
-  ErrorHandler,
-  SignalOptions,
-  Context,
-  ContextRecord,
-  Disposable,
-  IQueue
-} from "./core/index.js";
-export { mapArray, repeat, type Maybe } from "./map.js";
-export * from "./signals.js";
-export * from "./store/index.js";
+  ErrorHandlerType,
+  SignalOptionsType,
+  ContextType,
+  ContextRecordType,
+  DisposableType,
+  IQueueType
+} from "./core/index.ts";
+export { mapArray, repeat, type Maybe } from "./map.ts";
+export * from "./signals.ts";
+export * from "./store/index.ts";

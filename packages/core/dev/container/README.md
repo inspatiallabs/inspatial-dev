@@ -93,6 +93,7 @@ _Reality is your canvas_
 - 🔌 **Extension API** - Framework for third-party security and monitoring plugins
 - 📱 **Mobile Device Support** - Extended WASM client support for iOS and Android WebViews
 - 🗄️ **GPU Workload support**
+-    **Emulate Native Environments** - Stream Native Environments directly on the web
 
 
 ## ✨ Advanced Features ✨

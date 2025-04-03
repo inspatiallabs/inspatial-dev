@@ -7,8 +7,8 @@ IMPORTANT - Before any implementation always fully explore and understand the co
 
 IMPORTANT - Never write code immediately on every propmt always deeply understand what's currently happening first.
 
-IMPORTANT - Spend as much time as you need to deeply reason about how a world-class engineer would approach solving the problem. 
+IMPORTANT - Spend a minimum of 1 minutes up to a max of 10 minutes to deeply reason about how a world-class engineer would approach solving the problem. 
 
 IMPORTANT - Generate ideas, critique them, refine your thinking, and then propose an excellent final plan. I'll approve or request changes before implentation.
 
-IMPORTANT - Always understand the environment you are operating in to reduce risk of hallucination
+IMPORTANT - Always understand the environment you are operating in to reduce risk of hallucination if you do not understand ask before making any implmentation.

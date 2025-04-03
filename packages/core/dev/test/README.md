@@ -55,21 +55,23 @@ _Reality is your canvas_
 
 ## 🧪 InSpatial Test (🟡 Preview)
 
-A universal testing framework that works seamlessly across Deno, Node.js, and Bun runtimes. Write tests once, run them anywhere - from mobile to desktop, and 3D/spatial environments!
+A universal testing module that works seamlessly across Deno, Node.js, and Bun runtimes. Write tests once, run them anywhere - from mobile to desktop, and 3D/spatial environments!
 
 ## 🌟 Features
 
 - 🌍 Cross-platform support (Deno, Node.js, Bun)
 - 📝 Multiple test syntax styles (Function and Object)
 - 🎯 Support for both `assert` and `expect` style assertions
+- 🧩 Behavior Driven Development Support with (descibe & it)
 - ⚡ Async/await support out of the box
 - 🎨 Beautiful test output with syntax highlighting
 - 🔄 Runtime auto-detection
-- 🚫 Skip and Todo test support
+- 🚫 Test Modifiers: Skip and Todo test support
 - 🧹 Automatic resource cleanup
 - 🔒 Type-safe with full TypeScript support
 - 🧪 Test Doubles (Mocks, Stubs, Spies, etc.)
 - 📸 Snapshot Testing for detecting unintended changes
+
 
 ## 🔮 Coming Soon
 
@@ -79,9 +81,9 @@ A universal testing framework that works seamlessly across Deno, Node.js, and Bu
 - 📊 Spatial Computing Metrics
 - 🤖 AI-Powered CI/CD Test Agent
 - 📝 Logging and Reporting
-- 🧩 BDD (Behavior Driven Development) Support
 - 📈 Benchmarking
 - 🏷️ Type Assertions (Assert & Expect)
+- ⏰ Time Simulation Testing
 
 ## ✨ Advanced Features ✨
 
@@ -207,7 +209,7 @@ Here are the essential usage patterns for working with InSpatial Test:
 
 Create test files using either of these naming patterns:
 
-- `file.test.ts` (preferred)
+- `file.test.ts` (founders-choice)
 - `file_test.ts`
 
 ```typescript

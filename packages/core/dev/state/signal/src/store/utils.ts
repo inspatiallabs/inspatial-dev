@@ -1,6 +1,6 @@
-import { SUPPORTS_PROXY } from "../core/index.js";
-import { createMemo } from "../signals.js";
-import { $PROXY } from "./store.js";
+import { SUPPORTS_PROXY } from "../core/index.ts";
+import { createMemo } from "../signals.ts";
+import { $PROXY } from "./store.ts";
 
 function trueFn() {
   return true;
@@ -29,21 +29,25 @@ const propTraps: ProxyHandler<{
         return _.get(property);
       },
       set: trueFn,
-      deleteProperty: trueFn
+      deleteProperty: trueFn,
     };
   },
   ownKeys(_) {
     return _.keys();
-  }
+  },
 };
 
 type DistributeOverride<T, F> = T extends undefined ? F : T;
 type Override<T, U> = T extends any
   ? U extends any
     ? {
-        [K in keyof T]: K extends keyof U ? DistributeOverride<U[K], T[K]> : T[K];
+        [K in keyof T]: K extends keyof U
+          ? DistributeOverride<U[K], T[K]>
+          : T[K];
       } & {
-        [K in keyof U]: K extends keyof T ? DistributeOverride<U[K], T[K]> : U[K];
+        [K in keyof U]: K extends keyof T
+          ? DistributeOverride<U[K], T[K]>
+          : U[K];
       }
     : T & U
   : T & U;
@@ -61,7 +65,7 @@ type OverrideSpread<T, U> = T extends any
 type Simplify<T> = T extends any ? { [K in keyof T]: T[K] } : T;
 type _Merge<T extends unknown[], Curr = {}> = T extends [
   infer Next | (() => infer Next),
-  ...infer Rest
+  ...infer Rest,
 ]
   ? _Merge<Rest, Override<Curr, Next>>
   : T extends [...infer Rest, infer Next | (() => infer Next)]
@@ -80,17 +84,20 @@ function resolveSource(s: any) {
 
 const $SOURCES = Symbol(__DEV__ ? "MERGE_SOURCE" : 0);
 export function merge<T extends unknown[]>(...sources: T): Merge<T> {
-  if (sources.length === 1 && typeof sources[0] !== "function") return sources[0] as any;
+  if (sources.length === 1 && typeof sources[0] !== "function")
+    return sources[0] as any;
   let proxy = false;
   const flattened: T[] = [];
   for (let i = 0; i < sources.length; i++) {
     const s = sources[i];
     proxy = proxy || (!!s && $PROXY in (s as object));
-    const childSources = !!s && (s as object)[$SOURCES];
+    const childSources = !!s && (s as { [key: symbol]: any })[$SOURCES];
     if (childSources) flattened.push(...childSources);
     else
       flattened.push(
-        typeof s === "function" ? ((proxy = true), createMemo(s as () => any)) : (s as any)
+        typeof s === "function"
+          ? ((proxy = true), createMemo(s as () => any))
+          : (s as any)
       );
   }
   if (SUPPORTS_PROXY && proxy) {
@@ -113,8 +120,8 @@ export function merge<T extends unknown[]>(...sources: T): Merge<T> {
           const keys: Array<string> = [];
           for (let i = 0; i < flattened.length; i++)
             keys.push(...Object.keys(resolveSource(flattened[i])));
-          return [...new Set(keys)];
-        }
+          return Array.from(new Set(keys));
+        },
       },
       propTraps
     ) as unknown as Merge<T>;
@@ -140,7 +147,7 @@ export function merge<T extends unknown[]>(...sources: T): Merge<T> {
           ? {
               enumerable: true,
               configurable: true,
-              get: desc.get.bind(source)
+              get: desc.get.bind(source),
             }
           : desc;
       }
@@ -163,10 +170,10 @@ export type Omit<T, K extends readonly (keyof T)[]> = {
   [P in keyof T as Exclude<P, K[number]>]: T[P];
 };
 
-export function omit<T extends Record<any, any>, K extends readonly (keyof T)[]>(
-  props: T,
-  ...keys: K
-): Omit<T, K> {
+export function omit<
+  T extends Record<any, any>,
+  K extends readonly (keyof T)[],
+>(props: T, ...keys: K): Omit<T, K> {
   const blocked = new Set<keyof T>(keys);
   if (SUPPORTS_PROXY && $PROXY in props) {
     return new Proxy(
@@ -178,8 +185,8 @@ export function omit<T extends Record<any, any>, K extends readonly (keyof T)[]>
           return !blocked.has(property) && property in props;
         },
         keys() {
-          return Object.keys(props).filter(k => !blocked.has(k));
-        }
+          return Object.keys(props).filter((k) => !blocked.has(k));
+        },
       },
       propTraps
     ) as unknown as Omit<T, K>;
@@ -189,7 +196,11 @@ export function omit<T extends Record<any, any>, K extends readonly (keyof T)[]>
   for (const propName of Object.getOwnPropertyNames(props)) {
     if (!blocked.has(propName)) {
       const desc = Object.getOwnPropertyDescriptor(props, propName)!;
-      !desc.get && !desc.set && desc.enumerable && desc.writable && desc.configurable
+      !desc.get &&
+      !desc.set &&
+      desc.enumerable &&
+      desc.writable &&
+      desc.configurable
         ? (result[propName] = desc.value)
         : Object.defineProperty(result, propName, desc);
     }

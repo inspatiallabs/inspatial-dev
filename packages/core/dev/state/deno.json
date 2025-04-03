@@ -1,0 +1,39 @@
+{
+  "name": "@inspatial/state",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "homepage": "https://www.inspatial.dev",
+  "repository": "https://github.com/InSpatiallabs/inspatial-dev",
+  "author": "InSpatial Labs",
+  "bugs": "https://github.com/InSpatiallabs/inspatial-dev/issues",
+  "description": "InSpatial State is universal state management system that allows you to manage your state in a way that is easy to understand and use.",
+  "keywords": [
+    "state",
+    "state management",
+    "state management system",
+    "signals",
+    "context",
+    "trigger",
+    "trigger system",
+    "trigger bridge",
+    "trigger event",
+    "trigger registry",
+    "event",
+    "event handler",
+    "event bridge",
+    "event listener",
+    "event handler",
+    "event bridge"
+  ],
+  "tasks": {
+    "test": "deno test --allow-all --coverage=./coverage ./test/index.test.ts",
+    "test:coverage": "deno coverage ./coverage --lcov --output=./coverage/lcov.info"
+  },
+  "imports": {},
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "deno.ns", "deno.window"]
+  }
+}

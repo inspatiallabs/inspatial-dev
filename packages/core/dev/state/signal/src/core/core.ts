@@ -1,3 +1,7 @@
+declare global {
+  var __DEV__: boolean | undefined;
+}
+
 /**
  * Nodes for constructing a graph of reactive values and reactive computations.
  *
@@ -27,41 +31,52 @@
  *     executed in root to leaf order)
  */
 
-import { STATE_CHECK, STATE_CLEAN, STATE_DIRTY, STATE_DISPOSED } from "./constants.js";
-import { NotReadyError } from "./error.js";
-import { DEFAULT_FLAGS, ERROR_BIT, LOADING_BIT, UNINITIALIZED_BIT, type Flags } from "./flags.js";
-import { getOwner, onCleanup, Owner, setOwner } from "./owner.js";
-import { getClock, type IQueue } from "./scheduler.js";
+import {
+  STATE_CHECK,
+  STATE_CLEAN,
+  STATE_DIRTY,
+  STATE_DISPOSED,
+} from "./constants.ts";
+import { NotReadyErrorClass } from "./error.ts";
+import {
+  DEFAULT_FLAGS,
+  ERROR_BIT,
+  LOADING_BIT,
+  UNINITIALIZED_BIT,
+  type FlagsType,
+} from "./flags.ts";
+import { getOwner, OwnerClass, setOwner } from "./owner.ts";
+import { getClock, type IQueueType } from "./scheduler.ts";
 
-export interface SignalOptions<T> {
+export interface SignalOptionsType<T> {
   name?: string;
   equals?: ((prev: T, next: T) => boolean) | false;
   unobserved?: () => void;
 }
 
-interface SourceType {
-  _observers: ObserverType[] | null;
+interface SourceNodeType {
+  _observers: ObserverNodeType[] | null;
   _unobserved?: () => void;
   _updateIfNecessary: () => void;
 
-  _stateFlags: Flags;
+  _stateFlags: FlagsType;
   _time: number;
 }
 
-interface ObserverType {
-  _sources: SourceType[] | null;
+interface ObserverNodeType {
+  _sources: SourceNodeType[] | null;
   _notify: (state: number, skipQueue?: boolean) => void;
 
-  _handlerMask: Flags;
-  _notifyFlags: (mask: Flags, newFlags: Flags) => void;
+  _handlerMask: FlagsType;
+  _notifyFlags: (mask: FlagsType, newFlags: FlagsType) => void;
   _time: number;
 }
 
-let currentObserver: ObserverType | null = null,
-  currentMask: Flags = DEFAULT_FLAGS,
-  newSources: SourceType[] | null = null,
+let currentObserver: ObserverNodeType | null = null,
+  currentMask: FlagsType = DEFAULT_FLAGS,
+  newSources: SourceNodeType[] | null = null,
   newSourcesIndex = 0,
-  newFlags = 0,
+  newFlags: FlagsType = 0,
   notStale = false,
   updateCheck: null | { _value: boolean } = null,
   staleCheck: null | { _value: boolean } = null;
@@ -69,16 +84,19 @@ let currentObserver: ObserverType | null = null,
 /**
  * Returns the current observer.
  */
-export function getObserver(): Computation | null {
-  return currentObserver as Computation | null;
+export function getObserver(): ComputationClass | null {
+  return currentObserver as ComputationClass | null;
 }
 
 export const UNCHANGED: unique symbol = Symbol(__DEV__ ? "unchanged" : 0);
 export type UNCHANGED = typeof UNCHANGED;
 
-export class Computation<T = any> extends Owner implements SourceType, ObserverType {
-  _sources: SourceType[] | null = null;
-  _observers: ObserverType[] | null = null;
+export class ComputationClass<T = any>
+  extends OwnerClass
+  implements SourceNodeType, ObserverNodeType
+{
+  _sources: SourceNodeType[] | null = null;
+  _observers: ObserverNodeType[] | null = null;
   _value: T | undefined;
   _error: unknown;
   _compute: null | ((p?: T) => T);
@@ -92,19 +110,19 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
   _unobserved: (() => void) | undefined;
 
   /** Whether the computation is an error or has ancestors that are unresolved */
-  _stateFlags = 0;
+  _stateFlags: FlagsType = 0;
 
   /** Which flags raised by sources are handled, vs. being passed through. */
-  _handlerMask = DEFAULT_FLAGS;
+  _handlerMask: FlagsType = DEFAULT_FLAGS;
 
-  _loading: Computation<boolean> | null = null;
+  _loading: ComputationClass<boolean> | null = null;
   _time: number = -1;
   _forceNotify = false;
 
   constructor(
     initialValue: T | undefined,
     compute: null | ((p?: T) => T),
-    options?: SignalOptions<T>
+    options?: SignalOptionsType<T>
   ) {
     // Initialize self as a node in the Owner tree, for tracking cleanups.
     // If we aren't passed a compute function, we don't need to track nested computations
@@ -114,11 +132,13 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
     this._compute = compute;
 
     this._state = compute ? STATE_DIRTY : STATE_CLEAN;
-    this._stateFlags = compute && initialValue === undefined ? UNINITIALIZED_BIT : 0;
+    this._stateFlags =
+      compute && initialValue === undefined ? UNINITIALIZED_BIT : 0;
     this._value = initialValue;
 
     // Used when debugging the graph; it is often helpful to know the names of sources/observers
-    if (__DEV__) this._name = options?.name ?? (this._compute ? "computed" : "signal");
+    if (__DEV__)
+      this._name = options?.name ?? (this._compute ? "computed" : "signal");
 
     if (options?.equals !== undefined) this._equals = options.equals;
 
@@ -127,7 +147,8 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
 
   _read(): T {
     if (this._compute) {
-      if (this._stateFlags & ERROR_BIT && this._time <= getClock()) update(this);
+      if (this._stateFlags & ERROR_BIT && this._time <= getClock())
+        update(this);
       else this._updateIfNecessary();
     }
 
@@ -135,8 +156,18 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
     // so that when this._value changes, the currentObserver will be re-executed
     if (!this._compute || this._sources?.length) track(this);
 
-    // TODO do a handler lookup instead
-    newFlags |= this._stateFlags & ~currentMask;
+    // Handle specific flags through appropriate handlers
+    if (currentObserver) {
+      // For each flag in _stateFlags, check if currentObserver has a handler for it
+      const unhandledFlags = this._stateFlags & ~currentMask;
+      if (unhandledFlags) {
+        // Add any unhandled flags to newFlags to be propagated to parent
+        newFlags |= unhandledFlags;
+      }
+    } else {
+      // No observer to handle flags, preserve them all
+      newFlags |= this._stateFlags & ~currentMask;
+    }
 
     if (this._stateFlags & ERROR_BIT) {
       throw this._error as Error;
@@ -161,12 +192,16 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
    * before continuing
    */
   wait(): T {
-    if (this._compute && this._stateFlags & ERROR_BIT && this._time <= getClock()) {
+    if (
+      this._compute &&
+      this._stateFlags & ERROR_BIT &&
+      this._time <= getClock()
+    ) {
       update(this);
     }
 
     if ((notStale || this._stateFlags & UNINITIALIZED_BIT) && this.loading()) {
-      throw new NotReadyError();
+      throw new NotReadyErrorClass();
     }
     if (staleCheck && this.loading()) staleCheck._value = true;
 
@@ -191,7 +226,7 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
   /** Update the computation with a new value. */
   write(
     value: T | ((currentValue: T) => T) | UNCHANGED,
-    flags = 0,
+    flags: FlagsType = 0,
     // Tracks whether a function was returned from a compute result so we don't unwrap it.
     raw = false
   ): T {
@@ -260,7 +295,7 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
    * @param mask A bitmask for which flag(s) were changed.
    * @param newFlags The source's new flags, masked to just the changed ones.
    */
-  _notifyFlags(mask: Flags, newFlags: Flags): void {
+  _notifyFlags(mask: FlagsType, newFlags: FlagsType): void {
     // If we're dirty, none of the things we do can matter.
     if (this._state >= STATE_DIRTY) return;
 
@@ -298,7 +333,10 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
 
   _setError(error: unknown): void {
     this._error = error;
-    this.write(UNCHANGED, (this._stateFlags & ~LOADING_BIT) | ERROR_BIT | UNINITIALIZED_BIT);
+    this.write(
+      UNCHANGED,
+      (this._stateFlags & ~LOADING_BIT) | ERROR_BIT | UNINITIALIZED_BIT
+    );
   }
 
   /**
@@ -313,7 +351,11 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
     // they probably kept a reference to it as the parent reran, so there is likely a new computation
     // with the same _compute function that they should be reading instead.
     if (this._state === STATE_DISPOSED) {
-      throw new Error("Tried to read a disposed computation");
+      const errorMsg =
+        __DEV__ && this._name
+          ? `Tried to read disposed computation "${this._name}"`
+          : "Tried to read a disposed computation";
+      throw new Error(errorMsg);
     }
 
     // If the computation is already clean, none of our sources have changed, so we know that
@@ -330,7 +372,7 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
     // We keep track of whether any of our sources have changed loading state so that we can update
     // our loading state. This is only necessary if none of them change value because update() will
     // also cause us to recompute our loading state.
-    let observerFlags: Flags = 0;
+    let observerFlags: FlagsType = 0;
 
     // STATE_CHECK means one of our grandparent sources may have changed value or loading state,
     // so we need to recursively call _updateIfNecessary to update the state of all of our sources
@@ -382,12 +424,14 @@ export class Computation<T = any> extends Owner implements SourceType, ObserverT
   }
 }
 
-function loadingState(node: Computation): Computation<boolean> {
+function loadingState(node: ComputationClass): ComputationClass<boolean> {
   const prevOwner = setOwner(node._parent);
 
-  const options = __DEV__ ? { name: node._name ? `loading ${node._name}` : "loading" } : undefined;
+  const options = __DEV__
+    ? { name: node._name ? `loading ${node._name}` : "loading" }
+    : undefined;
 
-  const computation = new Computation(
+  const computation = new ComputationClass<boolean>(
     undefined,
     () => {
       track(node);
@@ -416,7 +460,7 @@ function loadingState(node: Computation): Computation<boolean> {
  *
  * When the sources do change, we create newSources and push the values that we read into it
  */
-function track(computation: SourceType): void {
+function track(computation: SourceNodeType): void {
   if (currentObserver) {
     if (
       !newSources &&
@@ -427,7 +471,6 @@ function track(computation: SourceType): void {
     } else if (!newSources) newSources = [computation];
     else if (computation !== newSources[newSources.length - 1]) {
       // If the computation is the same as the last source we read, we don't need to add it to newSources
-      // https://github.com/solidjs/solid/issues/46#issuecomment-515717924
       newSources.push(computation);
     }
     if (updateCheck) {
@@ -443,12 +486,12 @@ function track(computation: SourceType): void {
  * and error handling if the _compute function throws. It also sets the node as loading
  * if it reads any parents that are currently loading.
  */
-export function update<T>(node: Computation<T>): void {
+export function update<T>(node: ComputationClass<T>): void {
   const prevSources = newSources,
     prevSourcesIndex = newSourcesIndex,
     prevFlags = newFlags;
 
-  newSources = null as Computation[] | null;
+  newSources = null as ComputationClass[] | null;
   newSourcesIndex = 0;
   newFlags = 0;
 
@@ -464,8 +507,11 @@ export function update<T>(node: Computation<T>): void {
     // Update the node's value
     node.write(result, newFlags, true);
   } catch (error) {
-    if (error instanceof NotReadyError) {
-      node.write(UNCHANGED, newFlags | LOADING_BIT | (node._stateFlags & UNINITIALIZED_BIT));
+    if (error instanceof NotReadyErrorClass) {
+      node.write(
+        UNCHANGED,
+        newFlags | LOADING_BIT | (node._stateFlags & UNINITIALIZED_BIT)
+      );
     } else {
       node._setError(error);
     }
@@ -496,7 +542,7 @@ export function update<T>(node: Computation<T>): void {
       }
 
       // For each new source, we need to add this `node` to the source's observers array (downlinks)
-      let source: SourceType;
+      let source: SourceNodeType;
       for (let i = newSourcesIndex; i < node._sources.length; i++) {
         source = node._sources[i];
         if (!source._observers) source._observers = [node];
@@ -522,19 +568,21 @@ export function update<T>(node: Computation<T>): void {
   }
 }
 
-function removeSourceObservers(node: ObserverType, index: number): void {
-  let source: SourceType;
-  let swap: number;
-  for (let i = index; i < node._sources!.length; i++) {
-    source = node._sources![i];
-    if (source._observers) {
-      swap = source._observers.indexOf(node);
-      source._observers[swap] = source._observers[source._observers.length - 1];
-      source._observers.pop();
-      // maybe could get overcalled?
-      if (!source._observers.length) source._unobserved?.();
+/**
+ * Removes node from the observers array of the sources listed from `start` index.
+ */
+function removeSourceObservers(node: ObserverNodeType, start: number): void {
+  const sources = node._sources!;
+  for (let i = start; i < sources.length; i++) {
+    const source = sources[i],
+      observers = source._observers;
+    if (observers) {
+      const index = observers.indexOf(node);
+      observers.splice(index, 1);
+      if (!observers.length && source._unobserved) source._unobserved();
     }
   }
+  sources.length = start;
 }
 
 export function isEqual<T>(a: T, b: T): boolean {
@@ -546,8 +594,11 @@ export function isEqual<T>(a: T, b: T): boolean {
  * dependencies. Use `untrack` if you want to also disable owner tracking.
  */
 export function untrack<T>(fn: () => T): T {
-  if (currentObserver === null) return fn();
-  return compute(getOwner(), fn, null);
+  const prev = currentObserver;
+  currentObserver = null;
+  const result = fn();
+  currentObserver = prev;
+  return result;
 }
 
 /**
@@ -578,7 +629,7 @@ export function isPending(fn: () => any, loadingValue?: boolean): boolean {
     latest(fn);
     return staleCheck._value;
   } catch (err) {
-    if (!(err instanceof NotReadyError)) return false;
+    if (!(err instanceof NotReadyErrorClass)) return false;
     if (argLength > 1) return loadingValue!;
     throw err;
   } finally {
@@ -599,7 +650,8 @@ export function latest<T, U>(fn: () => T, fallback?: U): T | U {
   try {
     return fn();
   } catch (err) {
-    if (argLength > 1 && err instanceof NotReadyError) return fallback as U;
+    if (argLength > 1 && err instanceof NotReadyErrorClass)
+      return fallback as U;
     throw err;
   } finally {
     newFlags = prevFlags;
@@ -611,7 +663,7 @@ export function catchError(fn: () => void): unknown | undefined {
   try {
     fn();
   } catch (e) {
-    if (e instanceof NotReadyError) throw e;
+    if (e instanceof NotReadyErrorClass) throw e;
     return e;
   }
 }
@@ -621,19 +673,22 @@ export function catchError(fn: () => void): unknown | undefined {
  *
  * Warning: Usually there are simpler ways of modeling a problem that avoid using this function
  */
-export function runWithObserver<T>(observer: Computation, run: () => T): T | undefined {
+export function runWithObserver<T>(
+  observer: ComputationClass,
+  run: () => T
+): T | undefined {
   const prevSources = newSources,
     prevSourcesIndex = newSourcesIndex,
     prevFlags = newFlags;
 
-  newSources = null as Computation[] | null;
+  newSources = null as ComputationClass[] | null;
   newSourcesIndex = observer._sources ? observer._sources.length : 0;
   newFlags = 0;
 
   try {
     return compute(observer, run, observer);
   } catch (error) {
-    if (error instanceof NotReadyError) {
+    if (error instanceof NotReadyErrorClass) {
       observer.write(
         UNCHANGED,
         newFlags | LOADING_BIT | (observer._stateFlags & UNINITIALIZED_BIT)
@@ -661,7 +716,7 @@ export function runWithObserver<T>(observer: Computation, run: () => T): T | und
       }
 
       // For each new source, we need to add this `node` to the source's observers array (downlinks)
-      let source: SourceType;
+      let source: SourceNodeType;
       for (let i = newSourcesIndex; i < observer._sources!.length; i++) {
         source = observer._sources![i];
         if (!source._observers) source._observers = [observer];
@@ -680,111 +735,129 @@ export function runWithObserver<T>(observer: Computation, run: () => T): T | und
  * A convenient wrapper that calls `compute` with the `owner` and `observer` and is guaranteed
  * to reset the global context after the computation is finished even if an error is thrown.
  */
-export function compute<T>(owner: Owner | null, fn: (val: T) => T, observer: Computation<T>): T;
-export function compute<T>(owner: Owner | null, fn: (val: undefined) => T, observer: null): T;
 export function compute<T>(
-  owner: Owner | null,
-  fn: (val?: T) => T,
-  observer: Computation<T> | null
+  owner: OwnerClass | null,
+  fn: () => T,
+  node: ComputationClass | null
 ): T {
-  const prevOwner = setOwner(owner),
+  const prevOwner = getOwner(),
     prevObserver = currentObserver,
     prevMask = currentMask,
-    prevNotStale = notStale;
+    prevUpdateCheck = updateCheck,
+    prevStaleCheck = staleCheck;
 
-  currentObserver = observer;
-  currentMask = observer?._handlerMask ?? DEFAULT_FLAGS;
-  notStale = true;
+  setOwner(owner);
+  currentObserver = node;
+  currentMask = node?._handlerMask ?? DEFAULT_FLAGS;
+  updateCheck = null;
+  staleCheck = null;
 
   try {
-    return fn(observer ? observer._value : undefined);
+    return fn();
+  } catch (error: any) {
+    if (node) node.handleError(error);
+    // TODO: Rethrow error and propagate back up the stack ot the root
+    throw error;
   } finally {
     setOwner(prevOwner);
     currentObserver = prevObserver;
     currentMask = prevMask;
-    notStale = prevNotStale;
+    updateCheck = prevUpdateCheck;
+    staleCheck = prevStaleCheck;
   }
 }
 
-export function flatten(
-  children: any,
-  options?: { skipNonRendered?: boolean; doNotUnwrap?: boolean }
-): any {
-  try {
-    if (typeof children === "function" && !children.length) {
-      if (options?.doNotUnwrap) return children;
-      do {
-        children = children();
-      } while (typeof children === "function" && !children.length);
-    }
-    if (
-      options?.skipNonRendered &&
-      (children == null || children === true || children === false || children === "")
-    )
-      return;
+export function flatten<T>(
+  computation: ComputationClass<ComputationClass<T>>
+): ComputationClass<T> {
+  const node = new ComputationClass<T>(undefined, null);
 
-    if (Array.isArray(children)) {
-      let results: any[] = [];
-      if (flattenArray(children, results, options)) {
-        return () => {
-          let nested = [];
-          flattenArray(results, nested, { ...options, doNotUnwrap: false });
-          return nested;
-        };
-      }
-      return results;
+  node._handlerMask = ERROR_BIT | LOADING_BIT;
+  node._equals = false;
+
+  function getValue() {
+    computation._updateIfNecessary();
+
+    if (computation._stateFlags & ERROR_BIT) {
+      node.write(UNCHANGED, ERROR_BIT);
+      throw computation._error;
     }
-    return children;
-  } catch (e) {
-    if (options?.skipNonRendered && e instanceof NotReadyError) {
-      newFlags |= LOADING_BIT;
-      return undefined;
+
+    if (computation._stateFlags & LOADING_BIT) {
+      return {
+        _value: undefined,
+        read() {
+          return undefined;
+        },
+        wait() {
+          throw new NotReadyErrorClass();
+        },
+        loading() {
+          return true;
+        },
+        _stateFlags: LOADING_BIT,
+        _updateIfNecessary() {
+          throw new Error("Unreachable");
+        },
+        write() {
+          throw new Error("Unreachable");
+        },
+      } as unknown as ComputationClass<T>;
     }
-    throw e;
+
+    return computation._value!;
   }
+
+  let memo = new ComputationClass<T>(undefined, getValue);
+  memo._handlerMask = ERROR_BIT | LOADING_BIT;
+  return memo;
 }
 
-function flattenArray(
-  children: Array<any>,
-  results: any[] = [],
-  options?: { skipNonRendered?: boolean; doNotUnwrap?: boolean }
-): boolean {
-  let notReady: NotReadyError | null = null;
-  let needsUnwrap = false;
-  for (let i = 0; i < children.length; i++) {
-    try {
-      let child = children[i];
-      if (typeof child === "function" && !child.length) {
-        if (options?.doNotUnwrap) {
-          results.push(child);
-          needsUnwrap = true;
-          continue;
-        }
-        do {
-          child = child();
-        } while (typeof child === "function" && !child.length);
-      }
-      if (Array.isArray(child)) {
-        needsUnwrap = flattenArray(child, results, options);
-      } else if (
-        options?.skipNonRendered &&
-        (child == null || child === true || child === false || child === "")
-      ) {
-        // skip
-      } else results.push(child);
-    } catch (e) {
-      if (!(e instanceof NotReadyError)) throw e;
-      notReady = e;
-    }
-  }
-  if (notReady) throw notReady;
-  return needsUnwrap;
+export function createBoundary<T>(
+  fn: () => T,
+  queue: IQueueType,
+  owner = getOwner()
+): ComputationClass<T> {
+  const node = new ComputationClass<T>(undefined, fn);
+  node._queue = queue;
+  queue.addChild(node._queue);
+  owner?.append(node);
+  return node;
 }
 
-export function createBoundary<T>(fn: () => T, queue: IQueue): T {
-  const owner = new Owner();
-  const parentQueue = owner._queue;
-  parentQueue.addChild((owner._queue = queue));
-  onCleanup(() => parentQueue.removeChild(owner._queue!));
-  return compute(owner, fn, null);
+// ===================================================================
+// Debugging Utilities
+// ===================================================================
+
+/**
+ * Returns the current dependencies (sources) of the given computation node.
+ */
+export function getComputationDependencies(
+  computation: ComputationClass
+): ComputationClass[] {
+  // @ts-ignore __DEV__ is expected to be defined globally by the build process
+  if (!__DEV__) return [];
+  return (computation._sources?.slice() as ComputationClass[]) || [];
+}
+
+/**
+ * Returns the current observers of the given computation node.
+ */
+export function getComputationObservers(
+  computation: ComputationClass
+): ComputationClass[] {
+  // @ts-ignore __DEV__ is expected to be defined globally by the build process
+  if (!__DEV__) return [];
+  return (computation._observers?.slice() as ComputationClass[]) || [];
+}
+
+/**
+ * Returns the developer-assigned name of the computation node, if available.
+ */
+export function getComputationName(
+  computation: ComputationClass
+): string | undefined {
+  // @ts-ignore __DEV__ is expected to be defined globally by the build process
+  if (!__DEV__) return undefined;
+  return computation._name;
 }

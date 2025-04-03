@@ -51,7 +51,7 @@ alwaysApply: true
 10. **Test Pass?**
     - **Decision:**
       - **Yes:** If all tests pass, the implementation is considered complete.
-      - **No:** If any tests fail, analyze the failure, adjust tests if specifications were misunderstood, or refine implementation.
+      - **No:** If any tests fail, analyze the failure, adjust tests if specifications were misunderstood, if spec is not misunderstood then refine the implementation.
 
 **### Red-Green-Refactor Loop (Steps 7, 8, 9)**
 - **Continuous Improvement:**

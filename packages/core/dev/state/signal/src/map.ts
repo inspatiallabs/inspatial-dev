@@ -1,7 +1,7 @@
-import { Computation, compute, Owner } from "./core/index.js";
-import { runWithOwner } from "./signals.js";
-import type { Accessor } from "./signals.js";
-import { $TRACK } from "./store/index.js";
+import { ComputationClass, compute, OwnerClass } from "./core/index.ts";
+import { runWithOwner } from "./signals.ts";
+import type { AccessorType } from "./signals.ts";
+import { $TRACK } from "./store/index.ts";
 
 export type Maybe<T> = T | void | null | undefined | false;
 
@@ -10,16 +10,19 @@ export type Maybe<T> = T | void | null | undefined | false;
  *
  * similar to `Array.prototype.map`, but gets the value and index as accessors, transforms only values that changed and returns an accessor and reactively tracks changes to the list.
  *
- * @description https://docs.solidjs.com/reference/reactive-utilities/map-array
  */
 export function mapArray<Item, MappedItem>(
-  list: Accessor<Maybe<readonly Item[]>>,
-  map: (value: Accessor<Item>, index: Accessor<number>) => MappedItem,
-  options?: { keyed?: boolean | ((item: Item) => any); fallback?: Accessor<any> }
-): Accessor<MappedItem[]> {
-  const keyFn = typeof options?.keyed === "function" ? options.keyed : undefined;
+  list: AccessorType<Maybe<readonly Item[]>>,
+  map: (value: AccessorType<Item>, index: AccessorType<number>) => MappedItem,
+  options?: {
+    keyed?: boolean | ((item: Item) => any);
+    fallback?: AccessorType<any>;
+  }
+): AccessorType<MappedItem[]> {
+  const keyFn =
+    typeof options?.keyed === "function" ? options.keyed : undefined;
   return updateKeyedMap.bind({
-    _owner: new Owner(),
+    _owner: new OwnerClass(),
     _len: 0,
     _list: list,
     _items: [],
@@ -29,11 +32,13 @@ export function mapArray<Item, MappedItem>(
     _key: keyFn,
     _rows: keyFn || options?.keyed === false ? [] : undefined,
     _indexes: map.length > 1 ? [] : undefined,
-    _fallback: options?.fallback
+    _fallback: options?.fallback,
   });
 }
 
-function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[] {
+function updateKeyedMap<Item, MappedItem>(
+  this: MapData<Item, MappedItem>
+): any[] {
   const newItems = this._list() || [],
     newLen = newItems.length;
   (newItems as any)[$TRACK]; // top level tracking
@@ -43,24 +48,30 @@ function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[
       j: number,
       mapper = this._rows
         ? () => {
-            this._rows![j] = new Computation(newItems[j], null);
-            this._indexes && (this._indexes![j] = new Computation(j, null));
+            this._rows![j] = new ComputationClass(newItems[j], null);
+            this._indexes &&
+              (this._indexes![j] = new ComputationClass(j, null));
             return this._map(
-              Computation.prototype.read.bind(this._rows![j]),
+              ComputationClass.prototype.read.bind(this._rows![j]),
               this._indexes
-                ? Computation.prototype.read.bind(this._indexes![j])
+                ? ComputationClass.prototype.read.bind(this._indexes![j])
                 : (undefined as any)
             );
           }
         : this._indexes
           ? () => {
               const item = newItems[j];
-              this._indexes![j] = new Computation(j, null);
-              return this._map(() => item, Computation.prototype.read.bind(this._indexes![j]));
+              this._indexes![j] = new ComputationClass(j, null);
+              return this._map(
+                () => item,
+                ComputationClass.prototype.read.bind(this._indexes![j])
+              );
             }
           : () => {
               const item = newItems[j];
-              return (this._map as (value: () => Item) => MappedItem)(() => item);
+              return (this._map as (value: () => Item) => MappedItem)(
+                () => item
+              );
             };
 
     // fast path for empty arrays
@@ -77,7 +88,7 @@ function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[
       if (this._fallback && !this._mappings[0]) {
         // create fallback
         this._mappings[0] = compute<MappedItem>(
-          (this._nodes[0] = new Owner()),
+          (this._nodes[0] = new OwnerClass()),
           this._fallback,
           null
         );
@@ -91,7 +102,11 @@ function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[
 
       for (j = 0; j < newLen; j++) {
         this._items[j] = newItems[j];
-        this._mappings[j] = compute<MappedItem>((this._nodes[j] = new Owner()), mapper, null);
+        this._mappings[j] = compute<MappedItem>(
+          (this._nodes[j] = new OwnerClass()),
+          mapper,
+          null
+        );
       }
 
       this._len = newLen;
@@ -104,9 +119,11 @@ function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[
         newIndices: Map<Item, number>,
         newIndicesNext: number[],
         temp: MappedItem[] = new Array(newLen),
-        tempNodes: Owner[] = new Array(newLen),
-        tempRows: Computation<Item>[] | undefined = this._rows ? new Array(newLen) : undefined,
-        tempIndexes: Computation<number>[] | undefined = this._indexes
+        tempNodes: OwnerClass[] = new Array(newLen),
+        tempRows: ComputationClass<Item>[] | undefined = this._rows
+          ? new Array(newLen)
+          : undefined,
+        tempIndexes: ComputationClass<number>[] | undefined = this._indexes
           ? new Array(newLen)
           : undefined;
 
@@ -115,7 +132,8 @@ function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[
         start = 0, end = Math.min(this._len, newLen);
         start < end &&
         (this._items[start] === newItems[start] ||
-          (this._rows && compare(this._key, this._items[start], newItems[start])));
+          (this._rows &&
+            compare(this._key, this._items[start], newItems[start])));
         start++
       ) {
         if (this._rows) this._rows[start].write(newItems[start]);
@@ -127,7 +145,8 @@ function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[
         end >= start &&
         newEnd >= start &&
         (this._items[end] === newItems[newEnd] ||
-          (this._rows && compare(this._key, this._items[end], newItems[newEnd])));
+          (this._rows &&
+            compare(this._key, this._items[end], newItems[newEnd])));
         end--, newEnd--
       ) {
         temp[newEnd] = this._mappings[end];
@@ -176,7 +195,11 @@ function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[
             this._indexes![j].write(j);
           }
         } else {
-          this._mappings[j] = compute<MappedItem>((this._nodes[j] = new Owner()), mapper, null);
+          this._mappings[j] = compute<MappedItem>(
+            (this._nodes[j] = new OwnerClass()),
+            mapper,
+            null
+          );
         }
       }
 
@@ -194,18 +217,17 @@ function updateKeyedMap<Item, MappedItem>(this: MapData<Item, MappedItem>): any[
 /**
  * Reactively repeats a callback function the count provided - underlying helper for the `<Repeat>` control flow
  *
- * @description https://docs.solidjs.com/reference/reactive-utilities/repeat
  */
 export function repeat(
-  count: Accessor<number>,
+  count: AccessorType<number>,
   map: (index: number) => any,
   options?: {
-    from?: Accessor<number | undefined>;
-    fallback?: Accessor<any>;
+    from?: AccessorType<number | undefined>;
+    fallback?: AccessorType<any>;
   }
-): Accessor<any[]> {
+): AccessorType<any[]> {
   return updateRepeat.bind({
-    _owner: new Owner(),
+    _owner: new OwnerClass(),
     _len: 0,
     _offset: 0,
     _count: count,
@@ -213,7 +235,7 @@ export function repeat(
     _nodes: [],
     _mappings: [],
     _from: options?.from,
-    _fallback: options?.fallback
+    _fallback: options?.fallback,
   });
 }
 
@@ -231,7 +253,7 @@ function updateRepeat<MappedItem>(this: RepeatData<MappedItem>): any[] {
       if (this._fallback && !this._mappings[0]) {
         // create fallback
         this._mappings[0] = compute<MappedItem>(
-          (this._nodes[0] = new Owner()),
+          (this._nodes[0] = new OwnerClass()),
           this._fallback,
           null
         );
@@ -266,7 +288,7 @@ function updateRepeat<MappedItem>(this: RepeatData<MappedItem>): any[] {
       }
       for (let i = 0; i < difference; i++) {
         this._mappings[i] = compute<MappedItem>(
-          (this._nodes[i] = new Owner()),
+          (this._nodes[i] = new OwnerClass()),
           () => this._map(i + from),
           null
         );
@@ -275,7 +297,7 @@ function updateRepeat<MappedItem>(this: RepeatData<MappedItem>): any[] {
 
     for (let i = prevTo; i < to; i++) {
       this._mappings[i - from] = compute<MappedItem>(
-        (this._nodes[i - from] = new Owner()),
+        (this._nodes[i - from] = new OwnerClass()),
         () => this._map(i),
         null
       );
@@ -287,32 +309,36 @@ function updateRepeat<MappedItem>(this: RepeatData<MappedItem>): any[] {
   return this._mappings;
 }
 
-function compare<Item>(key: ((i: any) => any) | undefined, a: Item, b: Item): boolean {
+function compare<Item>(
+  key: ((i: any) => any) | undefined,
+  a: Item,
+  b: Item
+): boolean {
   return key ? key(a) === key(b) : true;
 }
 
 interface RepeatData<MappedItem = any> {
-  _owner: Owner;
+  _owner: OwnerClass;
   _len: number;
-  _count: Accessor<number>;
+  _count: AccessorType<number>;
   _map: (index: number) => MappedItem;
   _mappings: MappedItem[];
-  _nodes: Owner[];
+  _nodes: OwnerClass[];
   _offset: number;
-  _from?: Accessor<number| undefined>;
-  _fallback?: Accessor<any>;
+  _from?: AccessorType<number | undefined>;
+  _fallback?: AccessorType<any>;
 }
 
 interface MapData<Item = any, MappedItem = any> {
-  _owner: Owner;
+  _owner: OwnerClass;
   _len: number;
-  _list: Accessor<Maybe<readonly Item[]>>;
+  _list: AccessorType<Maybe<readonly Item[]>>;
   _items: Item[];
   _mappings: MappedItem[];
-  _nodes: Owner[];
-  _map: (value: Accessor<any>, index: Accessor<number>) => any;
+  _nodes: OwnerClass[];
+  _map: (value: AccessorType<any>, index: AccessorType<number>) => any;
   _key: ((i: any) => any) | undefined;
-  _rows?: Computation<Item>[];
-  _indexes?: Computation<number>[];
-  _fallback?: Accessor<any>;
+  _rows?: ComputationClass<Item>[];
+  _indexes?: ComputationClass<number>[];
+  _fallback?: AccessorType<any>;
 }

@@ -28,54 +28,58 @@
  * Note that the owner tree is largely orthogonal to the reactivity tree, and is much closer to the component tree.
  */
 
-import { STATE_CLEAN, STATE_DISPOSED } from "./constants.js";
-import type { Computation } from "./core.js";
-import { ContextNotFoundError, NoOwnerError, type ErrorHandler } from "./error.js";
-import { globalQueue, type IQueue } from "./scheduler.js";
-import { isUndefined } from "./utils.js";
+import { STATE_CLEAN, STATE_DISPOSED } from "./constants.ts";
+import type { ComputationClass } from "./core.ts";
+import {
+  ContextNotFoundErrorClass,
+  NoOwnerErrorClass,
+  ErrorHandlerType,
+} from "./error.ts";
+import { globalQueue, type IQueueType } from "./scheduler.ts";
+import { isUndefined } from "./utils.ts";
 
-export type ContextRecord = Record<string | symbol, unknown>;
+export type ContextRecordType = Record<string | symbol, unknown>;
 
-export interface Disposable {
+export interface DisposableType {
   (): void;
 }
 
-let currentOwner: Owner | null = null,
+let currentOwner: OwnerClass | null = null,
   defaultContext = {};
 
 /**
  * Returns the currently executing parent owner.
  */
-export function getOwner(): Owner | null {
+export function getOwner(): OwnerClass | null {
   return currentOwner;
 }
 
-export function setOwner(owner: Owner | null): Owner | null {
+export function setOwner(owner: OwnerClass | null): OwnerClass | null {
   const out = currentOwner;
   currentOwner = owner;
   return out;
 }
 
-export class Owner {
+export class OwnerClass {
   // We flatten the owner tree into a linked list so that we don't need a pointer to .firstChild
   // However, the children are actually added in reverse creation order
   // See comment at the top of the file for an example of the _nextSibling traversal
-  _parent: Owner | null = null;
-  _nextSibling: Owner | null = null;
-  _prevSibling: Owner | null = null;
+  _parent: OwnerClass | null = null;
+  _nextSibling: OwnerClass | null = null;
+  _prevSibling: OwnerClass | null = null;
 
   _state: number = STATE_CLEAN;
 
-  _disposal: Disposable | Disposable[] | null = null;
-  _context: ContextRecord = defaultContext;
-  _handlers: ErrorHandler[] | null = null;
-  _queue: IQueue = globalQueue;
+  _disposal: DisposableType | DisposableType[] | null = null;
+  _context: ContextRecordType = defaultContext;
+  _handlers: ErrorHandlerType[] | null = null;
+  _queue: IQueueType = globalQueue;
 
   constructor(signal = false) {
     if (currentOwner && !signal) currentOwner.append(this);
   }
 
-  append(child: Owner): void {
+  append(child: OwnerClass): void {
     child._parent = this;
     child._prevSibling = this;
 
@@ -88,23 +92,25 @@ export class Owner {
     }
 
     if (this._handlers) {
-      child._handlers = !child._handlers ? this._handlers : [...child._handlers, ...this._handlers];
+      child._handlers = !child._handlers
+        ? this._handlers
+        : [...child._handlers, ...this._handlers];
     }
 
     if (this._queue) child._queue = this._queue;
   }
 
-  dispose(this: Owner, self = true): void {
+  dispose(this: OwnerClass, self = true): void {
     if (this._state === STATE_DISPOSED) return;
 
     let head = self ? this._prevSibling || this._parent : this,
       current = this._nextSibling,
-      next: Computation | null = null;
+      next: ComputationClass | null = null;
 
     while (current && current._parent === this) {
       current.dispose(true);
       current._disposeNode();
-      next = current._nextSibling as Computation | null;
+      next = current._nextSibling as ComputationClass | null;
       current._nextSibling = null;
       current = next;
     }
@@ -147,7 +153,7 @@ export class Owner {
 
     for (i = 0; i < len; i++) {
       try {
-        this._handlers[i](error, this as any);
+        this._handlers[i](error, this);
         break; // error was handled.
       } catch (e) {
         error = e;
@@ -159,7 +165,7 @@ export class Owner {
   }
 }
 
-export interface Context<T> {
+export interface ContextType<T> {
   readonly id: symbol;
   readonly defaultValue: T | undefined;
 }
@@ -172,7 +178,10 @@ export interface Context<T> {
  * A default value can be provided here which will be used when a specific value is not provided
  * via a `setContext` call.
  */
-export function createContext<T>(defaultValue?: T, description?: string): Context<T> {
+export function createContext<T>(
+  defaultValue?: T,
+  description?: string
+): ContextType<T> {
   return { id: Symbol(description), defaultValue };
 }
 
@@ -182,9 +191,18 @@ export function createContext<T>(defaultValue?: T, description?: string): Contex
  * @throws `NoOwnerError` if there's no owner at the time of call.
  * @throws `ContextNotFoundError` if a context value has not been set yet.
  */
-export function getContext<T>(context: Context<T>, owner: Owner | null = currentOwner): T {
+export function getContext<T>(
+  context: ContextType<T>,
+  owner: OwnerClass | null = currentOwner
+): T {
   if (!owner) {
-    throw new NoOwnerError();
+    const contextDetails =
+      __DEV__ && context.id.description
+        ? `context "${context.id.description}"`
+        : "context";
+    throw new NoOwnerErrorClass(
+      `No owner found when trying to get ${contextDetails}. Ensure getContext is called within a reactive scope (e.g., createRoot, createSignal, createMemo, createEffect).`
+    );
   }
 
   const value = hasContext(context, owner)
@@ -192,7 +210,13 @@ export function getContext<T>(context: Context<T>, owner: Owner | null = current
     : context.defaultValue;
 
   if (isUndefined(value)) {
-    throw new ContextNotFoundError();
+    const contextDetails =
+      __DEV__ && context.id.description
+        ? `Context "${context.id.description}"`
+        : "Context";
+    throw new ContextNotFoundErrorClass(
+      `${contextDetails} not found. Ensure a value was set via setContext in an ancestor scope.`
+    );
   }
 
   return value;
@@ -203,23 +227,36 @@ export function getContext<T>(context: Context<T>, owner: Owner | null = current
  *
  * @throws `NoOwnerError` if there's no owner at the time of call.
  */
-export function setContext<T>(context: Context<T>, value?: T, owner: Owner | null = currentOwner) {
+export function setContext<T>(
+  context: ContextType<T>,
+  value?: T,
+  owner: OwnerClass | null = currentOwner
+) {
   if (!owner) {
-    throw new NoOwnerError();
+    const contextDetails =
+      __DEV__ && context.id.description
+        ? `context "${context.id.description}"`
+        : "context";
+    throw new NoOwnerErrorClass(
+      `No owner found when trying to set ${contextDetails}. Ensure setContext is called within a reactive scope.`
+    );
   }
 
   // We're creating a new object to avoid child context values being exposed to parent owners. If
   // we don't do this, everything will be a singleton and all hell will break lose.
   owner._context = {
     ...owner._context,
-    [context.id]: isUndefined(value) ? context.defaultValue : value
+    [context.id]: isUndefined(value) ? context.defaultValue : value,
   };
 }
 
 /**
  * Whether the given context is currently defined.
  */
-export function hasContext(context: Context<any>, owner: Owner | null = currentOwner): boolean {
+export function hasContext(
+  context: ContextType<any>,
+  owner: OwnerClass | null = currentOwner
+): boolean {
   return !isUndefined(owner?._context[context.id]);
 }
 
@@ -228,10 +265,8 @@ export function hasContext(context: Context<any>, owner: Owner | null = currentO
  * @param fn an effect that should run only once on cleanup
  *
  * @returns the same {@link fn} function that was passed in
- *
- * @description https://docs.solidjs.com/reference/lifecycle/on-cleanup
- */
-export function onCleanup(fn: Disposable): Disposable {
+ * */
+export function onCleanup(fn: DisposableType): DisposableType {
   if (!currentOwner) return fn;
 
   const node = currentOwner;

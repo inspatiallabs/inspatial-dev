@@ -1,10 +1,10 @@
-export type { Store, StoreSetter, StoreNode, NotWrappable, SolidStore } from "./store.js";
-export type { Merge, Omit } from "./utils.js";
+export type { StoreType, StoreSetterType, StoreNodeType } from "./store.ts";
+export type { Merge, Omit } from "./utils.ts";
 
-export { unwrap, isWrappable, createStore, $RAW, $TRACK, $PROXY, $TARGET } from "./store.js";
+export { unwrap, isWrappable, createStore, $RAW, $TRACK, $PROXY, $TARGET } from "./store.ts";
 
-export { createProjection } from "./projection.js";
+export { createProjection } from "./projection.ts";
 
-export { reconcile } from "./reconcile.js";
+export { reconcile } from "./reconcile.ts";
 
-export { merge, omit } from "./utils.js";
+export { merge, omit } from "./utils.ts";

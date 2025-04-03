@@ -486,6 +486,7 @@ export interface SpyProp<
   // deno-lint-ignore no-explicit-any
   Return = any,
 > {
+  mock: any
   (this: Self, ...args: Args): Return;
   /** The function that is being spied on. */
   original: (this: Self, ...args: Args) => Return;
@@ -1945,3 +1946,119 @@ export function resolvesNext<
   };
 }
 //#endregion resolvesNext
+
+
+// Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
+// This module is browser compatible.
+// Copyright 2019 Allain Lalonde. All rights reserved. ISC License.
+// deno-lint-ignore-file no-explicit-any ban-types
+
+/**
+ * This module contains a function to mock functions for testing and assertions.
+ *
+ * ```ts
+ * import { fn, expect } from "@std/expect";
+ *
+ * Deno.test("example", () => {
+ *   const mockFn = fn((a: number, b: number) => a + b);
+ *   const result = mockFn(1, 2);
+ *   expect(result).toEqual(3);
+ *   expect(mockFn).toHaveBeenCalledWith(1, 2);
+ *   expect(mockFn).toHaveBeenCalledTimes(1);
+ * });
+ * ```
+ *
+ * @module
+ */
+
+/*###############################################(MOCKFN)###############################################*/
+const MOCK_SYMBOL = Symbol.for("@MOCK");
+
+type MockCall = {
+  args: any[];
+  returned?: any;
+  thrown?: any;
+  timestamp: number;
+  returns: boolean;
+  throws: boolean;
+};
+/**
+ * Returns the calls made to a mock function.
+ * @param f The mock function to get the calls from.
+ * @returns The calls made to the mock function.
+ */
+export function getMockCalls(f: any): MockCall[] {
+  const mockInfo = f[MOCK_SYMBOL];
+  if (!mockInfo) {
+    throw new Error("Received function must be a mock or spy function");
+  }
+
+  return [...mockInfo.calls];
+}
+
+/**
+ * Creates a mock function that can be used for testing and assertions.
+ *
+ * @param stubs Functions to be used as stubs for different calls.
+ * @returns A mock function that keeps track of calls and returns values based on the provided stubs.
+ *
+ * @example Usage
+ * ```ts no-assert
+ * import { mockFn, expect } from "@inspatial/test/mock";
+ *
+ * test("example", () => {
+ *   const mockFn = mockFn(
+ *     (a: number, b: number) => a + b,
+ *     (a: number, b: number) => a - b
+ *   );
+ *   const result = mockFn(1, 2);
+ *   expect(result).toEqual(3);
+ *   expect(mockFn).toHaveBeenCalledWith(1, 2);
+ *   expect(mockFn).toHaveBeenCalledTimes(1);
+ *
+ *   const result2 = mockFn(3, 2);
+ *   expect(result2).toEqual(1);
+ *   expect(mockFn).toHaveBeenCalledWith(3, 2);
+ *   expect(mockFn).toHaveBeenCalledTimes(2);
+ * });
+ * ```
+ */
+export function mockFn(...stubs: Function[]): Function {
+  const calls: MockCall[] = [];
+
+  const f = (...args: any[]) => {
+    const stub = stubs.length === 1
+      // keep reusing the first
+      ? stubs[0]
+      // pick the exact mock for the current call
+      : stubs[calls.length];
+
+    try {
+      const returned = stub ? stub(...args) : undefined;
+      calls.push({
+        args,
+        returned,
+        timestamp: Date.now(),
+        returns: true,
+        throws: false,
+      });
+      return returned;
+    } catch (err) {
+      calls.push({
+        args,
+        timestamp: Date.now(),
+        returns: false,
+        thrown: err,
+        throws: true,
+      });
+      throw err;
+    }
+  };
+
+  Object.defineProperty(f, MOCK_SYMBOL, {
+    value: { calls },
+    writable: false,
+  });
+
+  return f;
+}

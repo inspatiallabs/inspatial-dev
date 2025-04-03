@@ -1,47 +1,54 @@
-import { STATE_DIRTY } from "./core/constants.js";
-import type { SignalOptions } from "./core/index.js";
+import { STATE_DIRTY } from "./core/constants.ts";
+import { EagerComputationClass, EffectClass } from "./core/effect.ts";
+import type { SignalOptionsType } from "./core/index.ts";
 import {
-  Computation,
+  ComputationClass,
   compute,
-  EagerComputation,
-  Effect,
   ERROR_BIT,
   flatten,
   getClock,
   incrementClock,
   LOADING_BIT,
-  NotReadyError,
+  NotReadyErrorClass,
   onCleanup,
-  Owner,
+  OwnerClass,
   UNCHANGED,
   UNINITIALIZED_BIT,
-  untrack
-} from "./core/index.js";
+  untrack,
+  getObserver,
+  isEqual,
+} from "./core/index.ts";
+import { $TRACK } from "./store/index.ts";
 
-export type Accessor<T> = () => T;
+// Renamed Types
+export type AccessorType<T> = () => T;
 
-export type Setter<in out T> = {
+export type SetterType<in out T> = {
   <U extends T>(
-    ...args: undefined extends T ? [] : [value: Exclude<U, Function> | ((prev: T) => U)]
+    ...args: undefined extends T
+      ? []
+      : [value: Exclude<U, Function> | ((prev: T) => U)]
   ): undefined extends T ? undefined : U;
   <U extends T>(value: (prev: T) => U): U;
   <U extends T>(value: Exclude<U, Function>): U;
   <U extends T>(value: Exclude<U, Function> | ((prev: T) => U)): U;
 };
 
-export type Signal<T> = [get: Accessor<T>, set: Setter<T>];
+export type SignalType<T> = [get: AccessorType<T>, set: SetterType<T>];
 
-export type ComputeFunction<Prev, Next extends Prev = Prev> = (v: Prev) => Next;
-export type EffectFunction<Prev, Next extends Prev = Prev> = (
+export type ComputeFunctionType<Prev, Next extends Prev = Prev> = (
+  v: Prev
+) => Next;
+export type EffectFunctionType<Prev, Next extends Prev = Prev> = (
   v: Next,
   p?: Prev
 ) => (() => void) | void;
 
-export interface EffectOptions {
+export interface EffectOptionsType {
   name?: string;
   defer?: boolean;
 }
-export interface MemoOptions<T> {
+export interface MemoOptionsType<T> {
   name?: string;
   equals?: false | ((prev: T, next: T) => boolean);
 }
@@ -49,12 +56,12 @@ export interface MemoOptions<T> {
 // Magic type that when used at sites where generic types are inferred from, will prevent those sites from being involved in the inference.
 // https://github.com/microsoft/TypeScript/issues/14829
 // TypeScript Discord conversation: https://discord.com/channels/508357248330760243/508357248330760249/911266491024949328
-export type NoInfer<T extends any> = [T][T extends any ? 0 : never];
+export type NoInferType<T extends any> = [T][T extends any ? 0 : never];
 
 /**
  * Creates a simple reactive state with a getter and setter
  * ```typescript
- * const [state: Accessor<T>, setState: Setter<T>] = createSignal<T>(
+ * const [state: AccessorType<T>, setState: SetterType<T>] = createSignal<T>(
  *  value: T,
  *  options?: { name?: string, equals?: false | ((prev: T, next: T) => boolean) }
  * )
@@ -63,7 +70,7 @@ export type NoInfer<T extends any> = [T][T extends any ? 0 : never];
  * @param options optional object with a name for debugging purposes and equals, a comparator function for the previous and next value to allow fine-grained control over the reactivity
  *
  * @returns ```typescript
- * [state: Accessor<T>, setState: Setter<T>]
+ * [state: AccessorType<T>, setState: SetterType<T>]
  * ```
  * * the Accessor is a function that returns the current value and registers each call to the reactive root
  * * the Setter is a function that allows directly setting or mutating the value:
@@ -72,33 +79,45 @@ export type NoInfer<T extends any> = [T][T extends any ? 0 : never];
  * setCount(count => count + 1);
  * ```
  *
- * @description https://docs.solidjs.com/reference/basic-reactivity/create-signal
  */
-export function createSignal<T>(): Signal<T | undefined>;
-export function createSignal<T>(value: Exclude<T, Function>, options?: SignalOptions<T>): Signal<T>;
+export function createSignal<T>(): SignalType<T | undefined>;
 export function createSignal<T>(
-  fn: ComputeFunction<T>,
+  value: Exclude<T, Function>,
+  options?: SignalOptionsType<T>
+): SignalType<T>;
+export function createSignal<T>(
+  fn: ComputeFunctionType<T>,
   initialValue?: T,
-  options?: SignalOptions<T>
-): Signal<T>;
+  options?: SignalOptionsType<T>
+): SignalType<T>;
 export function createSignal<T>(
-  first?: T | ComputeFunction<T>,
-  second?: T | SignalOptions<T>,
-  third?: SignalOptions<T>
-): Signal<T | undefined> {
+  first?: T | ComputeFunctionType<T>,
+  second?: T | SignalOptionsType<T>,
+  third?: SignalOptionsType<T>
+): SignalType<T | undefined> {
   if (typeof first === "function") {
-    const memo = createMemo<Signal<T>>(p => {
-      const node = new Computation<T>(
+    const memo = createMemo<SignalType<T>>((p) => {
+      const node = new ComputationClass<T>(
         (first as (prev?: T) => T)(p ? untrack(p[0]) : (second as T)),
         null,
         third
       );
-      return [node.read.bind(node), node.write.bind(node)] as Signal<T>;
+      return [node.read.bind(node), node.write.bind(node) as SetterType<T>];
     });
-    return [() => memo()[0](), (value => memo()[1](value)) as Setter<T | undefined>];
+    return [
+      () => memo()[0](),
+      ((value) => memo()[1](value)) as SetterType<T | undefined>,
+    ];
   }
-  const node = new Computation(first, null, second as SignalOptions<T>);
-  return [node.read.bind(node), node.write.bind(node) as Setter<T | undefined>];
+  const node = new ComputationClass(
+    first,
+    null,
+    second as SignalOptionsType<T>
+  );
+  return [
+    node.read.bind(node),
+    node.write.bind(node) as SetterType<T | undefined>,
+  ];
 }
 
 /**
@@ -114,25 +133,24 @@ export function createSignal<T>(
  * @param value an optional initial value for the computation; if set, fn will never receive undefined as first argument
  * @param options allows to set a name in dev mode for debugging purposes and use a custom comparison function in equals
  *
- * @description https://docs.solidjs.com/reference/basic-reactivity/create-memo
  */
 // The extra Prev generic parameter separates inference of the compute input
 // parameter type from inference of the compute return type, so that the effect
 // return type is always used as the memo Accessor's return type.
 export function createMemo<Next extends Prev, Prev = Next>(
-  compute: ComputeFunction<undefined | NoInfer<Prev>, Next>
-): Accessor<Next>;
+  compute: ComputeFunctionType<undefined | NoInferType<Prev>, Next>
+): AccessorType<Next>;
 export function createMemo<Next extends Prev, Init = Next, Prev = Next>(
-  compute: ComputeFunction<Init | Prev, Next>,
+  compute: ComputeFunctionType<Init | Prev, Next>,
   value: Init,
-  options?: MemoOptions<Next>
-): Accessor<Next>;
+  options?: MemoOptionsType<Next>
+): AccessorType<Next>;
 export function createMemo<Next extends Prev, Init, Prev>(
-  compute: ComputeFunction<Init | Prev, Next>,
+  compute: ComputeFunctionType<Init | Prev, Next>,
   value?: Init,
-  options?: MemoOptions<Next>
-): Accessor<Next> {
-  let node: Computation<Next> | undefined = new Computation<Next>(
+  options?: MemoOptionsType<Next>
+): AccessorType<Next> {
+  let node: ComputationClass<Next> | undefined = new ComputationClass<Next>(
     value as any,
     compute as any,
     options
@@ -170,48 +188,49 @@ export function createMemo<Next extends Prev, Init, Prev>(
  * @param value an optional initial value for the computation; if set, fn will never receive undefined as first argument
  * @param options allows to set a name in dev mode for debugging purposes and use a custom comparison function in equals
  *
- * @description https://docs.solidjs.com/reference/basic-reactivity/create-async
  */
 export function createAsync<T>(
   compute: (prev?: T) => Promise<T> | AsyncIterable<T> | T,
   value?: T,
-  options?: MemoOptions<T>
-): Accessor<T> {
+  options?: MemoOptionsType<T>
+): AccessorType<T> {
   let uninitialized = value === undefined;
-  const lhs = new EagerComputation(
+  const lhs = new EagerComputationClass(
     {
-      _value: value
+      _value: value,
     } as any,
-    (p?: Computation<T>) => {
+    (p?: ComputationClass<T>) => {
       const value = p?._value;
       const source = compute(value);
       const isPromise = source instanceof Promise;
-      const iterator = source[Symbol.asyncIterator];
+      const iterator =
+        typeof source === "object" &&
+        source !== null &&
+        (source as any)[Symbol.asyncIterator];
       if (!isPromise && !iterator) {
-        return {
-          wait() {
-            return source as T;
-          },
-          _value: source as T
-        };
+        // Return a proper ComputationClass instance instead of a simple object
+        return new ComputationClass(source as T, null, options);
       }
-      const signal = new Computation(value, null, options);
+      const signal = new ComputationClass(value, null, options);
       const w = signal.wait;
       signal.wait = function () {
         if (signal._stateFlags & ERROR_BIT && signal._time <= getClock()) {
           lhs._notify(STATE_DIRTY);
-          throw new NotReadyError();
+          throw new NotReadyErrorClass();
         }
         return w.call(this);
       };
-      signal.write(UNCHANGED, LOADING_BIT | (uninitialized ? UNINITIALIZED_BIT : 0));
+      signal.write(
+        UNCHANGED,
+        LOADING_BIT | (uninitialized ? UNINITIALIZED_BIT : 0)
+      );
       if (isPromise) {
         source.then(
-          value => {
+          (value) => {
             uninitialized = false;
             signal.write(value, 0, true);
           },
-          error => {
+          (error) => {
             uninitialized = true;
             signal._setError(error);
           }
@@ -252,28 +271,27 @@ export function createAsync<T>(
  * @param value an optional initial value for the computation; if set, fn will never receive undefined as first argument
  * @param options allows to set a name in dev mode for debugging purposes
  *
- * @description https://docs.solidjs.com/reference/basic-reactivity/create-effect
  */
 export function createEffect<Next>(
-  compute: ComputeFunction<undefined | NoInfer<Next>, Next>,
-  effect: EffectFunction<NoInfer<Next>, Next>,
+  compute: ComputeFunctionType<undefined | NoInferType<Next>, Next>,
+  effect: EffectFunctionType<NoInferType<Next>, Next>,
   error?: (err: unknown) => void
 ): void;
 export function createEffect<Next, Init = Next>(
-  compute: ComputeFunction<Init | Next, Next>,
-  effect: EffectFunction<Next, Next>,
+  compute: ComputeFunctionType<Init | Next, Next>,
+  effect: EffectFunctionType<Next, Next>,
   error: ((err: unknown) => void) | undefined,
   value: Init,
-  options?: EffectOptions
+  options?: EffectOptionsType
 ): void;
 export function createEffect<Next, Init>(
-  compute: ComputeFunction<Init | Next, Next>,
-  effect: EffectFunction<Next, Next>,
+  compute: ComputeFunctionType<Init | Next, Next>,
+  effect: EffectFunctionType<Next, Next>,
   error?: (err: unknown) => void,
   value?: Init,
-  options?: EffectOptions
+  options?: EffectOptionsType
 ): void {
-  void new Effect(
+  void new EffectClass(
     value as any,
     compute as any,
     effect,
@@ -297,27 +315,26 @@ export function createEffect<Next, Init>(
  * @param value an optional initial value for the computation; if set, fn will never receive undefined as first argument
  * @param options allows to set a name in dev mode for debugging purposes
  *
- * @description https://docs.solidjs.com/reference/secondary-primitives/create-render-effect
  */
 export function createRenderEffect<Next>(
-  compute: ComputeFunction<undefined | NoInfer<Next>, Next>,
-  effect: EffectFunction<NoInfer<Next>, Next>
+  compute: ComputeFunctionType<undefined | NoInferType<Next>, Next>,
+  effect: EffectFunctionType<NoInferType<Next>, Next>
 ): void;
 export function createRenderEffect<Next, Init = Next>(
-  compute: ComputeFunction<Init | Next, Next>,
-  effect: EffectFunction<Next, Next>,
+  compute: ComputeFunctionType<Init | Next, Next>,
+  effect: EffectFunctionType<Next, Next>,
   value: Init,
-  options?: EffectOptions
+  options?: EffectOptionsType
 ): void;
 export function createRenderEffect<Next, Init>(
-  compute: ComputeFunction<Init | Next, Next>,
-  effect: EffectFunction<Next, Next>,
+  compute: ComputeFunctionType<Init | Next, Next>,
+  effect: EffectFunctionType<Next, Next>,
   value?: Init,
-  options?: EffectOptions
+  options?: EffectOptionsType
 ): void {
-  void new Effect(value as any, compute as any, effect, undefined, {
+  void new EffectClass(value as any, compute as any, effect, undefined, {
     render: true,
-    ...(__DEV__ ? { ...options, name: options?.name ?? "effect" } : options)
+    ...(__DEV__ ? { ...options, name: options?.name ?? "effect" } : options),
   });
 }
 
@@ -327,11 +344,16 @@ export function createRenderEffect<Next, Init>(
  * @param fn a function in which the reactive state is scoped
  * @returns the output of `fn`.
  *
- * @description https://docs.solidjs.com/reference/reactive-utilities/create-root
  */
-export function createRoot<T>(init: ((dispose: () => void) => T) | (() => T)): T {
+export function createRoot<T>(
+  init: ((dispose: () => void) => T) | (() => T)
+): T {
   const owner = new Owner();
-  return compute(owner, !init.length ? (init as () => T) : () => init(() => owner.dispose()), null);
+  return compute(
+    owner,
+    !init.length ? (init as () => T) : () => init(() => owner.dispose()),
+    null
+  );
 }
 
 /**
@@ -340,7 +362,7 @@ export function createRoot<T>(init: ((dispose: () => void) => T) | (() => T)): T
  *
  * Warning: Usually there are simpler ways of modeling a problem that avoid using this function
  */
-export function runWithOwner<T>(owner: Owner | null, run: () => T): T {
+export function runWithOwner<T>(owner: OwnerClass | null, run: () => T): T {
   return compute(owner, run, null);
 }
 
@@ -351,16 +373,18 @@ export function runWithOwner<T>(owner: Owner | null, run: () => T): T {
  *
  * * If the error is thrown again inside the error handler, it will trigger the next available parent handler
  *
- * @description https://docs.solidjs.com/reference/reactive-utilities/catch-error
  */
 export function createErrorBoundary<T, U>(
   fn: () => T,
   fallback: (error: unknown, reset: () => void) => U
-): Accessor<T | U> {
-  const owner = new Owner();
-  const error = new Computation<{ _error: any } | undefined>(undefined, null);
-  const nodes = new Set<Owner>();
-  function handler(err: unknown, node: Owner) {
+): AccessorType<T | U> {
+  const owner = new OwnerClass();
+  const error = new ComputationClass<{ _error: any } | undefined>(
+    undefined,
+    null
+  );
+  const nodes = new Set<OwnerClass>();
+  function handler(err: unknown, node: OwnerClass) {
     if (nodes.has(node)) return;
     compute(
       node,
@@ -378,8 +402,10 @@ export function createErrorBoundary<T, U>(
   const guarded = compute(
     owner,
     () => {
-      const c = new Computation(undefined, fn);
-      const f = new EagerComputation(undefined, () => flatten(c.read()), { defer: true });
+      const c = new ComputationClass(undefined, fn);
+      const f = new EagerComputationClass(undefined, () => flatten(c.read()), {
+        defer: true,
+      });
       f._setError = function (error) {
         this.handleError(error);
       };
@@ -387,7 +413,7 @@ export function createErrorBoundary<T, U>(
     },
     null
   );
-  const decision = new Computation(null, () => {
+  const decision = new ComputationClass(null, () => {
     if (!error.read()) {
       const resolved = guarded.read();
       if (!error.read()) return resolved;
@@ -409,12 +435,12 @@ export function createErrorBoundary<T, U>(
  */
 export function resolve<T>(fn: () => T): Promise<T> {
   return new Promise((res, rej) => {
-    createRoot(dispose => {
-      new EagerComputation(undefined, () => {
+    createRoot((dispose) => {
+      new EagerComputationClass(undefined, () => {
         try {
           res(fn());
         } catch (err) {
-          if (err instanceof NotReadyError) throw err;
+          if (err instanceof NotReadyErrorClass) throw err;
           rej(err);
         }
         dispose();
@@ -422,3 +448,328 @@ export function resolve<T>(fn: () => T): Promise<T> {
     });
   });
 }
+
+// --- Start createResource ---
+
+/** Input to fetcher function, signifying the fetch should occur. */
+type ResourceSourceType<S> = S | false | null | undefined;
+
+/** Function that performs the asynchronous fetching. */
+type ResourceFetcherType<S, T> = (
+  source: S,
+  info: ResourceFetcherInfoType<T>
+) => Promise<T> | T;
+
+/** Function that performs the asynchronous fetching without a source. */
+type InitialResourceFetcherType<T> = (
+  info: ResourceFetcherInfoType<T>
+) => Promise<T> | T;
+
+/** Additional info passed to the fetcher function. */
+export interface ResourceFetcherInfoType<T> {
+  /** The current value of the resource data before fetching. */
+  value: T | undefined;
+  /** A method to refetch the resource. */
+  refetching: boolean | unknown;
+}
+
+/** Options for `createResource`. */
+export interface ResourceOptionsType<T, S = unknown> {
+  /** Initial value of the resource while loading. */
+  initialValue?: T;
+  /** Name for debugging purposes. */
+  name?: string;
+  /** Custom storage for resource state (advanced). */
+  storage?: (init: T | undefined) => SignalType<T | undefined>;
+  /** Source signal for the fetcher. Fetcher runs when source is not null/undefined/false. */
+  source?: AccessorType<ResourceSourceType<S>>;
+  /** A function that returns the resource's value on the server. */
+  ssrLoadFrom?: "initialValue";
+  /** Optional defer function to prevent fetcher running immediately */
+  deferStream?: boolean;
+}
+
+/** Reactive primitives returned by `createResource`. */
+export interface ResourceType<T> {
+  /** Reactive accessor for the latest resolved value. */
+  (): T | undefined;
+  /** Reactive accessor for the loading state. */
+  loading: AccessorType<boolean>;
+  /** Reactive accessor for the latest error. */
+  error: AccessorType<any>;
+  /** Trigger a refetch of the resource. */
+  refetch: (info?: unknown) => Promise<T> | T | undefined | null;
+  /** Mutate the resource value directly. */
+  mutate: SetterType<T | undefined>;
+  /** Reactive accessor for the latest resolved value (explicit property). */
+  latest: AccessorType<T | undefined>;
+}
+
+// Internal state for resource
+interface ResourceStateType<T> {
+  loading: boolean;
+  error: any;
+  latest: T | undefined;
+}
+
+// Resource return type combines Accessor and properties
+type ResourceReturnType<T> = AccessorType<T | undefined> & ResourceType<T>;
+
+/**
+ * Creates a reactive resource that handles asynchronous data fetching.
+ *
+ * @param fetcher - The function that fetches the data. It receives the source value (if provided) and previous value.
+ * @param options - Resource options: initialValue, name, source, etc.
+ * @returns A Resource object with reactive accessors for `loading`, `error`, the value, and `refetch`/`mutate` methods.
+ *
+ */
+export function createResource<T, S = true>(
+  fetcher: InitialResourceFetcherType<T>,
+  options?: ResourceOptionsType<T, S>
+): ResourceReturnType<T>;
+export function createResource<T, S>(
+  source: AccessorType<ResourceSourceType<S>>,
+  fetcher: ResourceFetcherType<S, T>,
+  options?: ResourceOptionsType<T, S>
+): ResourceReturnType<T>;
+export function createResource<T, S>(
+  sourceOrFetcher:
+    | AccessorType<ResourceSourceType<S>>
+    | InitialResourceFetcherType<T>,
+  fetcherOrOptions?: ResourceFetcherType<S, T> | ResourceOptionsType<T, S>,
+  optionsArg?: ResourceOptionsType<T, S>
+): ResourceReturnType<T> {
+  let source: AccessorType<ResourceSourceType<S>>;
+  let fetcher: ResourceFetcherType<S, T> | InitialResourceFetcherType<T>;
+  let options: ResourceOptionsType<T, S>;
+
+  // Normalize arguments
+  if (
+    arguments.length === 2 &&
+    typeof sourceOrFetcher === "function" &&
+    typeof fetcherOrOptions === "object"
+  ) {
+    source = () => true as ResourceSourceType<S>;
+    fetcher = sourceOrFetcher as InitialResourceFetcherType<T>;
+    options = fetcherOrOptions as ResourceOptionsType<T, S>;
+  } else if (
+    arguments.length >= 2 &&
+    typeof sourceOrFetcher === "function" &&
+    typeof fetcherOrOptions === "function"
+  ) {
+    source = sourceOrFetcher as AccessorType<ResourceSourceType<S>>;
+    fetcher = fetcherOrOptions as ResourceFetcherType<S, T>;
+    options = optionsArg ?? ({} as ResourceOptionsType<T, S>);
+  } else {
+    source = () => true as ResourceSourceType<S>;
+    fetcher = sourceOrFetcher as InitialResourceFetcherType<T>;
+    options = {} as ResourceOptionsType<T, S>;
+  }
+
+  const [state, setState] = createSignal<ResourceStateType<T>>(
+    {
+      loading: false,
+      error: undefined,
+      latest: options.initialValue,
+    },
+    {
+      equals: false,
+      name: __DEV__ ? `${options.name ?? "resource"}_state` : undefined,
+    }
+  );
+
+  const [trackVal, trigger] = createSignal(undefined, { equals: false });
+  const [trackFetcher, triggerFetcher] = createSignal<
+    InitialResourceFetcherType<T> | ResourceFetcherType<S, T>
+  >(fetcher, { equals: false });
+  const [sourceVal, setSourceVal] = createSignal<ResourceSourceType<S>>();
+  const [mutatedValue, setMutatedValue] = createSignal<T | undefined>(
+    undefined,
+    { equals: false }
+  );
+
+  let loading = false;
+  let errorVal: unknown;
+  let explicitSource = !!options.source;
+  let value = options.initialValue;
+  let fetchCnt = 0;
+  let modified = false;
+  let loadedDeferred = false;
+  let resolved = options.initialValue !== undefined;
+  let requested = false;
+  let currentPromise: Promise<T> | undefined = undefined;
+
+  function load(refetchingInfo: boolean | unknown = false) {
+    if (!modified && mutatedValue() !== undefined) return;
+    const src = source();
+    setSourceVal(() => src);
+    if (src == null || src === false) {
+      setState({
+        loading: false,
+        error: undefined,
+        latest: options.initialValue,
+      });
+      value = options.initialValue;
+      resolved = options.initialValue !== undefined;
+      loading = false;
+      errorVal = undefined;
+      requested = false;
+      currentPromise = undefined;
+      trigger(undefined);
+      return;
+    }
+
+    const currentFetcher = trackFetcher();
+    fetchCnt++;
+    const currentFetchCnt = fetchCnt;
+    loading = true;
+    errorVal = undefined;
+    requested = true;
+    const ref: ResourceFetcherInfoType<T> = {
+      value,
+      refetching: refetchingInfo,
+    };
+    modified = false;
+
+    setState((prev) => ({
+      latest: prev.latest,
+      error: undefined,
+      loading: true,
+    }));
+    trigger(undefined);
+
+    const promise = Promise.resolve(currentFetcher(src as S, ref));
+    currentPromise = promise;
+
+    promise
+      .then((res) => {
+        if (fetchCnt === currentFetchCnt) {
+          value = res;
+          resolved = true;
+          loading = false;
+          errorVal = undefined;
+          modified = false;
+          setMutatedValue(undefined);
+          setState({ latest: res, error: undefined, loading: false });
+          currentPromise = undefined;
+          trigger(undefined);
+        }
+      })
+      .catch((err) => {
+        if (fetchCnt === currentFetchCnt) {
+          errorVal = err;
+          resolved = false;
+          loading = false;
+          setState((prev) => ({
+            latest: prev.latest,
+            error: err,
+            loading: false,
+          }));
+          currentPromise = undefined;
+          trigger(undefined);
+        }
+      });
+    return promise;
+  }
+
+  const resourceAccessor: AccessorType<T | undefined> = createMemo(
+    () => {
+      trackVal();
+      if (modified) return mutatedValue();
+
+      const currentActualSource = explicitSource ? source() : true;
+
+      if (!resolved && !errorVal) {
+        if (currentActualSource == null || currentActualSource === false) {
+          throw new NotReadyErrorClass();
+        } else if (!requested) {
+          throw new NotReadyErrorClass();
+        } else {
+          throw new NotReadyErrorClass();
+        }
+      }
+      if (errorVal && !state().error) {
+        throw errorVal;
+      }
+      return state().latest;
+    },
+    undefined,
+    { name: __DEV__ ? `${options.name ?? "resource"}_memo` : undefined }
+  );
+
+  createRenderEffect((prevSource) => {
+    const currentSource = source();
+    setSourceVal(() => currentSource);
+
+    if (
+      prevSource === undefined &&
+      (currentSource == null || currentSource === false) &&
+      !requested
+    ) {
+      return currentSource;
+    }
+
+    if (currentSource == null || currentSource === false) {
+      setState({
+        loading: false,
+        error: undefined,
+        latest: options.initialValue,
+      });
+      value = options.initialValue;
+      resolved = options.initialValue !== undefined;
+      loading = false;
+      errorVal = undefined;
+      modified = false;
+      setMutatedValue(undefined);
+      requested = false;
+      currentPromise = undefined;
+      trigger(undefined);
+    } else if (prevSource !== currentSource || requested) {
+      load();
+    }
+    return currentSource;
+  });
+
+  const refetch = (info?: unknown) => {
+    const promise = load(info || true);
+    return promise;
+  };
+
+  const mutate = (
+    v: T | undefined | ((prev?: T) => T | undefined)
+  ): T | undefined => {
+    const val =
+      typeof v === "function"
+        ? (v as (prev?: T) => T | undefined)(state().latest)
+        : v;
+    modified = true;
+    resolved = true;
+    errorVal = undefined;
+    loading = false;
+    currentPromise = undefined;
+    setMutatedValue(() => val);
+    setState((prev) => ({ latest: val, error: undefined, loading: false }));
+    trigger(undefined);
+    return val;
+  };
+
+  const resourceReturn = resourceAccessor as ResourceReturnType<T>;
+  resourceReturn.loading = createMemo(() => state().loading, undefined, {
+    equals: false,
+    name: __DEV__ ? `${options.name ?? "resource"}_loading` : undefined,
+  });
+  resourceReturn.error = createMemo(() => state().error, undefined, {
+    equals: false,
+    name: __DEV__ ? `${options.name ?? "resource"}_error` : undefined,
+  });
+  resourceReturn.latest = createMemo(() => state().latest, undefined, {
+    equals: false,
+    name: __DEV__ ? `${options.name ?? "resource"}_latest` : undefined,
+  });
+  resourceReturn.refetch = refetch;
+  resourceReturn.mutate = mutate as SetterType<T | undefined>;
+
+  return resourceReturn;
+}
+
+// --- End createResource ---
