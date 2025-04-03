@@ -85,7 +85,7 @@ describe("Projection basics", () => {
   });
 
   it("should not self track", () => {
-    const spy = vi.fn();
+    const spy = mockFn();
     const [bar, setBar] = createSignal("foo");
     const projection = createRoot(() =>
       createProjection(

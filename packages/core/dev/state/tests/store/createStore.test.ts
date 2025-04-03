@@ -1,16 +1,26 @@
+import { test, expect, describe, it } from "../../../test/src/index.ts";
+import { spy } from "../../../test/src/mock.ts";
 import {
-  $RAW,
+  createStore as createStoreModule,
+  SetStoreFunction,
+  Store,
+  reconcile,
+  produce,
+} from "../src";
+import {
+  createStore,
+  flushSync,
+  unwrap,
+  untrack,
   createEffect,
   createMemo,
   createRoot,
   createSignal,
-  createStore,
-  flushSync,
-  mapArray,
-  untrack,
-  unwrap
-} from "../../signal/src/src/index.ts";
-import { test, expect, describe, it } from "../../../test/src/index.ts";
+} from "../../signal/src/index.ts";
+import { mapArray } from "../../signal/src/map.ts";
+
+// Helper type for setStore callbacks
+type StoreUpdater<T> = Parameters<SetStoreFunction<T>>[0];
 
 describe("State immutability", () => {
   test("Setting a property", () => {
@@ -28,6 +38,60 @@ describe("State immutability", () => {
     delete state.name;
     expect(state.name).toBe("John");
   });
+
+  test("nested class", () => {
+    const [inner] = createStore(new CustomThing(1));
+    const [store, setStore] = createStore<{ inner: CustomThing }>({ inner });
+
+    expect(store.inner.a).toEqual(1);
+    expect(store.inner.b).toEqual(10);
+
+    let sum: number | undefined;
+    createRoot(() => {
+      createEffect(
+        () => store.inner.a + store.inner.b,
+        (v: number) => {
+          sum = v;
+        }
+      );
+    });
+    flushSync();
+    expect(sum).toEqual(11);
+    setStore((s) => (s.inner.a = 10));
+    flushSync();
+    expect(sum).toEqual(20);
+    setStore((s) => (s.inner.b = 5));
+    flushSync();
+    expect(sum).toEqual(15);
+  });
+
+  test("not wrapped nested class", () => {
+    type TestStore = { inner: CustomThing };
+    const [store, setStore] = createStore<TestStore>({
+      inner: new CustomThing(1),
+    });
+
+    expect(store.inner.a).toEqual(1);
+    expect(store.inner.b).toEqual(10);
+
+    let sum: number | undefined;
+    createRoot(() => {
+      createEffect(
+        () => store.inner.a + store.inner.b,
+        (v: number) => {
+          sum = v;
+        }
+      );
+    });
+    flushSync();
+    expect(sum).toEqual(11);
+    setStore((s) => (s.inner.a = 10));
+    flushSync();
+    expect(sum).toEqual(20);
+    setStore((s) => (s.inner.b = 5));
+    flushSync();
+    expect(sum).toEqual(15);
+  });
 });
 
 describe("State Getters", () => {
@@ -36,10 +100,10 @@ describe("State Getters", () => {
       name: "John",
       get greeting(): string {
         return `Hi, ${this.name}`;
-      }
+      },
     });
     expect(state!.greeting).toBe("Hi, John");
-    setState(s => (s.name = "Jake"));
+    setState((s) => (s.name = "Jake"));
     expect(state!.greeting).toBe("Hi, Jake");
   });
 
@@ -49,13 +113,13 @@ describe("State Getters", () => {
       name: "John",
       get greeting(): string {
         return greeting();
-      }
+      },
     });
     createRoot(() => {
       greeting = createMemo(() => `Hi, ${state.name}`);
     });
     expect(state!.greeting).toBe("Hi, John");
-    setState(s => (s.name = "Jake"));
+    setState((s) => (s.name = "Jake"));
     flushSync();
     expect(state!.greeting).toBe("Hi, Jake");
   });
@@ -64,18 +128,18 @@ describe("State Getters", () => {
 describe("Simple setState modes", () => {
   test("Simple Key Value", () => {
     const [state, setState] = createStore({ key: "" });
-    setState(s => (s.key = "value"));
+    setState((s) => (s.key = "value"));
     expect(state.key).toBe("value");
   });
 
   test("Test Array", () => {
     const [todos, setTodos] = createStore([
       { id: 1, title: "Go To Work", done: true },
-      { id: 2, title: "Eat Lunch", done: false }
+      { id: 2, title: "Eat Lunch", done: false },
     ]);
-    setTodos(t => (t[1].done = true));
-    setTodos(t => t.push({ id: 3, title: "Go Home", done: false }));
-    setTodos(t => t.shift());
+    setTodos((t) => (t[1].done = true));
+    setTodos((t) => t.push({ id: 3, title: "Go Home", done: false }));
+    setTodos((t) => t.shift());
     expect(Array.isArray(todos)).toBe(true);
     expect(todos[0].done).toBe(true);
     expect(todos[1].title).toBe("Go Home");
@@ -85,11 +149,11 @@ describe("Simple setState modes", () => {
     const [state, setState] = createStore({
       todos: [
         { id: 1, title: "Go To Work", done: true },
-        { id: 2, title: "Eat Lunch", done: false }
-      ]
+        { id: 2, title: "Eat Lunch", done: false },
+      ],
     });
-    setState(s => (s.todos[1].done = true));
-    setState(s => s.todos.push({ id: 3, title: "Go Home", done: false }));
+    setState((s) => (s.todos[1].done = true));
+    setState((s) => s.todos.push({ id: 3, title: "Go Home", done: false }));
     expect(Array.isArray(state.todos)).toBe(true);
     expect(state.todos[1].done).toBe(true);
     expect(state.todos[2].title).toBe("Go Home");
@@ -99,7 +163,7 @@ describe("Simple setState modes", () => {
 describe("Unwrapping Edge Cases", () => {
   test("Unwrap nested frozen state object", () => {
     const [state] = createStore({
-        data: Object.freeze({ user: { firstName: "John", lastName: "Snow" } })
+        data: Object.freeze({ user: { firstName: "John", lastName: "Snow" } }),
       }),
       s = unwrap({ ...state });
     expect(s.data.user.firstName).toBe("John");
@@ -109,7 +173,7 @@ describe("Unwrapping Edge Cases", () => {
   });
   test("Unwrap nested frozen array", () => {
     const [state] = createStore({
-        data: [{ user: { firstName: "John", lastName: "Snow" } }]
+        data: [{ user: { firstName: "John", lastName: "Snow" } }],
       }),
       s = unwrap({ data: state.data.slice(0) });
     expect(s.data[0].user.firstName).toBe("John");
@@ -119,7 +183,9 @@ describe("Unwrapping Edge Cases", () => {
   });
   test("Unwrap nested frozen state array", () => {
     const [state] = createStore({
-        data: Object.freeze([{ user: { firstName: "John", lastName: "Snow" } }])
+        data: Object.freeze([
+          { user: { firstName: "John", lastName: "Snow" } },
+        ]),
       }),
       s = unwrap({ ...state });
     expect(s.data[0].user.firstName).toBe("John");
@@ -152,16 +218,16 @@ describe("Tracking State changes", () => {
       );
     });
     flushSync();
-    setState(s => (s.data = 5));
+    setState((s) => (s.data = 5));
     flushSync();
     // same value again should not retrigger
-    setState(s => (s.data = 5));
+    setState((s) => (s.data = 5));
     flushSync();
   });
 
   test("Track a nested state change", () => {
     const [state, setState] = createStore({
-      user: { firstName: "John", lastName: "Smith" }
+      user: { firstName: "John", lastName: "Smith" },
     });
     createRoot(() => {
       let executionCount = 0;
@@ -184,7 +250,7 @@ describe("Tracking State changes", () => {
       );
     });
     flushSync();
-    setState(s => (s.user.firstName = "Jake"));
+    setState((s) => (s.user.firstName = "Jake"));
     flushSync();
   });
 
@@ -211,7 +277,7 @@ describe("Tracking State changes", () => {
       );
     });
     flushSync();
-    setState(s => s.pop());
+    setState((s) => s.pop());
     flushSync();
   });
 
@@ -271,7 +337,7 @@ describe("Tracking State changes", () => {
 
       const mapped = mapArray(
         () => state,
-        item => item
+        (item) => item
       );
       createEffect(
         () => {
@@ -299,21 +365,23 @@ describe("Tracking State changes", () => {
     });
     flushSync();
     // add
-    setState(s => (s[1] = "item"));
+    setState((s) => (s[1] = "item"));
     flushSync();
 
     // update
-    setState(s => (s[1] = "new"));
+    setState((s) => (s[1] = "new"));
     flushSync();
 
     // delete
-    setState(s => [s[0]]);
+    setState((s) => [s[0]]);
     flushSync();
     expect.assertions(15);
   });
 
   test("Tracking iteration Object key addition/removal", () => {
-    const [state, setState] = createStore<{ obj: { item?: number } }>({ obj: {} });
+    const [state, setState] = createStore<{ obj: { item?: number } }>({
+      obj: {},
+    });
     let executionCount = 0;
     let executionCount2 = 0;
     createRoot(() => {
@@ -359,7 +427,7 @@ describe("Tracking State changes", () => {
     });
     flushSync();
     // add
-    setState(s => (s.obj.item = 5));
+    setState((s) => (s.obj.item = 5));
     flushSync();
 
     // update
@@ -367,18 +435,20 @@ describe("Tracking State changes", () => {
     // flushSync();
 
     // delete
-    setState(s => delete s.obj.item);
+    setState((s) => delete s.obj.item);
     flushSync();
     expect.assertions(7);
   });
 
   test("Doesn't trigger object on addition/removal", () => {
-    const [state, setState] = createStore<{ obj: { item?: number } }>({ obj: {} });
+    const [state, setState] = createStore<{ obj: { item?: number } }>({
+      obj: {},
+    });
     let executionCount = 0;
     createRoot(() => {
       createEffect(
         () => state.obj,
-        v => {
+        (v) => {
           if (executionCount === 0) expect(v.item).toBeUndefined();
           else if (executionCount === 1) {
             expect(v.item).toBe(5);
@@ -392,11 +462,11 @@ describe("Tracking State changes", () => {
     });
     flushSync();
     // add
-    setState(s => (s.obj.item = 5));
+    setState((s) => (s.obj.item = 5));
     flushSync();
 
     // delete
-    setState(s => delete s.obj.item);
+    setState((s) => delete s.obj.item);
     flushSync();
     expect.assertions(1);
   });
@@ -448,17 +518,19 @@ describe("Tracking State changes", () => {
     });
     flushSync();
     // add
-    setState(s => (s.item = 5));
+    setState((s) => (s.item = 5));
     flushSync();
 
     // delete
-    setState(s => delete s.item);
+    setState((s) => delete s.item);
     flushSync();
     expect.assertions(7);
   });
 
   test("Not Tracking Top level key addition/removal", () => {
-    const [state, setState] = createStore<{ item?: number; item2?: number }>({});
+    const [state, setState] = createStore<{ item?: number; item2?: number }>(
+      {}
+    );
     let executionCount = 0;
     createRoot(() => {
       createEffect(
@@ -476,11 +548,11 @@ describe("Tracking State changes", () => {
     });
     flushSync();
     // add
-    setState(s => (s.item = 5));
+    setState((s) => (s.item = 5));
     flushSync();
 
     // delete
-    setState(s => delete s.item);
+    setState((s) => delete s.item);
     flushSync();
     expect.assertions(1);
   });
@@ -490,7 +562,7 @@ describe("Handling functions in state", () => {
   test("Array Native Methods: Array.Filter", () => {
     createRoot(() => {
       const [state] = createStore({ list: [0, 1, 2] }),
-        getFiltered = createMemo(() => state.list.filter(i => i % 2));
+        getFiltered = createMemo(() => state.list.filter((i) => i % 2));
       expect(getFiltered()).toStrictEqual([1]);
     });
   });
@@ -498,10 +570,10 @@ describe("Handling functions in state", () => {
   test("Track function change", () => {
     createRoot(() => {
       const [state, setState] = createStore<{ fn: () => number }>({
-          fn: () => 1
+          fn: () => 1,
         }),
         getValue = createMemo(() => state.fn());
-      setState(s => (s.fn = () => 2));
+      setState((s) => (s.fn = () => 2));
       expect(getValue()).toBe(2);
     });
   });
@@ -512,7 +584,7 @@ describe("Setting state from Effects", () => {
     const [getData, setData] = createSignal("init"),
       [state, setState] = createStore({ data: "" });
     createRoot(() => {
-      createEffect(getData, v => setState(s => (s.data = v)));
+      createEffect(getData, (v) => setState((s) => (s.data = v)));
     });
     setData("signal");
     flushSync();
@@ -520,13 +592,13 @@ describe("Setting state from Effects", () => {
   });
 
   test("Select Promise", () =>
-    new Promise(done => {
+    new Promise((done) => {
       createRoot(async () => {
-        const p = new Promise<string>(resolve => {
+        const p = new Promise<string>((resolve) => {
           setTimeout(resolve, 20, "promised");
         });
         const [state, setState] = createStore({ data: "" });
-        p.then(v => setState(s => (s.data = v)));
+        p.then((v) => setState((s) => (s.data = v)));
         await p;
         expect(state.data).toBe("promised");
         done(undefined);
@@ -558,7 +630,7 @@ describe("Array length", () => {
     createRoot(() => {
       createEffect(
         () => list.length,
-        v => {
+        (v) => {
           length = v;
         }
       );
@@ -566,7 +638,7 @@ describe("Array length", () => {
     flushSync();
     expect(length).toBe(0);
     // insert at index 0
-    setState(s => (s.list[0] = 1));
+    setState((s) => (s.list[0] = 1));
     flushSync();
     expect(length).toBe(1);
   });
@@ -596,26 +668,26 @@ describe("Nested Classes", () => {
     const [inner] = createStore(new CustomThing(1));
     const [store, setStore] = createStore<{ inner: CustomThing }>({ inner });
 
-    expect(store.inner.a).toBe(1);
-    expect(store.inner.b).toBe(10);
+    expect(store.inner.a).toEqual(1);
+    expect(store.inner.b).toEqual(10);
 
-    let sum;
+    let sum: number | undefined;
     createRoot(() => {
       createEffect(
         () => store.inner.a + store.inner.b,
-        v => {
+        (v: number) => {
           sum = v;
         }
       );
     });
     flushSync();
-    expect(sum).toBe(11);
-    setStore(s => (s.inner.a = 10));
+    expect(sum).toEqual(11);
+    setStore((s) => (s.inner.a = 10));
     flushSync();
-    expect(sum).toBe(20);
-    setStore(s => (s.inner.b = 5));
+    expect(sum).toEqual(20);
+    setStore((s) => (s.inner.b = 5));
     flushSync();
-    expect(sum).toBe(15);
+    expect(sum).toEqual(15);
   });
 
   test("not wrapped nested class", () => {
@@ -627,77 +699,85 @@ describe("Nested Classes", () => {
         this.b = 10;
       }
     }
-    const [store, setStore] = createStore({ inner: new CustomThing(1) });
+    type TestStore = { inner: CustomThing };
+    const [store, setStore] = createStore<TestStore>({
+      inner: new CustomThing(1),
+    });
 
-    expect(store.inner.a).toBe(1);
-    expect(store.inner.b).toBe(10);
+    expect(store.inner.a).toEqual(1);
+    expect(store.inner.b).toEqual(10);
 
-    let sum;
+    let sum: number | undefined;
     createRoot(() => {
       createEffect(
         () => store.inner.a + store.inner.b,
-        v => {
+        (v: number) => {
           sum = v;
         }
       );
     });
     flushSync();
-    expect(sum).toBe(11);
-    setStore(s => (s.inner.a = 10));
+    expect(sum).toEqual(11);
+    setStore((s) => (s.inner.a = 10));
     flushSync();
-    expect(sum).toBe(20);
-    setStore(s => (s.inner.b = 5));
+    expect(sum).toEqual(20);
+    setStore((s) => (s.inner.b = 5));
     flushSync();
-    expect(sum).toBe(15);
+    expect(sum).toEqual(15);
   });
 });
 
 describe("In Operator", () => {
   test("wrapped nested class", () => {
     let access = 0;
-    const [store, setStore] = createStore<{ a?: number; b?: number; c?: number }>({
+    type TestStore = {
+      a?: number;
+      b?: number;
+      c?: number;
+    };
+    const [store, setStore] = createStore<TestStore>({
       a: 1,
       get b() {
         access++;
         return 2;
-      }
+      },
     });
 
-    expect("a" in store).toBe(true);
-    expect("b" in store).toBe(true);
-    expect("c" in store).toBe(false);
-    expect(access).toBe(0);
+    expect("a" in store).toEqual(true);
+    expect("b" in store).toEqual(true);
+    expect("c" in store).toEqual(false);
+    expect(access).toEqual(0);
 
     const [a, b, c] = createRoot(() => {
       return [
         createMemo(() => "a" in store),
         createMemo(() => "b" in store),
-        createMemo(() => "c" in store)
+        createMemo(() => "c" in store),
       ];
     });
 
-    expect(a()).toBe(true);
-    expect(b()).toBe(true);
-    expect(c()).toBe(false);
-    expect(access).toBe(0);
+    expect(a()).toEqual(true);
+    expect(b()).toEqual(true);
+    expect(c()).toEqual(false);
+    expect(access).toEqual(0);
 
-    setStore(s => (s.c = 3));
+    setStore((s) => (s.c = 3));
 
-    expect(a()).toBe(true);
-    expect(b()).toBe(true);
-    expect(c()).toBe(true);
-    expect(access).toBe(0);
+    expect(a()).toEqual(true);
+    expect(b()).toEqual(true);
+    expect(c()).toEqual(true);
+    expect(access).toEqual(0);
 
-    setStore(s => delete s.a);
-    expect(a()).toBe(false);
-    expect(b()).toBe(true);
-    expect(c()).toBe(true);
-    expect(access).toBe(0);
+    setStore((s) => delete s.a);
+    expect(a()).toEqual(false);
+    expect(b()).toEqual(true);
+    expect(c()).toEqual(true);
+    expect(access).toEqual(0);
 
-    expect("a" in store).toBe(false);
-    expect("b" in store).toBe(true);
-    expect("c" in store).toBe(true);
-    expect(access).toBe(0);
+    expect("a" in store).toEqual(false);
+    expect("b" in store).toEqual(true);
+    expect("c" in store).toEqual(true);
+    expect(access).toEqual(0);
   });
 });
 
@@ -706,49 +786,50 @@ describe("getters", () => {
     const [store, setStore] = createStore({
       get foo() {
         return Object.freeze({ foo: "foo" });
-      }
+      },
     });
-
     expect(() => store.foo).not.toThrow();
   });
 });
 
 describe("objects", () => {
   it("updates", () => {
-    const [store, setStore] = createStore({ foo: "foo" });
-    const effect = vi.fn();
+    type TestStore = { foo: string };
+    const [store, setStore] = createStore<TestStore>({ foo: "foo" });
+    const effect = spy();
     createRoot(() =>
       createEffect(
         () => store.foo,
-        v => effect(v)
+        (v: string) => effect(v)
       )
     );
     flushSync();
     expect(effect).toHaveBeenCalledTimes(1);
     expect(effect).toHaveBeenCalledWith("foo");
 
-    setStore(s => {
+    setStore((s: TestStore) => {
       s.foo = "bar";
     });
     flushSync();
     expect(effect).toHaveBeenCalledTimes(2);
-    expect(store.foo).toBe("bar");
+    expect(store.foo).toEqual("bar");
   });
 
   it("updates with nested object", () => {
-    const [store, setStore] = createStore({ foo: { bar: "bar" } });
-    const effect = vi.fn();
+    type TestStore = { foo: { bar: string } };
+    const [store, setStore] = createStore<TestStore>({ foo: { bar: "bar" } });
+    const effect = spy();
     createRoot(() =>
       createEffect(
         () => store.foo.bar,
-        v => effect(v)
+        (v: string) => effect(v)
       )
     );
     flushSync();
     expect(effect).toHaveBeenCalledTimes(1);
     expect(effect).toHaveBeenCalledWith("bar");
 
-    setStore(s => {
+    setStore((s: TestStore) => {
       s.foo.bar = "baz";
     });
     flushSync();
@@ -757,53 +838,57 @@ describe("objects", () => {
   });
 
   it("is immutable from the outside", () => {
-    const [store, setStore] = createStore({ foo: "foo" });
-    const effect = vi.fn();
+    type TestStore = { foo: string };
+    const [store, setStore] = createStore<TestStore>({ foo: "foo" });
+    const effect = spy();
     createRoot(() =>
       createEffect(
         () => store.foo,
-        v => effect(v)
+        (v: string) => effect(v)
       )
     );
     flushSync();
     expect(effect).toHaveBeenCalledTimes(1);
     expect(effect).toHaveBeenCalledWith("foo");
 
-    /* @ts-ignore */
-    store.foo = "bar";
+    // Attempting mutation for test purpose
+    try {
+      (store as any).foo = "bar";
+    } catch (e) {}
     flushSync();
-    expect(effect).toHaveBeenCalledTimes(1);
-    expect(store.foo).toBe("foo");
+    expect(effect).toHaveBeenCalledTimes(1); // Should not have been called again
+    expect(store.foo).toEqual("foo"); // Should remain unchanged
   });
 
   it("has properties", () => {
-    const [store, setStore] = createStore<{ foo?: string }>({});
-    const effect = vi.fn();
+    type TestStore = { foo?: string };
+    const [store, setStore] = createStore<TestStore>({});
+    const effect = spy();
     createRoot(() =>
       createEffect(
         () => "foo" in store,
-        v => effect(v)
+        (v: boolean) => effect(v)
       )
     );
     flushSync();
     expect(effect).toHaveBeenCalledTimes(1);
     expect(effect).toHaveBeenCalledWith(false);
 
-    setStore(s => {
+    setStore((s: TestStore) => {
       s.foo = "bar";
     });
     flushSync();
     expect(effect).toHaveBeenCalledTimes(2);
     expect(effect).toHaveBeenCalledWith(true);
 
-    setStore(s => {
+    setStore((s: TestStore) => {
       s.foo = undefined;
     });
     flushSync();
     expect(effect).toHaveBeenCalledTimes(2);
     expect(effect).toHaveBeenCalledWith(true);
 
-    setStore(s => {
+    setStore((s: TestStore) => {
       delete s.foo;
     });
     flushSync();
@@ -814,25 +899,31 @@ describe("objects", () => {
 
 describe("arrays", () => {
   it("supports arrays", () => {
-    const [store, setStore] = createStore([{ i: 1 }, { i: 2 }, { i: 3 }]);
-    const effectA = vi.fn();
-    const effectB = vi.fn();
-    const effectC = vi.fn();
+    type Item = { i: number };
+    type TestStore = Item[];
+    const [store, setStore] = createStore<TestStore>([
+      { i: 1 },
+      { i: 2 },
+      { i: 3 },
+    ]);
+    const effectA = spy();
+    const effectB = spy();
+    const effectC = spy();
     createRoot(() => {
       createEffect(
-        () => store.reduce((m, n) => m + n.i, 0),
-        v => effectA(v)
+        () => store.reduce((m: number, n: Item) => m + n.i, 0),
+        (v: number) => effectA(v)
       );
       createEffect(
         () => {
           const row = store[0];
           createEffect(
             () => row.i,
-            v => effectC(v)
+            (v: number) => effectC(v)
           );
           return row;
         },
-        v => effectB(v.i)
+        (v: Item) => effectB(v.i)
       );
     });
     flushSync();
@@ -843,7 +934,7 @@ describe("arrays", () => {
     expect(effectC).toHaveBeenCalledTimes(1);
     expect(effectC).toHaveBeenCalledWith(1);
 
-    setStore(s => {
+    setStore((s: TestStore) => {
       s[0].i = 2;
     });
     flushSync();
@@ -853,7 +944,7 @@ describe("arrays", () => {
     expect(effectC).toHaveBeenCalledTimes(2);
     expect(effectC).toHaveBeenCalledWith(2);
 
-    setStore(s => {
+    setStore((s: TestStore) => {
       s.push({ i: 4 });
     });
     flushSync();

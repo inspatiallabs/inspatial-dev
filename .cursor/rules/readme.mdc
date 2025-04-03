@@ -3,7 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
-<!-->This will never change <-->
 <div align="center">
     <a href="https://inspatiallabs.com" target="_blank">
     <picture>
@@ -28,7 +27,6 @@ alwaysApply: true
 
 _Reality is your canvas_
 
-<!-->This will never change <-->
 <h3 align="center">
     InSpatial is a universal development environment (UDE) <br> for building cross-platform and spatial (AR/MR/VR) applications
   </h3>
@@ -45,7 +43,6 @@ _Reality is your canvas_
 
 </div>
 
-<!-->This will never change <-->
 ##
 
 <div align="center">
