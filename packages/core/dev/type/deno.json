@@ -3,5 +3,8 @@
   "version": "0.1.2",
   "license": "Apache-2.0",
   "description": "Universal Runtime (Type) Validation",
-  "exports": "./src/index.ts"
+  "exports": "./src/index.ts",
+  "imports": {
+    "arktype": "npm:arktype@^2.1.16"
+  }
 }

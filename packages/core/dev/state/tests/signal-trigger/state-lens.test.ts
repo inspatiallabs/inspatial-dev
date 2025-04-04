@@ -115,7 +115,7 @@ test("StateLens - fromSignal with transform", () => {
   // Connect signal to lens with transform function
   // We need to adapt the function to return an array with a single element
   // to match the expected type signature
-  const transformFn = (value: { x: number; y: number; z: number }) => {
+  const transformFn = (value: { x: number; y: number; z: number }): [{ x: number; y: number }] => {
     // Only pass x and y coordinates
     return [{ x: value.x, y: value.y }];
   };
@@ -246,7 +246,7 @@ test("StateLens - fromTrigger method", () => {
   
   // Transform function - make it return an array to match expected type
   const transformCalls: any[] = [];
-  const transform = (eventData: any) => {
+  const transform = (eventData: any): [{ id: string; position: { x: number; y: number } }] => {
     transformCalls.push(eventData);
     return [{
       id: eventData.target.id,

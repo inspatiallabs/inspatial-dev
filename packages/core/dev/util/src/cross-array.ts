@@ -21,16 +21,16 @@ export function crossArray(
   a: readonly unknown[],
   b: readonly unknown[]
 ): (readonly [unknown, unknown])[] {
-  const res = [];
+  const res: [unknown, unknown][] = [];
   for (const av of a) {
     for (const bv of b) {
       if (unique && av === bv) {
         continue;
       }
-      res.push([av, bv] as const);
+      res.push([av, bv]);
     }
   }
-  return res.map((v) => v.flat() as unknown as readonly [unknown, unknown]);
+  return res;
 }
 
 /*##############################################(CROSS-ARRAYS)##############################################*/

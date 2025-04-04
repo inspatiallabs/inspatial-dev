@@ -111,10 +111,10 @@ import { toFileUrl } from "@std/path/to-file-url";
 import { ensureFile, ensureFileSync } from "@std/fs/ensure-file";
 import { assert, assertEqual as equal, AssertionError } from "../assert.ts";
 import {
-  buildMessage,
   differenceString as diffStr,
   diff,
-} from "@inspatial/util";
+} from "../../../util/src/difference.ts";
+import { buildMessage } from "../../../util/src/build-message.ts";
 
 const SNAPSHOT_DIR = "inspatial_snapshots";
 const SNAPSHOT_EXT = "snap";

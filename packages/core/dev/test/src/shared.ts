@@ -1,6 +1,6 @@
 // Imports
-import type { Nullable, Promisable } from "@inspatial/util";
-export type { Nullable, Promisable };
+export type { Nullable, Promisable } from "../../util/src/index.ts";
+import { Promisable } from "../../util/src/types.ts"
 import { highlight } from "./highlight.ts";
 
 /*#########################################(PROPS)#########################################*/

@@ -396,8 +396,8 @@ export function differenceString(
     tokenizeString(`${unescapeString(B)}\n`)
   );
 
-  const added = [];
-  const removed = [];
+  const added: DiffResultProp<string>[] = [];
+  const removed: DiffResultProp<string>[] = [];
   for (const result of diffResult) {
     if (result.type === "added") {
       added.push(result);

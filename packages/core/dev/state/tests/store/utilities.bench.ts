@@ -1,5 +1,5 @@
 // import {bench, describe } from "../../../test/src/index.ts";
-// import { merge, omit } from "../../signal/src/src/index.ts";
+// import { merge, omit } from "../../signal/src/index.ts";
 
 // const staticDesc = {
 //   value: 1,

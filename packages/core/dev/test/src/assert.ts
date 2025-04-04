@@ -139,8 +139,8 @@
  */
 
 /*#############################################(IMPORTS)#############################################*/
-import { format, buildMessage, diff, differenceString } from "@inspatial/util";
-import { stripAnsiCode, red } from "@inspatial/theme";
+import { format, buildMessage, diff, differenceString } from "../../util/src/index.ts";
+import { stripAnsiCode, red } from "../../theme/src/index.ts";
 
 /*#############################################(TYPES)#############################################*/
 /**

@@ -27,7 +27,7 @@ import {
   distill,
   inferred,
   Type,
-} from "npm:arktype@^2.1.10";
+} from "arktype";
 
 import { TypeErrorsClass, TypeErrorClass } from "./error.ts";
 import { SchemaRegistry, typeRef } from "./schema-registry.ts";

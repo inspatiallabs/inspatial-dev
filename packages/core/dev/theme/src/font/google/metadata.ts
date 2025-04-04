@@ -1,4 +1,4 @@
-import fontMap from "./font-map.json";
+import fontMap from "./font-map.json" with { type: "json" };
 
 type GoogleFontsMetadata = {
   [fontFamily: string]: {

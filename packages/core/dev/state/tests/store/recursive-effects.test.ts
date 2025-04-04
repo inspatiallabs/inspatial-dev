@@ -7,7 +7,7 @@ import {
   flushSync,
   untrack,
   unwrap,
-} from "../../signal/src/src/index.ts";
+} from "../../signal/src/index.ts";
 import { sharedClone } from "./shared-clone.ts";
 import { expect, describe, it } from "../../../test/src/index.ts";
 

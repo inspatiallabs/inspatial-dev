@@ -5,7 +5,7 @@ import {
   createRoot,
   createSignal,
   flushSync
-} from "../signal/src";
+} from "../signal/src/index.ts";
 import { test, expect, mockFn } from "../../../dev/test/src/index.ts";
 
 // Use test.each for setup/teardown

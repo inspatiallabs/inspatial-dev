@@ -13,7 +13,7 @@ import {
   stripAnsiCode,
   underline,
   yellow,
-} from "@inspatial/theme";
+} from "../../theme/src/index.ts";
 import { unescape } from "jsr:/@std/html@1/entities";
 hljs.registerLanguage("typescript", typescript);
 
@@ -59,9 +59,14 @@ export function highlight(
 
 /** Process rendered highlight.js html back to cli formatted highlighing. */
 function process(html: string) {
-  const stack = [];
+  const stack: Array<{
+    classname: string;
+    a: number;
+    b: number;
+  }> = [];
   const regex =
     /(?<open><span[^>]*class="(?<classname>[^"]*)"[^>]*>)|(?<close><\/span>)/gs;
+  
   let match = null as ReturnType<typeof regex.exec>;
   while ((match = regex.exec(html)) !== null) {
     const [captured] = match;

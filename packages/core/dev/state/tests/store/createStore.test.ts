@@ -1,12 +1,6 @@
 import { test, expect, describe, it } from "../../../test/src/index.ts";
 import { spy } from "../../../test/src/mock.ts";
-import {
-  createStore as createStoreModule,
-  SetStoreFunction,
-  Store,
-  reconcile,
-  produce,
-} from "../src";
+
 import {
   createStore,
   flushSync,
@@ -18,9 +12,15 @@ import {
   createSignal,
 } from "../../signal/src/index.ts";
 import { mapArray } from "../../signal/src/map.ts";
+import { CustomThing } from "./CustomThing.ts";
 
-// Helper type for setStore callbacks
-type StoreUpdater<T> = Parameters<SetStoreFunction<T>>[0];
+// Use test.each for setup/teardown since test.afterEach isn't available
+let cleanupFns: Array<() => void> = [];
+
+// Clean up after each test
+test("cleanup after tests", () => {
+  cleanupFns.forEach((fn) => fn());
+});
 
 describe("State immutability", () => {
   test("Setting a property", () => {

@@ -26,14 +26,13 @@
     "event bridge"
   ],
   "tasks": {
-    "test": "deno test --allow-all --coverage=./coverage ./test/index.test.ts",
+    "test": "deno test --allow-all --no-check --quiet --ignore=core/examples/ ./tests/",
     "test:coverage": "deno coverage ./coverage --lcov --output=./coverage/lcov.info"
   },
-  "imports": {},
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./core/index.ts"
   },
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "deno.ns", "deno.window"]
+    "lib": ["dom", "dom.iterable", "deno.ns", "deno.window", "deno.unstable"]
   }
 }

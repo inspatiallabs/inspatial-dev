@@ -61,8 +61,8 @@ const primitiveFonts = PrimitiveFontProps;
  * }
  */
 export const inspatialFontStyle: string = [
-  ...googleFonts.map((font) => font.font?.style).filter(Boolean),
-  ...primitiveFonts.map((font) => font.font?.style).filter(Boolean),
+  ...googleFonts.filter(font => font?.font).map((font) => font.font?.style).filter(Boolean),
+  ...primitiveFonts.filter(font => font?.font).map((font) => font.font?.style).filter(Boolean),
 ].join(" ");
 
 /************************(InSpatial Font Class)************************
@@ -95,8 +95,9 @@ export const inspatialFontStyle: string = [
  * }
  */
 export const inspatialFontClass: string = [
-  ...googleFonts.map((font) => font.font?.axes).filter(Boolean),
+  ...googleFonts.filter(font => font?.font).map((font) => font.font?.axes).filter(Boolean),
   ...primitiveFonts
+    .filter(font => font?.font?.className)
     .map((font) => font.font?.className as string)
     .filter(Boolean),
 ].join(" ");
@@ -151,6 +152,6 @@ export const inspatialFontClass: string = [
  * }
  */
 export const inspatialFontVariable: string = [
-  ...googleFonts.map((font) => font.font?.variable).filter(Boolean),
-  ...primitiveFonts.map((font) => font.font?.variable).filter(Boolean),
+  ...googleFonts.filter(font => font?.font).map((font) => font.font?.variable).filter(Boolean),
+  ...primitiveFonts.filter(font => font?.font).map((font) => font.font?.variable).filter(Boolean),
 ].join(" ");

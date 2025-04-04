@@ -26,35 +26,28 @@ IMPORTANT: Provide good type information
 
 IMPORTANT: ALWAYS document every symbol in the package, library or project exports, i.e class, constant, event, external, file, function, memeber, mixin, module, namespace, typedef etc.... For classes and interfaces for example, you should document the symbol itself, each method or property on it, including constructors
 
-**InSpatial Core Packages**
-- @inspatial/util
+**InSpatial Dev Packages**
+- @inspatial/ai
 - @inspatial/xr
 - @inspatial/kit
 - @inspatial/run
-- @inspatial/cache
-- @inspatial/env
 - @inspatial/router
 - @inspatial/server
-- @inspatial/ecs
+- @inspatial/type
+- @inspatial/state
+- @inspatial/util
 - @inspatial/iss
-- @inspatial/tw
 - @inspatial/theme
 - @inspatial/cli
 - @inspatial/test
-- @inspatial/vfx
 - @inspatial/icon
 - @inspatial/inmoji
-- @inspatial/kv
-- @inspatial/db
-- @inspatial/cms
-- @inspatial/orm
-- @inspatial/auth
-- @inspatial/vault
-- @inspatial/ratelimit
-- @inspatial/infetch
-- @inspatial/cron
-- @inspatial/live
-- @inspatial/deploy
+- @inspatial/dom
+- @inspatial/native
+- @inspatial/inreal
+- @inspatial/renderer
+
+
 
 **Heading Section**
 - MUST be the symbol name 
@@ -298,6 +291,14 @@ IMPORTANT: Prefer this visual hierarchy and template whenever possible.
  * @returns {ReturnType}
  * Explains what you get back, using real-world analogies.
  * For example: "You'll get back a receipt with all your items and the total"
+ * 
+ * ### 📝 Uncommon Knowledge
+ * `You want to drop little nuggests of uncomomon philosophical knowledge that are
+ * true but really uncommon and often times contrarian here related to the overaching
+ * module. an Example for a BDD module in a Test library or package will be something
+ * like - "BDD is a mindset and process, not a syntax.
+ * If your tests describe behavior clearly — you're doing BDD, regardless of what your
+ * code looks like.".
  * 
  * ### 🔧 Runtime Support
  * - ✅ Node.js

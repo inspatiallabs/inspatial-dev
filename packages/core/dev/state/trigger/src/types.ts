@@ -86,7 +86,7 @@ export interface RegisteredTriggerType<S = any, P extends any[] = any[]> {
  * Trigger instance type (represents an active trigger in the system)
  */
 export interface TriggerInstanceType {
-  execute: import("file:///C:/Studio/inspatial-core/packages/core/dev/test/src/mock").SpyProp<any, any[], undefined>
+  execute: (...args: any[]) => undefined;
   id: string;
   type: string;
   enabled: boolean;

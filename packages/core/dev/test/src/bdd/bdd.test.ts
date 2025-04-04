@@ -17,15 +17,15 @@ import {
     describe,
     it,
   } from "./bdd.ts";
-  import { TestSuiteInternal } from "./_test_suite.ts";
-  import { assertSpyCall, assertSpyCalls, type Spy, spy, stub } from "./mock.ts";
+  import { TestSuiteInternal } from "./test-suite.ts";
+  import { assertSpyCall, assertSpyCalls, type SpyProp, spy, stub } from "../mock.ts";
   
   class TestContext implements Deno.TestContext {
     name: string;
     origin: string;
     steps: TestContext[];
     spies: {
-      step: Spy;
+      step: SpyProp;
     };
   
     constructor(name: string) {
@@ -94,7 +94,7 @@ import {
   }
   
   let timerIdx = 1;
-  const timers = new Map<number, number>();
+  const timers = new Map<number, ReturnType<typeof setTimeout>>();
   function hookFns() {
     timerIdx = 1;
     timers.clear();
@@ -182,7 +182,7 @@ import {
      */
     async function assertOptions<T>(
       expectedOptions: Omit<Deno.TestDefinition, "name" | "fn">,
-      cb: (fn: Spy) => void,
+      cb: (fn: SpyProp) => void,
     ) {
       using test = stub(Deno, "test");
       const fn = spy();
@@ -222,7 +222,7 @@ import {
      * This is used to reduce code duplication when testing calling `it` with different call signatures.
      */
     async function assertMinimumOptions(
-      cb: (fn: Spy) => void,
+      cb: (fn: SpyProp) => void,
     ) {
       await assertOptions({}, cb);
     }
@@ -232,7 +232,7 @@ import {
      * This is used to reduce code duplication when testing calling `it` with different call signatures.
      */
     async function assertAllOptions(
-      cb: (fn: Spy) => void,
+      cb: (fn: SpyProp) => void,
     ) {
       await assertOptions(baseOptions, cb);
     }
@@ -369,7 +369,7 @@ import {
        * This is used to reduce code duplication when testing calling `it.only` with different call signatures.
        */
       async function assertMinimumOptions(
-        cb: (fn: Spy) => void,
+        cb: (fn: SpyProp) => void,
       ) {
         await assertOptions({ only: true }, cb);
       }
@@ -379,7 +379,7 @@ import {
        * This is used to reduce code duplication when testing calling `it.only` with different call signatures.
        */
       async function assertAllOptions(
-        cb: (fn: Spy) => void,
+        cb: (fn: SpyProp) => void,
       ) {
         await assertOptions({ ...baseOptions, only: true }, cb);
       }
@@ -523,7 +523,7 @@ import {
        * This is used to reduce code duplication when testing calling `it.ignore` with different call signatures.
        */
       async function assertMinimumOptions(
-        cb: (fn: Spy) => void,
+        cb: (fn: SpyProp) => void,
       ) {
         await assertOptions({ ignore: true }, cb);
       }
@@ -533,7 +533,7 @@ import {
        * This is used to reduce code duplication when testing calling `it.ignore` with different call signatures.
        */
       async function assertAllOptions(
-        cb: (fn: Spy) => void,
+        cb: (fn: SpyProp) => void,
       ) {
         await assertOptions({ ...baseOptions, ignore: true }, cb);
       }
@@ -688,7 +688,7 @@ import {
      */
     async function assertOptions(
       expectedOptions: Omit<Deno.TestDefinition, "name" | "fn">,
-      cb: (fns: readonly [Spy, Spy]) => void,
+      cb: (fns: readonly [SpyProp, SpyProp]) => void,
     ) {
       using test = stub(Deno, "test");
       const fns = [spy(), spy()] as const;
@@ -741,7 +741,7 @@ import {
      * This is used to reduce code duplication when testing calling `describe` with different call signatures.
      */
     async function assertMinimumOptions(
-      cb: (fns: readonly [Spy, Spy]) => void,
+      cb: (fns: readonly [SpyProp, SpyProp]) => void,
     ) {
       await assertOptions({}, cb);
     }
@@ -752,7 +752,7 @@ import {
      * This is used to reduce code duplication when testing calling `describe` with different call signatures.
      */
     async function assertAllOptions(
-      cb: (fns: readonly [Spy, Spy]) => void,
+      cb: (fns: readonly [SpyProp, SpyProp]) => void,
     ) {
       await assertOptions({ ...baseOptions }, cb);
     }
@@ -926,7 +926,7 @@ import {
        * This is used to reduce code duplication when testing calling `describe.only` with different call signatures.
        */
       async function assertMinimumOptions(
-        cb: (fns: readonly [Spy, Spy]) => void,
+        cb: (fns: readonly [SpyProp, SpyProp]) => void,
       ) {
         await assertOptions({ only: true }, cb);
       }
@@ -937,7 +937,7 @@ import {
        * This is used to reduce code duplication when testing calling `describe.only` with different call signatures.
        */
       async function assertAllOptions(
-        cb: (fns: readonly [Spy, Spy]) => void,
+        cb: (fns: readonly [SpyProp, SpyProp]) => void,
       ) {
         await assertOptions({ ...baseOptions, only: true }, cb);
       }
@@ -1127,7 +1127,7 @@ import {
        */
       async function assertIgnoreOptions(
         expectedOptions: Omit<Deno.TestDefinition, "name" | "fn">,
-        cb: (fns: readonly [Spy, Spy]) => void,
+        cb: (fns: readonly [SpyProp, SpyProp]) => void,
       ) {
         using test = stub(Deno, "test");
         const fns = [spy(), spy()] as const;
@@ -1166,7 +1166,7 @@ import {
        * This is used to reduce code duplication when testing calling `describe.ignore` with different call signatures.
        */
       async function assertMinimumOptions(
-        cb: (fns: readonly [Spy, Spy]) => void,
+        cb: (fns: readonly [SpyProp, SpyProp]) => void,
       ) {
         await assertIgnoreOptions({ ignore: true }, cb);
       }
@@ -1177,7 +1177,7 @@ import {
        * This is used to reduce code duplication when testing calling `describe.ignore` with different call signatures.
        */
       async function assertAllOptions(
-        cb: (fns: readonly [Spy, Spy]) => void,
+        cb: (fns: readonly [SpyProp, SpyProp]) => void,
       ) {
         await assertIgnoreOptions({ ...baseOptions, ignore: true }, cb);
       }
@@ -1377,7 +1377,7 @@ import {
        * This is used to reduce code duplication when testing calling `describe.ignore` with different call signatures.
        */
       async function assertOnly(
-        cb: (fns: readonly [Spy, Spy, Spy]) => void,
+        cb: (fns: readonly [SpyProp, SpyProp, SpyProp]) => void,
       ) {
         using test = stub(Deno, "test");
         const fns = [spy(), spy(), spy()] as const;
@@ -1474,7 +1474,7 @@ import {
        * This is used to reduce code duplication when testing calling `describe.ignore` with different call signatures.
        */
       async function assertOnly(
-        cb: (fns: readonly [Spy, Spy, Spy]) => void,
+        cb: (fns: readonly [SpyProp, SpyProp, SpyProp]) => void,
       ) {
         using test = stub(Deno, "test");
         const fns = [spy(), spy(), spy()] as const;
@@ -1575,11 +1575,11 @@ import {
       async function assertHooks(
         cb: (
           options: {
-            beforeAllFn: Spy;
-            afterAllFn: Spy;
-            beforeEachFn: Spy;
-            afterEachFn: Spy;
-            fns: readonly [Spy, Spy];
+            beforeAllFn: SpyProp;
+            afterAllFn: SpyProp;
+            beforeEachFn: SpyProp;
+            afterEachFn: SpyProp;
+            fns: readonly [SpyProp, SpyProp];
           },
         ) => void,
       ) {

@@ -7,5 +7,8 @@
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
+  },
+  "exports": {
+    ".": "./src/index.ts"
   }
 }

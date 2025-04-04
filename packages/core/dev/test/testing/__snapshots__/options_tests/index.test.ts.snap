@@ -1,0 +1,9 @@
+export const snapshot = {};
+
+snapshot[`test > dir > absolute 1`] = `
+[
+  1,
+  2,
+  3,
+]
+`;

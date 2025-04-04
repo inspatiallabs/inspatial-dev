@@ -27,7 +27,7 @@ export function range(
     return [];
   }
 
-  const result = [];
+  const result: number[] = [];
   for (let i = start; step > 0 ? i < end : i > end; i += step) {
     result.push(i);
   }

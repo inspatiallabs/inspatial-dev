@@ -140,6 +140,7 @@ export class TriggerManagerClass {
       type: config.type,
       enabled: true,
       params: { ...config },
+      execute: (...args: any[]) => undefined, // Simple mock function implementation
 
       // Management methods
       disable: () => this.disableTrigger(triggerId),

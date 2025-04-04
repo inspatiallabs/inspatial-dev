@@ -253,10 +253,10 @@ test("createTriggerSignal - integration with signal system", () => {
   const [dependency, setDependency] = createSignal("initial");
   
   // Use a regular function instead of a spy to avoid type issues
-  const transformCalls: Array<{ event: string; currentValue: string }> = [];
-  const transform = (event: string, currentValue: string) => {
+  const transformCalls: Array<{ event: any[]; currentValue: string }> = [];
+  const transform = (event: any[], currentValue: string) => {
     transformCalls.push({ event, currentValue });
-    return `${event}-${dependency()}`; // Depend on another signal
+    return `${event[0]}-${dependency()}`; // Depend on another signal
   };
   
   const [value, setValue, controls] = createTriggerSignal("start", {

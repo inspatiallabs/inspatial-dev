@@ -1,0 +1,3 @@
+export const snapshot = {};
+
+snapshot[`[MISSING SNAPSHOT] 1`] = `"This snapshot doesn't exist"`;

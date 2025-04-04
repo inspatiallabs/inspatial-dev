@@ -5,7 +5,7 @@ import {
   createRoot,
   createSignal,
   flushSync,
-} from "../../signal/src/src/index.ts";
+} from "../../signal/src/index.ts";
 import { test, expect, describe, it, mockFn } from "../../../test/src/index.ts";
 
 describe("Projection basics", () => {

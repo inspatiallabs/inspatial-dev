@@ -511,6 +511,7 @@ export class StateLens<
     // Create trigger with our action handler
     const trigger = createTriggerInstance({
       ...triggerConfig,
+      type: triggerConfig.type || "event",
       action: actionHandler
     });
     
@@ -568,8 +569,9 @@ export class StateLens<
     // Create trigger with empty action (will be fired manually)
     const trigger = createTriggerInstance({
       ...triggerConfig,
+      type: triggerConfig.type || "event",
       action: () => {} // Placeholder
-    } as TriggerConfigType);
+    });
     
     // Listen for events and manually fire the trigger
     const unsubscribe = this.on(event, (...args: EventMap[K]) => {

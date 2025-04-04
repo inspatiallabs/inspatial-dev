@@ -6,7 +6,7 @@ import {
   flushSync,
   merge,
   omit,
-} from "../../signal/src/src/index.ts";
+} from "../../signal/src/index.ts";
 import { test, expect, describe, it } from "../../../test/src/index.ts";
 
 type SimplePropTypes = {
