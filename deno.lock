@@ -1200,6 +1200,8 @@
       },
       "packages/core/dev/test": {
         "dependencies": [
+          "jsr:@inspatial/theme@*",
+          "jsr:@inspatial/util@*",
           "jsr:@std/fs@^1.0.15",
           "jsr:@std/path@^1.0.8"
         ]
