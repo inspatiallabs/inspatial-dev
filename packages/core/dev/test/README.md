@@ -72,7 +72,6 @@ A universal testing module that works seamlessly across Deno, Node.js, and Bun r
 - 🧪 Test Doubles (Mocks, Stubs, Spies, etc.)
 - 📸 Snapshot Testing for detecting unintended changes
 
-
 ## 🔮 Coming Soon
 
 - 🎮 XR (AR/VR/MR) Testing Support
@@ -104,6 +103,7 @@ fn: () => {
 expect(sum(2, 2)).toBe(4);
 }
 });</code></pre>
+
 </td>
 <td>
 <h4>🧩 Cross-Runtime Support</h4>
@@ -115,6 +115,7 @@ test("universal test", () => {
 // This test will run in any environment
 expect(1 + 1).toBe(2);
 });</code></pre>
+
 </td>
 
   </tr>
@@ -138,6 +139,7 @@ expect(array).toContain(item);
 // assert style
 assertEquals(value, expected);
 assertArrayIncludes(array, [item]);</code></pre>
+
 </td>
 
   </tr>
@@ -160,6 +162,7 @@ isActive: true
 // Advanced matchers
 expect(email).toBeEmail();
 expect(response).toRespondWithStatus(200);</code></pre>
+
 </td>
 
   </tr>
@@ -262,15 +265,107 @@ test("using both assertion styles", () => {
 });
 ```
 
-### 4. **Advanced Features Overview**
+### 4. **Using Describe & It Style (BDD)**
 
-InSpatial Test includes several advanced capabilities:
+InSpatial Test provides a natural way to organize your tests using Behavior-Driven Development (BDD) style:
 
-- **Test modifiers**: Use `.skip`, `.only`, and `.todo` to control test execution
-- **Async testing**: Native support for async/await in tests
-- **Resource cleanup**: Automatic sanitization of resources and operations
-- **Rich matcher library**: Extensive collection of assertion matchers
-- **Custom test options**: Configure permissions, environment variables, and more
+```typescript
+import { describe, test, expect } from "@inspatial/test";
+
+// Basic example - grouping related tests
+describe("Calculator", () => {
+  test("should add two numbers correctly", () => {
+    expect(2 + 2).toBe(4);
+  });
+
+  test("should subtract numbers correctly", () => {
+    expect(5 - 3).toBe(2);
+  });
+});
+```
+
+NOTE: you can also use `it()` in place of `test` e.g
+
+```typescript
+import { describe, it, expect } from "@inspatial/test";
+
+// Basic example - grouping related tests using `it`
+describe("Calculator", () => {
+  it("should add two numbers correctly", () => {
+    expect(2 + 2).toBe(4);
+  });
+
+  it("should subtract numbers correctly", () => {
+    expect(5 - 3).toBe(2);
+  });
+});
+```
+
+The BDD style really shines when testing complex features with multiple related behaviors:
+
+```typescript
+import { describe, it, beforeEach, afterAll, expect } from "@inspatial/test";
+
+describe("User Authentication", () => {
+  let auth;
+  let testUser;
+
+  // Setup before each test
+  beforeEach(() => {
+    auth = authCloudExtension();
+    testUser = { username: "testuser", password: "P@ssw0rd" };
+    auth.boot(testUser);
+  });
+
+  // Cleanup after all tests
+  afterAll(() => {
+    auth.clearAllUsers();
+  });
+
+  describe("Login Process", () => {
+    it("should accept valid credentials", () => {
+      const result = auth.login(testUser.username, testUser.password);
+      expect(result.success).toBe(true);
+      expect(result.token).toBeDefined();
+    });
+
+    it("should reject invalid passwords", () => {
+      const result = auth.login(testUser.username, "wrong-password");
+      expect(result.success).toBe(false);
+      expect(result.message).toContain("Invalid credentials");
+    });
+
+    it("should reject non-existent users", () => {
+      const result = auth.login("nonexistent", "any-password");
+      expect(result.success).toBe(false);
+      expect(result.message).toContain("User not found");
+    });
+  });
+
+  describe("Account Management", () => {
+    it("should allow users to change passwords", () => {
+      const newPassword = "NewP@ssw0rd";
+      auth.changePassword(testUser.username, testUser.password, newPassword);
+
+      // Old password should no longer work
+      expect(auth.login(testUser.username, testUser.password).success).toBe(
+        false
+      );
+
+      // New password should work
+      expect(auth.login(testUser.username, newPassword).success).toBe(true);
+    });
+  });
+});
+```
+
+This approach offers several key benefits:
+
+- **Hierarchical organization**: Nest test suites to reflect your feature structure
+- **Better readability**: Tests read like natural language specifications
+- **Shared setup/teardown**: Use hooks at different levels in the test hierarchy
+- **Focused testing**: Run specific test suites with `.only()` or skip them with `.skip()`
+- **Living documentation**: Tests serve as up-to-date documentation of how your system behaves
 
 ### 5. **Mocking and Test Doubles**
 
@@ -591,13 +686,16 @@ deno test --allow-read --allow-write -- --update  # or -u for short
 ```
 
 > **Tip**: Use `createAssertSnapshot` when you need to:
+>
 > - Filter out changing data (like timestamps)
 > - Transform data before comparison
 > - Customize snapshot storage location
 > - Reuse snapshot logic across multiple tests
 
 --
+
 > **Note**: New snapshots will only be created when running in update mode. Use update mode when:
+>
 > - Adding new snapshot assertions to your tests
 > - Making intentional changes that cause snapshots to fail
 > - Reviewing and accepting changes in snapshot output
@@ -694,8 +792,6 @@ jobs:
           npx --yes tsx --test *.test.ts
 ```
 
----
-
 ## 🎯 API Reference
 
 ### Core Functions
@@ -708,6 +804,23 @@ jobs:
 | `test.todo()` | Define a placeholder for a future test   |
 | `expect()`    | Create an assertion with chainable API   |
 | `assert`      | Collection of direct assertion functions |
+
+### BDD Functions
+
+| Function          | Description                                        |
+| ----------------- | -------------------------------------------------- |
+| `describe()`      | Create a test suite grouping related tests         |
+| `describe.only()` | Create a test suite that will run exclusively      |
+| `describe.skip()` | Create a test suite that will be skipped           |
+| `it()`            | Define an individual test case                     |
+| `it.only()`       | Define a test case that will run exclusively       |
+| `it.skip()`       | Define a test case that will be skipped            |
+| `beforeEach()`    | Run setup code before each test in the suite       |
+| `afterEach()`     | Run cleanup code after each test in the suite      |
+| `beforeAll()`     | Run setup code once before all tests in the suite  |
+| `afterAll()`      | Run cleanup code once after all tests in the suite |
+| `before()`        | Alias of `beforeAll()`                             |
+| `after()`         | Alias of `afterAll()`                              |
 
 ### Mock Functions
 
