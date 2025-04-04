@@ -113,8 +113,8 @@ import { assert, assertEqual as equal, AssertionError } from "../assert.ts";
 import {
   differenceString as diffStr,
   diff,
-} from "../../../util/src/difference.ts";
-import { buildMessage } from "../../../util/src/build-message.ts";
+  buildMessage,
+} from "@inspatial/util";
 
 const SNAPSHOT_DIR = "inspatial_snapshots";
 const SNAPSHOT_EXT = "snap";
@@ -398,7 +398,9 @@ class AssertSnapshotContext {
       });
       if (permission.state !== "granted") {
         throw new Deno.errors.PermissionDenied(
-          `Missing write access to snapshot file (${this.#snapshotFileUrl}). This is required because assertSnapshot was called in update mode. Please pass the --allow-write flag.`
+          `Missing write access to snapshot file (${
+            this.#snapshotFileUrl
+          }). This is required because assertSnapshot was called in update mode. Please pass the --allow-write flag.`
         );
       }
       globalThis.addEventListener("unload", this.#teardown);

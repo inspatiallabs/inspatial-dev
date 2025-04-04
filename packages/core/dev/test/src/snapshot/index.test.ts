@@ -4,7 +4,7 @@
  * Disabling type checking for this file as the tests work correctly at runtime.
  */
 
-import { stripAnsiCode } from "../../../theme/src/color/index.ts";
+import { stripAnsiCode } from "@inspatial/theme";
 import { dirname, fromFileUrl, join, toFileUrl } from "@std/path";
 import {
   assert,

@@ -3,6 +3,8 @@
   "license": "Apache-2.0",
   "version": "0.1.0",
   "imports": {
+    "@inspatial/util": "../util/src/index.ts",
+    "@inspatial/theme": "../theme/src/index.ts",
     "@std/path": "jsr:@std/path@^1.0.8",
     "@std/fs": "jsr:@std/fs@^1.0.15"
   },
