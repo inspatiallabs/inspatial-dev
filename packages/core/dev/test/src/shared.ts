@@ -1,5 +1,5 @@
 // Imports
-import { Promisable } from "../../util/src/types.ts"
+import { Promisable } from "@inspatial/util/types"
 import { highlight } from "./highlight.ts";
 
 /*#########################################(PROPS)#########################################*/
@@ -55,7 +55,7 @@ export interface TestProps {
 }
 /*#########################################(OPTIONS)#########################################*/
 /** InSpatial Test types. */
-export type { Nullable, Promisable } from "../../util/src/index.ts";
+export type { Nullable, Promisable } from "@inspatial/util/types";
 
 
 /**

@@ -349,7 +349,9 @@ class AssertSnapshotContext {
 
     try {
       const snapshotFileUrl = this.#snapshotFileUrl.toString();
-      const { snapshot } = await import(snapshotFileUrl);
+      // Use URL constructor to ensure proper path resolution in published package
+      const resolvedUrl = new URL(snapshotFileUrl).toString();
+      const { snapshot } = await import(resolvedUrl);
       this.#currentSnapshots =
         typeof snapshot === "undefined"
           ? new Map()
