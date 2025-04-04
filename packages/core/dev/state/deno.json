@@ -26,8 +26,12 @@
     "event bridge"
   ],
   "tasks": {
-    "test": "deno test --allow-all --no-check --quiet --ignore=core/examples/ ./tests/",
+    "test": "deno test --allow-all --no-check --ignore=core/examples/ ./tests/",
     "test:coverage": "deno coverage ./coverage --lcov --output=./coverage/lcov.info"
+  },
+  "imports": {
+    "@inspatial/util": "jsr:@inspatial/util@^0.1.6",
+    "@inspatial/test": "jsr:@inspatial/test@^0.1.0"
   },
   "exports": {
     ".": "./core/index.ts"

@@ -88,7 +88,7 @@ export function getObserver(): ComputationClass | null {
   return currentObserver as ComputationClass | null;
 }
 
-export const UNCHANGED: unique symbol = Symbol(__DEV__ ? "unchanged" : 0);
+export const UNCHANGED: unique symbol = Symbol("unchanged");
 export type UNCHANGED = typeof UNCHANGED;
 
 export class ComputationClass<T = any>

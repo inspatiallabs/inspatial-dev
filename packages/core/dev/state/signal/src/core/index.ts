@@ -75,5 +75,12 @@ export {
   SuspenseQueueClass,
   createSuspense,
 } from "./suspense.ts";
-export {} from // Values from effect.ts (assuming EffectClass/EagerComputationClass are internal)
-"./effect.ts";
+export {
+  // Constants
+  SUPPORTS_PROXY,
+} from "./constants.ts";
+export {
+  // Values from effect.ts (assuming EffectClass/EagerComputationClass are internal)
+  EffectClass,
+  EagerComputationClass,
+} from "./effect.ts";

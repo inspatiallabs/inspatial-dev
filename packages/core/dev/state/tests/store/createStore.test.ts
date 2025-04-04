@@ -1,4 +1,4 @@
-import { test, expect, describe, it } from "../../../test/src/index.ts";
+import { test, expect, describe, it } from "@inspatial/test";
 import { spy } from "../../../test/src/mock.ts";
 
 import {

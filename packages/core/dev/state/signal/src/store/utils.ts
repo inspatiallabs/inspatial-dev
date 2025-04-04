@@ -1,4 +1,4 @@
-import { SUPPORTS_PROXY } from "../core/index.ts";
+import { SUPPORTS_PROXY } from "../index.ts"
 import { createMemo } from "../signals.ts";
 import { $PROXY } from "./store.ts";
 
@@ -82,7 +82,7 @@ function resolveSource(s: any) {
   return !(s = typeof s === "function" ? s() : s) ? {} : s;
 }
 
-const $SOURCES = Symbol(__DEV__ ? "MERGE_SOURCE" : 0);
+const $SOURCES = Symbol("MERGE_SOURCE");
 export function merge<T extends unknown[]>(...sources: T): Merge<T> {
   if (sources.length === 1 && typeof sources[0] !== "function")
     return sources[0] as any;

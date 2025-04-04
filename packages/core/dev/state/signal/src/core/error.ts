@@ -22,7 +22,7 @@ export class ContextNotFoundErrorClass extends Error {
 }
 
 export class EffectErrorClass extends Error {
-  cause: unknown;
+  override cause: unknown;
   constructor(effect: Function, cause: unknown) {
     super(__DEV__ ? `Uncaught error while running effect:\n\n  ${effect.toString()}\n` : "");
     this.cause = cause;

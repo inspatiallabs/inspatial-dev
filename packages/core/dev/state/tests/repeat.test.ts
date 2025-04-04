@@ -6,7 +6,7 @@ import {
   flushSync,
   repeat,
 } from "../signal/src/index.ts  ";
-import { test, expect, mockFn } from "../../../dev/test/src/index.ts";
+import { test, expect, mockFn } from "@inspatial/test";
 
 // Use test.each for setup/teardown
 let cleanupFns: Array<() => void> = [];

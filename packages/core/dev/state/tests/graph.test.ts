@@ -1,5 +1,5 @@
 import { createMemo, createSignal } from "../signal/src/index.ts";
-import { test, expect, mockFn, afterEach } from "../../../dev/test/src/index.ts";
+import { test, expect, mockFn, afterEach } from "@inspatial/test";
 
 test("should drop X->B->X updates", () => {
   //     X

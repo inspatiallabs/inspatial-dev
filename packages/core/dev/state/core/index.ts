@@ -51,7 +51,7 @@ export { StateManager } from "./manager.ts";
 export {
   createTriggerSignal,
   createSignalConditionTrigger,
-  StateEventBus,
+  StateLens,
   createStateLens,
 } from "./signal-trigger.ts";
 

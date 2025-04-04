@@ -1,4 +1,4 @@
-// import { assertEquals, assertHTMLEquals, test } from "../../../test/src/index.ts";
+// import { assertEquals, assertHTMLEquals, test } from "@inspatial/test";
 // import { jsx, Fragment } from "./index.ts";
 
 

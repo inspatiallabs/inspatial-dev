@@ -24,10 +24,10 @@ export type StoreSetterType<T> = StoreSetterWithHelpersType<T>;
 type DataNodeType = ComputationClass<any>;
 type DataNodesType = Record<PropertyKey, DataNodeType>;
 
-const $RAW = Symbol(__DEV__ ? "STORE_RAW" : 0),
-  $TRACK = Symbol(__DEV__ ? "STORE_TRACK" : 0),
-  $TARGET = Symbol(__DEV__ ? "STORE_TARGET" : 0),
-  $PROXY = Symbol(__DEV__ ? "STORE_PROXY" : 0);
+const $RAW = Symbol("STORE_RAW"),
+  $TRACK = Symbol("STORE_TRACK"),
+  $TARGET = Symbol("STORE_TARGET"),
+  $PROXY = Symbol("STORE_PROXY");
 
 export const STORE_VALUE = "v" as const;
 export const STORE_NODE = "n" as const;

@@ -3,7 +3,7 @@
  * @module @inspatial/state/test/signal-trigger
  */
 
-import { test, expect, spy, assertSpyCalls, mockSession, mockFn } from "../../../test/src/index.ts";
+import { test, expect, spy, assertSpyCalls, mockSession, mockFn } from "@inspatial/test";
 import { createSignalConditionTrigger } from "../../core/signal-trigger.ts";
 import { createSignal } from "../../signal/src/signals.ts";
 import { createTriggerInstance } from "../../trigger/src/action.ts";

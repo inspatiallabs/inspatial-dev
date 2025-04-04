@@ -1,5 +1,5 @@
 // src/xml.test.ts
-import { assertEquals, test } from "../../../test/src/index.ts";
+import { assertEquals, test } from "@inspatial/test";
 import { jsx } from "../jsx/jsx-runtime.ts";
 import {
   xml,

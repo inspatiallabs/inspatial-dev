@@ -1,5 +1,5 @@
 import { createEffect, createRoot, getOwner, untrack, flushSync } from "../signal/src/index.ts";
-import { test, expect, mockFn, afterEach } from "../../../dev/test/src/index.ts";
+import { test, expect, mockFn, afterEach } from "@inspatial/test";
 // Use test.each for setup/teardown
 let cleanupFns: Array<() => void> = [];
 

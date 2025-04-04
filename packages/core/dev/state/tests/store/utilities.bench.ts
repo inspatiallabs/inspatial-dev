@@ -1,4 +1,4 @@
-// import {bench, describe } from "../../../test/src/index.ts";
+// import {bench, describe } from "@inspatial/test";
 // import { merge, omit } from "../../signal/src/index.ts";
 
 // const staticDesc = {

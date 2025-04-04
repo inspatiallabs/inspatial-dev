@@ -4,7 +4,7 @@
  */
 
 // @ts-nocheck - Bypass type checking for testing
-import { assertEquals, assertObjectMatch, assertHTMLEquals, test } from "../../../test/src/index.ts";
+import { assertEquals, assertObjectMatch, assertHTMLEquals, test } from "@inspatial/test";
 import { createElement, Fragment, jsx, jsxs } from "./jsx-runtime.ts";
 
 /**

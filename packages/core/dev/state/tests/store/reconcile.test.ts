@@ -1,5 +1,5 @@
 import { createStore, reconcile, unwrap } from "../../signal/src/index.ts";
-import { test, expect, describe } from "../../../test/src/index.ts";
+import { test, expect, describe } from "@inspatial/test";
 
 // Cleanup functions array for test cleanup
 const cleanupFns: Array<() => void> = [];

@@ -6,7 +6,7 @@ import {
   createSignal,
   flushSync,
 } from "../../signal/src/index.ts";
-import { test, expect, describe, it, mockFn } from "../../../test/src/index.ts";
+import { test, expect, describe, it, mockFn } from "@inspatial/test";
 
 describe("Projection basics", () => {
   it("should observe key changes", () => {

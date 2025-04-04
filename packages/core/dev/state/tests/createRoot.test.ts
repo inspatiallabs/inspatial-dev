@@ -10,7 +10,7 @@ import {
   type AccessorType,
   type SignalType,
 } from "../signal/src/index.ts";
-import { test, expect, mockFn } from "../../../dev/test/src/index.ts";
+import { test, expect, mockFn } from "@inspatial/test";
 
 // Use cleanup array since test.afterEach isn't available
 let cleanupFns: Array<() => void> = [];

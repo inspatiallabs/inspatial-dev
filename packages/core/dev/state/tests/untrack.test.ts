@@ -7,7 +7,7 @@ import {
   onCleanup,
   untrack
 } from "../signal/src/index.ts";
-import { test, expect, mockFn } from "../../../dev/test/src/index.ts";
+import { test, expect, mockFn } from "@inspatial/test";
 
 // Use test.each for setup/teardown
 let cleanupFns: Array<() => void> = [];
@@ -116,7 +116,7 @@ test("should track owner across peeks", () => {
       createEffect(
         () => {
           childCompute($a());
-          onCleanup(childDispose);
+          onCleanup(() => childDispose());
         },
         () => {}
       )

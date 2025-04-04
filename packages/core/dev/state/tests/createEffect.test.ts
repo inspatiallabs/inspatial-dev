@@ -7,7 +7,7 @@ import {
   flushSync,
   onCleanup,
 } from "../signal/src/index.ts";
-import { test, expect, mockFn } from "../../../dev/test/src/index.ts";
+import { test, expect, mockFn } from "@inspatial/test";
 
 // Use test.each for setup/teardown
 let cleanupFns: Array<() => void> = [];
@@ -20,8 +20,8 @@ test("cleanup after tests", () => {
 
 test("should run effect", () => {
   const [$x, setX] = createSignal(0),
-    compute = mockFn($x),
-    effect = mockFn();
+    compute = mockFn($x) as any,
+    effect = mockFn() as any;
 
   createRoot(() => createEffect(compute, effect));
   expect(compute).toHaveBeenCalledTimes(1);
@@ -41,7 +41,7 @@ test("should run effect", () => {
 });
 
 test("should run effect on change", () => {
-  const effect = mockFn();
+  const effect = mockFn() as any;
 
   const [$x, setX] = createSignal(10);
   const [$y, setY] = createSignal(10);
@@ -73,10 +73,10 @@ test("should handle nested effect", () => {
   const [$x, setX] = createSignal(0);
   const [$y, setY] = createSignal(0);
 
-  const outerEffect = mockFn();
-  const innerEffect = mockFn();
-  const innerPureDispose = mockFn();
-  const innerEffectDispose = mockFn();
+  const outerEffect = mockFn() as any;
+  const innerEffect = mockFn() as any;
+  const innerPureDispose = mockFn() as any;
+  const innerEffectDispose = mockFn() as any;
 
   const stopEffect = createRoot((dispose) => {
     createEffect(() => {
@@ -84,7 +84,7 @@ test("should handle nested effect", () => {
       createEffect(
         () => {
           $y();
-          onCleanup(innerPureDispose);
+          onCleanup(innerPureDispose as any);
         },
         () => {
           innerEffect();
@@ -148,12 +148,12 @@ test("should handle nested effect", () => {
 });
 
 test("should stop effect", () => {
-  const effect = mockFn();
+  const effect = mockFn() as any;
 
   const [$x, setX] = createSignal(10);
 
   const stopEffect = createRoot((dispose) => {
-    createEffect($x, effect);
+    createEffect($x as any, effect as any);
     return dispose;
   });
 
@@ -167,17 +167,17 @@ test("should stop effect", () => {
 });
 
 test("should run all disposals before each new run", () => {
-  const effect = mockFn();
-  const disposeA = mockFn();
-  const disposeB = mockFn();
-  const disposeC = mockFn();
+  const effect = mockFn() as any;
+  const disposeA = mockFn() as any;
+  const disposeB = mockFn() as any;
+  const disposeC = mockFn() as any;
 
   function fnA() {
-    onCleanup(disposeA);
+    onCleanup(disposeA as any);
   }
 
   function fnB() {
-    onCleanup(disposeB);
+    onCleanup(disposeB as any);
   }
 
   const [$x, setX] = createSignal(0);
@@ -188,10 +188,10 @@ test("should run all disposals before each new run", () => {
         fnA(), fnB();
         return $x();
       },
-      () => {
+      (() => {
         effect();
         return disposeC;
-      }
+      }) as any
     )
   );
   flushSync();
@@ -214,8 +214,8 @@ test("should run all disposals before each new run", () => {
 });
 
 test("should run render effect effects", () => {
-  const initial = mockFn(),
-    effect = mockFn();
+  const initial = mockFn() as any,
+    effect = mockFn() as any;
 
   const [$x, setX] = createSignal(0);
 
@@ -224,7 +224,7 @@ test("should run render effect effects", () => {
     createRenderEffect(() => {
       savedComputed = $x();
       initial();
-    }, effect)
+    }, effect as any)
   );
 
   expect(initial).toHaveBeenCalledTimes(1);
@@ -277,23 +277,27 @@ test("should update effects synchronously", () => {
 });
 
 test("should be able to await effects with promises", async () => {
-  let resolve;
+  let resolve: ((value: unknown) => void);
   const p = new Promise((r) => (resolve = r));
-  const track = mockFn();
+  const track = mockFn() as any;
   let result;
 
   createRoot(() => {
-    createEffect(async () => {
-      track();
-      await p;
-      result = "success";
-    });
+    createEffect(
+      async () => {
+        track();
+        await p;
+        result = "success";
+        return result;
+      },
+      () => {}
+    );
   });
 
   flushSync();
   expect(track).toHaveBeenCalledTimes(1);
   expect(result).toBeUndefined();
-  resolve();
+  resolve!("done");
   await p;
   expect(result).toBe("success");
 
@@ -301,9 +305,9 @@ test("should be able to await effects with promises", async () => {
 });
 
 test("should be able to await nested effects with promises", async () => {
-  let resolve;
-  const p = new Promise((r) => (resolve = r));
-  const track = mockFn();
+  let resolve: ((value: unknown) => void);
+  const p = new Promise(r => (resolve = r));
+  const track = mockFn() as any;
   let result;
 
   const [$x, setX] = createSignal(false);
@@ -311,13 +315,17 @@ test("should be able to await nested effects with promises", async () => {
   const dispose = createRoot((dispose) => {
     createEffect(() => {
       if ($x()) {
-        createEffect(async () => {
-          track();
-          await p;
-          result = "success";
-        });
+        createEffect(
+          async () => {
+            track();
+            await p;
+            result = "success";
+            return result;
+          },
+          () => {}
+        );
       }
-    });
+    }, () => {});
     return dispose;
   });
 
@@ -325,7 +333,7 @@ test("should be able to await nested effects with promises", async () => {
   flushSync();
   expect(track).toHaveBeenCalledTimes(1);
   expect(result).toBeUndefined();
-  resolve();
+  resolve!("done");
   await p;
   expect(result).toBe("success");
 
@@ -364,7 +372,7 @@ test("should not re-run inner effect for constant signal", () => {
           inner();
         }
       );
-    });
+    }, () => {});
   });
 
   flushSync();
@@ -386,8 +394,8 @@ test("should not re-run inner effect for constant signal", () => {
 
 test("createEffect computeFn returns a value", () => {
   const [$x, setX] = createSignal(0),
-    compute = mockFn(() => $x()),
-    effect = mockFn();
+    compute = mockFn(() => $x()) as any,
+    effect = mockFn() as any;
 
   createRoot(() => createEffect(compute, effect));
   flushSync();

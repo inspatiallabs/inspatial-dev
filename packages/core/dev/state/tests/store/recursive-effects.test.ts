@@ -9,7 +9,7 @@ import {
   unwrap,
 } from "../../signal/src/index.ts";
 import { sharedClone } from "./shared-clone.ts";
-import { expect, describe, it } from "../../../test/src/index.ts";
+import { expect, describe, it } from "@inspatial/test";
 
 describe("recursive effects", () => {
   it("can track deeply with cloning", () => {

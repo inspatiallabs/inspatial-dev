@@ -348,7 +348,7 @@ export function createRenderEffect<Next, Init>(
 export function createRoot<T>(
   init: ((dispose: () => void) => T) | (() => T)
 ): T {
-  const owner = new Owner();
+  const owner = new OwnerClass();
   return compute(
     owner,
     !init.length ? (init as () => T) : () => init(() => owner.dispose()),
@@ -398,35 +398,25 @@ export function createErrorBoundary<T, U>(
     nodes.add(node);
     if (nodes.size === 1) error.write({ _error: err });
   }
-  owner._handlers = owner._handlers ? [handler, ...owner._handlers] : [handler];
-  const guarded = compute(
-    owner,
+
+  owner._handlers = [handler];
+  const c = new ComputationClass<ComputationClass<undefined>>(
+    undefined,
     () => {
-      const c = new ComputationClass(undefined, fn);
-      const f = new EagerComputationClass(undefined, () => flatten(c.read()), {
-        defer: true,
-      });
-      f._setError = function (error) {
-        this.handleError(error);
-      };
-      return f;
-    },
-    null
-  );
-  const decision = new ComputationClass(null, () => {
-    if (!error.read()) {
-      const resolved = guarded.read();
-      if (!error.read()) return resolved;
+      owner.dispose(false);
+      owner.emptyDisposal();
+      const result = compute(owner, fn, owner as any);
+      return new ComputationClass<undefined>(result, null);
     }
-    return fallback(error.read()!._error, () => {
-      incrementClock();
-      for (let node of nodes) {
-        (node as any)._state = STATE_DIRTY;
-        (node as any)._queue?.enqueue((node as any)._type, node);
-      }
-    });
-  });
-  return decision.read.bind(decision);
+  );
+  const f = new EagerComputationClass<ComputationClass<U>>(undefined, () => {
+    const err = error.read();
+    if (!err) return c as any;
+    const reset = () => error.write(undefined);
+    const result = fallback(err._error, reset);
+    return new ComputationClass<U>(result, null);
+  }, {});
+  return () => f.wait().wait();
 }
 
 /**
@@ -527,7 +517,7 @@ export function createResource<T, S = true>(
   fetcher: InitialResourceFetcherType<T>,
   options?: ResourceOptionsType<T, S>
 ): ResourceReturnType<T>;
-export function createResource<T, S>(
+export function createResource<T, S extends ResourceFetcherInfoType<T>>(
   source: AccessorType<ResourceSourceType<S>>,
   fetcher: ResourceFetcherType<S, T>,
   options?: ResourceOptionsType<T, S>
