@@ -752,9 +752,14 @@ export function compute<T>(
   updateCheck = null;
   staleCheck = null;
 
+  let result: T;
+  let hadError = false;
+  
   try {
-    return fn();
+    result = fn();
+    return result;
   } catch (error: any) {
+    hadError = true;
     if (node) node.handleError(error);
     // TODO: Rethrow error and propagate back up the stack ot the root
     throw error;

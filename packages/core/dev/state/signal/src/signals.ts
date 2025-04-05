@@ -19,6 +19,10 @@ import {
   isEqual,
 } from "./core/index.ts";
 import { $TRACK } from "./store/index.ts";
+import { batch, globalQueue } from "./core/scheduler.ts";
+
+// Import scheduled from scheduler for flushSync
+import { globalQueue as queue, flushSync as baseFlushSync } from "./core/scheduler.ts";
 
 // Renamed Types
 export type AccessorType<T> = () => T;
@@ -274,27 +278,31 @@ export function createAsync<T>(
  */
 export function createEffect<Next>(
   compute: ComputeFunctionType<undefined | NoInferType<Next>, Next>,
-  effect: EffectFunctionType<NoInferType<Next>, Next>,
+  effect?: EffectFunctionType<NoInferType<Next>, Next>,
   error?: (err: unknown) => void
 ): void;
 export function createEffect<Next, Init = Next>(
   compute: ComputeFunctionType<Init | Next, Next>,
-  effect: EffectFunctionType<Next, Next>,
-  error: ((err: unknown) => void) | undefined,
-  value: Init,
+  effect?: EffectFunctionType<Next, Next>,
+  error?: ((err: unknown) => void),
+  value?: Init,
   options?: EffectOptionsType
 ): void;
 export function createEffect<Next, Init>(
   compute: ComputeFunctionType<Init | Next, Next>,
-  effect: EffectFunctionType<Next, Next>,
+  effect?: EffectFunctionType<Next, Next>,
   error?: (err: unknown) => void,
   value?: Init,
   options?: EffectOptionsType
 ): void {
+  // Handle the case where only compute function is provided
+  const effectHandler = effect === undefined ? (() => {}) : effect;
+
+  // Create the effect instance and run it
   void new EffectClass(
     value as any,
     compute as any,
-    effect,
+    effectHandler,
     error,
     __DEV__ ? { ...options, name: options?.name ?? "effect" } : options
   );
@@ -763,3 +771,25 @@ export function createResource<T, S>(
 }
 
 // --- End createResource ---
+
+let batchDepth = 0;
+
+/**
+ * Check if we're currently in a batch
+ */
+export function isBatching(): boolean {
+  return batchDepth > 0;
+}
+
+/**
+ * By default, changes are batched on the microtask queue which is an async process. You can flush
+ * the queue synchronously to get the latest updates. This is useful for testing and synchronous situations
+ * where you need the latest values immediately.
+ * 
+ * @param fn An optional function to execute before flushing.
+ * @returns The return value of the provided function, or undefined if no function is provided.
+ */
+export function flushSync<T>(fn?: () => T): T | undefined {
+  // Use the base implementation from scheduler
+  return baseFlushSync(fn);
+}

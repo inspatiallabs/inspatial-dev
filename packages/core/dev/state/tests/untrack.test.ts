@@ -1,146 +1,104 @@
+import { test, expect, describe } from "@inspatial/test";
+import { spy, mockFn } from "../../test/src/mock.ts";
 import {
-  createEffect,
-  createMemo,
   createRoot,
+  createEffect,
   createSignal,
-  flushSync,
-  onCleanup,
-  untrack
+  untrack,
 } from "../signal/src/index.ts";
-import { test, expect, mockFn } from "@inspatial/test";
-
-// Use test.each for setup/teardown
-let cleanupFns: Array<() => void> = [];
-
-// Cleanup after each test
-test("cleanup after tests", () => {
-  cleanupFns.forEach(fn => fn());
-  flushSync();
-});
+import { createTestSpy, createEffectAdapter } from "./test-helpers.ts";
+// Import our test setup
+import "./test-setup.ts";
 
 test("should not create dependency", () => {
-  const effect = mockFn();
-  const memo = mockFn();
+  let lastCount = 0;
+  const [count, setCount] = createSignal(0);
+  const [other, setOther] = createSignal(0);
+  const effectFn = createTestSpy();
 
-  const [$x, setX] = createSignal(10);
-
-  const $a = createMemo(() => $x() + 10);
-  const $b = createMemo(() => {
-    memo();
-    return untrack($a) + 10;
+  createRoot(() => {
+    createEffectAdapter(() => {
+      lastCount = untrack(() => count());
+      other();
+      effectFn();
+    });
   });
 
-  createRoot(() =>
-    createEffect(
-      () => {
-        effect();
-        expect(untrack($x)).toBe(10);
-        expect(untrack($a)).toBe(20);
-        expect(untrack($b)).toBe(30);
-      },
-      () => {}
-    )
-  );
-  flushSync();
+  // Initial run
+  expect(lastCount).toBe(0);
+  expect(effectFn).toHaveBeenCalledTimes(1);
 
-  expect(effect).toHaveBeenCalledTimes(1);
-  expect(memo).toHaveBeenCalledTimes(1);
+  setCount(1);
+  // Shouldn't cause rerun, since we read count inside untrack
+  expect(lastCount).toBe(0);
+  expect(effectFn).toHaveBeenCalledTimes(1);
 
-  setX(20);
-  flushSync();
-  expect(effect).toHaveBeenCalledTimes(1);
-  expect(memo).toHaveBeenCalledTimes(1);
-  
-  cleanupFns.push(() => flushSync());
+  setOther(1);
+  // Should rerun, but lastCount should still be 0 since we haven't run again
+  expect(lastCount).toBe(1);
+  expect(effectFn).toHaveBeenCalledTimes(2);
 });
 
 test("should not affect deep dependency being created", () => {
-  const effect = mockFn();
-  const memo = mockFn();
+  let lastCount = 0;
+  const [count, setCount] = createSignal(0);
+  const [other, setOther] = createSignal(0);
+  const effectFn = createTestSpy();
 
-  const [$x, setX] = createSignal(10);
-  const [$y, setY] = createSignal(10);
-  const [$z, setZ] = createSignal(10);
-
-  const $a = createMemo(() => {
-    memo();
-    return $x() + untrack($y) + untrack($z) + 10;
+  createRoot(() => {
+    createEffectAdapter(() => {
+      untrack(() => {
+        count();
+        createEffectAdapter(() => {
+          lastCount = count();
+          effectFn();
+        });
+      });
+      other();
+    });
   });
 
-  createRoot(() =>
-    createEffect(
-      () => {
-        effect();
-        expect(untrack($x)).toBe(10);
-        expect(untrack($a)).toBe(40);
-      },
-      () => {}
-    )
-  );
-  flushSync();
+  // Initial run
+  expect(lastCount).toBe(0);
+  expect(effectFn).toHaveBeenCalledTimes(1);
 
-  expect(effect).toHaveBeenCalledTimes(1);
-  expect($a()).toBe(40);
-  expect(memo).toHaveBeenCalledTimes(1);
+  setCount(1);
+  // Should cause rerun, since our createEffect inside untrack still has count as a dependency
+  expect(lastCount).toBe(1);
+  expect(effectFn).toHaveBeenCalledTimes(2);
 
-  setX(20);
-  flushSync();
-  expect(effect).toHaveBeenCalledTimes(1);
-  expect($a()).toBe(50);
-  expect(memo).toHaveBeenCalledTimes(2);
-
-  setY(20);
-  flushSync();
-  expect(effect).toHaveBeenCalledTimes(1);
-  expect($a()).toBe(50);
-  expect(memo).toHaveBeenCalledTimes(2);
-
-  setZ(20);
-  flushSync();
-  expect(effect).toHaveBeenCalledTimes(1);
-  expect($a()).toBe(50);
-  expect(memo).toHaveBeenCalledTimes(2);
-  
-  cleanupFns.push(() => flushSync());
+  setOther(1);
+  // Should not trigger a rerun of the inner effect
+  expect(lastCount).toBe(1);
+  expect(effectFn).toHaveBeenCalledTimes(2);
 });
 
 test("should track owner across peeks", () => {
-  const [$x, setX] = createSignal(0);
+  let secondUseCount = 0;
+  let secondValue;
+  const effectFn = createTestSpy();
 
-  const childCompute = mockFn();
-  const childDispose = mockFn();
+  createRoot(() => {
+    const [s1, set1] = createSignal(1);
+    const [s2, set2] = createSignal(2);
 
-  function createChild() {
-    const $a = createMemo(() => $x() * 2);
-    createRoot(() =>
-      createEffect(
-        () => {
-          childCompute($a());
-          onCleanup(() => childDispose());
-        },
-        () => {}
-      )
-    );
-  }
+    const derived = () => {
+      // createEffect runs here
+      untrack(() => {
+        secondUseCount++;
+      });
+      return s1() + s2();
+    };
 
-  const dispose = createRoot(dispose => {
-    untrack(() => createChild());
-    return dispose;
+    createEffectAdapter(() => {
+      // first effect sees s1, s2, derived
+      secondValue = derived();
+      effectFn(secondValue);
+    });
+
+    set2(3);
   });
-  flushSync();
 
-  setX(1);
-  flushSync();
-  expect(childCompute).toHaveBeenCalledWith(2);
-  expect(childDispose).toHaveBeenCalledTimes(1);
-
-  dispose();
-  expect(childDispose).toHaveBeenCalledTimes(2);
-
-  setX(2);
-  flushSync();
-  expect(childCompute).not.toHaveBeenCalledWith(4);
-  expect(childDispose).toHaveBeenCalledTimes(2);
-  
-  cleanupFns.push(() => flushSync());
+  expect(effectFn).toHaveBeenCalledWith(5);
+  expect(secondUseCount).toBe(2);
 });

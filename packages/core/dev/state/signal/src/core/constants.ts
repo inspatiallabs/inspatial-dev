@@ -14,3 +14,6 @@ export const EFFECT_RENDER = 1;
 export const EFFECT_USER = 2;
 
 export const SUPPORTS_PROXY = typeof Proxy === "function";
+
+// Symbol used to access the raw value of wrapped store objects/arrays
+export const $RAW = Symbol("store-raw");

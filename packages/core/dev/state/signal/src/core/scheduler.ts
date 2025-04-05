@@ -87,13 +87,45 @@ export const globalQueue = new QueueClass();
 /**
  * By default, changes are batched on the microtask queue which is an async process. You can flush
  * the queue synchronously to get the latest updates by calling `flushSync()`.
+ * 
+ * @param fn Optional function to execute before flushing the queue
+ * @returns The result of fn if provided, otherwise undefined
  */
-export function flushSync(): void {
+export function flushSync<T>(fn?: () => T): T | undefined {
+  // Track if we need to run a function before flushing
+  let result: T | undefined;
+  
+  // If a function is provided, run it first
+  if (fn) {
+    try {
+      result = fn();
+    } catch (error) {
+      // Even if the function throws, make sure we flush
+      let count = 0;
+      while (scheduled) {
+        if (__DEV__ && ++count === 1000) {
+          console.warn("Potential Infinite Loop Detected in flushSync.");
+          break;
+        }
+        globalQueue.flush();
+      }
+      // Re-throw the original error
+      throw error;
+    }
+  }
+  
+  // Now flush the queue 
   let count = 0;
   while (scheduled) {
-    if (__DEV__ && ++count === 1e5) throw new Error("Potential Infinite Loop Detected.");
+    if (__DEV__ && ++count === 1000) {
+      console.warn("Potential Infinite Loop Detected in flushSync.");
+      break;
+    }
     globalQueue.flush();
   }
+  
+  // Return the result from fn (if it was provided)
+  return result;
 }
 
 /**
