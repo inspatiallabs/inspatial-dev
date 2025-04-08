@@ -170,7 +170,7 @@ export function isElement(o) {
         typeof o.nodeName === "string";
 }
 
-export function createElement(nodeName, classNames) {
+export function createElement(nodeName: string, classNames: string[]) {
   const el = document.createElement(nodeName);
   if (classNames) {
     classNames = ensureArray(classNames);
@@ -179,23 +179,23 @@ export function createElement(nodeName, classNames) {
   return el;
 }
 
-export function emptyElement(el) {
+export function emptyElement(el: Node) {
   while (el.firstChild) {
     el.removeChild(el.firstChild);
   }
 }
 
-export function emptyElements(els) {
+export function emptyElements(els: Node[]) {
   els = ensureArray(els);
   els.forEach((el) => emptyElement(el));
 }
 
-export function replaceContent(el, newContent) {
+export function replaceContent(el: Node, newContent: string) {
   emptyElement(el);
   el.insertAdjacentHTML("afterbegin", newContent);
 }
 
-export function removeElements(els) {
+export function removeElements(els: Node[]) {
   els = ensureArray(els);
   els.forEach((el) => el.parentNode.removeChild(el));
 }

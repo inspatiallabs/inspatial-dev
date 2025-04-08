@@ -31,95 +31,111 @@ interface EventInit {
  * @implements globalThis.Event
  */
 class GlobalEvent {
-    static get BUBBLING_PHASE(): number { return BUBBLING_PHASE; }
-    static get AT_TARGET(): number { return AT_TARGET; }
-    static get CAPTURING_PHASE(): number { return CAPTURING_PHASE; }
-    static get NONE(): number { return NONE; }
-
-    type: string;
-    bubbles: boolean;
-    cancelable: boolean;
-    cancelBubble: boolean;
-    defaultPrevented: boolean;
-    eventPhase: number;
-    timeStamp: number;
-    originalTarget: any;
-    returnValue: any;
-    srcElement: any;
-    target: any;
-    /** @internal */
-    _stopImmediatePropagationFlag: boolean;
-    /** @internal */
-    _path: any[];
-
-    /**
-     * Create a new event
-     * @param type - The type of the event
-     * @param eventInitDict - Options for the event
-     */
-    constructor(type: string, eventInitDict: EventInit = {}) {
-      this.type = type;
-      this.bubbles = !!eventInitDict.bubbles;
-      this.cancelBubble = false;
-      this._stopImmediatePropagationFlag = false;
-      this.cancelable = !!eventInitDict.cancelable;
-      this.eventPhase = this.NONE;
-      this.timeStamp = Date.now();
-      this.defaultPrevented = false;
-      this.originalTarget = null;
-      this.returnValue = null;
-      this.srcElement = null;
-      this.target = null;
-      this._path = [];
-    }
-
-    get BUBBLING_PHASE(): number { return BUBBLING_PHASE; }
-    get AT_TARGET(): number { return AT_TARGET; }
-    get CAPTURING_PHASE(): number { return CAPTURING_PHASE; }
-    get NONE(): number { return NONE; }
-
-    /**
-     * Prevent the event's default action
-     */
-    preventDefault(): void { 
-      this.defaultPrevented = true; 
-    }
-
-    /**
-     * Get the path through which the event bubbles
-     * @returns Array of event targets
-     */
-    // simplified implementation, should be https://dom.spec.whatwg.org/#dom-event-composedpath
-    composedPath(): any[] {
-      return this._path.map(getCurrentTarget);
-    }
-
-    /**
-     * Stop propagation of the event
-     */
-    stopPropagation(): void {
-      this.cancelBubble = true;
-    }
-    
-    /**
-     * Stop immediate propagation of the event
-     */
-    stopImmediatePropagation(): void {
-      this.stopPropagation();
-      this._stopImmediatePropagationFlag = true;
-    }
-
-    /**
-     * Initialize the event with the given parameters
-     * @param type - The event type
-     * @param bubbles - Whether the event bubbles
-     * @param cancelable - Whether the event is cancelable
-     */
-    initEvent(type: string, bubbles: boolean, cancelable: boolean): void {
-      this.type = type;
-      this.bubbles = bubbles;
-      this.cancelable = cancelable;
-    }
+  static get BUBBLING_PHASE(): number {
+    return BUBBLING_PHASE;
+  }
+  static get AT_TARGET(): number {
+    return AT_TARGET;
+  }
+  static get CAPTURING_PHASE(): number {
+    return CAPTURING_PHASE;
+  }
+  static get NONE(): number {
+    return NONE;
   }
 
-export {GlobalEvent as Event};
+  type: string;
+  bubbles: boolean;
+  cancelable: boolean;
+  cancelBubble: boolean;
+  defaultPrevented: boolean;
+  eventPhase: number;
+  timeStamp: number;
+  originalTarget: any;
+  returnValue: any;
+  srcElement: any;
+  target: any;
+  /** @internal */
+  _stopImmediatePropagationFlag: boolean;
+  /** @internal */
+  _path: any[];
+
+  /**
+   * Create a new event
+   * @param type - The type of the event
+   * @param eventInitDict - Options for the event
+   */
+  constructor(type: string, eventInitDict: EventInit = {}) {
+    this.type = type;
+    this.bubbles = !!eventInitDict.bubbles;
+    this.cancelBubble = false;
+    this._stopImmediatePropagationFlag = false;
+    this.cancelable = !!eventInitDict.cancelable;
+    this.eventPhase = this.NONE;
+    this.timeStamp = Date.now();
+    this.defaultPrevented = false;
+    this.originalTarget = null;
+    this.returnValue = null;
+    this.srcElement = null;
+    this.target = null;
+    this._path = [];
+  }
+
+  get BUBBLING_PHASE(): number {
+    return BUBBLING_PHASE;
+  }
+  get AT_TARGET(): number {
+    return AT_TARGET;
+  }
+  get CAPTURING_PHASE(): number {
+    return CAPTURING_PHASE;
+  }
+  get NONE(): number {
+    return NONE;
+  }
+
+  /**
+   * Prevent the event's default action
+   */
+  preventDefault(): void {
+    this.defaultPrevented = true;
+  }
+
+  /**
+   * Get the path through which the event bubbles
+   * @returns Array of event targets
+   */
+  // simplified implementation, should be https://dom.spec.whatwg.org/#dom-event-composedpath
+  composedPath(): any[] {
+    return this._path.map(getCurrentTarget);
+  }
+
+  /**
+   * Stop propagation of the event
+   */
+  stopPropagation(): void {
+    this.cancelBubble = true;
+  }
+
+  /**
+   * Stop immediate propagation of the event
+   */
+  stopImmediatePropagation(): void {
+    this.stopPropagation();
+    this._stopImmediatePropagationFlag = true;
+  }
+
+  /**
+   * Initialize the event with the given parameters
+   * @param type - The event type
+   * @param bubbles - Whether the event bubbles
+   * @param cancelable - Whether the event is cancelable
+   */
+  initEvent(type: string, bubbles: boolean, cancelable: boolean): void {
+    this.type = type;
+    this.bubbles = bubbles;
+    this.cancelable = cancelable;
+  }
+}
+
+export { GlobalEvent as Event };

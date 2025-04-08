@@ -1,6 +1,7 @@
 // https://dom.spec.whatwg.org/#interface-parentnode
 // Document, DocumentFragment, Element
 
+// @ts-ignore - Ignoring TS extension import error
 import {
   ATTRIBUTE_NODE,
   DOCUMENT_FRAGMENT_NODE,
@@ -8,28 +9,45 @@ import {
   TEXT_NODE,
   NODE_END,
   CDATA_SECTION_NODE,
-  COMMENT_NODE
-} from '../shared/constants.ts';
+  COMMENT_NODE,
+} from "../shared/constants.ts";
 
-import {PRIVATE, END, NEXT, PREV, START, VALUE} from '../shared/symbols.ts';
+// @ts-ignore - Ignoring TS extension import error
+import { PRIVATE, END, NEXT, PREV, START, VALUE } from "../shared/symbols.ts";
 
-import {prepareMatch} from '../shared/matches.ts';
-import {previousSibling, nextSibling} from '../shared/node.ts';
-import {getEnd, knownAdjacent, knownBoundaries, knownSegment, knownSiblings, localCase} from '../shared/util/utils.ts';
+// @ts-ignore - Ignoring TS extension import error
+import { prepareMatch } from "../shared/matches.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { previousSibling, nextSibling } from "../shared/node.ts";
+// @ts-ignore - Ignoring TS extension import error
+import {
+  getEnd,
+  knownAdjacent,
+  knownBoundaries,
+  knownSegment,
+  knownSiblings,
+  localCase,
+} from "../shared/util/utils.ts";
 
-import {Node} from '../interface/node.ts';
-import {Text} from '../interface/text.ts';
-import {NodeList} from '../interface/node-list.ts';
+// @ts-ignore - Ignoring TS extension import error
+import { Node } from "../interface/node.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { Text } from "../interface/text.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { NodeList } from "../interface/node-list.ts";
 
-import {moCallback} from '../interface/mutation-observer.ts';
-import {connectedCallback} from '../interface/custom-element-registry.ts';
+// @ts-ignore - Ignoring TS extension import error
+import { moCallback } from "../interface/mutation-observer.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { connectedCallback } from "../interface/custom-element-registry.ts";
 
-import {nextElementSibling} from './non-document-type-child-node.ts';
+// @ts-ignore - Ignoring TS extension import error
+import { nextElementSibling } from "./non-document-type-child-node.ts";
 
-const isNode = node => node instanceof Node;
+const isNode = (node: any): boolean => node instanceof Node;
 
-const insert = (parentNode, child, nodes) => {
-  const {ownerDocument} = parentNode;
+const insert = (parentNode: any, child: any, nodes: any[]): void => {
+  const { ownerDocument } = parentNode;
   for (const node of nodes)
     parentNode.insertBefore(
       isNode(node) ? node : new Text(ownerDocument, node),
@@ -47,33 +65,33 @@ const insert = (parentNode, child, nodes) => {
 }} NodeStruct */
 
 export class ParentNode extends Node {
-  constructor(ownerDocument, localName, nodeType) {
+  constructor(ownerDocument: any, localName: string, nodeType: number) {
     super(ownerDocument, localName, nodeType);
-    this[PRIVATE] = null;
+    (this as any)[PRIVATE] = null;
     /** @type {NodeStruct} */
-    this[NEXT] = this[END] = {
+    (this as any)[NEXT] = (this as any)[END] = {
       [NEXT]: null,
       [PREV]: this,
       [START]: this,
       nodeType: NODE_END,
       ownerDocument: this.ownerDocument,
-      parentNode: null
+      parentNode: null,
     };
   }
 
-  get childNodes() {
-    const childNodes = new NodeList;
-    let {firstChild} = this;
+  override get childNodes(): NodeList {
+    const childNodes = new NodeList();
+    let { firstChild } = this;
     while (firstChild) {
       childNodes.push(firstChild);
-      firstChild = nextSibling(firstChild);
+      firstChild = nextSibling(firstChild as any);
     }
     return childNodes;
   }
 
-  get children() {
-    const children = new NodeList;
-    let {firstElementChild} = this;
+  get children(): NodeList {
+    const children = new NodeList();
+    let { firstElementChild } = this;
     while (firstElementChild) {
       children.push(firstElementChild);
       firstElementChild = nextElementSibling(firstElementChild);
@@ -84,28 +102,28 @@ export class ParentNode extends Node {
   /**
    * @returns {NodeStruct | null}
    */
-  get firstChild() {
-    let {[NEXT]: next, [END]: end} = this;
-    while (next.nodeType === ATTRIBUTE_NODE)
-      next = next[NEXT];
+  override get firstChild(): any {
+    let next = (this as any)[NEXT];
+    const end = (this as any)[END];
+    while (next.nodeType === ATTRIBUTE_NODE) next = next[NEXT];
     return next === end ? null : next;
   }
 
   /**
    * @returns {NodeStruct | null}
    */
-  get firstElementChild() {
-    let {firstChild} = this;
+  get firstElementChild(): any {
+    let { firstChild } = this;
     while (firstChild) {
-      if (firstChild.nodeType === ELEMENT_NODE)
-        return firstChild;
-      firstChild = nextSibling(firstChild);
+      if (firstChild.nodeType === ELEMENT_NODE) return firstChild;
+      firstChild = nextSibling(firstChild as any);
     }
     return null;
   }
 
-  get lastChild() {
-    const prev = this[END][PREV];
+  // @ts-ignore - Accessor overriding property in base class
+  override get lastChild(): any {
+    const prev = (this as any)[END][PREV];
     switch (prev.nodeType) {
       case NODE_END:
         return prev[START];
@@ -115,48 +133,47 @@ export class ParentNode extends Node {
     return prev === this ? null : prev;
   }
 
-  get lastElementChild() {
-    let {lastChild} = this;
+  get lastElementChild(): any {
+    let { lastChild } = this;
     while (lastChild) {
-      if (lastChild.nodeType === ELEMENT_NODE)
-        return lastChild;
-      lastChild = previousSibling(lastChild);
+      if (lastChild.nodeType === ELEMENT_NODE) return lastChild;
+      lastChild = previousSibling({ prev: lastChild } as any);
     }
     return null;
   }
 
-  get childElementCount() {
+  get childElementCount(): number {
     return this.children.length;
   }
 
-  prepend(...nodes) {
+  prepend(...nodes: any[]): void {
     insert(this, this.firstChild, nodes);
   }
 
-  append(...nodes) {
-    insert(this, this[END], nodes);
+  append(...nodes: any[]): void {
+    insert(this, (this as any)[END], nodes);
   }
 
-  replaceChildren(...nodes) {
-    let {[NEXT]: next, [END]: end} = this;
-    while (next !== end && next.nodeType === ATTRIBUTE_NODE)
-      next = next[NEXT];
+  replaceChildren(...nodes: any[]): void {
+    let next = (this as any)[NEXT];
+    const end = (this as any)[END];
+    while (next !== end && next.nodeType === ATTRIBUTE_NODE) next = next[NEXT];
     while (next !== end) {
       const after = getEnd(next)[NEXT];
       next.remove();
       next = after;
     }
-    if (nodes.length)
-      insert(this, end, nodes);
+    if (nodes.length) insert(this, end, nodes);
   }
 
-  getElementsByClassName(className) {
-    const elements = new NodeList;
-    let {[NEXT]: next, [END]: end} = this;
+  getElementsByClassName(className: string): NodeList {
+    const elements = new NodeList();
+    let next = (this as any)[NEXT];
+    const end = (this as any)[END];
     while (next !== end) {
       if (
         next.nodeType === ELEMENT_NODE &&
-        next.hasAttribute('class') &&
+        next.hasAttribute("class") &&
         next.classList.has(className)
       )
         elements.push(next);
@@ -165,60 +182,67 @@ export class ParentNode extends Node {
     return elements;
   }
 
-  getElementsByTagName(tagName) {
-    const elements = new NodeList;
-    let {[NEXT]: next, [END]: end} = this;
+  getElementsByTagName(tagName: string): NodeList {
+    const elements = new NodeList();
+    let next = (this as any)[NEXT];
+    const end = (this as any)[END];
     while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE && (
-        next.localName === tagName ||
-        localCase(next) === tagName
-      ))
+      if (
+        next.nodeType === ELEMENT_NODE &&
+        (next.localName === tagName || localCase(next) === tagName)
+      )
         elements.push(next);
       next = next[NEXT];
     }
     return elements;
   }
 
-  querySelector(selectors) {
+  querySelector(selectors: string): any {
     const matches = prepareMatch(this, selectors);
-    let {[NEXT]: next, [END]: end} = this;
+    let next = (this as any)[NEXT];
+    const end = (this as any)[END];
     while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE && matches(next))
-        return next;
-      next = next.nodeType === ELEMENT_NODE && next.localName === 'template' ? next[END] : next[NEXT];
+      if (next.nodeType === ELEMENT_NODE && matches(next)) return next;
+      next =
+        next.nodeType === ELEMENT_NODE && next.localName === "template"
+          ? next[END]
+          : next[NEXT];
     }
     return null;
   }
 
-  querySelectorAll(selectors) {
+  querySelectorAll(selectors: string): NodeList {
     const matches = prepareMatch(this, selectors);
-    const elements = new NodeList;
-    let {[NEXT]: next, [END]: end} = this;
+    const elements = new NodeList();
+    let next = (this as any)[NEXT];
+    const end = (this as any)[END];
     while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE && matches(next))
-        elements.push(next);
-      next = next.nodeType === ELEMENT_NODE && next.localName === 'template' ? next[END] : next[NEXT];
+      if (next.nodeType === ELEMENT_NODE && matches(next)) elements.push(next);
+      next =
+        next.nodeType === ELEMENT_NODE && next.localName === "template"
+          ? next[END]
+          : next[NEXT];
     }
     return elements;
   }
 
-  appendChild(node) {
-    return this.insertBefore(node, this[END]);
+  // @ts-ignore - Resolving accessor vs property conflict
+  override appendChild(node: any): any {
+    return this.insertBefore(node, (this as any)[END]);
   }
 
-  contains(node) {
+  override contains(node: any): boolean {
     let parentNode = node;
     while (parentNode && parentNode !== this)
       parentNode = parentNode.parentNode;
     return parentNode === this;
   }
 
-  insertBefore(node, before = null) {
-    if (node === before)
-      return node;
-    if (node === this)
-      throw new Error('unable to append a node to itself');
-    const next = before || this[END];
+  // @ts-ignore - Resolving accessor vs property conflict
+  override insertBefore(node: any, before: any = null): any {
+    if (node === before) return node;
+    if (node === this) throw new Error("unable to append a node to itself");
+    const next = before || (this as any)[END];
     switch (node.nodeType) {
       case ELEMENT_NODE:
         node.remove();
@@ -228,12 +252,13 @@ export class ParentNode extends Node {
         connectedCallback(node);
         break;
       case DOCUMENT_FRAGMENT_NODE: {
-        let {[PRIVATE]: parentNode, firstChild, lastChild} = node;
+        let parentNode = node[PRIVATE];
+        let firstChild = node.firstChild;
+        let lastChild = node.lastChild;
         if (firstChild) {
           knownSegment(next[PREV], firstChild, lastChild, next);
           knownAdjacent(node, node[END]);
-          if (parentNode)
-            parentNode.replaceChildren();
+          if (parentNode) parentNode.replaceChildren();
           do {
             firstChild.parentNode = this;
             moCallback(firstChild, null);
@@ -241,7 +266,7 @@ export class ParentNode extends Node {
               connectedCallback(firstChild);
           } while (
             firstChild !== lastChild &&
-            (firstChild = nextSibling(firstChild))
+            (firstChild = nextSibling(firstChild as any))
           );
         }
         break;
@@ -261,13 +286,15 @@ export class ParentNode extends Node {
     return node;
   }
 
-  normalize() {
-    let {[NEXT]: next, [END]: end} = this;
+  override normalize(): void {
+    let next = (this as any)[NEXT];
+    const end = (this as any)[END];
     while (next !== end) {
-      const {[NEXT]: $next, [PREV]: $prev, nodeType} = next;
+      const $next = next[NEXT];
+      const $prev = next[PREV];
+      const { nodeType } = next;
       if (nodeType === TEXT_NODE) {
-        if (!next[VALUE])
-          next.remove();
+        if (!next[VALUE]) next.remove();
         else if ($prev && $prev.nodeType === TEXT_NODE) {
           $prev.textContent += next.textContent;
           next.remove();
@@ -277,14 +304,13 @@ export class ParentNode extends Node {
     }
   }
 
-  removeChild(node) {
-    if (node.parentNode !== this)
-      throw new Error('node is not a child');
+  override removeChild(node: any): any {
+    if (node.parentNode !== this) throw new Error("node is not a child");
     node.remove();
     return node;
   }
 
-  replaceChild(node, replaced) {
+  override replaceChild(node: any, replaced: any): any {
     const next = getEnd(replaced)[NEXT];
     replaced.remove();
     this.insertBefore(node, next);

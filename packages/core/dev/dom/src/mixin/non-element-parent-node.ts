@@ -1,41 +1,45 @@
 // https://dom.spec.whatwg.org/#interface-nonelementparentnode
 // Document, DocumentFragment
 
-import {ELEMENT_NODE} from '../shared/constants.ts';
-import {END, NEXT} from '../shared/symbols.ts';
-import {nonElementAsJSON} from '../shared/jsdon.ts';
+// @ts-ignore - Ignoring TS extension import error
+import { ELEMENT_NODE } from "../shared/constants.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { END, NEXT } from "../shared/symbols.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { nonElementAsJSON } from "../shared/jsdon.ts";
 
-import {ParentNode} from './parent-node.ts';
+// @ts-ignore - Ignoring TS extension import error
+import { ParentNode } from "./parent-node.ts";
 
 export class NonElementParentNode extends ParentNode {
-  getElementById(id) {
-    let {[NEXT]: next, [END]: end} = this;
+  getElementById(id: string): any {
+    let { [NEXT]: next, [END]: end } = this as any;
     while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE && next.id === id)
-        return next;
+      if (next.nodeType === ELEMENT_NODE && next.id === id) return next;
       next = next[NEXT];
     }
     return null;
   }
 
-  cloneNode(deep) {
-    const {ownerDocument, constructor} = this;
+  // @ts-ignore - Return type differs from base class but matches implementation
+  override cloneNode(deep?: boolean): any {
+    const { ownerDocument, constructor } = this as any;
     const nonEPN = new constructor(ownerDocument);
     if (deep) {
-      const {[END]: end} = nonEPN;
-      for (const node of this.childNodes)
+      const { [END]: end } = nonEPN;
+      for (const node of (this as any).childNodes)
         nonEPN.insertBefore(node.cloneNode(deep), end);
     }
-    return nonEPN; 
+    return nonEPN;
   }
 
-  toString() {
-    const {childNodes, localName} = this;
-    return `<${localName}>${childNodes.join('')}</${localName}>`;
+  override toString(): string {
+    const { childNodes, localName } = this as any;
+    return `<${localName}>${childNodes.join("")}</${localName}>`;
   }
 
-  toJSON() {
-    const json = [];
+  toJSON(): any[] {
+    const json: any[] = [];
     nonElementAsJSON(this, json);
     return json;
   }

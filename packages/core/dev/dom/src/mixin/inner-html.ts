@@ -1,30 +1,45 @@
-import {ELEMENT_NODE, DOCUMENT_FRAGMENT_NODE} from '../shared/constants.ts';
-import {CUSTOM_ELEMENTS} from '../shared/symbols.ts';
-import {parseFromString} from '../shared/parse-from-string.ts';
-import {ignoreCase} from '../shared/util/utils.ts';
+// @ts-ignore - Ignoring TS extension import error
+import { ELEMENT_NODE, DOCUMENT_FRAGMENT_NODE } from "../shared/constants.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { CUSTOM_ELEMENTS } from "../shared/symbols.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { parseFromString } from "../shared/parse-from-string.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { ignoreCase } from "../shared/util/utils.ts";
 
+interface NodeWithChildNodes {
+  childNodes: {
+    join(separator: string): string;
+    forEach(callback: (node: any) => void, thisArg?: any): void;
+    map<T>(callback: (node: any) => T, thisArg?: any): T[];
+  };
+  ownerDocument: any;
+  nodeType: number;
+  replaceChildren(...nodes: any[]): void;
+}
 
 /**
  * @param {Node} node
  * @returns {String}
  */
-export const getInnerHtml = node => node.childNodes.join('');
+export const getInnerHtml = (node: NodeWithChildNodes): string =>
+  node.childNodes.join("");
 
 /**
  * @param {Node} node
  * @param {String} html
  */
-export const setInnerHtml = (node, html) => {
-  const {ownerDocument} = node;
-  const {constructor} = ownerDocument;
-  const document = new constructor;
+export const setInnerHtml = (node: NodeWithChildNodes, html: string): void => {
+  const { ownerDocument } = node;
+  const { constructor } = ownerDocument;
+  const document = new constructor();
   document[CUSTOM_ELEMENTS] = ownerDocument[CUSTOM_ELEMENTS];
-  const {childNodes} = parseFromString(document, ignoreCase(node), html);
+  const { childNodes } = parseFromString(document, ignoreCase(node), html);
 
   node.replaceChildren(...childNodes.map(setOwnerDocument, ownerDocument));
 };
 
-function setOwnerDocument(node) {
+function setOwnerDocument(this: any, node: any): any {
   node.ownerDocument = this;
   switch (node.nodeType) {
     case ELEMENT_NODE:

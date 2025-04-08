@@ -5,43 +5,43 @@
 
 // Define all the interfaces for DOM objects
 // @ts-ignore - Ignoring TS extension import error
-import {Event, EventInit, EventListener, EventListenerOptions} from './interface/event.ts';
+import { Event } from "./interface/event.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {NodeList} from './interface/node-list.ts';
+import { NodeList } from "./interface/node-list.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {CustomEvent, CustomEventInit} from './interface/custom-event.ts';
+import { CustomEvent, CustomEventInit } from "./interface/custom-event.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {HTMLCollection} from './interface/html-collection.ts';
+import { HTMLCollection } from "./interface/html-collection.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {DOMImplementation} from './interface/implementation.ts';
+import { DOMImplementation } from "./interface/implementation.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {Document, DocumentType} from './interface/document.ts';
+import { Document, DocumentType } from "./interface/document.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {DocumentFragment} from './interface/document-fragment.ts';
+import { DocumentFragment } from "./interface/document-fragment.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {Node, NodeFilter} from './interface/node.ts';
+import { Node, NodeFilter } from "./interface/node.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {Element} from './interface/element.ts';
+import { Element } from "./interface/element.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {Attr} from './interface/attr.ts';
+import { Attr } from "./interface/attr.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {CharacterData} from './interface/character-data.ts';
+import { CharacterData } from "./interface/character-data.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {Text} from './interface/text.ts';
+import { Text } from "./interface/text.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {Comment} from './interface/comment.ts';
+import { Comment } from "./interface/comment.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {CDATASection} from './interface/cdata-section.ts';
+import { CDATASection } from "./interface/cdata-section.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {ProcessingInstruction} from './interface/processing-instruction.ts';
+import { ProcessingInstruction } from "./interface/processing-instruction.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {ShadowRoot} from './interface/shadow-root.ts';
+import { ShadowRoot } from "./interface/shadow-root.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {Range} from './interface/range.ts';
+import { Range } from "./interface/range.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {XMLDocument} from './xml/document.ts';
+import { XMLDocument } from "./xml/document.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {HTMLDocument} from './html/document.ts';
+import { HTMLDocument } from "./html/document.ts";
 
 // Cache utilities
 // @ts-ignore - Ignoring TS extension import error
@@ -51,15 +51,15 @@ import {
   querySelectorWM,
   querySelectorAllWM,
   get,
-  reset
-} from './shared/cache.ts';
+  reset,
+} from "./shared/cache.ts";
 
 // Define types for various DOM interfaces
 interface AttrElement {
   value: string;
 }
 
-type ElementWithContent = Element & { 
+type ElementWithContent = Element & {
   textContent: string;
   contentWindow?: Window;
   value?: string;
@@ -77,7 +77,6 @@ export {
   HTMLDocument,
   XMLDocument,
   DOMImplementation,
-
   Document,
   DocumentFragment,
   DocumentType,
@@ -94,20 +93,27 @@ export {
   NodeList,
   HTMLCollection,
   Event,
-  EventInit,
-  EventListener,
-  EventListenerOptions,
   CustomEvent,
   CustomEventInit,
-  Range
+  Range,
 };
 
 // Export cache utilities with type information
 export const cache = {
   // Create a new WeakMap for caching (implemented here since it's not in the original cache.ts)
-  create: <K extends keyof CacheTypes>(type: K): CacheTypes[K] => new WeakMap() as CacheTypes[K],
-  get: get as <K extends keyof CacheTypes, V>(map: CacheTypes[K], obj: any, key: string, callback: () => V) => V,
-  reset
+  create: <K extends keyof CacheTypes>(type: K): CacheTypes[K] =>
+    new WeakMap() as CacheTypes[K],
+
+  // Create a wrapper function that adapts the original get function to match the expected signature
+  get: <K extends keyof CacheTypes, V>(
+    map: CacheTypes[K],
+    obj: any,
+    key: string,
+    callback: () => V
+  ): V => {
+    return get(map as WeakMap<object, V>, obj, callback as any) as V;
+  },
+  reset,
 };
 
 // @ts-ignore - Ignoring TS extension import error

@@ -1,7 +1,7 @@
 // @ts-ignore - Ignoring TS extension import error
 import { setPrototypeOf } from "../shared/object.ts";
 // @ts-ignore - Ignoring TS extension import error
-import hyphenize from "../../../../util/src/hyphenize.ts";
+import hyphenize from "@inspatial/util/hyphenize";
 // @ts-ignore - Ignoring TS extension import error
 import { Element } from "../interface/element.ts";
 
@@ -44,7 +44,7 @@ const handler: ProxyHandler<DOMStringMap> = {
     }
     return undefined;
   },
-  
+
   set(dataset: DOMStringMap, name: string, value: string): boolean {
     /** Ensure the name is a valid property of the dataset */
     if (Object.prototype.hasOwnProperty.call(dataset, name)) {

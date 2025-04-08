@@ -26,6 +26,7 @@ export class SVGElement extends Element {
     this.ownerSVGElement = ownerSVGElement;
   }
 
+  // @ts-ignore - SVG DOM spec requires className to be an object with baseVal/animVal
   override get className(): { baseVal: string, animVal: string } {
     if (!classNames.has(this))
       classNames.set(this, new Proxy({baseVal: '', animVal: ''}, handler));
@@ -33,6 +34,7 @@ export class SVGElement extends Element {
   }
 
   /* c8 ignore start */
+  // @ts-ignore - Allowing setting className with a string while returning as object
   override set className(value: string) {
     const {classList} = this;
     classList.clear();

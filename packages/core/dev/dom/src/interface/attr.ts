@@ -17,8 +17,7 @@ import { attributeChangedCallback as ceAttributes } from "./custom-element-regis
 // @ts-ignore - Ignoring TS extension import error
 import { Node } from "./node.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { escapeHtml } from "../../../../util/src/escape-html.ts";
-
+import { escapeHtml } from "@inspatial/util/escape-html";
 const QUOTE = /"/g;
 
 // Interface extension for symbol properties

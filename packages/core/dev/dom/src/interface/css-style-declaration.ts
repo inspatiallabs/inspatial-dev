@@ -1,8 +1,8 @@
 // @ts-ignore - Ignoring TS extension import error and relative import path
-import hyphenize from '../../../../util/src/hyphenize.ts';
+import hyphenize from "@inspatial/util/hyphenize";
 
 // @ts-ignore - Ignoring TS extension import error
-import {CHANGED, PRIVATE, VALUE} from '../shared/symbols.ts';
+import { CHANGED, PRIVATE, VALUE } from "../shared/symbols.ts";
 
 // Type definitions
 interface AttributeWithValue {
@@ -28,24 +28,27 @@ const refs = new WeakMap<any, ElementWithStyle>();
 
 // Helper functions
 // @ts-ignore - Iterator type issues
-const getKeys = (style: StyleMap): string[] => [...style.keys()].filter(key => key !== PRIVATE);
+const getKeys = (style: StyleMap): string[] =>
+  // @ts-ignore - Map iteration requires downlevelIteration or ES2015+ target
+  [...style.keys()].filter(
+    (key): key is string => typeof key === "string" && key !== String(PRIVATE)
+  );
 
 // @ts-ignore - Function type issues
 const updateKeys = (style: StyleMap): AttributeWithValue | null => {
   const element = refs.get(style);
-  const attr = element?.getAttributeNode('style') || null;
-  
+  const attr = element?.getAttributeNode("style") || null;
+
   if (!attr || attr[CHANGED] || style.get(PRIVATE) !== attr) {
     style.clear();
     if (attr) {
       style.set(PRIVATE, attr);
       for (const rule of attr[VALUE].split(/\s*;\s*/)) {
-        let [key, ...rest] = rule.split(':');
+        let [key, ...rest] = rule.split(":");
         if (rest.length > 0) {
           key = key.trim();
-          const value = rest.join(':').trim();
-          if (key && value)
-            style.set(key, value);
+          const value = rest.join(":").trim();
+          if (key && value) style.set(key, value);
         }
       }
     }
@@ -55,8 +58,7 @@ const updateKeys = (style: StyleMap): AttributeWithValue | null => {
 
 // @ts-ignore - Function type issues
 function push(this: string[], value: any, key: any): void {
-  if (key !== PRIVATE)
-    this.push(`${key}:${value}`);
+  if (key !== PRIVATE) this.push(`${key}:${value}`);
 }
 
 /**
@@ -91,7 +93,7 @@ export class CSSStyleDeclaration extends Map {
   set cssText(value: string) {
     const element = refs.get(this);
     if (element) {
-      element.setAttribute('style', value);
+      element.setAttribute("style", value);
     }
   }
 
@@ -102,7 +104,7 @@ export class CSSStyleDeclaration extends Map {
    */
   getPropertyValue(name: string): string {
     // @ts-ignore - Handler type issues
-    return handler.get(this, name) || '';
+    return handler.get(this, name) || "";
   }
 
   /**
@@ -130,30 +132,30 @@ export class CSSStyleDeclaration extends Map {
    */
   // @ts-ignore - Iterator type issues
   override [Symbol.iterator]() {
-    updateKeys(this);
-    const keys = getKeys(this);
-    const {length} = keys;
+    updateKeys(this as unknown as StyleMap);
+    const keys = getKeys(this as unknown as StyleMap);
+    const { length } = keys;
     let i = 0;
-    
+
     return {
       next() {
         const done = i === length;
         return {
           done,
-          value: done ? null : keys[i++]
+          value: done ? null : keys[i++],
         };
       },
       [Symbol.iterator]() {
         return this;
-      }
+      },
     };
   }
 
   /**
    * Get the private reference to this instance
    */
-  get [PRIVATE]() { 
-    return this; 
+  get [PRIVATE]() {
+    return this;
   }
 
   /**
@@ -161,35 +163,32 @@ export class CSSStyleDeclaration extends Map {
    * @returns CSS string representation
    */
   override toString(): string {
-    updateKeys(this);
+    updateKeys(this as unknown as StyleMap);
     const cssText: string[] = [];
     this.forEach(push, cssText);
-    return cssText.join(';');
+    return cssText.join(";");
   }
 }
 
 // Define the prototype for use in handler
-const {prototype} = CSSStyleDeclaration;
+const { prototype } = CSSStyleDeclaration;
 
 // Proxy handler
 // @ts-ignore - Handler type issues
 const handler = {
   /**
    * Get a style property value
-   * @param style - The style map 
+   * @param style - The style map
    * @param name - The property name
    * @returns The property value
    */
   get(style: StyleMap, name: string | symbol): any {
-    if (name in prototype)
-      return style[name];
+    if (name in prototype) return (style as any)[name];
     updateKeys(style);
-    if (name === 'length')
-      return getKeys(style).length;
-    if (typeof name === 'string' && /^\d+$/.test(name))
+    if (name === "length") return getKeys(style).length;
+    if (typeof name === "string" && /^\d+$/.test(name))
       return getKeys(style)[parseInt(name, 10)];
-    if (typeof name === 'string')
-      return style.get(hyphenize(name));
+    if (typeof name === "string") return style.get(hyphenize(name));
     return undefined;
   },
 
@@ -201,18 +200,16 @@ const handler = {
    * @returns true to indicate success
    */
   set(style: StyleMap, name: string | symbol, value: any): boolean {
-    if (name === 'cssText') {
+    if (name === "cssText") {
       (style as any).cssText = value;
-    } else if (typeof name === 'string') {
+    } else if (typeof name === "string") {
       let attr = updateKeys(style);
-      if (value == null)
-        style.delete(hyphenize(name));
-      else
-        style.set(hyphenize(name), value);
+      if (value == null) style.delete(hyphenize(name));
+      else style.set(hyphenize(name), value);
       if (!attr) {
         const element = refs.get(style);
         if (element) {
-          attr = element.ownerDocument.createAttribute('style');
+          attr = element.ownerDocument.createAttribute("style");
           element.setAttributeNode(attr);
           style.set(PRIVATE, attr);
         }
@@ -223,5 +220,5 @@ const handler = {
       }
     }
     return true;
-  }
+  },
 };
