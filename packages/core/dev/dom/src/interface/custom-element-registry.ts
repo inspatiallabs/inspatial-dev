@@ -1,11 +1,11 @@
 // @ts-ignore - Ignoring TS extension import error
-import {ELEMENT_NODE} from '../shared/constants.ts';
+import { ELEMENT_NODE } from "../shared/constants.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {END, NEXT, UPGRADE} from '../shared/symbols.ts';
+import { END, NEXT, UPGRADE } from "../shared/symbols.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {entries, setPrototypeOf} from '../shared/object.ts';
+import { entries, setPrototypeOf } from "../shared/object.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {shadowRoots} from '../shared/shadow-roots.ts';
+import { shadowRoots } from "../shared/shadow-roots.ts";
 
 let reactive = false;
 
@@ -13,7 +13,12 @@ export const Classes = new WeakMap();
 
 export const customElements = new WeakMap();
 
-export const attributeChangedCallback = (element: any, attributeName: string, oldValue: any, newValue?: any): void => {
+export const attributeChangedCallback = (
+  element: any,
+  attributeName: string,
+  oldValue: any,
+  newValue?: any
+): void => {
   if (
     reactive &&
     customElements.has(element) &&
@@ -24,45 +29,55 @@ export const attributeChangedCallback = (element: any, attributeName: string, ol
   }
 };
 
-const createTrigger = (method: string, isConnected: boolean) => (element: any): void => {
-  if (customElements.has(element)) {
-    const info = customElements.get(element);
-    if (info.connected !== isConnected && element.isConnected === isConnected) {
-      info.connected = isConnected;
-      if (method in element)
-        element[method]();
+const createTrigger =
+  (method: string, isConnected: boolean) =>
+  (element: any): void => {
+    if (customElements.has(element)) {
+      const info = customElements.get(element);
+      if (
+        info.connected !== isConnected &&
+        element.isConnected === isConnected
+      ) {
+        info.connected = isConnected;
+        if (method in element) element[method]();
+      }
     }
-  }
-};
+  };
 
-const triggerConnected = createTrigger('connectedCallback', true);
+const triggerConnected = createTrigger("connectedCallback", true);
 export const connectedCallback = (element: any): void => {
   if (reactive) {
     triggerConnected(element);
-    if (shadowRoots.has(element))
-      element = shadowRoots.get(element).shadowRoot;
+    if (shadowRoots.has(element)) {
+      const entry = shadowRoots.get(element);
+      if (entry && entry.shadowRoot) {
+        element = entry.shadowRoot;
+      }
+    }
     // @ts-ignore - Symbol property access
-    let {[NEXT]: next, [END]: end} = element;
+    let { [NEXT]: next, [END]: end } = element;
     while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE)
-        triggerConnected(next);
+      if (next.nodeType === ELEMENT_NODE) triggerConnected(next);
       // @ts-ignore - Symbol property access
       next = next[NEXT];
     }
   }
 };
 
-const triggerDisconnected = createTrigger('disconnectedCallback', false);
+const triggerDisconnected = createTrigger("disconnectedCallback", false);
 export const disconnectedCallback = (element: any): void => {
   if (reactive) {
     triggerDisconnected(element);
-    if (shadowRoots.has(element))
-      element = shadowRoots.get(element).shadowRoot;
+    if (shadowRoots.has(element)) {
+      const entry = shadowRoots.get(element);
+      if (entry && entry.shadowRoot) {
+        element = entry.shadowRoot;
+      }
+    }
     // @ts-ignore - Symbol property access
-    let {[NEXT]: next, [END]: end} = element;
+    let { [NEXT]: next, [END]: end } = element;
     while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE)
-        triggerDisconnected(next);
+      if (next.nodeType === ELEMENT_NODE) triggerDisconnected(next);
       // @ts-ignore - Symbol property access
       next = next[NEXT];
     }
@@ -121,74 +136,75 @@ export class CustomElementRegistry {
    * @param {Function} Class the custom element **Class** definition
    * @param {object?} options the optional object with an `extends` property
    */
-  define(localName: string, Class: any, options: { extends?: string } = {}): void {
-    const {ownerDocument, registry, waiting} = this;
+  define(
+    localName: string,
+    Class: any,
+    options: { extends?: string } = {}
+  ): void {
+    const { ownerDocument, registry, waiting } = this;
 
     if (registry.has(localName))
-      throw new Error('unable to redefine ' + localName);
+      throw new Error("unable to redefine " + localName);
 
     if (Classes.has(Class))
-      throw new Error('unable to redefine the same class: ' + Class);
+      throw new Error("unable to redefine the same class: " + Class);
 
-    this.active = (reactive = true);
+    this.active = reactive = true;
 
-    const {extends: extend} = options;
+    const { extends: extend } = options;
 
     Classes.set(Class, {
       ownerDocument,
-      options: {is: extend ? localName : ''},
-      localName: extend || localName
+      options: { is: extend ? localName : "" },
+      localName: extend || localName,
     });
 
-    const check = extend ?
-      (element: any): boolean => {
-        return element.localName === extend &&
-               element.getAttribute('is') === localName;
-      } :
-      (element: any): boolean => element.localName === localName;
-    registry.set(localName, {Class, check});
+    const check = extend
+      ? (element: any): boolean => {
+          return (
+            element.localName === extend &&
+            element.getAttribute("is") === localName
+          );
+        }
+      : (element: any): boolean => element.localName === localName;
+    registry.set(localName, { Class, check });
     if (waiting.has(localName)) {
       const resolvers = waiting.get(localName);
       if (resolvers) {
-        for (const resolve of resolvers)
-          resolve(Class);
+        for (const resolve of resolvers) resolve(Class);
         waiting.delete(localName);
       }
     }
-    ownerDocument.querySelectorAll(
-      extend ? `${extend}[is="${localName}"]` : localName
-    ).forEach(this.upgrade, this);
+    ownerDocument
+      .querySelectorAll(extend ? `${extend}[is="${localName}"]` : localName)
+      .forEach(this.upgrade, this);
   }
 
   /**
    * @param {Element} element
    */
   upgrade(element: any): void {
-    if (customElements.has(element))
-      return;
-    const {ownerDocument, registry} = this;
-    const ce = element.getAttribute('is') || element.localName;
+    if (customElements.has(element)) return;
+    const { ownerDocument, registry } = this;
+    const ce = element.getAttribute("is") || element.localName;
     if (registry.has(ce)) {
       const info = registry.get(ce);
       if (info && info.check(element)) {
-        const {Class} = info;
-        const {attributes, isConnected} = element;
-        for (const attr of attributes)
-          element.removeAttributeNode(attr);
+        const { Class } = info;
+        const { attributes, isConnected } = element;
+        for (const attr of attributes) element.removeAttributeNode(attr);
 
         const values = entries(element);
-        for (const [key] of values)
-          delete element[key];
+        for (const [key] of values) delete element[key];
 
         setPrototypeOf(element, Class.prototype);
         // @ts-ignore - Symbol property access
-        ownerDocument[UPGRADE] = {element, values};
+        ownerDocument[UPGRADE] = { element, values };
         new Class(ownerDocument, ce);
 
-        customElements.set(element, {connected: isConnected});
+        customElements.set(element, { connected: isConnected });
 
-        for (const attr of attributes)
-          element.setAttributeNode(attr);
+        for (const attr of attributes) element.setAttributeNode(attr);
 
         if (isConnected && element.connectedCallback)
           element.connectedCallback();
@@ -200,16 +216,15 @@ export class CustomElementRegistry {
    * @param {string} localName the custom element definition name
    */
   whenDefined(localName: string): Promise<any> {
-    const {registry, waiting} = this;
-    return new Promise(resolve => {
+    const { registry, waiting } = this;
+    return new Promise((resolve) => {
       if (registry.has(localName)) {
         const info = registry.get(localName);
         if (info) {
           resolve(info.Class);
         }
       } else {
-        if (!waiting.has(localName))
-          waiting.set(localName, []);
+        if (!waiting.has(localName)) waiting.set(localName, []);
         const waitList = waiting.get(localName);
         if (waitList) {
           waitList.push(resolve);

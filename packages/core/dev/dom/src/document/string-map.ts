@@ -39,7 +39,8 @@ const handler: ProxyHandler<DOMStringMap> = {
     if (name in dataset) {
       const ref = refs.get(dataset);
       if (ref) {
-        return ref.getAttribute(key(name));
+        const attrValue = ref.getAttribute(key(name));
+        return attrValue === null ? undefined : attrValue;
       }
     }
     return undefined;

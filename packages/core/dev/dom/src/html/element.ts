@@ -2,6 +2,8 @@
 import {END, UPGRADE} from '../shared/symbols.ts';
 // @ts-ignore - Ignoring TS extension import error
 import {booleanAttribute, stringAttribute} from '../shared/attributes.ts';
+// @ts-ignore - Ignoring TS extension import error
+import type {ElementNode} from '../shared/attributes.ts';
 
 // @ts-ignore - Ignoring TS extension import error
 import {Event} from '../interface/event.ts';
@@ -71,7 +73,7 @@ export class HTMLElement extends Element {
    * Gets the height of the element, including padding and border but not margins
    * @returns {number} The offset height in pixels
    */
-  get offsetHeight(): number { 
+  override get offsetHeight(): number { 
     const heightAttr = this.getAttribute('height');
     // Return 0 if no height or unit specified, otherwise parse number or return default
     return heightAttr ? parseInt(heightAttr, 10) || 0 : 0;
@@ -81,7 +83,7 @@ export class HTMLElement extends Element {
    * Gets the distance from the left border of the element to the left border of its offsetParent
    * @returns {number} The offset left in pixels
    */
-  get offsetLeft(): number { 
+  override get offsetLeft(): number { 
     // In this implementation, we're defaulting to 0
     // In a real browser this would be calculated based on layout
     return 0;
@@ -91,20 +93,20 @@ export class HTMLElement extends Element {
    * Gets the element's offsetParent (the nearest positioned ancestor)
    * @returns {Element|null} The offset parent element or null if none
    */
-  get offsetParent(): Element | null { 
+  override get offsetParent(): Element | null { 
     // Start with the parent element
     let parent = this.parentElement;
     
     // In a real browser implementation, we would find the nearest positioned ancestor
     // Here we just return the immediate parent or null
-    return parent;
+    return parent as unknown as Element | null;
   }
   
   /**
    * Gets the distance from the top border of the element to the top border of its offsetParent
    * @returns {number} The offset top in pixels
    */
-  get offsetTop(): number { 
+  override get offsetTop(): number { 
     // In this implementation, we're defaulting to 0
     // In a real browser this would be calculated based on layout
     return 0;
@@ -114,18 +116,24 @@ export class HTMLElement extends Element {
    * Gets the width of the element, including padding and border but not margins
    * @returns {number} The offset width in pixels
    */
-  get offsetWidth(): number { 
+  override get offsetWidth(): number { 
     const widthAttr = this.getAttribute('width');
     // Return 0 if no width or unit specified, otherwise parse number or return default
     return widthAttr ? parseInt(widthAttr, 10) || 0 : 0;
   }
 
-  blur(): void { this.dispatchEvent(new Event('blur')); }
+  blur(): void { 
+    // @ts-ignore - Event type compatibility in this implementation
+    this.dispatchEvent(new Event('blur')); 
+  }
+  
   click(): void {
+    // @ts-ignore - Event type compatibility in this implementation
     const clickEvent = new Event('click', {bubbles: true, cancelable: true});
     // @ts-ignore - Property 'button' is set for mouse events
     clickEvent.button = 0;
 
+    // @ts-ignore - Event type compatibility in this implementation
     this.dispatchEvent(clickEvent);
   }
 
@@ -137,24 +145,24 @@ export class HTMLElement extends Element {
   get isContentEditable(): boolean { return this.hasAttribute('contenteditable'); }
 
   // Boolean Accessors
-  get contentEditable(): boolean { return booleanAttribute.get(this, 'contenteditable'); }
-  set contentEditable(value: boolean) { booleanAttribute.set(this, 'contenteditable', value); }
-  get draggable(): boolean { return booleanAttribute.get(this, 'draggable'); }
-  set draggable(value: boolean) { booleanAttribute.set(this, 'draggable', value); }
-  get hidden(): boolean { return booleanAttribute.get(this, 'hidden'); }
-  set hidden(value: boolean) { booleanAttribute.set(this, 'hidden', value); }
-  get spellcheck(): boolean { return booleanAttribute.get(this, 'spellcheck'); }
-  set spellcheck(value: boolean) { booleanAttribute.set(this, 'spellcheck', value); }
+  get contentEditable(): boolean { return booleanAttribute.get(this as unknown as ElementNode, 'contenteditable'); }
+  set contentEditable(value: boolean) { booleanAttribute.set(this as unknown as ElementNode, 'contenteditable', value); }
+  get draggable(): boolean { return booleanAttribute.get(this as unknown as ElementNode, 'draggable'); }
+  set draggable(value: boolean) { booleanAttribute.set(this as unknown as ElementNode, 'draggable', value); }
+  get hidden(): boolean { return booleanAttribute.get(this as unknown as ElementNode, 'hidden'); }
+  set hidden(value: boolean) { booleanAttribute.set(this as unknown as ElementNode, 'hidden', value); }
+  get spellcheck(): boolean { return booleanAttribute.get(this as unknown as ElementNode, 'spellcheck'); }
+  set spellcheck(value: boolean) { booleanAttribute.set(this as unknown as ElementNode, 'spellcheck', value); }
 
   // String Accessors
-  get accessKey(): string { return stringAttribute.get(this, 'accesskey'); }
-  set accessKey(value: string) { stringAttribute.set(this, 'accesskey', value); }
-  get dir(): string { return stringAttribute.get(this, 'dir'); }
-  set dir(value: string) { stringAttribute.set(this, 'dir', value); }
-  get lang(): string { return stringAttribute.get(this, 'lang'); }
-  set lang(value: string) { stringAttribute.set(this, 'lang', value); }
-  get title(): string { return stringAttribute.get(this, 'title'); }
-  set title(value: string) { stringAttribute.set(this, 'title', value); }
+  get accessKey(): string { return stringAttribute.get(this as unknown as ElementNode, 'accesskey'); }
+  set accessKey(value: string) { stringAttribute.set(this as unknown as ElementNode, 'accesskey', value); }
+  get dir(): string { return stringAttribute.get(this as unknown as ElementNode, 'dir'); }
+  set dir(value: string) { stringAttribute.set(this as unknown as ElementNode, 'dir', value); }
+  get lang(): string { return stringAttribute.get(this as unknown as ElementNode, 'lang'); }
+  set lang(value: string) { stringAttribute.set(this as unknown as ElementNode, 'lang', value); }
+  get title(): string { return stringAttribute.get(this as unknown as ElementNode, 'title'); }
+  set title(value: string) { stringAttribute.set(this as unknown as ElementNode, 'title', value); }
 
   // DOM Level 0
   get onabort(): any { return level0.get(this, 'onabort'); }

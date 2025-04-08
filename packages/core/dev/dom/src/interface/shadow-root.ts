@@ -1,27 +1,36 @@
 // @ts-ignore - Ignoring TS extension import error
-import {DOCUMENT_FRAGMENT_NODE} from '../shared/constants.ts';
+import { DOCUMENT_FRAGMENT_NODE } from "../shared/constants.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {getInnerHtml, setInnerHtml} from '../mixin/inner-html.ts';
+import { getInnerHtml, setInnerHtml } from "../mixin/inner-html.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {NonElementParentNode} from '../mixin/non-element-parent-node.ts';
+import { DocumentFragment } from "./document-fragment.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {Element} from './element.ts';
+import { Element } from "./element.ts";
 
 /**
+ * Implements a specialized Shadow DOM root that extends DocumentFragment
+ * This implements the TODO from @benemma to have ShadowRoot as a specialized class
+ * extending DocumentFragment to better model the DOM specification
+ *
  * @implements globalThis.ShadowRoot
  */
-export class ShadowRoot extends NonElementParentNode {
+export class ShadowRoot extends DocumentFragment {
   /**
    * The element that hosts this shadow root
    */
   host: Element;
 
   /**
+   * The mode of the shadow root (open or closed)
+   */
+  mode: string = "open";
+
+  /**
    * Creates a new ShadowRoot
    * @param host - The element that will host this shadow root
    */
   constructor(host: Element) {
-    super(host.ownerDocument, '#shadow-root', DOCUMENT_FRAGMENT_NODE);
+    super(host.ownerDocument);
     this.host = host;
   }
 

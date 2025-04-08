@@ -16,13 +16,11 @@ import {
   Document,
   DocumentFragment
 } from "../src/cached.ts";
-// @ts-ignore - Ignoring TS extension import error
-import { ParentNode } from "../src/mixin/parent-node.ts";
 
 // Test document to use for creating nodes
 const createTestDocument = () => {
-  // For Document the signature is (ownerDocument, localName, nodeType)
-  return new Document(null, "document", Node.DOCUMENT_NODE);
+  // Create Document with correct number of arguments
+  return new Document("");
 };
 
 /**

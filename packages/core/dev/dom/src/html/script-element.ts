@@ -5,6 +5,8 @@ import { registerHTMLClass } from '../shared/register-html-class.ts';
 
 // @ts-ignore - Ignoring TS extension import error
 import { TextElement } from './text-element.ts';
+// @ts-ignore - Ignoring TS extension import error
+import type { ElementNode } from "../shared/attributes.ts";
 
 const tagName = 'script';
 
@@ -17,24 +19,24 @@ export class HTMLScriptElement extends TextElement {
   }
 
   get type(): string {
-    return stringAttribute.get(this, 'type');
+    return stringAttribute.get(this as unknown as ElementNode, 'type');
   }
   set type(value: string) {
-    stringAttribute.set(this, 'type', value);
+    stringAttribute.set(this as unknown as ElementNode, 'type', value);
   }
 
   get src(): string {
-    return stringAttribute.get(this, 'src');
+    return stringAttribute.get(this as unknown as ElementNode, 'src');
   }
   set src(value: string) {
-    stringAttribute.set(this, 'src', value);
+    stringAttribute.set(this as unknown as ElementNode, 'src', value);
   }
 
   get defer(): boolean {
-    return booleanAttribute.get(this, 'defer');
+    return booleanAttribute.get(this as unknown as ElementNode, 'defer');
   }
   set defer(value: boolean) {
-    booleanAttribute.set(this, 'defer', value);
+    booleanAttribute.set(this as unknown as ElementNode, 'defer', value);
   }
   
   get crossOrigin(): string | null {
@@ -45,31 +47,31 @@ export class HTMLScriptElement extends TextElement {
   }
   
   get nomodule(): boolean {
-    return booleanAttribute.get(this, 'nomodule');
+    return booleanAttribute.get(this as unknown as ElementNode, 'nomodule');
   }
   set nomodule(value: boolean) {
-    booleanAttribute.set(this, 'nomodule', value);
+    booleanAttribute.set(this as unknown as ElementNode, 'nomodule', value);
   }
   
   get referrerPolicy(): string {
-    return stringAttribute.get(this, 'referrerpolicy');
+    return stringAttribute.get(this as unknown as ElementNode, 'referrerpolicy');
   }
   set referrerPolicy(value: string) {
-    stringAttribute.set(this, 'referrerpolicy', value);
+    stringAttribute.set(this as unknown as ElementNode, 'referrerpolicy', value);
   }
   
   override get nonce(): string {
-    return stringAttribute.get(this, 'nonce');
+    return stringAttribute.get(this as unknown as ElementNode, 'nonce');
   }
   override set nonce(value: string) {
-    stringAttribute.set(this, 'nonce', value);
+    stringAttribute.set(this as unknown as ElementNode, 'nonce', value);
   }
   
   get async(): boolean {
-    return booleanAttribute.get(this, 'async');
+    return booleanAttribute.get(this as unknown as ElementNode, 'async');
   }
   set async(value: boolean) {
-    booleanAttribute.set(this, 'async', value);
+    booleanAttribute.set(this as unknown as ElementNode, 'async', value);
   }
   
   get text(): string | null { return this.textContent; }

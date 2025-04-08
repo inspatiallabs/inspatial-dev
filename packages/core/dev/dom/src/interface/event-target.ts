@@ -39,8 +39,10 @@ interface CustomEvent extends Event {
   currentTarget: EventTarget | null;
   target: EventTarget | null;
   // Constants for event phases
-  readonly AT_TARGET: number;
-  readonly BUBBLING_PHASE: number;
+  readonly AT_TARGET: 2;
+  readonly BUBBLING_PHASE: 3;
+  readonly CAPTURING_PHASE: 1;
+  readonly NONE: 0;
 }
 
 // Use our internal type for the event target

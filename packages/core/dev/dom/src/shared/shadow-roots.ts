@@ -1,1 +1,4 @@
-export const shadowRoots = new WeakMap;
+export const shadowRoots = new WeakMap<
+  Element,
+  { mode: string; shadowRoot: ShadowRoot }
+>();

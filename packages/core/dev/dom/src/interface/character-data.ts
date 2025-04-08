@@ -64,9 +64,11 @@ export class CharacterData extends Node {
   }
 
   override get previousElementSibling(): Node | null {
+    // @ts-expect-error - This is valid at runtime but has type incompatibility in TS
     return previousElementSibling(this) as Node | null;
   }
   override get nextElementSibling(): Node | null {
+    // @ts-expect-error - This is valid at runtime but has type incompatibility in TS
     return nextElementSibling(this) as Node | null;
   }
 
