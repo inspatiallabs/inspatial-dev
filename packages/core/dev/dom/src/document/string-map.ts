@@ -36,39 +36,55 @@ export class DOMStringMap {
 
 const handler: ProxyHandler<DOMStringMap> = {
   get(dataset: DOMStringMap, name: string): string | undefined {
-    if (name in dataset) {
-      const ref = refs.get(dataset);
-      if (ref) {
-        const attrValue = ref.getAttribute(key(name));
-        return attrValue === null ? undefined : attrValue;
-      }
+    // Skip internal properties and symbols
+    if (typeof name === 'symbol' || name === 'constructor' || name === 'toString') {
+      return (dataset as any)[name];
+    }
+    
+    const ref = refs.get(dataset);
+    if (ref) {
+      const attrValue = ref.getAttribute(key(name));
+      return attrValue === null ? undefined : attrValue;
     }
     return undefined;
   },
 
   set(dataset: DOMStringMap, name: string, value: string): boolean {
-    /** Ensure the name is a valid property of the dataset */
-    if (Object.prototype.hasOwnProperty.call(dataset, name)) {
-      dataset[name] = value; // Set the value in the dataset
-      const ref = refs.get(dataset);
-      if (ref) {
-        ref.setAttribute(key(name), value); // Update the corresponding attribute
-      }
-      return true; // Indicate success
+    // Skip internal properties and symbols
+    if (typeof name === 'symbol' || name === 'constructor' || name === 'toString') {
+      (dataset as any)[name] = value;
+      return true;
     }
-    return false; // Indicate failure if name is invalid
+    
+    const ref = refs.get(dataset);
+    if (ref) {
+      // Set the data attribute on the element
+      ref.setAttribute(key(name), value);
+      
+      // Also set it on the dataset object
+      (dataset as any)[name] = value;
+      return true;
+    }
+    return false;
   },
 
   deleteProperty(dataset: DOMStringMap, name: string): boolean {
-    /** Check if the name exists in the dataset */
-    if (Object.prototype.hasOwnProperty.call(dataset, name)) {
-      const ref = refs.get(dataset);
-      if (ref) {
-        ref.removeAttribute(key(name));
-      }
+    const ref = refs.get(dataset);
+    if (ref) {
+      ref.removeAttribute(key(name));
     }
-    return delete dataset[name];
+    return delete (dataset as any)[name];
   },
+  
+  // Add has to support 'in' operator
+  has(dataset: DOMStringMap, name: string): boolean {
+    if (typeof name === 'symbol' || name === 'constructor' || name === 'toString') {
+      return name in dataset;
+    }
+    
+    const ref = refs.get(dataset);
+    return ref ? ref.hasAttribute(key(name)) : false;
+  }
 };
 
 setPrototypeOf(DOMStringMap.prototype, null);

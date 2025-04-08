@@ -171,28 +171,178 @@ export class EventTarget {
    * @returns Whether the default action was prevented
    */
   dispatchEvent(event: Event): boolean {
-    if (!(event instanceof Event)) {
+    // Check if event is an instance of Event by checking its properties rather than instanceof
+    if (!event || typeof event !== 'object' || typeof event.type !== 'string') {
       throw new Error('Invalid event');
     }
     
     // Set up the event
     const customEvent = event as unknown as CustomEvent;
-    customEvent.target = this;
+    if (!customEvent.target) {
+      customEvent.target = this;
+    }
     
-    // Build the event path
-    const path = [{currentTarget: this, target: this}];
+    // Reset event state for new dispatch
+    customEvent._stopImmediatePropagationFlag = false;
+    customEvent.cancelBubble = false;
+    
+    // Build the event path for propagation
+    // Start with this node as the target
+    const path = [];
+    
+    // If this element has a parentNode, add to path for bubbling phase (bottom-up)
+    if ('parentNode' in this && (this as any).parentNode) {
+      // Add current target
+      path.push({currentTarget: this as EventTarget, target: customEvent.target || this});
+      
+      // Add parent nodes
+      let parent = (this as any).parentNode as EventTarget;
+      while (parent) {
+        path.push({currentTarget: parent as EventTarget, target: customEvent.target || this});
+        // Check if parent has a parentNode property and it's not null before assigning
+        const nextParent = 'parentNode' in parent ? (parent as any).parentNode : null;
+        if (!nextParent) break;
+        parent = nextParent as EventTarget;
+      }
+    } else {
+      // For non-DOM EventTargets, just handle on the target itself
+      path.push({currentTarget: this as EventTarget, target: customEvent.target || this});
+    }
+    
+    // Store the path for composedPath() calls
     customEvent._path = path;
     
-    // Initialize event phase
-    customEvent.eventPhase = customEvent.CAPTURING_PHASE;
+    let stopped = false;
+    let defaultPrevented = false;
     
-    // Dispatch the event
-    const canceled = customEvent._path.reverse().some(invokeListeners, customEvent);
+    // At target phase - always happens first
+    const firstNode = path[0];
+    customEvent.eventPhase = customEvent.AT_TARGET;
+    customEvent.currentTarget = firstNode.currentTarget;
+    
+    // Dispatch to target
+    try {
+      const listeners = this._getListeners(customEvent.type);
+      if (listeners) {
+        for (const [listener, options] of Array.from(listeners.entries())) {
+          if (customEvent._stopImmediatePropagationFlag) break;
+          
+          try {
+            // Call the listener
+            if (typeof listener === 'function') {
+              listener.call(customEvent.target as EventTarget, customEvent);
+            } else {
+              listener.handleEvent(customEvent);
+            }
+          } catch (error) {
+            console.error('Error in event listener:', error);
+          }
+          
+          // Handle once option
+          const once = typeof options === 'boolean' ? false : !!(options as AddEventListenerOptions)?.once;
+          if (once && listeners.has(listener)) {
+            listeners.delete(listener);
+          }
+          
+          // Check if default was prevented
+          if (customEvent.defaultPrevented) {
+            defaultPrevented = true;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error dispatching event at target:', error);
+    }
+    
+    // Stop if propagation was explicitly stopped
+    if (customEvent.cancelBubble) {
+      stopped = true;
+    }
+    
+    // Bubbling phase (go through parent chain) if the event bubbles and wasn't stopped
+    if (!stopped && customEvent.bubbles && path.length > 1) {
+      // Only go through parents (skip the target)
+      const bubblePath = path.slice(1);
+      
+      for (const node of bubblePath) {
+        if (stopped) break;
+        
+        customEvent.eventPhase = customEvent.BUBBLING_PHASE;
+        customEvent.currentTarget = node.currentTarget;
+        
+        try {
+          // Get listeners for this node
+          const parentTarget = node.currentTarget as EventTarget;
+          const map = wm.get(parentTarget);
+          
+          if (map && map.has(customEvent.type)) {
+            const listeners = map.get(customEvent.type)!;
+            
+            for (const [listener, options] of Array.from(listeners.entries())) {
+              if (customEvent.cancelBubble || customEvent._stopImmediatePropagationFlag) {
+                stopped = true;
+                break;
+              }
+              
+              // Skip capturing listeners during bubble phase
+              const capture = typeof options === 'boolean' ? options : !!(options as AddEventListenerOptions)?.capture;
+              if (capture) continue;
+              
+              try {
+                // Call the listener
+                if (typeof listener === 'function') {
+                  listener.call(parentTarget as EventTarget, customEvent);
+                } else {
+                  listener.handleEvent(customEvent);
+                }
+              } catch (error) {
+                console.error('Error in event listener during bubble:', error);
+              }
+              
+              // Handle once option
+              const once = typeof options === 'boolean' ? false : !!(options as AddEventListenerOptions)?.once;
+              if (once && listeners.has(listener)) {
+                listeners.delete(listener);
+              }
+              
+              // Check if propagation was stopped
+              if (customEvent.cancelBubble) {
+                stopped = true;
+                break;
+              }
+              
+              // Check if default was prevented
+              if (customEvent.defaultPrevented) {
+                defaultPrevented = true;
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error dispatching event during bubble:', error);
+        }
+      }
+    }
     
     // Reset event properties
     customEvent.currentTarget = null;
-    customEvent.eventPhase = customEvent.NONE;
+    customEvent.eventPhase = customEvent.NONE || 0;
     
-    return !customEvent.defaultPrevented && !canceled;
+    // For non-cancelable events, always return true regardless of defaultPrevented
+    if (!customEvent.cancelable) {
+      return true;
+    }
+    
+    // For cancelable events, return false if defaultPrevented
+    return !defaultPrevented;
+  }
+  
+  /**
+   * Helper method to get listeners for a specific event type
+   * @private
+   */
+  private _getListeners(type: string): Map<EventListenerOrEventListenerObject, AddEventListenerOptions | boolean | undefined> | undefined {
+    const map = wm.get(this);
+    if (!map) return undefined;
+    return map.get(type);
   }
 }

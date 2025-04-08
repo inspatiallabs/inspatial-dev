@@ -10,10 +10,12 @@ import {
   NODE_END,
   CDATA_SECTION_NODE,
   COMMENT_NODE,
+  DOCUMENT_NODE,
+  DOCUMENT_TYPE_NODE,
 } from "../shared/constants.ts";
 
 // @ts-ignore - Ignoring TS extension import error
-import { PRIVATE, END, NEXT, PREV, START, VALUE } from "../shared/symbols.ts";
+import { PRIVATE, END, NEXT, PREV, START, VALUE, MUTATION_OBSERVER } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import { prepareMatch } from "../shared/matches.ts";
@@ -242,32 +244,48 @@ export class ParentNode extends Node {
 
   // @ts-ignore - Resolving accessor vs property conflict
   override appendChild(node: any): any {
-    // Make sure the node is properly added to the internal child list
-    if (node) {
-      // If the node is already a child of this node, remove it first
-      if (node.parentNode === this) {
-        this.removeChild(node);
+    if (node === this) throw new Error("unable to append a node to itself");
+    
+    // Special case for DocumentFragment
+    if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
+      let child = node.firstChild;
+      while (child) {
+        const next = child.nextSibling;
+        this.appendChild(child);
+        child = next;
+      }
+      return node;
+    }
+    
+    // Regular node appending
+    if (node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+    
+    node.parentNode = this;
+    
+    // Insert the node before the END marker
+    const prev = (this as any)[END][PREV];
+    const end = (this as any)[END];
+    
+    node[PREV] = prev;
+    node[NEXT] = end;
+    prev[NEXT] = node;
+    end[PREV] = node;
+    
+    // Safely call mutation observer callback if available
+    try {
+      // Call lifecycle callbacks
+      const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
+      if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
+        moCallback(node, this);
       }
       
-      // Set the parent and insert the node
-      node.parentNode = this;
-      
-      // Insert before the end marker
-      const end = (this as any)[END];
-      const prev = end[PREV];
-      
-      // Link the node into the tree
-      node[PREV] = prev;
-      node[NEXT] = end;
-      prev[NEXT] = node;
-      end[PREV] = node;
-      
-      // Call lifecycle callbacks
-      // @ts-ignore - Using proper mutation record shape
-      moCallback(this, {addedNodes: [node]});
       if (node.nodeType === ELEMENT_NODE) {
         connectedCallback(node);
       }
+    } catch (error) {
+      console.warn('Error in mutation observer callback:', error);
     }
     
     return node;
@@ -285,14 +303,26 @@ export class ParentNode extends Node {
     if (node === before) return node;
     if (node === this) throw new Error("unable to append a node to itself");
     const next = before || (this as any)[END];
+    
     switch (node.nodeType) {
       case ELEMENT_NODE:
         node.remove();
         node.parentNode = this;
         knownBoundaries(next[PREV], node, next);
-        moCallback(node, null);
+        
+        // Safely call mutation observer callback
+        try {
+          const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
+          if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
+            moCallback(node, null);
+          }
+        } catch (error) {
+          console.warn('Error in mutation observer callback:', error);
+        }
+        
         connectedCallback(node);
         break;
+        
       case DOCUMENT_FRAGMENT_NODE: {
         let parentNode = node[PRIVATE];
         let firstChild = node.firstChild;
@@ -303,7 +333,17 @@ export class ParentNode extends Node {
           if (parentNode) parentNode.replaceChildren();
           do {
             firstChild.parentNode = this;
-            moCallback(firstChild, null);
+            
+            // Safely call mutation observer callback
+            try {
+              const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
+              if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
+                moCallback(firstChild, null);
+              }
+            } catch (error) {
+              console.warn('Error in mutation observer callback:', error);
+            }
+            
             if (firstChild.nodeType === ELEMENT_NODE)
               connectedCallback(firstChild);
           } while (
@@ -313,6 +353,7 @@ export class ParentNode extends Node {
         }
         break;
       }
+      
       case TEXT_NODE:
       case COMMENT_NODE:
       case CDATA_SECTION_NODE:
@@ -322,9 +363,20 @@ export class ParentNode extends Node {
       default:
         node.parentNode = this;
         knownSiblings(next[PREV], node, next);
-        moCallback(node, null);
+        
+        // Safely call mutation observer callback
+        try {
+          const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
+          if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
+            moCallback(node, null);
+          }
+        } catch (error) {
+          console.warn('Error in mutation observer callback:', error);
+        }
+        
         break;
     }
+    
     return node;
   }
 

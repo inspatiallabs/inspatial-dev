@@ -103,8 +103,9 @@ export class CSSStyleDeclaration extends Map {
    * @returns The value of the property
    */
   getPropertyValue(name: string): string {
-    // @ts-ignore - Handler type issues
-    return handler.get(this, name) || "";
+    // Always return a string (empty string if property doesn't exist)
+    const value = handler.get(this, name);
+    return value === undefined || value === null ? "" : value;
   }
 
   /**

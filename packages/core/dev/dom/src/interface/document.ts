@@ -6,6 +6,7 @@ import {
   DOCUMENT_FRAGMENT_NODE,
   DOCUMENT_TYPE_NODE,
   ELEMENT_NODE,
+  TEXT_NODE,
   SVG_NAMESPACE,
 } from "../shared/constants.ts";
 
@@ -106,7 +107,7 @@ export class Document extends NonElementParentNode {
   constructor(type: string) {
     super(null, "#document", DOCUMENT_NODE);
     (this as any)[CUSTOM_ELEMENTS] = { active: false, registry: null };
-    (this as any)[MUTATION_OBSERVER] = { active: false, class: null };
+    (this as any)[MUTATION_OBSERVER] = { active: false, class: null, observers: new Set() };
     (this as any)[MIME] = Mime[type as keyof typeof Mime];
     /** @type {DocumentType} */
     (this as any)[DOCTYPE] = null;
@@ -216,7 +217,71 @@ export class Document extends NonElementParentNode {
   }
 
   get documentElement() {
-    return this.firstElementChild;
+    // Check if there's an existing HTML element
+    const html = this.firstElementChild;
+    
+    // If no HTML element exists, create one
+    if (!html) {
+      const htmlElement = this.createElement('html');
+      this.appendChild(htmlElement);
+      return htmlElement;
+    }
+    
+    return html;
+  }
+
+  /**
+   * Gets the head element of the document
+   * @returns The head element or null if not found
+   */
+  get head() {
+    const documentElement = this.documentElement;
+    if (!documentElement) return null;
+    
+    // Look for existing head element
+    let head = null;
+    for (let i = 0; i < documentElement.childNodes.length; i++) {
+      const child = documentElement.childNodes[i];
+      if (child.nodeType === ELEMENT_NODE && child.nodeName === 'HEAD') {
+        head = child;
+        break;
+      }
+    }
+    
+    // Create head if it doesn't exist
+    if (!head) {
+      head = this.createElement('head');
+      documentElement.appendChild(head);
+    }
+    
+    return head;
+  }
+  
+  /**
+   * Gets the body element of the document
+   * @returns The body element or null if not found
+   */
+  get body() {
+    const documentElement = this.documentElement;
+    if (!documentElement) return null;
+    
+    // Look for existing body element
+    let body = null;
+    for (let i = 0; i < documentElement.childNodes.length; i++) {
+      const child = documentElement.childNodes[i];
+      if (child.nodeType === ELEMENT_NODE && child.nodeName === 'BODY') {
+        body = child;
+        break;
+      }
+    }
+    
+    // Create body if it doesn't exist
+    if (!body) {
+      body = this.createElement('body');
+      documentElement.appendChild(body);
+    }
+    
+    return body;
   }
 
   override get isConnected() {
@@ -303,10 +368,8 @@ export class Document extends NonElementParentNode {
     return document;
   }
 
-  importNode(externalNode: Node) {
-    // important: keep the signature length as *one*
-    // or it would behave like old IE or Edge with polyfills
-    const deep = 1 < arguments.length && !!arguments[1];
+  importNode(externalNode: Node, deep = false) {
+    // Modified to properly handle deep parameter
     const node = externalNode.cloneNode(deep);
     const { [CUSTOM_ELEMENTS]: customElements } = this as any;
     const { active } = customElements;
@@ -331,6 +394,53 @@ export class Document extends NonElementParentNode {
         }
       }
     }
+    return node;
+  }
+
+  /**
+   * Adopts a node from another document, removing it from that document and placing it in this one
+   * @param node - The node to adopt
+   * @returns The adopted node
+   */
+  adoptNode(node: Node): Node {
+    const oldDoc = node.ownerDocument;
+    if (oldDoc && oldDoc !== this) {
+      // Remove the node from its old document if it has a parent
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+      
+      // Set the ownerDocument property
+      (node as any).ownerDocument = this;
+      
+      // If the node is an element, also update its children
+      if (node.nodeType === ELEMENT_NODE) {
+        // Recursively update ownerDocument for all child nodes
+        const walkChildren = (parent: any) => {
+          let { [NEXT]: next, [END]: end } = parent;
+          while (next !== end) {
+            if (next.nodeType === ELEMENT_NODE || next.nodeType === TEXT_NODE) {
+              (next as any).ownerDocument = this;
+              
+              // Process children of elements recursively
+              if (next.nodeType === ELEMENT_NODE) {
+                walkChildren(next);
+              }
+            }
+            next = next[NEXT];
+          }
+        };
+        
+        walkChildren(node);
+        
+        // Upgrade custom elements if necessary
+        const { [CUSTOM_ELEMENTS]: customElements } = this as any;
+        if (customElements.active) {
+          customElements.upgrade(node);
+        }
+      }
+    }
+    
     return node;
   }
 

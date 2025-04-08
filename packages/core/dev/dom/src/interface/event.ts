@@ -31,17 +31,18 @@ export interface EventInit {
  * @implements globalThis.Event
  */
 class GlobalEvent {
-  static get BUBBLING_PHASE(): number {
-    return BUBBLING_PHASE;
+  // Define phase constants as specific number literals to match DOM spec
+  static get BUBBLING_PHASE(): 3 {
+    return BUBBLING_PHASE as 3;
   }
-  static get AT_TARGET(): number {
-    return AT_TARGET;
+  static get AT_TARGET(): 2 {
+    return AT_TARGET as 2;
   }
-  static get CAPTURING_PHASE(): number {
-    return CAPTURING_PHASE;
+  static get CAPTURING_PHASE(): 1 {
+    return CAPTURING_PHASE as 1;
   }
-  static get NONE(): number {
-    return NONE;
+  static get NONE(): 0 {
+    return NONE as 0;
   }
 
   type: string;
@@ -49,12 +50,15 @@ class GlobalEvent {
   cancelable: boolean;
   cancelBubble: boolean;
   defaultPrevented: boolean;
-  eventPhase: number;
+  eventPhase: 0 | 1 | 2 | 3;
   timeStamp: number;
   originalTarget: any;
   returnValue: any;
   srcElement: any;
   target: any;
+  currentTarget: any = null;
+  composed: boolean = false;
+  isTrusted: boolean = false;
   /** @internal */
   _stopImmediatePropagationFlag: boolean;
   /** @internal */
@@ -78,20 +82,21 @@ class GlobalEvent {
     this.returnValue = null;
     this.srcElement = null;
     this.target = null;
+    this.composed = !!eventInitDict.composed;
     this._path = [];
   }
 
-  get BUBBLING_PHASE(): number {
-    return BUBBLING_PHASE;
+  get BUBBLING_PHASE(): 3 {
+    return BUBBLING_PHASE as 3;
   }
-  get AT_TARGET(): number {
-    return AT_TARGET;
+  get AT_TARGET(): 2 {
+    return AT_TARGET as 2;
   }
-  get CAPTURING_PHASE(): number {
-    return CAPTURING_PHASE;
+  get CAPTURING_PHASE(): 1 {
+    return CAPTURING_PHASE as 1;
   }
-  get NONE(): number {
-    return NONE;
+  get NONE(): 0 {
+    return NONE as 0;
   }
 
   /**
@@ -121,7 +126,7 @@ class GlobalEvent {
    * Stop immediate propagation of the event
    */
   stopImmediatePropagation(): void {
-    this.stopPropagation();
+    this.cancelBubble = true;
     this._stopImmediatePropagationFlag = true;
   }
 

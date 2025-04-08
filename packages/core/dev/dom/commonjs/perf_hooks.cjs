@@ -1,7 +1,7 @@
 // Minimal implementation of the perf_hooks module
 // This just provides a performance object compatible with the DOM implementation
 
-'use strict';
+"use strict";
 
 // Create a minimal performance implementation
 const performance = {
@@ -13,7 +13,7 @@ const performance = {
   clearMarks() {},
   clearMeasures() {},
   timeOrigin: Date.now(),
-  timing: {}
+  timing: {},
 };
 
-module.exports = { performance }; 
+module.exports = { performance };

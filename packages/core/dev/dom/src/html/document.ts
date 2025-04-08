@@ -69,7 +69,7 @@ export class HTMLDocument extends Document {
   /**
    * @type HTMLHeadElement
    */
-  get head(): HTMLElement {
+  override get head(): HTMLElement {
     // @ts-ignore - Type assertion for documentElement
     const documentElement = this.documentElement as HTMLElement;
     // @ts-ignore - Type assertion for firstElementChild
@@ -86,7 +86,7 @@ export class HTMLDocument extends Document {
   /**
    * @type HTMLBodyElement
    */
-  get body(): HTMLElement {
+  override get body(): HTMLElement {
     const head = this.head;
     // @ts-ignore - Type assertion for nextElementSibling
     let nextElementSibling = head.nextElementSibling as HTMLElement | null;
