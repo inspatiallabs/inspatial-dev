@@ -1,12 +1,12 @@
 // @ts-ignore - Ignoring TS extension import error
-import {HTMLImageElement} from '../html/image-element.ts';
+import { HTMLImageElement } from "../html/image-element.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {registerHTMLClass} from '../shared/register-html.ts';
+import { registerHTMLClass } from "../shared/register-html-class.ts";
 
 /**
  * Creates an Image class factory for the given document
  * @param ownerDocument - The document that owns the Image class
- * @returns A constructor for Image objects
+ * @returns A constructosr for Image objects
  */
 export const ImageClass = (ownerDocument: any) => {
   /**
@@ -22,12 +22,12 @@ export const ImageClass = (ownerDocument: any) => {
       super(ownerDocument);
       switch (arguments.length) {
         case 1:
-          this.height = width;
-          this.width = width;
+          (this as any).height = width || 0;
+          (this as any).width = width || 0;
           break;
         case 2:
-          this.height = height!;
-          this.width = width!;
+          (this as any).height = height || 0;
+          (this as any).width = width || 0;
           break;
       }
     }
@@ -37,5 +37,5 @@ export const ImageClass = (ownerDocument: any) => {
 };
 
 // Register the Image class
-const tagName = 'img';
+const tagName = "img";
 registerHTMLClass(tagName, HTMLImageElement);

@@ -3,9 +3,7 @@
  * This module is crucial for InSpatial DOM implementation and streaming updates.
  */
 
-import { parseHTML } from "../index.ts"
-
-
+import { parseHTML } from "./index.ts";
 
 /** Interface for the DOM tree walker used in streaming updates */
 interface InWalkerType {
@@ -41,7 +39,7 @@ const SPECIAL_TAGS = new Set(["HTML", "HEAD", "BODY"]);
 /** Utility function to wait for the next animation frame */
 const wait = () => new Promise((resolve) => requestAnimationFrame(resolve));
 
-/** 
+/**
  * Main function to diff and update DOM nodes based on an HTML stream
  * @param oldNode - The existing DOM node to update
  * @param stream - ReadableStream containing the new HTML content
@@ -66,7 +64,7 @@ export async function diffStream(
   }
 }
 
-/** 
+/**
  * Updates a single node by comparing and applying changes from the new node
  * @param oldNode - The existing DOM node to update
  * @param newNode - The new node to diff against
@@ -103,7 +101,7 @@ async function updateNode(oldNode: Node, newNode: Node, walker: InWalkerType) {
   }
 }
 
-/** 
+/**
  * Updates attributes of an element by comparing old and new attribute sets
  * @param oldAttributes - Current attributes of the element
  * @param newAttributes - New attributes to apply
@@ -144,13 +142,17 @@ function setAttributes(
   }
 }
 
-/** 
+/**
  * Recursively updates child nodes of a parent element
  * @param oldParent - The existing parent node
  * @param newParent - The new parent node to diff against
  * @param walker - Walker instance for traversing the DOM tree
  */
-async function setChildNodes(oldParent: Node, newParent: Node, walker: InWalkerType) {
+async function setChildNodes(
+  oldParent: Node,
+  newParent: Node,
+  walker: InWalkerType
+) {
   let checkOld;
   let oldKey;
   let newKey;
@@ -229,7 +231,7 @@ async function setChildNodes(oldParent: Node, newParent: Node, walker: InWalkerT
   });
 }
 
-/** 
+/**
  * Retrieves the key identifier for a node
  * @param node - The node to get the key from
  * @returns The key value from either the 'key' attribute or id
@@ -238,7 +240,7 @@ function getKey(node: Node) {
   return (node as Element)?.getAttribute?.("key") || (node as Element).id;
 }
 
-/** 
+/**
  * Creates a walker for traversing an HTML stream
  * @param stream - ReadableStream containing HTML content
  * @param options - Configuration options for the walker

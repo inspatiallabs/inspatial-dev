@@ -15,16 +15,13 @@ import { HTMLHRElement } from "../html/hr-element.ts";
 import { HTMLProgressElement } from "../html/progress-element.ts";
 import { HTMLParagraphElement } from "../html/paragraph-element.ts";
 import { HTMLTableElement } from "../html/table-element.ts";
-import { HTMLFrameSetElement } from "../html/frame-set-element.ts";
 import { HTMLLIElement } from "../html/li-element.ts";
 import { HTMLBaseElement } from "../html/base-element.ts";
 import { HTMLDataListElement } from "../html/data-list-element.ts";
 import { HTMLInputElement } from "../html/input-element.ts";
-import { HTMLParamElement } from "../html/param-element.ts";
 import { HTMLMediaElement } from "../html/media-element.ts";
 import { HTMLAudioElement } from "../html/audio-element.ts";
 import { HTMLHeadingElement } from "../html/heading-element.ts";
-import { HTMLDirectoryElement } from "../html/directory-element.ts";
 import { HTMLQuoteElement } from "../html/quote-element.ts";
 import { HTMLCanvasElement } from "../html/canvas-element.ts";
 import { HTMLLegendElement } from "../html/legend-element.ts";
@@ -45,7 +42,6 @@ import { HTMLMapElement } from "../html/map-element.ts";
 import { HTMLOptGroupElement } from "../html/opt-group-element.ts";
 import { HTMLDListElement } from "../html/d-list-element.ts";
 import { HTMLTextAreaElement } from "../html/text-area-element.ts";
-import { HTMLFontElement } from "../html/font-element.ts";
 import { HTMLDivElement } from "../html/div-element.ts";
 import { HTMLLinkElement } from "../html/link-element.ts";
 import { HTMLSlotElement } from "../html/slot-element.ts";
@@ -85,16 +81,13 @@ export {
   HTMLProgressElement as DOMProgressElement,
   HTMLParagraphElement as DOMParagraphElement,
   HTMLTableElement as DOMTableElement,
-  HTMLFrameSetElement as DOMFrameSetElement,
   HTMLLIElement as DOMLIElement,
   HTMLBaseElement as DOMBaseElement,
   HTMLDataListElement as DOMDataListElement,
   HTMLInputElement as DOMInputElement,
-  HTMLParamElement as DOMParamElement,
   HTMLMediaElement as DOMMediaElement,
   HTMLAudioElement as DOMAudioElement,
   HTMLHeadingElement as DOMHeadingElement,
-  HTMLDirectoryElement as DOMDirectoryElement,
   HTMLQuoteElement as DOMQuoteElement,
   HTMLCanvasElement as DOMCanvasElement,
   HTMLLegendElement as DOMLegendElement,
@@ -115,7 +108,6 @@ export {
   HTMLOptGroupElement as DOMOptGroupElement,
   HTMLDListElement as DOMDListElement,
   HTMLTextAreaElement as DOMTextAreaElement,
-  HTMLFontElement as DOMFontElement,
   HTMLDivElement as DOMDivElement,
   HTMLLinkElement as DOMLinkElement,
   HTMLSlotElement as DOMSlotElement,
@@ -156,16 +148,13 @@ const HTMLClasses = {
   HTMLProgressElement,
   HTMLParagraphElement,
   HTMLTableElement,
-  HTMLFrameSetElement,
   HTMLLIElement,
   HTMLBaseElement,
   HTMLDataListElement,
   HTMLInputElement,
-  HTMLParamElement,
   HTMLMediaElement,
   HTMLAudioElement,
   HTMLHeadingElement,
-  HTMLDirectoryElement,
   HTMLQuoteElement,
   HTMLCanvasElement,
   HTMLLegendElement,
@@ -186,7 +175,6 @@ const HTMLClasses = {
   HTMLOptGroupElement,
   HTMLDListElement,
   HTMLTextAreaElement,
-  HTMLFontElement,
   HTMLDivElement,
   HTMLLinkElement,
   HTMLSlotElement,

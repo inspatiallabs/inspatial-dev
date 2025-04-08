@@ -51,6 +51,7 @@
     "npm:arktype@^2.1.16": "2.1.16",
     "npm:clsx@^2.1.1": "2.1.1",
     "npm:css-select@5.1.0": "5.1.0",
+    "npm:css-select@^5.1.0": "5.1.0",
     "npm:cssom@*": "0.5.0",
     "npm:highlight.js@^11.10.0": "11.11.1",
     "npm:jose@^5.9.6": "5.10.0",
@@ -1253,6 +1254,13 @@
         "dependencies": [
           "jsr:@inspatial/test@^0.0.8",
           "jsr:@inspatial/type@~0.1.2"
+        ]
+      },
+      "packages/core/dev/dom": {
+        "dependencies": [
+          "jsr:@inspatial/test@0.1",
+          "jsr:@inspatial/util@~0.1.6",
+          "npm:css-select@^5.1.0"
         ]
       },
       "packages/core/dev/iss": {

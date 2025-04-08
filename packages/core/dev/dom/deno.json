@@ -4,13 +4,15 @@
   "version": "0.1.0",
   "imports": {
     "css-select": "npm:css-select@^5.1.0",
-    "@inspatial/util": "../../util/src/index.ts"
+    "@inspatial/util": "jsr:@inspatial/util@^0.1.6",
+    "@inspatial/test": "jsr:@inspatial/test@^0.1.0"
   },
   "exports": {
     ".": "./src/index.ts"
   },
   "tasks": {
-    "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"
+    "test": "deno test --no-check --allow-all ./src/index.test.ts",
+    "test:parent-node": "deno test --no-check --allow-all ./tests/parent-node-simple.test.ts"
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]

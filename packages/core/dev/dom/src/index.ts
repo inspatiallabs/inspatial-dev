@@ -90,8 +90,11 @@ export function Document() {
   illegalConstructor();
 }
 
-// Set prototype for Document
-setPrototypeOf(DOMDocument, Document).prototype = Document.prototype;
+// Set up Document constructor correctly
+// Instead of modifying prototypes directly, copy properties
+Object.defineProperties(Document, Object.getOwnPropertyDescriptors(DOMDocument));
+// Ensure the function name is preserved
+Object.defineProperty(Document, 'name', { value: 'Document' });
 
 // Export JSON utility functions
 // @ts-ignore - Ignoring TS extension import error

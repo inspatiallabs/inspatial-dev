@@ -1,30 +1,29 @@
 // @ts-ignore - Ignoring TS extension import error
-import {IMAGE} from '../shared/symbols.ts';
+import { IMAGE } from "../shared/symbols.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {registerHTMLClass} from '../shared/register-html-class.ts';
+import { registerHTMLClass } from "../shared/register-html-class.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {numericAttribute} from '../shared/attributes.ts';
+import { numericAttribute } from "../shared/attributes.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {HTMLElement} from './element.ts';
-
+import { HTMLElement } from "./element.ts";
 
 class Canvas {
   width: number;
   height: number;
-  
+
   constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
   }
-  
+
   getContext(type?: string): any {
     return null;
   }
-  
+
   toDataURL(type?: string, quality?: number): string {
-    return '';
+    return "";
   }
-  
+
   static createCanvas(width: number, height: number): Canvas {
     return new Canvas(width, height);
   }
@@ -32,7 +31,7 @@ class Canvas {
 
 const createCanvas = Canvas.createCanvas;
 
-const tagName = 'canvas';
+const tagName = "canvas";
 
 /**
  * @implements globalThis.HTMLCanvasElement
@@ -40,7 +39,7 @@ const tagName = 'canvas';
 export class HTMLCanvasElement extends HTMLElement {
   // @ts-ignore - Symbol indexing
   [IMAGE]: Canvas;
-  
+
   constructor(ownerDocument: any, localName: string = tagName) {
     super(ownerDocument, localName);
     // @ts-ignore - Symbol indexing
@@ -53,7 +52,7 @@ export class HTMLCanvasElement extends HTMLElement {
   }
 
   set width(value: number) {
-    numericAttribute.set(this, 'width', value);
+    numericAttribute.set(this as any, "width", value);
     // @ts-ignore - Symbol indexing
     this[IMAGE].width = value;
   }
@@ -64,7 +63,7 @@ export class HTMLCanvasElement extends HTMLElement {
   }
 
   set height(value: number) {
-    numericAttribute.set(this, 'height', value);
+    numericAttribute.set(this as any, "height", value);
     // @ts-ignore - Symbol indexing
     this[IMAGE].height = value;
   }

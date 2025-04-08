@@ -18,7 +18,7 @@ function getCurrentTarget(ev: any): any {
 /**
  * Interface for Event initialization dictionary
  */
-interface EventInit {
+export interface EventInit {
   /** Whether the event bubbles up through the DOM */
   bubbles?: boolean;
   /** Whether the event is cancelable */

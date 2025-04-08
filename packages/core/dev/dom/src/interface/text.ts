@@ -2,8 +2,6 @@
 import { TEXT_NODE } from "../shared/constants.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { VALUE } from "../shared/symbols.ts";
-// @ts-ignore - Ignoring TS extension import error
-import { escapeHtml } from "../../../../util/src/escape-html.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import { CharacterData } from "./character-data.ts";

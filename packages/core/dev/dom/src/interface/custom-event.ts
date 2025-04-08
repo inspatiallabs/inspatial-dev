@@ -6,7 +6,7 @@ import {Event} from './event.ts';
 /**
  * Interface for CustomEvent initialization dictionary
  */
-interface CustomEventInit extends EventInit {
+export interface CustomEventInit extends EventInit {
   /** Any data that will be accessible through the CustomEvent.detail property */
   detail?: any;
 }
