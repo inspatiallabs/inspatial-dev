@@ -107,7 +107,11 @@ export class Document extends NonElementParentNode {
   constructor(type: string) {
     super(null, "#document", DOCUMENT_NODE);
     (this as any)[CUSTOM_ELEMENTS] = { active: false, registry: null };
-    (this as any)[MUTATION_OBSERVER] = { active: false, class: null, observers: new Set() };
+    (this as any)[MUTATION_OBSERVER] = { 
+      active: false, 
+      class: null,
+      observers: new Set()
+    };
     (this as any)[MIME] = Mime[type as keyof typeof Mime];
     /** @type {DocumentType} */
     (this as any)[DOCTYPE] = null;
