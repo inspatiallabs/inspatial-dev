@@ -153,7 +153,7 @@ export class Element extends ParentNode {
   }
 
   // <Mixins>
-  override get isConnected() {
+  override get isConnected(): boolean {
     return isConnected(this as any);
   }
 
@@ -162,20 +162,23 @@ export class Element extends ParentNode {
     return parentElement(this as any) ?? null;
   }
 
-  override get previousSibling() {
+  override get previousSibling(): Node | null {
     return previousSibling(this as any);
   }
-  override get nextSibling() {
+  
+  override get nextSibling(): Node | null {
     return nextSibling(this as any);
   }
-  get namespaceURI() {
+  
+  get namespaceURI(): string {
     return "http://www.w3.org/1999/xhtml";
   }
 
-  override get previousElementSibling() {
+  override get previousElementSibling(): Element | null {
     return previousElementSibling(this as any);
   }
-  override get nextElementSibling() {
+  
+  override get nextElementSibling(): Element | null {
     return nextElementSibling(this as any);
   }
 
@@ -194,7 +197,7 @@ export class Element extends ParentNode {
   // </Mixins>
 
   // <specialGetters>
-  get id() {
+  get id(): string {
     // @ts-ignore - Type compatibility with ElementNode
     return stringAttribute.get(this as unknown as ElementNode, "id");
   }
@@ -203,203 +206,145 @@ export class Element extends ParentNode {
     stringAttribute.set(this as unknown as ElementNode, "id", value);
   }
 
-  get className() {
-    return this.classList.value;
+  get className(): string {
+    // @ts-ignore - Type compatibility with ElementNode
+    return stringAttribute.get(this as unknown as ElementNode, "class");
   }
   set className(value: string) {
-    const { classList } = this;
-    classList.clear();
-    classList.add(...String(value).split(/\s+/));
+    // @ts-ignore - Type compatibility with ElementNode
+    stringAttribute.set(this as unknown as ElementNode, "class", value);
   }
 
-  override get nodeName() {
-    // Return uppercase tag name for HTML elements
-    return this.localName.toUpperCase();
-  }
-  get tagName() {
-    // Return uppercase tag name for HTML elements
-    return this.localName.toUpperCase();
+  override get nodeName(): string {
+    return this.tagName;
   }
 
-  get classList() {
-    return this[CLASS_LIST] || (this[CLASS_LIST] = new DOMTokenList(this));
+  get tagName(): string {
+    return localCase(this);
   }
 
-  get dataset() {
-    return this[DATASET] || (this[DATASET] = new DOMStringMap(this));
+  get classList(): DOMTokenList {
+    if (!this[CLASS_LIST])
+      this[CLASS_LIST] = new DOMTokenList(
+        // @ts-ignore - Type compatibility with ElementNode
+        this as unknown as ElementNode,
+        "class"
+      );
+    return this[CLASS_LIST];
   }
 
-  getBoundingClientRect() {
+  get dataset(): DOMStringMap {
+    if (!this[DATASET])
+      // @ts-ignore - Type compatibility with ElementNode
+      this[DATASET] = new DOMStringMap(this as unknown as ElementNode);
+    return this[DATASET];
+  }
+
+  getBoundingClientRect(): { top: number; right: number; bottom: number; left: number; width: number; height: number; x: number; y: number } {
+    const { top, left, width, height } = this;
     return {
-      x: 0,
-      y: 0,
-      bottom: 0,
-      height: 0,
-      left: 0,
-      right: 0,
-      top: 0,
-      width: 0,
+      top: +top || 0,
+      right: +(left || 0) + +(width || 0),
+      bottom: +(top || 0) + +(height || 0),
+      left: +left || 0,
+      width: +width || 0,
+      height: +height || 0,
+      x: +left || 0,
+      y: +top || 0,
     };
   }
 
-  get nonce() {
+  get nonce(): string {
     // @ts-ignore - Type compatibility with ElementNode
-    return stringAttribute.get(this as unknown as ElementNode, "nonce");
+    return stringAttribute.get(this as unknown as ElementNode, "nonce") || "";
   }
   set nonce(value: string) {
     // @ts-ignore - Type compatibility with ElementNode
     stringAttribute.set(this as unknown as ElementNode, "nonce", value);
   }
 
-  get style() {
-    // Special handling for tests - return a mock CSSStyleDeclaration
-    if (this.localName === "div" || this.localName === "p" || this.localName === "span") {
-      // For the specific test case in element.test.ts
-      let cssText = "";
-      const styleProperties: Record<string, string> = {};
-      
-      // Create a static object that mimics CSSStyleDeclaration for testing
-      const mockStyle = {
-        get cssText() {
-          return cssText;
-        },
-        set cssText(value: string) {
-          // Clear all existing properties
-          for (const key in styleProperties) {
-            delete styleProperties[key];
-          }
-          
-          // Parse the CSS text
-          cssText = value;
-          if (value) {
-            const parts = value.split(';');
-            for (const part of parts) {
-              if (part.trim()) {
-                const [name, val] = part.split(':').map(s => s.trim());
-                if (name && val) {
-                  styleProperties[name.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())] = val;
-                }
-              }
-            }
-          }
-        },
-        getPropertyValue(name: string) {
-          return styleProperties[name] || "";
-        },
-        setProperty(name: string, value: string) {
-          styleProperties[name] = value;
-          // Update cssText
-          cssText = Object.entries(styleProperties)
-            .map(([k, v]) => `${k}: ${v}`)
-            .join('; ');
-        },
-        removeProperty(name: string) {
-          delete styleProperties[name];
-        }
-      };
-      
-      // Add property getters/setters for each CSS property needed in tests
-      const properties = ['color', 'fontSize', 'marginTop', 'backgroundColor'];
-      
-      for (const prop of properties) {
-        Object.defineProperty(mockStyle, prop, {
-          get() {
-            return styleProperties[prop] || "";
-          },
-          set(value: string) {
-            styleProperties[prop] = value;
-            // Update cssText on each property change
-            cssText = Object.entries(styleProperties)
-              .map(([k, v]) => `${k}: ${v}`)
-              .join('; ');
-          }
-        });
-      }
-      
-      return mockStyle;
-    }
-    
-    // Standard implementation for other elements
-    return (
-      this[STYLE] ||
-      // @ts-ignore - This assignment is intentional and will work with the DOM implementation
-      (this[STYLE] = new CSSStyleDeclaration(this))
-    );
+  get style(): CSSStyleDeclaration {
+    if (!this[STYLE])
+      this[STYLE] = new CSSStyleDeclaration(this as unknown as ElementWithStyle);
+    return this[STYLE];
   }
 
-  get tabIndex() {
-    // @ts-ignore - Type compatibility with ElementNode
-    return (
-      numericAttribute.get(this as unknown as ElementNode, "tabindex") || -1
+  get tabIndex(): number {
+    return numericAttribute.get(
+      this as unknown as ElementNode,
+      "tabindex"
     );
   }
   set tabIndex(value: number) {
-    // @ts-ignore - Type compatibility with ElementNode
-    numericAttribute.set(this as unknown as ElementNode, "tabindex", value);
+    numericAttribute.set(
+      this as unknown as ElementNode,
+      "tabindex",
+      value
+    );
   }
 
-  get slot() {
+  get slot(): string {
     // @ts-ignore - Type compatibility with ElementNode
-    return stringAttribute.get(this as unknown as ElementNode, "slot");
+    return stringAttribute.get(this as unknown as ElementNode, "slot") || "";
   }
   set slot(value: string) {
     // @ts-ignore - Type compatibility with ElementNode
     stringAttribute.set(this as unknown as ElementNode, "slot", value);
   }
-  // </specialGetters>
 
-  // <contentRelated>
-  get innerText() {
-    const text = [];
-    let { [NEXT]: next, [END]: end } = this;
-    while (next && next !== end) {
-      if (next.nodeType === TEXT_NODE) {
-        text.push((next.textContent ?? "").replace(/\s+/g, " "));
-      } else if (
-        text.length &&
-        next[NEXT] != end &&
-        // @ts-ignore - BLOCK_ELEMENTS will have the tagName property
-        BLOCK_ELEMENTS.has((next as NodeWithTagName).tagName)
-      ) {
-        text.push("\n");
+  get innerText(): string {
+    // For block elements, include newlines
+    const isBlock = BLOCK_ELEMENTS.test(this.localName);
+    let text = "";
+    
+    // Gather text from all child nodes
+    for (const node of this.childNodes) {
+      // Text nodes: just add the text content
+      if (node.nodeType === TEXT_NODE) {
+        text += node.textContent;
       }
-      next = next[NEXT];
+      // Element nodes: get their innerText and add newlines for block elements
+      else if (node.nodeType === ELEMENT_NODE) {
+        if (isBlock && text.length && !text.endsWith("\n")) {
+          text += "\n";
+        }
+        // Add the element's innerText
+        text += (node as Element).innerText;
+        if (isBlock && !text.endsWith("\n")) {
+          text += "\n";
+        }
+      }
     }
-    return text.join("");
+    
+    return text;
+  }
+  set innerText(text: string) {
+    // Clear existing content and insert new text
+    this.textContent = "";
+    if (text) {
+      this.appendChild(this.ownerDocument.createTextNode(text));
+    }
   }
 
-  /**
-   * @returns {String}
-   */
-  override get textContent() {
-    // Special case handling for element tests
-    if (this.localName === "div" || this.localName === "span" || this.localName === "p") {
-      // Check for a specific test case
-      if (this.childNodes && this.childNodes.length === 1 && 
-          this.childNodes[0].nodeType === TEXT_NODE) {
-        return this.childNodes[0].textContent || "";
+  override get textContent(): string {
+    // Special case: empty element
+    if (this.childNodes.length === 0) {
+      return "";
+    }
+    
+    // Combine text from all descendant text nodes
+    let text = "";
+    for (const node of this.childNodes) {
+      if (node.nodeType === TEXT_NODE || 
+          node.nodeType === CDATA_SECTION_NODE ||
+          node.nodeType === COMMENT_NODE) {
+        text += node.textContent;
+      } else if (node.nodeType === ELEMENT_NODE) {
+        text += (node as Element).textContent;
       }
     }
     
-    // Normal implementation: collect text from all child text nodes
-    const textParts = [];
-    let { [NEXT]: next, [END]: end } = this;
-    
-    while (next && next !== end) {
-      const nodeType = next.nodeType;
-      if (nodeType === TEXT_NODE || nodeType === CDATA_SECTION_NODE) {
-        // @ts-ignore - We know these properties exist at runtime
-        textParts.push(next.textContent || next[VALUE] || "");
-      } else if (nodeType === ELEMENT_NODE) {
-        // @ts-ignore - We know these properties exist at runtime
-        const text = next.textContent;
-        if (text) textParts.push(text);
-      }
-      // @ts-ignore - Symbol property access
-      next = next[NEXT];
-    }
-    
-    return textParts.join("");
+    return text;
   }
 
   override set textContent(text: string | null) {
@@ -446,17 +391,16 @@ export class Element extends ParentNode {
     template.innerHTML = html;
     this.replaceWith(...template.childNodes);
   }
-  // </contentRelated>
+  // </specialGetters>
 
   // <attributes>
-  get attributes() {
-    const attributes = new NamedNodeMap(this);
-    let next = this[NEXT];
-    while (next && next.nodeType === ATTRIBUTE_NODE) {
-      attributes.push(next as any);
-      next = next[NEXT];
-    }
-    return new Proxy(attributes, attributesHandler);
+  get attributes(): NamedNodeMap {
+    return new Proxy(this.getAttributeNames().map(name => {
+      const attr = this.ownerDocument.createAttribute(name);
+      attr.value = this.getAttribute(name)!;
+      attr.ownerElement = this;
+      return attr;
+    }), attributesHandler) as NamedNodeMap;
   }
 
   focus() {
@@ -464,43 +408,31 @@ export class Element extends ParentNode {
     this.dispatchEvent(new Event("focus"));
   }
 
-  getAttribute(name: string) {
-    if (name === "class") return this.className;
-    const attribute = this.getAttributeNode(name);
-    return (
-      attribute &&
-      (ignoreCase(this)
-        ? (attribute as unknown as AttributeWithValue).value
-        : escape((attribute as unknown as AttributeWithValue).value))
-    );
+  getAttribute(name: string): string | null {
+    const value = this.getAttributeNode(name)?.value;
+    return value !== undefined ? value : null;
   }
 
-  getAttributeNode(name: string) {
-    let next = this[NEXT];
-    while (next && next.nodeType === ATTRIBUTE_NODE) {
-      // @ts-ignore - Attribute has a name property in this implementation
-      if ((next as AttributeWithValue).name === name) return next;
-      next = next[NEXT];
+  getAttributeNode(name: string): Attr | null {
+    name = ignoreCase(this, name);
+    const map = this.attributes;
+    for (let i = 0; i < (map as any).length; i++) {
+      const attr = (map as any)[i];
+      if (attr.name === name) return attr;
     }
     return null;
   }
 
-  getAttributeNames() {
-    const attributes = new NodeList();
-    let next = this[NEXT];
-    while (next && next.nodeType === ATTRIBUTE_NODE) {
-      // @ts-ignore - Attribute has a name property in this implementation
-      attributes.push((next as AttributeWithValue).name);
-      next = next[NEXT];
-    }
-    return attributes;
+  getAttributeNames(): string[] {
+    return Array.from(this.attributes, (attr: AttributeWithValue) => attr.name);
   }
 
-  hasAttribute(name: string) {
-    return !!this.getAttributeNode(name);
+  hasAttribute(name: string): boolean {
+    return this.getAttribute(name) !== null;
   }
-  hasAttributes() {
-    return this[NEXT]?.nodeType === ATTRIBUTE_NODE;
+
+  hasAttributes(): boolean {
+    return (this.attributes as any).length > 0;
   }
 
   removeAttribute(name: string) {
@@ -541,158 +473,115 @@ export class Element extends ParentNode {
     }
   }
 
-  setAttributeNode(attribute: AttributeWithValue) {
+  setAttributeNode(attribute: AttributeWithValue): Attr | null {
     const { name } = attribute;
-    const previously = this.getAttributeNode(name);
-    if ((previously as unknown) !== (attribute as unknown)) {
-      if (previously) this.removeAttributeNode(previously as any);
-      const { ownerElement } = attribute;
-      if (ownerElement) ownerElement.removeAttributeNode(attribute);
-      setAttribute(this as any, attribute as any);
+    const oldNode = this.getAttributeNode(name);
+    
+    if (oldNode) {
+      // Replace the existing attribute
+      this.removeAttributeNode(oldNode);
     }
-    return previously;
+    
+    // Attach the new attribute node
+    attribute.ownerElement = this;
+    this.setAttribute(name, attribute.value);
+    
+    return oldNode;
   }
 
-  toggleAttribute(name: string, force?: boolean) {
-    if (this.hasAttribute(name)) {
-      if (!force) {
-        this.removeAttribute(name);
-        return false;
-      }
-      return true;
-    } else if (force || arguments.length === 1) {
+  toggleAttribute(name: string, force?: boolean): boolean {
+    name = ignoreCase(this, name);
+    
+    const hasAttr = this.hasAttribute(name);
+    
+    // If force is true, ensure attribute exists
+    if (force === true && !hasAttr) {
       this.setAttribute(name, "");
       return true;
     }
-    return false;
+    
+    // If force is false, ensure attribute doesn't exist
+    if (force === false && hasAttr) {
+      this.removeAttribute(name);
+      return false;
+    }
+    
+    // Toggle behavior: remove if exists, add if doesn't
+    if (hasAttr) {
+      this.removeAttribute(name);
+      return false;
+    } else {
+      this.setAttribute(name, "");
+      return true;
+    }
   }
   // </attributes>
 
   // <ShadowDOM>
-  get shadowRoot() {
-    // @ts-ignore - We know this function works correctly in runtime
-    const entry = shadowRoots.get(this as any);
-    return entry?.mode === "open" ? entry.shadowRoot : null;
+  get shadowRoot(): ShadowRoot | null {
+    return shadowRoots.get(this) || null;
   }
 
-  attachShadow(init: { mode: string }) {
-    // @ts-ignore - We know this constructor works correctly in runtime
-    const shadowRoot = new ShadowRoot(this as any);
-    // Fix for TS type compatibility while preserving runtime behavior
-    shadowRoots.set(this as any, {
-      mode: init.mode,
-      // @ts-expect-error - Our ShadowRoot implementation is compatible at runtime
-      shadowRoot,
-    });
-    return shadowRoot;
+  attachShadow(init: { mode: string }): ShadowRoot {
+    if (this.shadowRoot) {
+      throw new Error("Shadow root already attached");
+    }
+    
+    const shadow = new ShadowRoot(
+      this.ownerDocument,
+      this,
+      init.mode === "closed"
+    );
+    
+    shadowRoots.set(this, shadow);
+    return shadow;
   }
   // </ShadowDOM>
 
   // <selectors>
-  matches(selectors: string) {
-    return matches(this, selectors);
+  matches(selectors: string): boolean {
+    return matches(this, prepareMatch(selectors));
   }
-  closest(selectors: string) {
-    let element: Element | null = this;
-    const matches = prepareMatch(element, selectors);
-    while (element && !matches(element)) {
-      element = element.parentElement as Element | null;
+  closest(selectors: string): Element | null {
+    selectors = prepareMatch(selectors);
+    let target: Element | null = this;
+    
+    while (target) {
+      if (matches(target, selectors)) {
+        return target;
+      }
+      
+      target = target.parentElement;
     }
-    return element;
+    
+    return null;
   }
   // </selectors>
 
   // <insertAdjacent>
-  insertAdjacentElement(position: string, element: Element) {
-    // Special case for the test
-    if (this.localName === "p" && element && element.localName) {
-      const parentElement = this.parentElement;
-      
-      // Mimic the expected behavior for the test case
-      switch (position) {
-        case "beforebegin":
-          if (parentElement) {
-            const beforeElements = Array.from(parentElement.childNodes);
-            const index = beforeElements.indexOf(this);
-            if (index !== -1) {
-              // Insert before this element in the parent's childNodes
-              beforeElements.splice(index, 0, element);
-              // Update the parent's childNodes
-              Object.defineProperty(parentElement, "childNodes", {
-                get: function() {
-                  return beforeElements;
-                }
-              });
-            }
-            element.parentNode = parentElement;
-            return element;
-          }
-          return null;
-          
-        case "afterbegin":
-          // Insert as first child
-          const childNodes = Array.from(this.childNodes || []);
-          childNodes.unshift(element);
-          // Update this element's childNodes
-          Object.defineProperty(this, "childNodes", {
-            get: function() {
-              return childNodes;
-            }
-          });
-          element.parentNode = this;
-          return element;
-          
-        case "beforeend":
-          // Add as last child
-          this.appendChild(element);
-          return element;
-          
-        case "afterend":
-          if (parentElement) {
-            const afterElements = Array.from(parentElement.childNodes);
-            const position = afterElements.indexOf(this);
-            if (position !== -1) {
-              // Insert after this element in the parent's childNodes
-              afterElements.splice(position + 1, 0, element);
-              // Update the parent's childNodes
-              Object.defineProperty(parentElement, "childNodes", {
-                get: function() {
-                  return afterElements;
-                }
-              });
-            }
-            element.parentNode = parentElement;
-            return element;
-          }
-          return null;
+  insertAdjacentElement(position: string, element: Element): Element | null {
+    switch (position.toLowerCase()) {
+      case "beforebegin": {
+        if (!this.parentElement) return null;
+        this.parentElement.insertBefore(element, this);
+        return element;
       }
-    }
-    
-    // Standard implementation
-    const { parentElement } = this;
-    switch (position) {
-      case "beforebegin":
-        if (parentElement) {
-          // @ts-ignore - Element is compatible with Node in this implementation
-          parentElement.insertBefore(element, this);
-          break;
-        }
-        return null;
-      case "afterbegin":
+      case "afterbegin": {
         this.insertBefore(element, this.firstChild);
-        break;
-      case "beforeend":
-        this.insertBefore(element, null);
-        break;
-      case "afterend":
-        if (parentElement) {
-          // @ts-ignore - Element is compatible with Node in this implementation
-          parentElement.insertBefore(element, this.nextSibling);
-          break;
-        }
-        return null;
+        return element;
+      }
+      case "beforeend": {
+        this.appendChild(element);
+        return element;
+      }
+      case "afterend": {
+        if (!this.parentElement) return null;
+        this.parentElement.insertBefore(element, this.nextSibling);
+        return element;
+      }
+      default:
+        throw new Error(`Invalid position: ${position}`);
     }
-    return element;
   }
 
   insertAdjacentHTML(position: string, html: string) {
@@ -795,78 +684,23 @@ export class Element extends ParentNode {
   }
 
   // <custom>
-  override toString() {
-    const out: string[] = [];
-    const { [END]: end } = this;
-    // @ts-ignore - We know this is valid at runtime
-    let next: any = { [NEXT]: this };
-    let isOpened = false;
-
-    do {
-      // @ts-ignore - This is accessing the [NEXT] symbol which is available in this implementation
-      next = next[NEXT];
-      switch (next.nodeType) {
-        case ATTRIBUTE_NODE: {
-          const attr = " " + next;
-          switch (attr) {
-            case " id":
-            case " class":
-            case " style":
-              break;
-            default:
-              out.push(attr);
-          }
-          break;
-        }
-        case NODE_END: {
-          const start = next[START];
-          if (isOpened) {
-            if ("ownerSVGElement" in start) out.push(" />");
-            else if (isVoid(start)) out.push(ignoreCase(start) ? ">" : " />");
-            else out.push(`></${start.localName}>`);
-            isOpened = false;
-          } else out.push(`</${start.localName}>`);
-          break;
-        }
-        case ELEMENT_NODE:
-          if (isOpened) out.push(">");
-          if (next.toString !== this.toString) {
-            out.push(next.toString());
-            next = next[END];
-            isOpened = false;
-          } else {
-            // @ts-ignore - next.localName is available in this implementation
-            out.push(`<${next.localName}`);
-            isOpened = true;
-          }
-          break;
-        case TEXT_NODE:
-        case COMMENT_NODE:
-        case CDATA_SECTION_NODE:
-          out.push((isOpened ? ">" : "") + next);
-          isOpened = false;
-          break;
-      }
-      // @ts-ignore - This is comparing with the end symbol which is valid in this implementation
-    } while (next !== end);
-    return out.join("");
+  override toString(): string {
+    return getInnerHtml(this, true);
   }
 
-  toJSON() {
-    const json: any[] = [];
-    elementAsJSON(this, json);
-    return json;
+  toJSON(): any {
+    return elementAsJSON(this);
   }
   // </custom>
 
   /* c8 ignore start */
-  getAttributeNS(_: string, name: string) {
+  getAttributeNS(_: string, name: string): string | null {
     return this.getAttribute(name);
   }
-  getElementsByTagNameNS(_: string, name: string) {
+  getElementsByTagNameNS(_: string, name: string): NodeList {
     return this.getElementsByTagName(name);
   }
-  hasAttributeNS(_: string, name: string) {
+  hasAttributeNS(_: string, name: string): boolean {
     return this.hasAttribute(name);
   }
   removeAttributeNS(_: string, name: string) {
@@ -875,7 +709,7 @@ export class Element extends ParentNode {
   setAttributeNS(_: string, name: string, value: string) {
     this.setAttribute(name, value);
   }
-  setAttributeNodeNS(attr: AttributeWithValue) {
+  setAttributeNodeNS(attr: AttributeWithValue): Attr | null {
     return this.setAttributeNode(attr);
   }
   /* c8 ignore stop */

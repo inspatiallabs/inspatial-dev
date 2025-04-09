@@ -1,13 +1,13 @@
-// @ts-ignore - Using npm package import
-import {parse} from 'npm:cssom';
-
 // @ts-ignore - Ignoring TS extension import error
-import {registerHTMLClass} from '../shared/register-html-class.ts';
+import { registerHTMLClass } from "../shared/register-html-class.ts";
 // @ts-ignore - Ignoring TS extension import error
-import {SHEET} from '../shared/symbols.ts';
+import { SHEET } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import {TextElement} from './text-element.ts';
+
+// @ts-ignore - Ignoring TS extension import error
+import { parseStyleElement } from './style-element.parse.ts';
 
 const tagName = 'style';
 
@@ -28,7 +28,7 @@ export class HTMLStyleElement extends TextElement {
       return sheet;
     }
     // @ts-ignore - Ignoring for symbol property access
-    return this[SHEET] = parse(this.textContent || '');
+    return this[SHEET] = parseStyleElement(this.textContent || '');
   }
 
   override get innerHTML(): string {

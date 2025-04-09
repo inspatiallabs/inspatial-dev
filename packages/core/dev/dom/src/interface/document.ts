@@ -128,7 +128,7 @@ export class Document extends NonElementParentNode {
   /**
    * @type {globalThis.Document['defaultView']}
    */
-  get defaultView() {
+  get defaultView(): any {
     if (!window.has(this))
       window.set(
         this,
@@ -203,7 +203,7 @@ export class Document extends NonElementParentNode {
     return window.get(this);
   }
 
-  get doctype() {
+  get doctype(): DocumentType | null {
     const docType = (this as any)[DOCTYPE];
     if (docType) return docType;
     const { firstChild } = this;
@@ -225,7 +225,7 @@ export class Document extends NonElementParentNode {
     }
   }
 
-  get documentElement() {
+  get documentElement(): Element | null {
     // Check if there's an existing HTML element
     const html = this.firstElementChild;
 
@@ -243,7 +243,7 @@ export class Document extends NonElementParentNode {
    * Gets the head element of the document
    * @returns The head element or null if not found
    */
-  get head() {
+  get head(): Element | null {
     const documentElement = this.documentElement;
     if (!documentElement) return null;
 
@@ -270,7 +270,7 @@ export class Document extends NonElementParentNode {
    * Gets the body element of the document
    * @returns The body element or null if not found
    */
-  get body() {
+  get body(): Element | null {
     const documentElement = this.documentElement;
     if (!documentElement) return null;
 
@@ -293,51 +293,60 @@ export class Document extends NonElementParentNode {
     return body;
   }
 
-  override get isConnected() {
+  override get isConnected(): boolean {
     return true;
   }
 
   /**
    * @protected
    */
-  override _getParent() {
+  override _getParent(): any {
     return (this as any)[EVENT_TARGET];
   }
 
-  createAttribute(name: string) {
+  createAttribute(name: string): Attr {
     return new Attr(this, name);
   }
-  createCDATASection(data: string) {
+  
+  createCDATASection(data: string): CDATASection {
     return new CDATASection(this, data);
   }
-  createComment(textContent: string) {
+  
+  createComment(textContent: string): Comment {
     return new Comment(this, textContent);
   }
-  createDocumentFragment() {
+  
+  createDocumentFragment(): DocumentFragment {
     return new DocumentFragment(this);
   }
-  createDocumentType(name: string, publicId: string, systemId: string) {
+  
+  createDocumentType(name: string, publicId: string, systemId: string): DocumentType {
     return new DocumentType(this, name, publicId, systemId);
   }
-  createElement(localName: string) {
+  
+  createElement(localName: string): Element {
     return new Element(this, localName);
   }
-  createRange() {
+  
+  createRange(): Range {
     const range = new Range();
     range.commonAncestorContainer = this;
     return range;
   }
-  createTextNode(textContent: string) {
+  
+  createTextNode(textContent: string): Text {
     return new Text(this, textContent);
   }
-  createTreeWalker(root: any, whatToShow: number = -1) {
+  
+  createTreeWalker(root: any, whatToShow: number = -1): TreeWalker {
     return new TreeWalker(root, whatToShow);
   }
-  createNodeIterator(root: any, whatToShow: number = -1) {
+  
+  createNodeIterator(root: any, whatToShow: number = -1): TreeWalker {
     return this.createTreeWalker(root, whatToShow);
   }
 
-  createEvent(name: string) {
+  createEvent(name: string): Event | CustomEvent {
     const event = create(
       name === "Event" ? new Event("") : new CustomEvent("")
     );
@@ -359,7 +368,7 @@ export class Document extends NonElementParentNode {
     return event;
   }
 
-  override cloneNode(deep = false) {
+  override cloneNode(deep = false): Document {
     const {
       constructor,
       [CUSTOM_ELEMENTS]: customElements,
@@ -377,7 +386,7 @@ export class Document extends NonElementParentNode {
     return document;
   }
 
-  importNode(externalNode: Node | Element, deep = false) {
+  importNode(externalNode: Node | Element, deep = false): Node | Element {
     // Modified to properly handle deep parameter
     const node = externalNode.cloneNode(deep);
     const { [CUSTOM_ELEMENTS]: customElements } = this as any;
@@ -397,9 +406,8 @@ export class Document extends NonElementParentNode {
           let { [NEXT]: next, [END]: end } = node;
           while (next !== end) {
             if (next.nodeType === ELEMENT_NODE) upgrade(next);
-            next = next[NEXT];
+            next = next.nextSibling;
           }
-          break;
         }
       }
     }
@@ -460,32 +468,29 @@ export class Document extends NonElementParentNode {
     return node;
   }
 
-  override toString() {
-    return this.childNodes.join("");
+  override toString(): string {
+    return this.documentElement?.outerHTML ?? '';
   }
 
-  override querySelector(selectors: string) {
+  override querySelector(selectors: string): Element | null {
     return query(super.querySelector, this, selectors);
   }
 
-  override querySelectorAll(selectors: string) {
+  override querySelectorAll(selectors: string): NodeList {
     return query(super.querySelectorAll, this, selectors);
   }
 
-  /* c8 ignore start */
-  getElementsByTagNameNS(_: string, name: string) {
+  getElementsByTagNameNS(_: string, name: string): NodeList {
     return this.getElementsByTagName(name);
   }
-  createAttributeNS(_: string, name: string) {
+  
+  createAttributeNS(_: string, name: string): Attr {
     return this.createAttribute(name);
   }
-  createElementNS(nsp: string | null, localName: string, options?: any) {
-    // For SVG namespace, use SVGElement and preserve case
-    if (nsp === SVG_NAMESPACE) {
-      // SVGElement constructor needs (ownerDocument, localName, namespace)
-      return new (SVGElement as any)(this, localName, nsp);
-    }
-    // For other namespaces, use regular createElement
+  
+  createElementNS(nsp: string | null, localName: string, options?: any): Element | SVGElement {
+    if (nsp === SVG_NAMESPACE)
+      return new SVGElement(this, localName);
     return this.createElement(localName);
   }
   
@@ -504,7 +509,6 @@ export class Document extends NonElementParentNode {
    * Closes the document after writing - Implemented in HTMLDocument
    */
   close?(): void;
-  /* c8 ignore stop */
 }
 
 setPrototypeOf(
