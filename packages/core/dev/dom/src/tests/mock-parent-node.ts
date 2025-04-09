@@ -3,9 +3,9 @@
  */
 
 // @ts-ignore - Ignoring TS extension import error
-import { ELEMENT_NODE } from "../src/shared/constants.ts";
+import { ELEMENT_NODE } from "../shared/constants.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { NodeList } from "../src/interface/node-list.ts";
+import { NodeList } from "../interface/node-list.ts";
 
 /**
  * Minimal ParentNode implementation for testing

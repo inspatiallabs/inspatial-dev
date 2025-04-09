@@ -12,8 +12,8 @@ import {
   Text, 
   Document,
   Attr
-} from "../src/cached.ts";
-import { MIME } from "../src/shared/symbols.ts";
+} from "../cached.ts";
+import { MIME } from "../shared/symbols.ts";
 
 // Test document to use for creating elements
 const createTestDocument = () => {

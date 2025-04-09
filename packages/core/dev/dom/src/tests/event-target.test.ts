@@ -8,9 +8,9 @@
 // Import from test package
 import { test, expect, assertEquals } from "@inspatial/test";
 // Import DOM classes
-import { EventTarget, Event, Element, Document } from "../src/cached.ts";
+import { EventTarget, Event, Element, Document } from "../cached.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { MIME } from "../src/shared/symbols.ts";
+import { MIME } from "../shared/symbols.ts";
 
 // Test document to use for creating elements
 const createTestDocument = () => {

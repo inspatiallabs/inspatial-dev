@@ -13,9 +13,9 @@ import {
   Comment,
   DocumentFragment,
   Node,
-} from "../src/cached.ts";
+} from "../cached.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { MIME } from "../src/shared/symbols.ts";
+import { MIME } from "../shared/symbols.ts";
 
 // Helper to create a test document with MIME settings
 const createTestDocument = () => {

@@ -5,7 +5,7 @@
 // @ts-ignore - Ignoring TS extension import error
 import { test, expect, assertEquals } from "@inspatial/test";
 // @ts-ignore - Ignoring TS extension import error
-import { Node, Element, Text, Comment, Document } from "../src/cached.ts";
+import { Node, Element, Text, Comment, Document } from "../cached.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { TestDocumentFragment } from "./custom-document-fragment.ts";
 

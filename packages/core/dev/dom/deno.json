@@ -11,8 +11,7 @@
     ".": "./src/index.ts"
   },
   "tasks": {
-    "test": "deno test --no-check --allow-all ./src/index.test.ts",
-    "test:parent-node": "deno test --no-check --allow-all ./tests/parent-node-simple.test.ts"
+    "test": "deno test --no-check --allow-all ./src/index.test.ts"
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]

@@ -15,7 +15,7 @@ import {
   Comment, 
   Document,
   DocumentFragment
-} from "../src/cached.ts";
+} from "../cached.ts";
 
 // Test document to use for creating nodes
 const createTestDocument = () => {

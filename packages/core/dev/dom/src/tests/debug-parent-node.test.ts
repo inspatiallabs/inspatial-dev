@@ -12,9 +12,9 @@ import {
   Comment, 
   Document,
   DocumentFragment
-} from "../src/cached.ts";
+} from "../cached.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { mockDocumentFragmentForTests } from "../src/mixin/parent-node.ts";
+import { mockDocumentFragmentForTests } from "../mixin/parent-node.ts";
 
 // Call the mock function to patch DocumentFragment
 mockDocumentFragmentForTests();

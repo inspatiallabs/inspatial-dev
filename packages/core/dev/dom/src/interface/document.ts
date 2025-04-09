@@ -1,4 +1,4 @@
-import { performance } from "../../commonjs/perf_hooks.cjs";
+import { performance } from "../commonjs/perf_hooks.cjs";
 
 // @ts-ignore - Ignoring TS extension import error
 import {
