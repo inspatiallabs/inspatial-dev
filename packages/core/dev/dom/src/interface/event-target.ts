@@ -178,9 +178,30 @@ export class EventTarget {
     
     // Set up the event
     const customEvent = event as unknown as CustomEvent;
+    // Initialize target if not already set
+    // Use the CustomEvent interface which allows writing to target
     if (!customEvent.target) {
-      customEvent.target = this;
+      // Instead of directly setting target, we'll use Object.defineProperty to make it writable for our use
+      Object.defineProperty(customEvent, 'target', {
+        value: this,
+        writable: true,
+        configurable: true
+      });
     }
+    
+    // Make eventPhase, currentTarget writable properties for our internal use
+    Object.defineProperties(customEvent, {
+      'eventPhase': {
+        value: customEvent.NONE || 0,
+        writable: true,
+        configurable: true
+      },
+      'currentTarget': {
+        value: null,
+        writable: true,
+        configurable: true
+      }
+    });
     
     // Reset event state for new dispatch
     customEvent._stopImmediatePropagationFlag = false;

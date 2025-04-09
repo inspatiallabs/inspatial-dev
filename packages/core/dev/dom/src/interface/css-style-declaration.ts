@@ -104,7 +104,7 @@ export class CSSStyleDeclaration extends Map {
    */
   getPropertyValue(name: string): string {
     // Always return a string (empty string if property doesn't exist)
-    const value = handler.get(this, name);
+    const value = handler.get(this as unknown as StyleMap, name);
     return value === undefined || value === null ? "" : value;
   }
 

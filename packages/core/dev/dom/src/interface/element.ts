@@ -402,7 +402,7 @@ export class Element extends ParentNode {
     return textParts.join("");
   }
 
-  override set textContent(text: string) {
+  override set textContent(text: string | null) {
     // For element tests, create an optimized implementation
     if (this.localName === "div" || this.localName === "span" || this.localName === "p") {
       // Clear all children first

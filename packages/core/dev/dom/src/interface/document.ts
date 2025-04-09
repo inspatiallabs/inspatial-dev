@@ -107,12 +107,16 @@ export class Document extends NonElementParentNode {
   constructor(type: string) {
     super(null, "#document", DOCUMENT_NODE);
     (this as any)[CUSTOM_ELEMENTS] = { active: false, registry: null };
-    (this as any)[MUTATION_OBSERVER] = { 
-      active: false, 
+    (this as any)[MUTATION_OBSERVER] = {
+      active: false,
       class: null,
-      observers: new Set()
+      observers: new Set(),
     };
-    (this as any)[MIME] = Mime[type as keyof typeof Mime];
+    // Set default MIME type to text/html when type is empty
+    if (type === "") {
+      type = "text/html";
+    }
+    (this as any)[MIME] = Mime[type as keyof typeof Mime] || Mime["text/html"];
     /** @type {DocumentType} */
     (this as any)[DOCTYPE] = null;
     (this as any)[DOM_PARSER] = null;
@@ -223,14 +227,14 @@ export class Document extends NonElementParentNode {
   get documentElement() {
     // Check if there's an existing HTML element
     const html = this.firstElementChild;
-    
+
     // If no HTML element exists, create one
     if (!html) {
-      const htmlElement = this.createElement('html');
+      const htmlElement = this.createElement("html");
       this.appendChild(htmlElement);
       return htmlElement;
     }
-    
+
     return html;
   }
 
@@ -241,26 +245,26 @@ export class Document extends NonElementParentNode {
   get head() {
     const documentElement = this.documentElement;
     if (!documentElement) return null;
-    
+
     // Look for existing head element
     let head = null;
     for (let i = 0; i < documentElement.childNodes.length; i++) {
       const child = documentElement.childNodes[i];
-      if (child.nodeType === ELEMENT_NODE && child.nodeName === 'HEAD') {
+      if (child.nodeType === ELEMENT_NODE && child.nodeName === "HEAD") {
         head = child;
         break;
       }
     }
-    
-    // Create head if it doesn't exist
+
+    // If head doesn't exist, create it
     if (!head) {
-      head = this.createElement('head');
+      head = this.createElement("head");
       documentElement.appendChild(head);
     }
-    
+
     return head;
   }
-  
+
   /**
    * Gets the body element of the document
    * @returns The body element or null if not found
@@ -268,23 +272,23 @@ export class Document extends NonElementParentNode {
   get body() {
     const documentElement = this.documentElement;
     if (!documentElement) return null;
-    
+
     // Look for existing body element
     let body = null;
     for (let i = 0; i < documentElement.childNodes.length; i++) {
       const child = documentElement.childNodes[i];
-      if (child.nodeType === ELEMENT_NODE && child.nodeName === 'BODY') {
+      if (child.nodeType === ELEMENT_NODE && child.nodeName === "BODY") {
         body = child;
         break;
       }
     }
-    
-    // Create body if it doesn't exist
+
+    // If body doesn't exist, create it
     if (!body) {
-      body = this.createElement('body');
+      body = this.createElement("body");
       documentElement.appendChild(body);
     }
-    
+
     return body;
   }
 
@@ -372,7 +376,7 @@ export class Document extends NonElementParentNode {
     return document;
   }
 
-  importNode(externalNode: Node, deep = false) {
+  importNode(externalNode: Node | Element, deep = false) {
     // Modified to properly handle deep parameter
     const node = externalNode.cloneNode(deep);
     const { [CUSTOM_ELEMENTS]: customElements } = this as any;
@@ -406,45 +410,52 @@ export class Document extends NonElementParentNode {
    * @param node - The node to adopt
    * @returns The adopted node
    */
-  adoptNode(node: Node): Node {
+  adoptNode(node: Node | Element): Node | Element {
     const oldDoc = node.ownerDocument;
-    if (oldDoc && oldDoc !== this) {
-      // Remove the node from its old document if it has a parent
-      if (node.parentNode) {
-        node.parentNode.removeChild(node);
-      }
-      
-      // Set the ownerDocument property
-      (node as any).ownerDocument = this;
-      
-      // If the node is an element, also update its children
-      if (node.nodeType === ELEMENT_NODE) {
-        // Recursively update ownerDocument for all child nodes
-        const walkChildren = (parent: any) => {
-          let { [NEXT]: next, [END]: end } = parent;
-          while (next !== end) {
-            if (next.nodeType === ELEMENT_NODE || next.nodeType === TEXT_NODE) {
-              (next as any).ownerDocument = this;
-              
-              // Process children of elements recursively
-              if (next.nodeType === ELEMENT_NODE) {
-                walkChildren(next);
+    // Only proceed if the node has an ownerDocument and it's different from current document
+    if (oldDoc && oldDoc !== null) {
+      const isSameDocument = Object.is(oldDoc, this);
+      if (!isSameDocument) {
+        // Remove the node from its old document if it has a parent
+        if (node.parentNode) {
+          (node as any).parentNode.removeChild(node);
+        }
+
+        // Set the ownerDocument property
+        (node as any).ownerDocument = this;
+
+        // If the node is an element, also update its children
+        if (node.nodeType === ELEMENT_NODE) {
+          // Recursively update ownerDocument for all child nodes
+          const walkChildren = (parent: any) => {
+            let { [NEXT]: next, [END]: end } = parent;
+            while (next !== end) {
+              if (
+                next.nodeType === ELEMENT_NODE ||
+                next.nodeType === TEXT_NODE
+              ) {
+                (next as any).ownerDocument = this;
+
+                // Process children of elements recursively
+                if (next.nodeType === ELEMENT_NODE) {
+                  walkChildren(next);
+                }
               }
+              next = next[NEXT];
             }
-            next = next[NEXT];
+          };
+
+          walkChildren(node);
+
+          // Upgrade custom elements if necessary
+          const { [CUSTOM_ELEMENTS]: customElements } = this as any;
+          if (customElements.active) {
+            customElements.upgrade(node);
           }
-        };
-        
-        walkChildren(node);
-        
-        // Upgrade custom elements if necessary
-        const { [CUSTOM_ELEMENTS]: customElements } = this as any;
-        if (customElements.active) {
-          customElements.upgrade(node);
         }
       }
     }
-    
+
     return node;
   }
 
@@ -467,11 +478,14 @@ export class Document extends NonElementParentNode {
   createAttributeNS(_: string, name: string) {
     return this.createAttribute(name);
   }
-  createElementNS(nsp: string, localName: string, options?: any) {
-    // @ts-ignore - SVGElement constructor expects different arguments
-    return nsp === SVG_NAMESPACE
-      ? new SVGElement(this, localName, null)
-      : this.createElement(localName);
+  createElementNS(nsp: string | null, localName: string, options?: any) {
+    // For SVG namespace, use SVGElement and preserve case
+    if (nsp === SVG_NAMESPACE) {
+      // SVGElement constructor needs (ownerDocument, localName, namespace)
+      return new (SVGElement as any)(this, localName, nsp);
+    }
+    // For other namespaces, use regular createElement
+    return this.createElement(localName);
   }
   /* c8 ignore stop */
 }

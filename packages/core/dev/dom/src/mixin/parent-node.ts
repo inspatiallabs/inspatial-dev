@@ -57,6 +57,21 @@ const insert = (parentNode: any, child: any, nodes: any[]): void => {
     );
 };
 
+// Helper function to check if an element has all specified classes
+function hasClassNames(element: any, classNames: string[]): boolean {
+  // Check if the element has a class attribute
+  if (!element.hasAttribute || !element.hasAttribute("class")) {
+    return false;
+  }
+  
+  // Get element's classList and check for each required class
+  const classList = element.classList;
+  if (!classList) return false;
+  
+  // Check if element has all required classes
+  return classNames.every(className => classList.contains(className));
+}
+
 /** @typedef { import('../interface/element.ts').Element & {
     [typeof NEXT]: NodeStruct,
     [typeof PREV]: NodeStruct,
@@ -211,35 +226,59 @@ export class ParentNode extends Node {
     if (nodes.length) insert(this, end, nodes);
   }
 
-  getElementsByClassName(className: string): NodeList {
-    const elements = new NodeList();
-    let next = (this as any)[NEXT];
-    const end = (this as any)[END];
-    while (next !== end) {
-      if (
-        next.nodeType === ELEMENT_NODE &&
-        next.hasAttribute("class") &&
-        next.classList.has(className)
-      )
-        elements.push(next);
+  /**
+   * Get elements by tag name, safely handling null nodes
+   * @param localName - The tag name to search for
+   * @returns A live HTMLCollection of matching elements
+   */
+  getElementsByTagName(localName: string): any {
+    const matches = new NodeList();
+    const nodes = [];
+    let { [NEXT]: next } = this as any;
+    
+    // Safely traverse the DOM, handling null nodes
+    while (next && next !== this) {
+      if (next && next.nodeType === ELEMENT_NODE &&
+          (localName === "*" || next.nodeName === localName.toUpperCase())) {
+        nodes.push(next);
+      }
       next = next[NEXT];
     }
-    return elements;
+    
+    for (const node of nodes)
+      matches.push(node);
+    
+    return matches;
   }
 
-  getElementsByTagName(tagName: string): NodeList {
-    const elements = new NodeList();
-    let next = (this as any)[NEXT];
-    const end = (this as any)[END];
-    while (next !== end) {
-      if (
-        next.nodeType === ELEMENT_NODE &&
-        (next.localName === tagName || localCase(next) === tagName)
-      )
-        elements.push(next);
+  /**
+   * Get elements by class name, safely handling null nodes
+   * @param names - Space-separated class names to search for
+   * @returns A live HTMLCollection of matching elements
+   */
+  getElementsByClassName(names: string): any {
+    const matches = new NodeList();
+    const nodes = [];
+    // Handle empty class name
+    if (!names.trim()) return matches;
+    
+    const classes = names.split(/\s+/);
+    let { [NEXT]: next } = this as any;
+    
+    // Safely traverse the DOM, handling null nodes
+    while (next && next !== this) {
+      // Ensure next is not null before checking nodeType
+      if (next && next.nodeType === ELEMENT_NODE &&
+          hasClassNames(next, classes)) {
+        nodes.push(next);
+      }
       next = next[NEXT];
     }
-    return elements;
+    
+    for (const node of nodes)
+      matches.push(node);
+    
+    return matches;
   }
 
   querySelector(selectors: string): any {

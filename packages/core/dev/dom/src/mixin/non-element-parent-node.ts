@@ -13,11 +13,17 @@ import { ParentNode } from "./parent-node.ts";
 
 export class NonElementParentNode extends ParentNode {
   getElementById(id: string): any {
-    let { [NEXT]: next, [END]: end } = this as any;
-    while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE && next.id === id) return next;
+    let next = (this as any)[NEXT];
+    
+    // Safely traverse the DOM, handling null nodes
+    while (next && next !== this) {
+      // Check for null before accessing nodeType
+      if (next && next.nodeType === ELEMENT_NODE && next.id === id) {
+        return next;
+      }
       next = next[NEXT];
     }
+    
     return null;
   }
 
