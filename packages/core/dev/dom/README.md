@@ -49,7 +49,7 @@ InSpatial DOM is a high-performance, **DOM-less** environment designed for
   selectors, element creation, and tree manipulation.
 - **Headless DOM Parsing**: Enables parsing and manipulation of XML, HTML, and
   SVG without a traditional browser DOM.
-- **Ultra-Lightweight**: No dependency on the browser’s native DOM, reducing
+- **Ultra-Lightweight**: No dependency on the browser's native DOM, reducing
   memory overhead.
 - **Optimized for XR & 3D**: Direct GPU integration, supporting WebXR and
   spatial computing workflows.
@@ -121,10 +121,14 @@ bunx jsr add @inspatial/dom
 
 ## 🚀 Getting Started
 
+### Using DOMParser (Standard Approach)
 ```js
 import { DOMParser } from "@inspatial/dom"
 
+// Create a parser instance
 const parser = new DOMParser()
+
+// Parse HTML string into a document
 const document = parser.parseFromString(
   "<html><body><h1>Hello, InSpatial!</h1></body></html>",
   "text/html",
@@ -132,6 +136,25 @@ const document = parser.parseFromString(
 
 console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 ```
+
+### Using parseHTML (Convenience Function)
+```js
+import { parseHTML } from "@inspatial/dom"
+
+// Parse HTML string in one step
+const { document, window } = parseHTML("<html><body><h1>Hello, InSpatial!</h1></body></html>")
+
+console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
+
+// You also get access to the window object
+console.log(window.document === document) // true
+```
+
+The `parseHTML` function is a convenient wrapper that:
+- Creates a DOMParser instance for you
+- Sets the MIME type to "text/html"
+- Returns both document and window objects
+- Optionally accepts custom globals as a second parameter
 
 ---
 
