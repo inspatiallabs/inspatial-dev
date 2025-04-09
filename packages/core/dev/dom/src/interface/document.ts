@@ -212,8 +212,9 @@ export class Document extends NonElementParentNode {
     return null;
   }
 
-  set doctype(value) {
+  set doctype(value: string | null) {
     if (
+      value &&
       /^([a-z:]+)(\s+system|\s+public(\s+"([^"]+)")?)?(\s+"([^"]+)")?/i.test(
         value
       )
@@ -487,6 +488,22 @@ export class Document extends NonElementParentNode {
     // For other namespaces, use regular createElement
     return this.createElement(localName);
   }
+  
+  /**
+   * Opens the document for writing - Implemented in HTMLDocument
+   */
+  open?(): void;
+  
+  /**
+   * Writes HTML content to the document - Implemented in HTMLDocument
+   * @param content - The HTML content to write
+   */
+  write?(content: string): void;
+  
+  /**
+   * Closes the document after writing - Implemented in HTMLDocument
+   */
+  close?(): void;
   /* c8 ignore stop */
 }
 

@@ -16,18 +16,18 @@ export class HTMLOptionElement extends HTMLElement {
   }
 
   /* c8 ignore start */
-  get value() {
+  get value(): string {
     return stringAttribute.get(this as any, "value");
   }
-  set value(value) {
+  set value(value: string) {
     stringAttribute.set(this as any, "value", value);
   }
   /* c8 ignore stop */
 
-  get selected() {
+  get selected(): boolean {
     return booleanAttribute.get(this as any, "selected");
   }
-  set selected(value) {
+  set selected(value: boolean) {
     const option = this.parentElement as any;
     if (option?.querySelector) {
       const selectedOption = option.querySelector("option[selected]");

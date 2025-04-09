@@ -75,12 +75,11 @@ const createHTMLElement = (ownerDocument, localName) => {
 };
 
 /**
- * Given a stringified, or arrayfied DOM element, returns an HTMLDocument
- * that represent the content of such string, or array.
+ * Parse JSON into DOM structure
  * @param value A JSON string or array representing DOM content
  * @returns An HTMLDocument or Element or DocumentFragment depending on the content
  */
-export const parseJSON = (value) => {
+export const parseJSON = (value: string | any[]): HTMLDocument | Element | DocumentFragment => {
   const array = typeof value === "string" ? parse(value) : value;
   const { length } = array;
   const document = new HTMLDocument();
@@ -167,4 +166,4 @@ export const parseJSON = (value) => {
  * @param node The Document or Element to serialize
  * @returns The linear jsdon serialized array
  */
-export const toJSON = (node) => node.toJSON();
+export const toJSON = (node: Node | Element | Document): any[] => node.toJSON();

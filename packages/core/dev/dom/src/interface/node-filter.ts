@@ -7,9 +7,9 @@ import {
 } from '../shared/constants.ts';
 
 export class NodeFilter {
-  static get SHOW_ALL() { return SHOW_ALL; }
-  static get SHOW_ELEMENT() { return SHOW_ELEMENT; }
-  static get SHOW_COMMENT() { return SHOW_COMMENT; }
-  static get SHOW_CDATA_SECTION() { return SHOW_CDATA_SECTION; }
-  static get SHOW_TEXT() { return SHOW_TEXT; }
+  static get SHOW_ALL(): number { return SHOW_ALL; }
+  static get SHOW_ELEMENT(): number { return SHOW_ELEMENT; }
+  static get SHOW_COMMENT(): number { return SHOW_COMMENT; }
+  static get SHOW_CDATA_SECTION(): number { return SHOW_CDATA_SECTION; }
+  static get SHOW_TEXT(): number { return SHOW_TEXT; }
 }

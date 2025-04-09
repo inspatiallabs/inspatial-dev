@@ -4,5 +4,5 @@
  * @implements globalThis.NodeList
  */
 export class NodeList extends Array {
-  item(i: number) { return i < this.length ? this[i] : null; }
+  item(i: number): Node | null { return i < this.length ? this[i] : null; }
 }

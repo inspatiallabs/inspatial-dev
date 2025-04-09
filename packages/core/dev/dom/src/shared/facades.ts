@@ -12,7 +12,7 @@ import { SVGElement as _SVGElement } from "../svg/element.ts";
 import { setPrototypeOf } from "./object.ts";
 
 /* c8 ignore start */
-export const illegalConstructor = () => {
+export const illegalConstructor = (): never => {
   throw new TypeError("Illegal constructor");
 };
 

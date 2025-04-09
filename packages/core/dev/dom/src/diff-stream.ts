@@ -3,6 +3,7 @@
  * This module is crucial for InSpatial DOM implementation and streaming updates.
  */
 
+// @ts-ignore - Ignoring TS extension import error
 import { parseHTML } from "./index.ts";
 
 /** Interface for the DOM tree walker used in streaming updates */
@@ -253,7 +254,8 @@ async function htmlStreamWalker(
   // Use InSpatial DOM to parse the HTML stream
   const { document: doc } = parseHTML("");
 
-  doc.open();
+  // Type assertion to inform TypeScript that doc has these methods
+  (doc as any).open();
   const decoderStream = new TextDecoderStream();
   const decoderStreamReader = decoderStream.readable.getReader();
   let streamInProgress = true;
@@ -269,10 +271,10 @@ async function htmlStreamWalker(
           streamInProgress = false;
           break;
         }
-        doc.write(value);
+        (doc as any).write(value);
       }
     } finally {
-      doc.close();
+      (doc as any).close();
     }
   }
 

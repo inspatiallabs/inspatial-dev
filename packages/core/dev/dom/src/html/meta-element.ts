@@ -17,20 +17,20 @@ export class HTMLMetaElement extends HTMLElement {
   }
 
   /* c8 ignore start */
-  get name() { return stringAttribute.get(this as unknown as ElementNode, 'name'); }
-  set name(value) { stringAttribute.set(this as unknown as ElementNode, 'name', value); }
+  get name(): string { return stringAttribute.get(this as unknown as ElementNode, 'name'); }
+  set name(value: string) { stringAttribute.set(this as unknown as ElementNode, 'name', value); }
 
-  get httpEquiv() { return stringAttribute.get(this as unknown as ElementNode, 'http-equiv'); }
-  set httpEquiv(value) { stringAttribute.set(this as unknown as ElementNode, 'http-equiv', value); }
+  get httpEquiv(): string { return stringAttribute.get(this as unknown as ElementNode, 'http-equiv'); }
+  set httpEquiv(value: string) { stringAttribute.set(this as unknown as ElementNode, 'http-equiv', value); }
 
-  get content() { return stringAttribute.get(this as unknown as ElementNode, 'content'); }
-  set content(value) { stringAttribute.set(this as unknown as ElementNode, 'content', value); }
+  get content(): string { return stringAttribute.get(this as unknown as ElementNode, 'content'); }
+  set content(value: string) { stringAttribute.set(this as unknown as ElementNode, 'content', value); }
 
-  get charset() { return stringAttribute.get(this as unknown as ElementNode, 'charset'); }
-  set charset(value) { stringAttribute.set(this as unknown as ElementNode, 'charset', value); }
+  get charset(): string { return stringAttribute.get(this as unknown as ElementNode, 'charset'); }
+  set charset(value: string) { stringAttribute.set(this as unknown as ElementNode, 'charset', value); }
 
-  get media() { return stringAttribute.get(this as unknown as ElementNode, 'media'); }
-  set media(value) { stringAttribute.set(this as unknown as ElementNode, 'media', value); }
+  get media(): string { return stringAttribute.get(this as unknown as ElementNode, 'media'); }
+  set media(value: string) { stringAttribute.set(this as unknown as ElementNode, 'media', value); }
   /* c8 ignore stop */
 
 }

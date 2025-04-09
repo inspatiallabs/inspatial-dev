@@ -11,6 +11,8 @@ import { Document } from "../interface/document.ts";
 import { NodeList } from "../interface/node-list.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { customElements } from "../interface/custom-element-registry.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { parseFromString } from "../shared/parse-from-string.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import { HTMLElement } from "./element.ts";
@@ -44,8 +46,57 @@ const createHTMLElement = (
  * @implements globalThis.HTMLDocument
  */
 export class HTMLDocument extends Document {
+  /**
+   * Store for accumulated HTML content during document writing
+   * @private
+   */
+  private _writtenContent: string = '';
+  
+  /**
+   * Flag indicating if document is currently open for writing
+   * @private
+   */
+  private _isOpen: boolean = false;
+
   constructor() {
     super("text/html");
+  }
+
+  /**
+   * Opens the document for writing
+   */
+  override open(): void {
+    // Clear existing content
+    this._writtenContent = '';
+    this._isOpen = true;
+    
+    // Clear existing children
+    let child = this.firstChild;
+    while (child) {
+      this.removeChild(child);
+      child = this.firstChild;
+    }
+  }
+
+  /**
+   * Writes HTML content to the document
+   * @param content - The HTML content to write
+   */
+  override write(content: string): void {
+    if (!this._isOpen) {
+      this.open();
+    }
+    
+    this._writtenContent += content;
+    // Re-parse the accumulated content
+    parseFromString(this, true, this._writtenContent);
+  }
+
+  /**
+   * Closes the document after writing
+   */
+  override close(): void {
+    this._isOpen = false;
   }
 
   get all(): NodeList {

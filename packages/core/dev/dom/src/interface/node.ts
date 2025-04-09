@@ -55,28 +55,28 @@ export class Node extends EventTarget {
   localName: string;
   nodeType: number;
 
-  static get ELEMENT_NODE() {
+  static get ELEMENT_NODE(): number {
     return ELEMENT_NODE;
   }
-  static get ATTRIBUTE_NODE() {
+  static get ATTRIBUTE_NODE(): number {
     return ATTRIBUTE_NODE;
   }
-  static get TEXT_NODE() {
+  static get TEXT_NODE(): number {
     return TEXT_NODE;
   }
-  static get CDATA_SECTION_NODE() {
+  static get CDATA_SECTION_NODE(): number {
     return CDATA_SECTION_NODE;
   }
-  static get COMMENT_NODE() {
+  static get COMMENT_NODE(): number {
     return COMMENT_NODE;
   }
-  static get DOCUMENT_NODE() {
+  static get DOCUMENT_NODE(): number {
     return DOCUMENT_NODE;
   }
-  static get DOCUMENT_FRAGMENT_NODE() {
+  static get DOCUMENT_FRAGMENT_NODE(): number {
     return DOCUMENT_FRAGMENT_NODE;
   }
-  static get DOCUMENT_TYPE_NODE() {
+  static get DOCUMENT_TYPE_NODE(): number {
     return DOCUMENT_TYPE_NODE;
   }
 
@@ -92,28 +92,28 @@ export class Node extends EventTarget {
     this[PREV] = null;
   }
 
-  get ELEMENT_NODE() {
+  get ELEMENT_NODE(): number {
     return ELEMENT_NODE;
   }
-  get ATTRIBUTE_NODE() {
+  get ATTRIBUTE_NODE(): number {
     return ATTRIBUTE_NODE;
   }
-  get TEXT_NODE() {
+  get TEXT_NODE(): number {
     return TEXT_NODE;
   }
-  get CDATA_SECTION_NODE() {
+  get CDATA_SECTION_NODE(): number {
     return CDATA_SECTION_NODE;
   }
-  get COMMENT_NODE() {
+  get COMMENT_NODE(): number {
     return COMMENT_NODE;
   }
-  get DOCUMENT_NODE() {
+  get DOCUMENT_NODE(): number {
     return DOCUMENT_NODE;
   }
-  get DOCUMENT_FRAGMENT_NODE() {
+  get DOCUMENT_FRAGMENT_NODE(): number {
     return DOCUMENT_FRAGMENT_NODE;
   }
-  get DOCUMENT_TYPE_NODE() {
+  get DOCUMENT_TYPE_NODE(): number {
     return DOCUMENT_TYPE_NODE;
   }
 

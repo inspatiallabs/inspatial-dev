@@ -26,10 +26,13 @@ import { setPrototypeOf } from "./shared/object.ts";
  * Parses HTML string and returns the document
  * @param html HTML string to parse
  * @param globals Global variables to include in the document
- * @returns Parsed document
+ * @returns Parsed document with window and document objects
  */
-export const parseHTML = (html: string, globals = null) =>
-  new DOMParser().parseFromString(html, "text/html", globals).defaultView;
+export const parseHTML = (html: string, globals = null): { 
+  document: DOMDocument;
+  window: Window;
+  [key: string]: any;
+} => new DOMParser().parseFromString(html, "text/html", globals).defaultView;
 
 // Export diffStream functionality
 // @ts-ignore - Ignoring TS extension import error
