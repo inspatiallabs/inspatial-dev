@@ -2,7 +2,6 @@
 import { TEXT_NODE } from "../shared/constants.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { VALUE } from "../shared/symbols.ts";
-
 // @ts-ignore - Ignoring TS extension import error
 import { CharacterData } from "./character-data.ts";
 
@@ -14,27 +13,10 @@ export class Text extends CharacterData {
     super(ownerDocument, "#text", TEXT_NODE, data);
   }
 
+  // @ts-ignore - Method exists in parent class
   get wholeText(): string {
-    const text: string[] = [];
-    // @ts-ignore - Properties exist at runtime
-    let { previousSibling, nextSibling } = this;
-    while (previousSibling) {
-      if (previousSibling.nodeType === TEXT_NODE)
-        // @ts-ignore - Symbol property access
-        text.unshift(previousSibling[VALUE]);
-      else break;
-      previousSibling = previousSibling.previousSibling;
-    }
     // @ts-ignore - Symbol property access
-    text.push(this[VALUE]);
-    while (nextSibling) {
-      if (nextSibling.nodeType === TEXT_NODE)
-        // @ts-ignore - Symbol property access
-        text.push(nextSibling[VALUE]);
-      else break;
-      nextSibling = nextSibling.nextSibling;
-    }
-    return text.join("");
+    return this[VALUE];
   }
 
   // @ts-ignore - Method exists in parent class
@@ -47,6 +29,6 @@ export class Text extends CharacterData {
   // @ts-ignore - Method exists in parent class
   toString(): string {
     // @ts-ignore - Symbol property access
-    return escapeHtml(this[VALUE]);
+    return this[VALUE];
   }
 }

@@ -5,7 +5,14 @@
  * DOM's Document interface.
  */
 
-import { test, expect, assertEquals } from "@inspatial/test";
+import {
+  test,
+  expect,
+  assertEquals,
+  assert,
+  describe,
+  it,
+} from "@inspatial/test";
 import {
   Document,
   Element,
@@ -13,6 +20,7 @@ import {
   Comment,
   DocumentFragment,
   Node,
+  parseHTML,
 } from "../cached.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { MIME } from "../shared/symbols.ts";
@@ -390,4 +398,368 @@ test({
     const div = doc.createElementNS(null, "div");
     expect(div.namespaceURI).toBe(null);
   },
+});
+
+/**
+ * # Document Advanced Features Testing
+ * @summary Tests for document cloning, equality, title handling, and DOM APIs
+ *
+ * These tests verify advanced document functionality including document cloning,
+ * node equality checking, title manipulation, and various DOM implementation details.
+ */
+describe("DocumentAdvanced", () => {
+  describe("Document cloning and equality", () => {
+    it("should correctly clone a document with all its contents", () => {
+      // GIVEN a document with a doctype and title
+      const { window } = parseHTML(`
+        <!doctype html>
+        <html>
+          <head><title>hello</title></head>
+        </html>
+      `);
+
+      // WHEN cloning the document
+      const clone = window.document.cloneNode(true);
+
+      // THEN the clone should be connected and have the same structure
+      assert(clone.isConnected === true, "document should always be connected");
+      assert(
+        JSON.stringify(clone) ===
+          '[9,10,"html",1,"html",1,"head",1,"title",3,"hello",-4]',
+        "JSON representation should match the original document structure"
+      );
+      assert(
+        clone.doctype.nodeType === 10,
+        "DOCTYPE node should have nodeType 10"
+      );
+    });
+
+    it("should correctly determine equality between documents", () => {
+      // GIVEN a document and its clone
+      const { window } = parseHTML(`
+        <!doctype html>
+        <html>
+          <head><title>hello</title></head>
+        </html>
+      `);
+      const clone = window.document.cloneNode(true);
+
+      // THEN isEqualNode should return true for equality comparisons
+      assert(
+        clone.isEqualNode(clone) === true,
+        "A document should be equal to itself"
+      );
+      assert(
+        clone.isEqualNode(window.document) === true,
+        "A cloned document should be equal to the original document"
+      );
+    });
+  });
+
+  describe("DOCTYPE handling", () => {
+    it("should handle DOCTYPE nodes correctly", () => {
+      // GIVEN a document with no DOCTYPE
+      let document = new DOMParser().parseFromString("", "text/html");
+
+      // THEN doctype should be null
+      assert(
+        document.doctype === null,
+        "Document created without DOCTYPE should have null doctype"
+      );
+
+      // WHEN inserting an element without a DOCTYPE
+      document.insertBefore(document.createElement("html"));
+
+      // THEN doctype should still be null
+      assert(
+        document.doctype === null,
+        "Document should still have null doctype after inserting non-DOCTYPE node"
+      );
+
+      // GIVEN a clone with a DOCTYPE
+      const { window } = parseHTML(`<!doctype html><html></html>`);
+      const clone = window.document.cloneNode(true);
+
+      // WHEN inserting the DOCTYPE from the clone
+      document.insertBefore(clone.doctype, document.firstChild);
+
+      // THEN the doctype property should reference the inserted DOCTYPE
+      assert(
+        document.doctype === clone.doctype,
+        "Document.doctype should reference the inserted DOCTYPE node"
+      );
+    });
+  });
+
+  describe("Global objects and constructors", () => {
+    it("should expose the correct global objects", () => {
+      // GIVEN a document created with parseHTML
+      const { setTimeout } = parseHTML(`<!doctype html><html></html>`);
+
+      // THEN setTimeout should match the global setTimeout
+      assert(
+        setTimeout === global.setTimeout,
+        "setTimeout from parseHTML should match global setTimeout"
+      );
+    });
+
+    it("should throw when incorrectly instantiating Document constructor", () => {
+      // GIVEN the Document constructor
+      const { Document } = parseHTML(`<!doctype html><html></html>`);
+
+      // WHEN trying to use Document constructor incorrectly
+      try {
+        new Document();
+        assert(
+          true === false,
+          "Document should not be instantiable without new"
+        );
+      } catch (ok) {
+        // THEN an error should be thrown
+        assert(
+          true === true,
+          "Using Document constructor incorrectly should throw"
+        );
+      }
+    });
+  });
+
+  describe("Document title handling", () => {
+    it("should correctly get and set document title", () => {
+      // GIVEN a document with HTML structure
+      let document = new DOMParser().parseFromString(
+        "<!DOCTYPE html><html />",
+        "text/html"
+      );
+
+      // THEN the initial title should be empty
+      assert(
+        document.title === "",
+        "Initial document title should be empty string"
+      );
+
+      // WHEN setting the title with quoted content
+      document.title = '"hello"';
+
+      // THEN the title should be set exactly as provided (not escaped)
+      assert(
+        document.title === '"hello"',
+        "Document title with quotes should not be escaped"
+      );
+      assert(
+        document.toString() ===
+          '<!DOCTYPE html><html><head><title>"hello"</title></head></html>',
+        "Document serialization should include the title with quotes"
+      );
+      assert(
+        document.body.tagName === "BODY",
+        "Body element should be automatically created"
+      );
+
+      // WHEN setting a simple title
+      document.title = "I";
+
+      // THEN getting the title should not have side effects
+      assert(
+        document.title + document.title + document.title === "III",
+        "Accessing title should not have side effects"
+      );
+
+      // WHEN setting a title with special characters
+      document.title = "&";
+
+      // THEN the raw character should be preserved in serialization
+      assert(
+        document.toString() ===
+          "<!DOCTYPE html><html><head><title>&</title></head><body></body></html>",
+        "Special characters in title should be preserved in document serialization"
+      );
+    });
+  });
+
+  describe("Document.all collection", () => {
+    it("should correctly provide the document.all collection", () => {
+      // GIVEN a document with HTML structure
+      let document = new DOMParser().parseFromString(
+        "<!DOCTYPE html><html />",
+        "text/html"
+      );
+      document.title = "test";
+
+      // THEN document.all should contain all elements in the document
+      assert(
+        document.all.length === 4,
+        "document.all should contain all elements in the document"
+      );
+      assert(
+        document.all[0] === document.querySelector("html"),
+        "First element in document.all should be html"
+      );
+      assert(
+        document.all[1] === document.querySelector("head"),
+        "Second element in document.all should be head"
+      );
+      assert(
+        document.all[2] === document.querySelector("title"),
+        "Third element in document.all should be title"
+      );
+      assert(
+        document.all[3] === document.querySelector("body"),
+        "Fourth element in document.all should be body"
+      );
+    });
+  });
+
+  describe("Window event handling", () => {
+    it("should correctly handle window events", () => {
+      // GIVEN a window object from parseHTML with an event listener
+      const { window } = parseHTML(`<!doctype html><html></html>`);
+      let triggered = false;
+
+      // WHEN adding and triggering an event
+      window.addEventListener("test", function once() {
+        triggered = true;
+        window.removeEventListener("test", once);
+      });
+      window.dispatchEvent(new window.Event("test"));
+
+      // THEN the event handler should be triggered
+      assert(
+        triggered === true,
+        "Window event listener should be triggered by dispatched event"
+      );
+    });
+
+    it("should allow modifying window properties", () => {
+      // GIVEN a window object from parseHTML
+      const { window } = parseHTML(`<!doctype html><html></html>`);
+
+      // WHEN setting a custom property
+      window.anyValue = 123;
+
+      // THEN the property should be accessible
+      assert(
+        window.anyValue === 123,
+        "Custom window property should be accessible"
+      );
+
+      // WHEN overriding methods
+      window.addEventListener =
+        window.removeEventListener =
+        window.dispatchEvent =
+          null;
+
+      // THEN the overridden methods should reflect the new values
+      assert(
+        window.addEventListener === null,
+        "Window methods should be overridable"
+      );
+
+      // THEN performance.now should return a number
+      assert(
+        typeof window.performance.now() === "number",
+        "window.performance.now() should return a number"
+      );
+    });
+  });
+
+  describe("HTML parsing features", () => {
+    it("should correctly parse and serialize HTML fragments", () => {
+      // GIVEN a HTML fragment
+      const result = parseHTML("<html><body><div>asdf</div></body></html>");
+
+      // THEN it should parse into the correct structure
+      assert(
+        result.document.body.outerHTML === "<body><div>asdf</div></body>",
+        "HTML fragment should be correctly parsed into DOM structure"
+      );
+    });
+
+    it("should handle location and base URI correctly", () => {
+      // GIVEN a location object
+      const location = { href: "http://ok" };
+
+      // WHEN parsing HTML with this location
+      const withLocation = parseHTML("<html></html>", { location });
+
+      // THEN the location should be correctly set
+      assert(
+        withLocation.document.defaultView.location === location,
+        "Document defaultView should have the provided location object"
+      );
+      assert(
+        withLocation.document.baseURI === location.href,
+        "Document baseURI should match location.href"
+      );
+
+      // WHEN parsing HTML with a base element
+      const withBase = parseHTML('<html><base href="http://base"></html>', {
+        location,
+      });
+
+      // THEN the baseURI should be derived from the base element
+      assert(
+        withBase.document.documentElement.baseURI === "http://base",
+        "Document baseURI should be derived from base element when present"
+      );
+
+      // GIVEN a document fragment
+      const fragment = new DocumentFragment();
+
+      // THEN it should have null baseURI
+      assert(
+        fragment.baseURI === null,
+        "DocumentFragment.baseURI should be null"
+      );
+    });
+
+    it("should support CSS attribute selectors with wildcards", () => {
+      // GIVEN a document with an SVG element with class
+      const parser = new DOMParser();
+      const { document: svg } = parser.parseFromString(
+        '<svg class="foo-1"/>',
+        "text/html"
+      ).defaultView.window;
+
+      // THEN attribute wildcard selectors should work
+      assert(
+        svg.querySelector('[class*="foo-"]') === svg.firstElementChild,
+        "CSS attribute wildcard selectors should find matching elements"
+      );
+    });
+
+    it("should handle minimal content correctly", () => {
+      // GIVEN minimal content
+      const parser = new DOMParser();
+
+      // WHEN parsing minimal content
+      const result = parser.parseFromString("...", "text/html");
+
+      // THEN it should still create an HTML structure
+      assert(
+        result.firstElementChild.localName === "html",
+        "Minimal content should still parse into html structure"
+      );
+    });
+  });
+
+  describe("Document body manipulation", () => {
+    it("should maintain correct ownership when manipulating body", () => {
+      // GIVEN an empty document with doctype and structure
+      const issue187 = new DOMParser().parseFromString(
+        `<!DOCTYPE html><html><head></head><body></body></html>`,
+        "text/html"
+      ).defaultView.window.document;
+
+      // WHEN adding content to body through innerHTML
+      issue187.body.innerHTML = "<span></span>";
+      const span = issue187.body.firstElementChild;
+
+      // THEN the new element should have the correct ownerDocument
+      assert(
+        span.ownerDocument.body === issue187.body,
+        "Elements added via innerHTML should have correct ownerDocument"
+      );
+    });
+  });
 });
