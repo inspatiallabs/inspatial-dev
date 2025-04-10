@@ -1,6 +1,3 @@
-// import { IconVariants } from "@/components/icons/variants";
-// import { TypographyProps } from "@/spatialKit/UI/Typography/variant";
-
 /**********************************(Modal Props)**********************************/
 
 /**
@@ -96,214 +93,10 @@ export interface DOMAttributes {
  * ```
  */
 export interface SharedProps extends DOMAttributes {
-  children?: unknown; //React.ReactNode - Note: using unknown keeps the type independent of framework
+  children?: unknown; // Ideally framework Node - Note: using unknown keeps the type independent of framework
   asChild?: boolean;
   disabled?: boolean;
   debug?: boolean;
-}
-
-/**********************************(Theme Props)**********************************/
-
-/**
- * ThemeProps defines the overall theme configuration for your application.
- * It includes various aspects of theming such as variant, format, mode, cursor, radius, and typography.
- *
- * @interface ThemeProps
- * @property {ThemeVariantProps} variant - The visual variant of the theme (e.g., flat, neutral).
- * @property {ThemeFormatProps} format - The color format and accent of the theme.
- * @property {ThemeModeProps} mode - The color mode of the theme (light, dark, or auto).
- * @property {ThemeCursorProps} cursor - The cursor style for the theme.
- * @property {ThemeRadiusProps} radius - The border radius scale for the theme.
- * @property {TypographyProps} [typography] - Optional typography configuration.
- *
- * @example
- * ```tsx
- * const theme: ThemeProps = {
- *   variant: "soft",
- *   format: { name: "lavender" },
- *   mode: "light",
- *   cursor: "pointer",
- *   radius: "md",
- * };
- * ```
- */
-// export interface ThemeProps {
-//   variant: ThemeVariantProps;
-//   format: ThemeFormatProps;
-//   mode: ThemeModeProps;
-//   cursor: ThemeCursorProps;
-//   radius: ThemeRadiusProps;
-//   typography?: TypographyProps;
-// }
-
-/**
- * ThemeSizeScaleProps represents a scale of sizes used throughout the theme.
- * This type is used for various size-related properties like spacing and radius.
- *
- * @type {string}
- */
-export type ThemeSizeScaleProps =
-  | "base"
-  | "xs"
-  | "sm"
-  | "md"
-  | "lg"
-  | "xl"
-  | "2xl"
-  | "3xl"
-  | "4xl"
-  | "full";
-
-export type ThemeRadiusProps = ThemeSizeScaleProps;
-
-export type ThemeSpacingProps = ThemeSizeScaleProps;
-
-/**
- * ThemeCursorProps defines the available cursor styles for the theme.
- * It includes a wide range of cursor options to enhance user interaction.
- *
- * @type {string}
- */
-export type ThemeCursorProps =
-  | "auto"
-  | "base"
-  | "select"
-  | "Orbit"
-  | "pointer"
-  | "pan"
-  | "panning"
-  | "loading"
-  | "Help"
-  | "disabled"
-  | "text-x"
-  | "text-y"
-  | "cross"
-  | "Zoom-In"
-  | "zoom-out"
-  | "copy"
-  | "move"
-  | "resize-y"
-  | "resize-x"
-  | "resize-t"
-  | "resize-r"
-  | "resize-b"
-  | "resize-l"
-  | "resize-tlbr"
-  | "resize-trbl"
-  | "resize-tl"
-  | "resize-tr"
-  | "resize-bl"
-  | "resize-br";
-
-/**
- * ThemeVariantProps defines the visual variants available for the theme.
- *
- * @type {string}
- */
-export type ThemeVariantProps = "flat" | "neutral" | "brutal" | "soft";
-
-/**
- * ThemeModeProps defines the color modes available for the theme.
- *
- * @type {string}
- */
-export type ThemeModeProps = "light" | "dark" | "auto";
-
-/**
- * ThemeFormatNameProps defines the available color accent themes.
- * It includes a wide variety of themes to suit different design needs.
- *
- * @type {string}
- */
-export type ThemeFormatNameProps =
-  | "default" // will use the theme color accent of the website/app
-  | "lavender"
-  | "blossom"
-  | "sky"
-  | "sunset"
-  | "forest"
-  | "ocean"
-  | "midnight"
-  | "autumn"
-  | "polar"
-  | "mocha"
-  | "neon"
-  | "pastel"
-  | "monochrome"
-  | "metropolis"
-  | "cyberpunk"
-  | "earth"
-  | "retro"
-  | "noire"
-  | "tropical"
-  | "nordic"
-  | "steampunk"
-  | "breeze"
-  | "emerald"
-  | "dusk"
-  | "amethyst"
-  | "cherry"
-  | "rustic"
-  | "arctic"
-  | "expresso"
-  | "sherbet"
-  | "mamal"
-  | "cyberpunk"
-  | "terra"
-  | "vintage"
-  | "noir"
-  | "island"
-  | "fjord"
-  | "brass"
-  | "unoclub"
-  | "duoclub"
-  | "tresclub"
-  | "zinc";
-
-/**
- * ThemeFormatProps defines the structure for theme color formats.
- * It includes the theme name and optional color configurations for light and dark modes.
- *
- * @interface ThemeFormatProps
- * @property {ThemeFormatNameProps} name - The name of the theme format.
- * @property {Object} [light] - Optional color configuration for light mode.
- * @property {Object} [dark] - Optional color configuration for dark mode.
- *
- * @example
- * ```tsx
- * const myThemeFormat: ThemeFormatProps = {
- *   name: "lavender",
- *   light: {
- *     brand: "#8a4baf",
- *     background: "#f8f8f8",
- *     // ... other color properties
- *   },
- *   dark: {
- *     brand: "#b76edf",
- *     background: "#1a1a1a",
- *     // ... other color properties
- *   }
- * };
- * ```
- */
-export interface ThemeFormatProps {
-  name: ThemeFormatNameProps;
-  light?: {
-    brand?: string;
-    background?: string;
-    surface?: string;
-    primary?: string;
-    secondary?: string;
-    muted?: string;
-  };
-  dark?: {
-    brand?: string;
-    background?: string;
-    surface?: string;
-    primary?: string;
-    secondary?: string;
-    muted?: string;
-  };
 }
 
 /**********************************(Server Action Props)**********************************/
@@ -465,7 +258,7 @@ export type NonVoid<T> = T extends void ? never : T;
 export type Arg<
   T extends (...args: any[]) => any,
   index extends number = 0,
-  required extends boolean = false,
+  required extends boolean = false
 > = required extends true
   ? NonNullable<Parameters<T>[index]>
   : Parameters<T>[index];
@@ -505,7 +298,6 @@ export type TypedArray =
   | Uint16Array
   | Int32Array
   | Uint32Array
-  | Float16Array
   | Float32Array
   | Float64Array
   | BigInt64Array

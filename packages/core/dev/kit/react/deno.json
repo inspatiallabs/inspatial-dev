@@ -1,0 +1,42 @@
+{
+  "name": "@inspatial/kit-rct",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --external react",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --external react",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "jsxFragmentFactory": "React.Fragment"
+  },
+  "imports": {
+    "motion": "npm:motion@^11.13.1",
+    "@inspatial/theme": "jsr:@inspatial/theme@^0.1.0",
+    "@inspatial/types": "jsr:@inspatial/types@^0.1.2",
+    "@lynx-js/react": "npm:@lynx-js/react@^0.106.3"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./ornament": "./src/ornament/index.ts",
+    "./button": "./src/button/index.ts",
+    "./tab": "./src/tab/index.ts",
+    "./presentation": "./src/presentation/index.ts"
+  },
+  "tasks": {
+    "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
+  },
+  "publish": {
+    "exclude": [
+      ".github",
+      ".vscode",
+      "examples",
+      "fixtures",
+      "**/*.test.ts",
+      "test_deps.ts"
+    ]
+  }
+}

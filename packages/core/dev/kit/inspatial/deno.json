@@ -1,21 +1,15 @@
 {
   "name": "@inspatial/kit",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "Apache-2.0",
-  "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external react",
-    "dev": "tsup src/index.ts --format cjs,esm --watch --dts --external react",
-    "lint": "eslint \"src/**/*.ts*\"",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
-  },
   "compilerOptions": {
     "jsx": "precompile",
-    "jsxImportSource": "custom",
+    "jsxImportSource": "@inspatial/run/jsx",
     "jsxFragmentFactory": "Fragment"
   },
   "imports": {
     "motion": "npm:motion@^11.13.1",
-    "custom": "./packages/core/dev/renderer/jsx-dom/src/index.ts" 
+    "@inspatial/run": "./packages/core/dev/run/src/jsx/jsx-runtime.ts" 
   },
   "exports": {
     ".": "./src/index.ts",

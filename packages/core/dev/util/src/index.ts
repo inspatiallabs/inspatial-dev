@@ -34,7 +34,6 @@ export * from "./collection.ts";
 export * from "./countries.ts";
 export * from "./encoding.ts";
 export * from "./regex-escape.ts";
-export * from "./types.ts";
 export * from "./build-message.ts";
 export * from "./same-start.ts";
 export * from "./farthest-point.ts";

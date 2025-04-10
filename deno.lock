@@ -40,6 +40,7 @@
     "jsr:@std/toml@^1.0.1": "1.0.3",
     "jsr:@std/ulid@1.0.0": "1.0.0",
     "jsr:@std/yaml@^1.0.5": "1.0.5",
+    "npm:@lynx-js/react@~0.106.3": "0.106.3_@types+react@18.3.18",
     "npm:@orillusion/core@*": "0.8.5-dev.5",
     "npm:@standard-schema/spec@1.0.0-beta.4": "1.0.0-beta.4",
     "npm:@stylexjs/stylex@~0.9.3": "0.9.3",
@@ -57,7 +58,8 @@
     "npm:highlight.js@^11.10.0": "11.11.1",
     "npm:jose@^5.9.6": "5.10.0",
     "npm:linkedom@~0.18.9": "0.18.9",
-    "npm:motion@^11.13.1": "11.18.2",
+    "npm:motion@^11.13.1": "11.18.2_react@18.3.1",
+    "npm:react@^18.2.0": "18.3.1",
     "npm:tailwind-merge@^1.14.0": "1.14.0",
     "npm:tailwind-merge@^2.5.3": "2.6.0",
     "npm:tailwind-scrollbar@^3.1.0": "3.1.0_tailwindcss@3.4.17__postcss@8.5.3",
@@ -285,6 +287,9 @@
     "@ark/util@0.45.6": {
       "integrity": "sha512-eI8Y1X0+271Q1p8qU39tkyrzIVMZIuymzixzVD0UL7k+HJaPhbbrjuKW/1CZzQ64tc+ugl7z2kP01YlAMA5h7A=="
     },
+    "@hongzhiyuan/preact@10.24.0-319c684e": {
+      "integrity": "sha512-weWzMUnmXk7gynEpOo/iIyfq95pRoFO2+18eiwD0hk/TeIQUeHbyG4W/S3lCEjB54jvft/itXwhkF+vz623BEg=="
+    },
     "@isaacs/cliui@8.0.2": {
       "integrity": "sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==",
       "dependencies": [
@@ -318,6 +323,13 @@
       "dependencies": [
         "@jridgewell/resolve-uri",
         "@jridgewell/sourcemap-codec"
+      ]
+    },
+    "@lynx-js/react@0.106.3_@types+react@18.3.18": {
+      "integrity": "sha512-RTL8MDaSShwBWtPO3qfiSr+RaN3lDdxoEbqAORn+W4wh/xMO1ex8HKcS9EOvEhEFsZA6VN0t7zHDgrotrvwd/g==",
+      "dependencies": [
+        "@types/react",
+        "preact@npm:@hongzhiyuan/preact@10.24.0-319c684e"
       ]
     },
     "@nodelib/fs.scandir@2.1.5": {
@@ -396,6 +408,16 @@
       "integrity": "sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==",
       "dependencies": [
         "undici-types"
+      ]
+    },
+    "@types/prop-types@15.7.13": {
+      "integrity": "sha512-hCZTSvwbzWGvhqxp/RqVqwU999pBf2vp7hzIjiYOsl8wqOmUxkQ6ddw1cV3l8811+kdUFus/q4d1Y3E3SyEifA=="
+    },
+    "@types/react@18.3.18": {
+      "integrity": "sha512-t4yC+vtgnkYjNSKlFx1jkAhH8LgTo2N/7Qvi83kdEaUtMDiwpbLAktKDaAMlRcJ5eSxZkH74eEGt1ky31d7kfQ==",
+      "dependencies": [
+        "@types/prop-types",
+        "csstype"
       ]
     },
     "@types/stats.js@0.17.3": {
@@ -639,6 +661,15 @@
         "tslib"
       ]
     },
+    "framer-motion@11.18.2_react@18.3.1": {
+      "integrity": "sha512-5F5Och7wrvtLVElIpclDT0CBzMVg3dL22B64aZwHtsIY8RB4mXICLrkajK4G9R+ieSAGcgrLeae2SeUTg2pr6w==",
+      "dependencies": [
+        "motion-dom",
+        "motion-utils",
+        "react",
+        "tslib"
+      ]
+    },
     "fsevents@2.3.3": {
       "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="
     },
@@ -803,7 +834,15 @@
     "motion@11.18.2": {
       "integrity": "sha512-JLjvFDuFr42NFtcVoMAyC2sEjnpA8xpy6qWPyzQvCloznAyQ8FIXioxWfHiLtgYhoVpfUqSWpn1h9++skj9+Wg==",
       "dependencies": [
-        "framer-motion",
+        "framer-motion@11.18.2",
+        "tslib"
+      ]
+    },
+    "motion@11.18.2_react@18.3.1": {
+      "integrity": "sha512-JLjvFDuFr42NFtcVoMAyC2sEjnpA8xpy6qWPyzQvCloznAyQ8FIXioxWfHiLtgYhoVpfUqSWpn1h9++skj9+Wg==",
+      "dependencies": [
+        "framer-motion@11.18.2_react@18.3.1",
+        "react",
         "tslib"
       ]
     },
@@ -912,6 +951,12 @@
     },
     "queue-microtask@1.2.3": {
       "integrity": "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A=="
+    },
+    "react@18.3.1": {
+      "integrity": "sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==",
+      "dependencies": [
+        "loose-envify"
+      ]
     },
     "read-cache@1.0.0": {
       "integrity": "sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==",
@@ -1273,9 +1318,18 @@
           "npm:@stylexjs/stylex@~0.9.3"
         ]
       },
-      "packages/core/dev/kit": {
+      "packages/core/dev/kit/inspatial": {
         "dependencies": [
           "npm:motion@^11.13.1"
+        ]
+      },
+      "packages/core/dev/kit/react": {
+        "dependencies": [
+          "jsr:@inspatial/theme@0.1",
+          "jsr:@inspatial/types@~0.1.2",
+          "npm:@lynx-js/react@~0.106.3",
+          "npm:motion@^11.13.1",
+          "npm:react@^18.2.0"
         ]
       },
       "packages/core/dev/sdf": {
