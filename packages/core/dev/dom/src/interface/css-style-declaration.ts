@@ -4,6 +4,9 @@ import hyphenize from "@inspatial/util/hyphenize";
 // @ts-ignore - Ignoring TS extension import error
 import { CHANGED, PRIVATE, VALUE } from "../shared/symbols.ts";
 
+// @ts-ignore - Ignoring TS extension import error
+import { CSSProperties } from "../html/style-element.parse.ts";
+
 // Type definitions
 interface AttributeWithValue {
   [CHANGED]?: boolean;
@@ -65,7 +68,10 @@ function push(this: string[], value: any, key: any): void {
  * @implements globalThis.CSSStyleDeclaration
  */
 // @ts-ignore - Class type issues
-export class CSSStyleDeclaration extends Map {
+export class CSSStyleDeclaration extends Map implements CSSProperties {
+  // For TypeScript to recognize direct property access
+  [key: string]: any;
+
   /**
    * Create a new CSSStyleDeclaration for an element
    * @param element - The element to create a style declaration for

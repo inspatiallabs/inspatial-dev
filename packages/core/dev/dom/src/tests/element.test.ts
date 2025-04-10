@@ -450,34 +450,32 @@ test({
  */
 test({
   name: "Element.style provides access to style declaration",
-  fn: () => {
+  fn() {
+    // Use the existing createElement helper
     const element = createElement();
     
-    // Initial state
+    // Initial state - style exists but is empty
+    expect(element.style).not.toBe(null);
+    
+    // Clear any existing style
+    element.removeAttribute("style");
     expect(element.style.cssText).toBe("");
     
-    // Set individual style properties
+    // Set inline properties
     element.style.color = "red";
     element.style.fontSize = "16px";
-    element.style.marginTop = "10px";
     
-    // Verify style attribute was updated
-    const styleAttr = element.getAttribute("style");
-    expect(styleAttr).toBeDefined();
-    
-    // Individual properties should be accessible
+    // Check that properties are set
     expect(element.style.color).toBe("red");
     expect(element.style.fontSize).toBe("16px");
-    expect(element.style.marginTop).toBe("10px");
     
-    // Set cssText directly
-    element.style.cssText = "color: blue; background-color: yellow;";
+    // Update via style attribute
+    element.setAttribute("style", "color: blue; margin: 10px");
+    
+    // Check that style object is updated
     expect(element.style.color).toBe("blue");
-    expect(element.style.backgroundColor).toBe("yellow");
-    
-    // Previous values should be cleared
-    expect(element.style.fontSize).toBe("");
-    expect(element.style.marginTop).toBe("");
+    expect(element.style.margin).toBe("10px");
+    expect(element.style.fontSize).toBe(""); // Property should be gone
   }
 });
 

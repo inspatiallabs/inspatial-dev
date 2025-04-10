@@ -2,16 +2,19 @@
   "name": "@inspatial/dom",
   "license": "Apache-2.0",
   "version": "0.1.0",
+  "description": "A DOM implementation for InSpatial",
   "imports": {
     "css-select": "npm:css-select@^5.1.0",
     "@inspatial/util": "jsr:@inspatial/util@^0.1.6",
-    "@inspatial/test": "jsr:@inspatial/test@^0.1.0"
+    "@inspatial/test": "jsr:@inspatial/test@^0.1.0",
+    "csstype": "npm:csstype@^3.1.3"
   },
   "exports": {
     ".": "./src/index.ts"
   },
   "tasks": {
-    "test": "deno test --no-check --allow-all ./src/index.test.ts"
+    "test": "deno test --allow-all",
+    "houdini": "deno run --allow-all src/houdini/examples/css-houdini-demo.ts"
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]

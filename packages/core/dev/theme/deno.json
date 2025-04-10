@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/theme",
   "license": "Apache-2.0",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "tasks": {
     "generate-google-fonts": "deno run --allow-read --allow-write ./theme/src/typography/google/font-generator-cli.ts"
   },
@@ -12,6 +12,7 @@
     "./font": "./src/font/index.ts",
     "./effect": "./src/effect/index.ts",
     "./variables": "./src/variables/index.ts",
-    "./variant": "./src/variant/index.ts"
+    "./variant": "./src/variant/index.ts",
+    "./type": "./src/type/index.ts"
   }
 }

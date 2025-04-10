@@ -53,6 +53,7 @@
     "npm:css-select@5.1.0": "5.1.0",
     "npm:css-select@^5.1.0": "5.1.0",
     "npm:cssom@*": "0.5.0",
+    "npm:csstype@^3.1.3": "3.1.3",
     "npm:highlight.js@^11.10.0": "11.11.1",
     "npm:jose@^5.9.6": "5.10.0",
     "npm:linkedom@~0.18.9": "0.18.9",
@@ -548,6 +549,9 @@
     },
     "cssom@0.5.0": {
       "integrity": "sha512-iKuQcq+NdHqlAcwUY0o/HL69XQrUaQdMjmStJ8JFmUaiiQErlhrmuigkg/CU4E2J0IyUKUrMAgl36TvN67MqTw=="
+    },
+    "csstype@3.1.3": {
+      "integrity": "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw=="
     },
     "didyoumean@1.2.2": {
       "integrity": "sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw=="
@@ -1260,7 +1264,8 @@
         "dependencies": [
           "jsr:@inspatial/test@0.1",
           "jsr:@inspatial/util@~0.1.6",
-          "npm:css-select@^5.1.0"
+          "npm:css-select@^5.1.0",
+          "npm:csstype@^3.1.3"
         ]
       },
       "packages/core/dev/iss": {

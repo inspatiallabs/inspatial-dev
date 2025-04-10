@@ -102,3 +102,34 @@ Object.defineProperty(Document, 'name', { value: 'Document' });
 // Export JSON utility functions
 // @ts-ignore - Ignoring TS extension import error
 export { parseJSON, toJSON } from "./shared/parse-json.ts";
+
+/**
+ * InSpatial DOM Main Module
+ */
+
+// Re-export core DOM components 
+export * from './interface/document.ts';
+export * from './interface/element.ts';
+export * from './interface/node.ts';
+export * from './interface/event.ts';
+
+// Export CSS Houdini implementation
+export * from './houdini/css-typed-om.ts';
+export * from './interface/element-css-houdini.ts';
+
+// Default initialization function
+import { Element } from './interface/element.ts';
+import { applyHoudiniToElement } from './interface/element-css-houdini.ts';
+
+/**
+ * Initialize the DOM with enhanced features
+ */
+export function initializeDOM() {
+  // Apply CSS Houdini enhancements to Element
+  applyHoudiniToElement(Element);
+}
+
+// Optionally auto-initialize if in a browser environment
+if (typeof window !== 'undefined') {
+  initializeDOM();
+}

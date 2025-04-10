@@ -15,70 +15,342 @@ export enum CSSRuleType {
 }
 
 /**
+ * Import CSS property types from csstype library
+ * This provides comprehensive, MDN-based typing for all CSS properties
+ */
+// @ts-ignore
+import type * as CSSType from "csstype";
+
+/**
+ * Interface for CSS properties accessed via style object
+ * This allows for proper TypeScript typing with element.style.color, etc.
+ * Uses csstype library for comprehensive property definitions
+ */
+export type CSSProperties = CSSType.Properties<string | number>;
+
+/**
  * CSS style declaration class to store properties and values
  */
 export class CSSStyleDeclaration {
-  private properties: Map<string, { value: string; priority: string }> =
-    new Map();
+  // Private properties for internal storage
+  _properties: Map<string, { value: string; priority: string }> = new Map();
+  _parentRule: CSSRule | null = null;
+  _ownerNode: any = null;
+  _readOnly: boolean = false;
+  _updating: boolean = false;
+  _computed: boolean = false;
   __starts?: number;
   __ends?: number;
+
+  // CSS property accessors - implemented through Proxy
+  [key: string]:
+    | string
+    | undefined
+    | number
+    | Function
+    | Map<string, { value: string; priority: string }>
+    | CSSRule
+    | null
+    | boolean;
+
+  /**
+   * Create a new CSSStyleDeclaration instance with property access
+   */
+  constructor() {
+    // Ensure properties are initialized
+    this._properties = new Map();
+
+    return new Proxy(this, {
+      get: (target, prop) => {
+        if (typeof prop === "string") {
+          // Make sure critical properties are exposed
+          if (prop === "cssText") {
+            return target.cssText;
+          }
+
+          if (prop === "parentRule") {
+            return target._parentRule;
+          }
+
+          if (prop === "length") {
+            return target.length;
+          }
+
+          if (prop === "_properties") {
+            return target._properties;
+          }
+
+          if (
+            prop === "setProperty" ||
+            prop === "getPropertyValue" ||
+            prop === "getPropertyPriority" ||
+            prop === "removeProperty" ||
+            prop === "item" ||
+            prop === "toString"
+          ) {
+            return target[prop];
+          }
+
+          // Convert camelCase to kebab-case for CSS property names
+          const cssProperty = camelToKebabCase(prop);
+          return target.getPropertyValue(cssProperty);
+        }
+
+        return target[prop as any];
+      },
+
+      set: (target, prop, value) => {
+        if (target._readOnly) {
+          return true; // Silently fail if readonly
+        }
+
+        if (typeof prop === "string") {
+          if (prop === "cssText") {
+            target.cssText = value;
+            return true;
+          }
+
+          if (prop === "_ownerNode") {
+            target._ownerNode = value;
+            return true;
+          }
+
+          if (prop === "_parentRule") {
+            target._parentRule = value;
+            return true;
+          }
+
+          if (prop === "_readOnly") {
+            target._readOnly = value;
+            return true;
+          }
+
+          if (prop === "_computed") {
+            target._computed = value;
+            return true;
+          }
+
+          // Convert camelCase to kebab-case for CSS property names
+          if (!/^_/.test(prop)) {
+            // Skip properties starting with underscore
+            const cssProperty = camelToKebabCase(prop);
+            target.setProperty(cssProperty, value);
+          } else {
+            target[prop as any] = value;
+          }
+          return true;
+        }
+
+        target[prop as any] = value;
+        return true;
+      },
+    });
+  }
 
   /**
    * Set a CSS property with optional priority
    */
-  setProperty(name: string, value: string, priority = ""): void {
-    this.properties.set(name, { value, priority });
+  setProperty(name: string, value: string, priority: string = ""): void {
+    if (this._readOnly) {
+      // In a real implementation, this would throw a NoModificationAllowedError
+      return;
+    }
+
+    // Handle empty or null value as removal
+    if (value === null || value === "") {
+      this.removeProperty(name);
+      return;
+    }
+
+    // Store the property
+    this._properties.set(name, { value, priority });
+
+    // Update the style attribute of the owner node
+    this._updateStyleAttribute();
   }
 
   /**
    * Get a CSS property value
    */
   getPropertyValue(name: string): string {
-    return this.properties.get(name)?.value || "";
+    if (this._computed) {
+      return ""; // Computed styles not implemented
+    }
+
+    // Convert to lowercase for non-custom properties
+    if (!name.startsWith("--")) {
+      name = name.toLowerCase();
+    }
+
+    return this._properties.get(name)?.value || "";
   }
 
   /**
-   * Get property priority
+   * Get a CSS property priority
    */
   getPropertyPriority(name: string): string {
-    return this.properties.get(name)?.priority || "";
+    if (!name.startsWith("--")) {
+      name = name.toLowerCase();
+    }
+
+    return this._properties.get(name)?.priority || "";
   }
 
   /**
    * Remove a property
    */
   removeProperty(name: string): string {
+    if (this._readOnly) {
+      // In a real implementation, this would throw a NoModificationAllowedError
+      return "";
+    }
+
+    if (!name.startsWith("--")) {
+      name = name.toLowerCase();
+    }
+
     const value = this.getPropertyValue(name);
-    this.properties.delete(name);
+    this._properties.delete(name);
+
+    // Update the style attribute of the owner node
+    this._updateStyleAttribute();
+
     return value;
   }
 
   /**
-   * Get all properties as a string
-   */
-  toString(): string {
-    let result = "";
-    this.properties.forEach((propData, name) => {
-      result += `${name}: ${propData.value}${
-        propData.priority ? " !" + propData.priority : ""
-      }; `;
-    });
-    return result;
-  }
-
-  /**
-   * Get number of properties
+   * Number of properties
    */
   get length(): number {
-    return this.properties.size;
+    return this._properties.size;
   }
 
   /**
    * Get property name at index
    */
   item(index: number): string {
-    return Array.from(this.properties.keys())[index] || "";
+    return Array.from(this._properties.keys())[index] || "";
   }
+
+  /**
+   * Set the cssText property directly
+   */
+  set cssText(value: string) {
+    if (this._readOnly) {
+      return;
+    }
+
+    // Clear existing properties
+    this._properties.clear();
+
+    if (!value) {
+      this._updateStyleAttribute();
+      return;
+    }
+
+    // Parse the CSS text and set properties
+    const rules = value.split(";");
+    for (const rule of rules) {
+      const trimmedRule = rule.trim();
+      if (!trimmedRule) continue;
+
+      const colonIndex = trimmedRule.indexOf(":");
+      if (colonIndex === -1) continue;
+
+      const property = trimmedRule.substring(0, colonIndex).trim();
+      let valueText = trimmedRule.substring(colonIndex + 1).trim();
+
+      // Check for !important
+      let priority = "";
+      const importantIndex = valueText.toLowerCase().indexOf("!important");
+      if (importantIndex !== -1) {
+        priority = "important";
+        valueText = valueText.substring(0, importantIndex).trim();
+      }
+
+      if (property && valueText) {
+        this._properties.set(property.toLowerCase(), {
+          value: valueText,
+          priority,
+        });
+      }
+    }
+
+    // Update the style attribute
+    this._updateStyleAttribute();
+  }
+
+  /**
+   * Get the cssText value
+   */
+  get cssText(): string {
+    if (this._computed) {
+      return "";
+    }
+
+    return this.toString();
+  }
+
+  /**
+   * Convert to string (CSS text format)
+   */
+  toString(): string {
+    const parts: string[] = [];
+    this._properties.forEach((propData, name) => {
+      parts.push(
+        `${name}: ${propData.value}${
+          propData.priority ? " !" + propData.priority : ""
+        }`
+      );
+    });
+    return parts.join("; ");
+  }
+
+  /**
+   * Update the style attribute of the owner node
+   */
+  _updateStyleAttribute(): void {
+    if (this._computed || !this._ownerNode || this._updating) {
+      return;
+    }
+
+    // Prevent update loops
+    this._updating = true;
+
+    // Update the style attribute with current CSS text
+    if (this._ownerNode.setAttribute) {
+      this._ownerNode.setAttribute("style", this.toString());
+    }
+
+    this._updating = false;
+  }
+}
+
+/**
+ * Convert camelCase to kebab-case (e.g., fontSize -> font-size)
+ */
+function camelToKebabCase(str: string): string {
+  if (!str || typeof str !== "string") return "";
+
+  // Handle vendor prefixes like webkit, moz, ms
+  const vendorPrefixed = str.match(/^(webkit|moz|ms|o)([A-Z])(.*)/);
+  if (vendorPrefixed) {
+    return `-${vendorPrefixed[1]}-${vendorPrefixed[2].toLowerCase()}${
+      vendorPrefixed[3]
+    }`
+      .replace(/([A-Z])/g, "-$1")
+      .toLowerCase();
+  }
+
+  return str.replace(/([A-Z])/g, "-$1").toLowerCase();
+}
+
+/**
+ * Convert kebab-case to camelCase (e.g., font-size -> fontSize)
+ */
+function kebabToCamelCase(str: string): string {
+  if (!str || typeof str !== "string") return "";
+  return str.replace(/-([a-z])/g, (_, group) => group.toUpperCase());
 }
 
 /**
