@@ -1,4 +1,5 @@
-const { replace } = "";
+// Instead of destructuring, use String.prototype.replace directly
+const stringReplace = String.prototype.replace;
 
 // escape
 const ca = /[<>&\xA0]/g;
@@ -26,4 +27,5 @@ const pe = (m: string): string => esca[m];
  *  the input type is unexpected, except for boolean and numbers,
  *  converted as string.
  */
-export const escapeHtml = (es: string) => replace.call(es, ca, pe);
+export const escapeHtml = (es: string): string =>
+  stringReplace.call(es, ca, pe);

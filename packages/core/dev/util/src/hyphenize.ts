@@ -13,7 +13,7 @@
  * hyphenize("PascalCase") // returns "pascal-case"
  * hyphenize("ABCTest") // returns "abc-test"
  **/
-export default function hyphenize(camel: string) {
+export default function hyphenize(camel: string): string {
   return camel
     .replace(/(([A-Z0-9])([A-Z0-9][a-z]))|(([a-z0-9]+)([A-Z]))/g, "$2$5-$3$6")
     .toLowerCase();
