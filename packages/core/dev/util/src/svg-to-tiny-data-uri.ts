@@ -1,4 +1,4 @@
-import { inspatialColorPatterns } from "../../theme/src/color/index.ts";
+import { inspatialColorPatterns } from "@inspatial/theme/color";
 
 // Define types for our color patterns
 type ColorPattern = RegExp | { light: RegExp; dark: RegExp };
