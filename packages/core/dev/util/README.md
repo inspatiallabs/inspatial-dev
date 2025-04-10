@@ -110,8 +110,8 @@ bunx jsr add @inspatial/util
 
 InSpatial util includes the following utility functions:
 
-1. `capitalize`: Capitalizes the first letter of a string.
-2. `kit` and `variant`: CSS class and string merging utilities.
+1. `` 
+2. `capitalize`: Capitalizes the first letter of a string.
 3. `shuffle`: Randomly shuffles an array.
 4. `shuffled`: Returns a new array with shuffled elements.
 5. `focusInput`, `hasErrorInput`, `focusRing`: Input styling utilities for focus and error states.
@@ -145,15 +145,14 @@ InSpatial util includes the following utility functions:
 33. `countries`: Utilities for handling country data.
 34. `encoding`: Utilities for encoding and decoding data.
 35. `regexEscape`: Escapes special characters in a regex pattern.
-36. `types`: Type utilities for TypeScript.
-37. `buildMessage`: Constructs a formatted message to represent differences between data sets.
-38. `sameStart`: Checks if two strings start with the same sequence.
-39. `farthestPoint`: Finds the farthest point in a dataset.
-40. `difference`: Calculates the difference between two datasets.
-41. `convertImageToBase64DOM`: Converts an image file to a base64 string using the DOM.
-42. `svgToTinyDataUri`: Converts an SVG to a tiny data URI.
-43. `svgToSrcSet`: Converts an SVG to a srcset-compatible data URI.
-44. `stringify`: Converts an object to a string.
+36. `buildMessage`: Constructs a formatted message to represent differences between data sets.
+37. `sameStart`: Checks if two strings start with the same sequence.
+38. `farthestPoint`: Finds the farthest point in a dataset.
+49. `difference`: Calculates the difference between two datasets.
+40. `convertImageToBase64DOM`: Converts an image file to a base64 string using the DOM.
+41. `svgToTinyDataUri`: Converts an SVG to a tiny data URI.
+42. `svgToSrcSet`: Converts an SVG to a srcset-compatible data URI.
+43. `stringify`: Converts an object to a string.
 
 For detailed usage and parameters of each utility, please refer to the source code or our comprehensive documentation.
 
