@@ -2,9 +2,18 @@
   "name": "@inspatial/type",
   "version": "0.1.2",
   "license": "Apache-2.0",
-  "description": "Universal Runtime (Type) Validation",
-  "exports": "./src/index.ts",
+  "description": "Universal Runtime Validation",
   "imports": {
     "arktype": "npm:arktype@^2.1.16"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./error": "./src/error.ts",
+    "./extension": "./src/extension.ts",
+    "./json-schema": "./src/json-schema.ts",
+    "./performance": "./src/performance.ts",
+    "./pipeline": "./src/pipeline.ts",
+    "./schema-registry": "./src/schema-registry.ts",
+    "./util": "./src/util.ts"
   }
 }

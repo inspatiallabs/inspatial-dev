@@ -1,31 +1,7 @@
-import {  } from "@inspatial/types";
+import {  } from "@inspatial/types/util";
 import { createVariant } from "@inspatial/theme/variant";
+import { Effect } from "@inspatial/theme/effect";
 
-//##############################################(ANIMATION STYLE)##############################################//
-export type AnimationStyle =
-  | "none"
-
-  //Text
-  | "rotate"
-  | "flip"
-  | "pullUp"
-  | "fadeUp"
-  | "fadeDown"
-  | "fadeLeft"
-  | "fadeRight"
-  | "fadeIn"
-  | "reveal"
-  | "blurIn"
-  | "typing"
-  | "generate"
-  | "ticker"
-  | "reUp"
-  | "gradual"
-
-  // Pattern
-  | "slideRight"
-  | "fadeOut"
-  | "scaleDown";
 
 //##############################################(BASE TYPES)##############################################//
 export type BaseFormat = "base";
@@ -120,7 +96,7 @@ export interface PatternProps extends SharedProps {
   speed?: number;
   color?: string;
   blur?: number;
-  animate?: AnimationStyle;
+  animate?: Effect;
 
   randomize?: boolean;
   randomInterval?: number; // Time in milliseconds between pattern changes

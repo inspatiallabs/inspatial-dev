@@ -1,7 +1,4 @@
-/**
- * JSON Schema for InSpatial Type
- * Enables bidirectional conversion between InSpatial Type JSON Schema and ArkType
- */
+//TODO: Replace with ArkType new JSON Schema implementation
 
 /**
  * JSON Schema Compatibility for InSpatial Type
