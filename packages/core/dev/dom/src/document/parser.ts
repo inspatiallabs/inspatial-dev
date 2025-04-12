@@ -15,7 +15,11 @@ export class DOMParser {
    * @param {MIME} mimeType
    * @returns {MimeToDoc[MIME]}
    */
-  parseFromString(markupLanguage: string, mimeType: string, globals = null): HTMLDocument | SVGDocument | XMLDocument {
+  parseFromString(
+    markupLanguage: string,
+    mimeType: string,
+    globals = null
+  ): HTMLDocument | SVGDocument | XMLDocument {
     let isHTML = false,
       document;
     if (mimeType === "text/html") {
