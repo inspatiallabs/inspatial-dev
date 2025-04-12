@@ -6,13 +6,13 @@
  */
 
 // @ts-ignore - Ignoring TS extension import error
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("Node", () => {
   // Common setup for all tests
-  const { NodeFilter } = parseHTML("");
-  const { document } = parseHTML("<html><head /><body><div /></body></html>");
+  const { NodeFilter } = InSpatialDOM("");
+  const { document } = InSpatialDOM("<html><head /><body><div /></body></html>");
   const [head, body, div] = document.querySelectorAll("head,body,div");
 
   describe("Node comparison", () => {

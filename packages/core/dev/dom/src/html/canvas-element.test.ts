@@ -6,12 +6,12 @@
  * context creation, and data URL generation.
  */
 import { describe, it, assert } from "@inspatial/test";
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 
 describe("CanvasElement", () => {
   it("should have correct default dimensions", () => {
     // GIVEN a canvas element
-    const { document } = parseHTML("<canvas></canvas>");
+    const { document } = InSpatialDOM("<canvas></canvas>");
     const canvas = document.querySelector("canvas")!;
 
     // THEN it should have the standard default dimensions
@@ -27,7 +27,7 @@ describe("CanvasElement", () => {
 
   it("should update its attributes when dimensions are changed", () => {
     // GIVEN a canvas element
-    const { document } = parseHTML("<canvas></canvas>");
+    const { document } = InSpatialDOM("<canvas></canvas>");
     const canvas = document.querySelector("canvas")!;
 
     // WHEN changing its dimensions
@@ -45,7 +45,7 @@ describe("CanvasElement", () => {
 
   it("should provide a 2D rendering context", () => {
     // GIVEN a canvas element
-    const { document } = parseHTML("<canvas></canvas>");
+    const { document } = InSpatialDOM("<canvas></canvas>");
     const canvas = document.querySelector("canvas")!;
 
     // WHEN requesting a 2D context
@@ -60,7 +60,7 @@ describe("CanvasElement", () => {
 
   it("should generate data URLs in the correct format", () => {
     // GIVEN a canvas element
-    const { document } = parseHTML("<canvas></canvas>");
+    const { document } = InSpatialDOM("<canvas></canvas>");
     const canvas = document.querySelector("canvas")!;
 
     // WHEN generating a data URL

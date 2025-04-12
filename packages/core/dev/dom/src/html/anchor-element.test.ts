@@ -6,12 +6,12 @@
  * different encoding and special character requirements.
  */
 import { describe, it, assert } from "@inspatial/test";
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 
 describe("AnchorElement", () => {
   it("should correctly handle a basic URL in href", () => {
     // GIVEN an anchor element with a URL containing query parameters
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<a href="https://inspatiallabs.com/?q=1&page=2">click me</a>'
     );
     const { lastElementChild: a } = document;
@@ -26,7 +26,7 @@ describe("AnchorElement", () => {
 
   it("should properly handle double quotes in href values", () => {
     // GIVEN an anchor element
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<a href="https://inspatiallabs.com/?q=1&page=2">click me</a>'
     );
     const { lastElementChild: a } = document;
@@ -44,7 +44,7 @@ describe("AnchorElement", () => {
 
   it("should encode and decode URL components properly", () => {
     // GIVEN an anchor element
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<a href="https://inspatiallabs.com/?q=1&page=2">click me</a>'
     );
     const { lastElementChild: a } = document;
@@ -62,7 +62,7 @@ describe("AnchorElement", () => {
 
   it("should preserve percent-encoded values", () => {
     // GIVEN an anchor element
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<a href="https://inspatiallabs.com/?q=1&page=2">click me</a>'
     );
     const { lastElementChild: a } = document;

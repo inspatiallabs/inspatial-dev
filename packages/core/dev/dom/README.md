@@ -137,12 +137,12 @@ const document = parser.parseFromString(
 console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 ```
 
-### Using parseHTML (Convenience Function)
+### Using InSpatialDOM (Convenience Function)
 ```js
-import { parseHTML } from "@inspatial/dom"
+import { InSpatialDOM } from "@inspatial/dom"
 
 // Parse HTML string in one step
-const { document, window } = parseHTML("<html><body><h1>Hello, InSpatial!</h1></body></html>")
+const { document, window } = InSpatialDOM("<html><body><h1>Hello, InSpatial!</h1></body></html>")
 
 console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 
@@ -150,7 +150,7 @@ console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 console.log(window.document === document) // true
 ```
 
-The `parseHTML` function is a convenient wrapper that:
+The `InSpatialDOM` function is a convenient wrapper that:
 - Creates a DOMParser instance for you
 - Sets the MIME type to "text/html"
 - Returns both document and window objects

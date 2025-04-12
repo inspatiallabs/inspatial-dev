@@ -5,16 +5,16 @@
  * These tests verify that the Element interface correctly implements DOM methods
  * for element manipulation, attribute handling, and content management.
  */
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("Element", () => {
-  const { document: globalDocument, Element } = parseHTML("");
+  const { document: globalDocument, Element } = InSpatialDOM("");
 
   describe("Element navigation", () => {
     it("should correctly handle node navigation properties", () => {
       // GIVEN a document with HTML structure
-      const { document } = parseHTML(
+      const { document } = InSpatialDOM(
         '<!DOCTYPE html><html id="html" class="live"><!--&lt;hello&gt;-->&lt;hello&gt;</html>'
       );
 
@@ -35,7 +35,7 @@ describe("Element", () => {
   describe("Element content manipulation", () => {
     it("should correctly handle innerHTML and sanitize content", () => {
       // GIVEN a document with an HTML element
-      const { document } = parseHTML(
+      const { document } = InSpatialDOM(
         '<!DOCTYPE html><html id="html" class="live"><!--&lt;hello&gt;-->&lt;hello&gt;</html>'
       );
 
@@ -55,7 +55,7 @@ describe("Element", () => {
 
     it("should correctly clone elements with their attributes", () => {
       // GIVEN a document with an element with attributes
-      const { document } = parseHTML(
+      const { document } = InSpatialDOM(
         '<!DOCTYPE html><html id="html" class="live"><!--&lt;hello&gt;-->&lt;hello&gt;</html>'
       );
 
@@ -82,7 +82,7 @@ describe("Element", () => {
 
     it("should handle node insertion methods correctly", () => {
       // GIVEN a document with an HTML element
-      const { document } = parseHTML(
+      const { document } = InSpatialDOM(
         '<!DOCTYPE html><html id="html" class="live"><!--&lt;hello&gt;-->&lt;hello&gt;</html>'
       );
 
@@ -114,7 +114,7 @@ describe("Element", () => {
 
     it("should support element navigation via previousElementSibling", () => {
       // GIVEN a document with multiple elements
-      const { document } = parseHTML(
+      const { document } = InSpatialDOM(
         '<!DOCTYPE html><html id="html" class="live"><!--&lt;hello&gt;-->&lt;hello&gt;</html>'
       );
 
@@ -138,7 +138,7 @@ describe("Element", () => {
 
     it("should support before() and after() for node insertion", () => {
       // GIVEN a document with elements
-      const { document } = parseHTML(
+      const { document } = InSpatialDOM(
         '<!DOCTYPE html><html id="html" class="live"><!--&lt;hello&gt;-->&lt;hello&gt;</html>'
       );
 
@@ -172,7 +172,7 @@ describe("Element", () => {
   describe("Element geometry", () => {
     it("should provide getBoundingClientRect() with default values", () => {
       // GIVEN a new element not in the document
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const div = document.createElement("div");
 
       // WHEN getting its bounding client rect
@@ -193,7 +193,7 @@ describe("Element", () => {
   describe("Element creation", () => {
     it("should support createElement with options", () => {
       // GIVEN a document
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
 
       // WHEN creating an element with options
       // Function signature can vary by implementation - handle this with dynamic call
@@ -209,7 +209,7 @@ describe("Element", () => {
   describe("Element dataset", () => {
     it("should provide access to data attributes via dataset", () => {
       // GIVEN a document with an element
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // THEN dataset should initially be empty
@@ -234,7 +234,7 @@ describe("Element", () => {
 
     it("should initialize dataset from existing data attributes", () => {
       // GIVEN a document
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // WHEN setting HTML with data attributes
@@ -255,7 +255,7 @@ describe("Element", () => {
   describe("Element classList", () => {
     it("should provide classList API for manipulating classes", () => {
       // GIVEN a document with an element
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // THEN classList should initially be empty
@@ -313,7 +313,7 @@ describe("Element", () => {
 
     it("should synchronize className and classList", () => {
       // GIVEN a document with an element
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // WHEN setting className
@@ -341,7 +341,7 @@ describe("Element", () => {
 
   describe("Element events", () => {
     it("should support addEventListener and removeEventListener", () => {
-      const root = parseHTML(`<div></div>`);
+      const root = InSpatialDOM(`<div></div>`);
       const element = root.firstChild;
       let clicked = false;
 
@@ -369,7 +369,7 @@ describe("Element", () => {
     });
 
     it("should support Level 0 event handlers", () => {
-      const root = parseHTML(`<div></div>`);
+      const root = InSpatialDOM(`<div></div>`);
       const element = root.firstChild;
       let focused = false;
 
@@ -398,7 +398,7 @@ describe("Element", () => {
   describe("Element attributes", () => {
     it("should handle tabIndex attribute", () => {
       // GIVEN a document with an element
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // THEN the default tabIndex should be -1
@@ -413,7 +413,7 @@ describe("Element", () => {
 
     it("should handle nonce attribute", () => {
       // GIVEN a document with an element
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // THEN the default nonce should be empty
@@ -428,7 +428,7 @@ describe("Element", () => {
 
     it("should support attribute manipulation methods", () => {
       // GIVEN a document with an element
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // WHEN setting attributes
@@ -451,7 +451,7 @@ describe("Element", () => {
   describe("Element HTML insertion", () => {
     it("should support insertAdjacentHTML and insertAdjacentText", () => {
       // GIVEN a document with an element containing HTML
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
       node.innerHTML = "<p>!</p>";
 
@@ -503,7 +503,7 @@ describe("Element", () => {
   describe("Element query selectors", () => {
     it("should support querySelector for finding elements", () => {
       // GIVEN a document with nested elements
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
       node.innerHTML = `<pre><code>echo &quot;&lt;table class='charts-css'&gt;&quot;</code></pre>`;
 
@@ -539,7 +539,7 @@ describe("Element", () => {
   describe("Element text handling", () => {
     it("should correctly handle innerHTML with special characters", () => {
       // GIVEN a document with an element
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // WHEN setting innerHTML with quotes
@@ -562,7 +562,7 @@ describe("Element", () => {
 
     it("should handle void elements and boolean attributes correctly", () => {
       // GIVEN a document with an element
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
 
       // WHEN setting innerHTML with void elements and boolean attributes
@@ -574,7 +574,7 @@ describe("Element", () => {
 
     it("should handle innerText and textContent differences", () => {
       // GIVEN a document with an element containing rich text
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const node = document.createElement("div");
       node.innerHTML =
         "<div>The <strong>quick</strong> brown fox</div><div>Jumped over<br>The lazy\ndog</div>";
@@ -594,7 +594,7 @@ describe("Element", () => {
   // Additional tests for outerHTML
   describe("Element outerHTML", () => {
     it("should handle setting outerHTML on text nodes", () => {
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const div = document.createElement("div");
       div.appendChild(document.createTextNode(""));
 
@@ -609,7 +609,7 @@ describe("Element", () => {
     });
 
     it("should replace elements correctly with outerHTML", () => {
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const div = document.createElement("div");
 
       div.innerHTML = "<span></span>";
@@ -625,7 +625,7 @@ describe("Element", () => {
     });
 
     it("should support outerHTML with text after the element", () => {
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const div = document.createElement("div");
 
       div.innerHTML = "<span></span>";
@@ -644,7 +644,7 @@ describe("Element", () => {
   // Tests for HTML and XML attribute handling
   describe("HTML and XML attributes", () => {
     it("should handle HTML attributes correctly", () => {
-      const { DOMParser } = parseHTML("");
+      const { DOMParser } = InSpatialDOM("");
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(
         `<div><span content-desc="text3&amp;more"/></div>`,
@@ -672,7 +672,7 @@ describe("Element", () => {
     });
 
     it("should handle empty HTML attributes from special set", () => {
-      const { DOMParser } = parseHTML("");
+      const { DOMParser } = InSpatialDOM("");
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(
         `<div><span style=""/></div>`,
@@ -695,7 +695,7 @@ describe("Element", () => {
     });
 
     it("should handle XML attributes correctly", () => {
-      const { DOMParser } = parseHTML("");
+      const { DOMParser } = InSpatialDOM("");
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(
         `<hierarchy><android.view.View content-desc="text3&amp;more"/></hierarchy>`,
@@ -729,7 +729,7 @@ describe("Element", () => {
     });
 
     it("should handle XML empty attributes from special set", () => {
-      const { DOMParser } = parseHTML("");
+      const { DOMParser } = InSpatialDOM("");
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(
         `<hierarchy><android.view.View style=""/></hierarchy>`,
@@ -754,7 +754,7 @@ describe("Element", () => {
 
   describe("Namespace properties", () => {
     it("should have the correct namespaceURI", () => {
-      const { document } = parseHTML("<html></html>");
+      const { document } = InSpatialDOM("<html></html>");
       const div = document.createElement("div");
 
       expect(div.namespaceURI).toBe("http://www.w3.org/1999/xhtml");

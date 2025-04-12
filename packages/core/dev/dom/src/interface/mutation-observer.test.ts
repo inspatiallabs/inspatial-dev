@@ -6,7 +6,7 @@
  * and character data.
  */
 
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("MutationObserver", () => {
@@ -36,7 +36,7 @@ describe("MutationObserver", () => {
 
   // Common test setup
   const setupTest = () => {
-    const { document, MutationObserver } = parseHTML("<html />");
+    const { document, MutationObserver } = InSpatialDOM("<html />");
 
     // Add null check for documentElement
     if (!document.documentElement) {

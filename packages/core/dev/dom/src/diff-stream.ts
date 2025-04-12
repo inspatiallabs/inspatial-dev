@@ -4,7 +4,7 @@
  */
 
 // @ts-ignore - Ignoring TS extension import error
-import { parseHTML } from "./index.ts";
+import { InSpatialDOM } from "./index.ts";
 
 /** Interface for the DOM tree walker used in streaming updates */
 interface InWalkerType {
@@ -252,7 +252,7 @@ async function htmlStreamWalker(
   options: InOptionsType = {}
 ): Promise<InWalkerType> {
   // Use InSpatial DOM to parse the HTML stream
-  const { document: doc } = parseHTML("");
+  const { document: doc } = InSpatialDOM("");
 
   // Type assertion to inform TypeScript that doc has these methods
   (doc as any).open();

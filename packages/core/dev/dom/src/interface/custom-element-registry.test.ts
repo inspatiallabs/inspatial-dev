@@ -1,12 +1,12 @@
 import {
-  parseHTML,
+  InSpatialDOM,
   DOMElement,
   DOMButtonElement,
   DOMTemplateElement,
 } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
-const { customElements, document } = parseHTML(`
+const { customElements, document } = InSpatialDOM(`
 <html>
 <body>
     <custom-element></custom-element>

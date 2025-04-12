@@ -5,13 +5,13 @@
  * event creation, dispatching, bubbling, and the composedPath functionality.
  */
 
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("Event", () => {
   // Common test environment setup
   const setupTestEnvironment = () => {
-    const { Event, document } = parseHTML("<html><div /></html>");
+    const { Event, document } = InSpatialDOM("<html><div /></html>");
     const node = document.getElementsByTagName("div")[0];
 
     // Create various event types for testing

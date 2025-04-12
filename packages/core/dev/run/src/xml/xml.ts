@@ -1,9 +1,9 @@
 // deno-lint-ignore-file ban-types
 
 // @ts-ignore - Ignoring TS extension import error
-import { parseHTML } from "../../../dom/src/dom.ts";
+import { InSpatialDOM } from "../../../dom/src/dom.ts";
 
-const { document, Node, Element } = parseHTML("");
+const { document, Node, Element } = InSpatialDOM("");
 
 // XML namespace registry
 const namespaceRegistry = new Map<string, Record<string, Function>>();

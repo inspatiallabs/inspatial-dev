@@ -1,4 +1,4 @@
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for node cloning
@@ -6,7 +6,7 @@ import { describe, it, assert } from "@inspatial/test";
 
 describe("Node Cloning", () => {
   it("should correctly clone a node with attributes", () => {
-    const { document } = parseHTML("<html><body></body></html>");
+    const { document } = InSpatialDOM("<html><body></body></html>");
 
     const div = document.createElement("div");
     div.setAttribute("class", "active");
@@ -20,7 +20,7 @@ describe("Node Cloning", () => {
   });
 
   it("should maintain attribute ownership after cloning", () => {
-    const { document } = parseHTML("<html><body></body></html>");
+    const { document } = InSpatialDOM("<html><body></body></html>");
 
     const span = document.createElement("span");
     span.setAttribute("data-role", "button");

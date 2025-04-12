@@ -1,4 +1,4 @@
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for StyleElement
@@ -6,7 +6,7 @@ import { describe, it, assert } from "@inspatial/test";
 describe("StyleElement", () => {
   it("should handle empty style element", () => {
     // GIVEN an empty style element
-    let { document } = parseHTML("<style></style>");
+    let { document } = InSpatialDOM("<style></style>");
     let style = document.firstElementChild;
 
     if (style) {
@@ -21,7 +21,7 @@ describe("StyleElement", () => {
 
   it("should handle style element with CSS content", () => {
     // GIVEN a style element
-    let { document } = parseHTML("<style></style>");
+    let { document } = InSpatialDOM("<style></style>");
     let style = document.firstElementChild;
 
     if (style) {

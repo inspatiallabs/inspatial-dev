@@ -13,43 +13,83 @@ import { NodeList as DOMNodeList } from "./interface/node-list.ts";
 import { DocumentFragment as DOMDocumentFragment } from "./interface/document-fragment.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { Event as DOMEvent, CustomEvent as DOMCustomEvent } from "./cached.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { Element } from "./interface/element.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { applyHoudiniToElement } from "./interface/element-css-houdini.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { EventTarget as DOMEventTarget } from "./interface/event-target.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { illegalConstructor } from "./shared/facades.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { NodeFilter } from "./interface/node-filter.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { NamedNodeMap } from "./interface/named-node-map.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { NodeList } from "./interface/node-list.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { Event } from "./interface/event.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { CustomEvent } from "./interface/custom-event.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { EventTarget } from "./interface/event-target.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { InputEvent } from "./interface/input-event.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { MutationObserverClass as MutationObserver } from "./interface/mutation-observer.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { HTMLElement } from "./html/element.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { Text } from "./interface/text.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { Comment } from "./interface/comment.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { Attr } from "./interface/attr.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { CDATASection } from "./interface/cdata-section.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { CharacterData } from "./interface/character-data.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { ProcessingInstruction } from "./interface/processing-instruction.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { DocumentType } from "./interface/document-type.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { ShadowRoot } from "./interface/shadow-root.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { Range } from "./interface/range.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { XMLDocument } from "./xml/document.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { HTMLDocument } from "./html/document.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { HTMLCollection } from "./interface/html-collection.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { DOMImplementation } from "./interface/implementation.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { CSSStyleDeclaration } from "./interface/css-style-declaration.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { DocumentFragment } from "./interface/document-fragment.ts";
 
 /*################################################(EXPORTS)################################################*/
 /**
- * Parses HTML string and returns the document along with all DOM interfaces
+ * Parses HTML string and returns a document along with all DOM interfaces
+ *
+ * This is the main entry point for using InSpatial DOM. It provides access to:
+ * - The parsed document and window objects
+ * - All standard DOM interfaces (Element, Node, etc.)
+ * - Helper methods for DOM manipulation
+ *
  * @param html HTML string to parse
- * @param globals Global variables to include in the document
+ * @param globals Optional global variables to include in the document
  * @returns Parsed document with window, document, and all DOM interfaces
+ *
+ * @example
+ * // Parse HTML and access DOM elements
+ * const { document, Element } = InSpatialDOM('<div>Hello World</div>');
+ * const div = document.querySelector('div');
+ * console.log(div.textContent); // "Hello World"
  */
-export const parseHTML = (
+export const InSpatialDOM = (
   html: string,
   globals = null
 ): {
@@ -103,7 +143,7 @@ export const parseHTML = (
   // Parser Interface
   DOMParser: typeof DOMParser;
 
-  // Catches all other interfaces and interfaces not explicitly listed above
+  // Catches all other interfaces and properties not explicitly listed above
   [key: string]: any;
 } => {
   const view = new DOMParser().parseFromString(
@@ -165,92 +205,6 @@ export const parseHTML = (
   return result;
 };
 
-// Export diffStream functionality
-export { diffStream } from "./diff-stream.ts";
-
-// Export InSpatialDOM namespace for convenience
-export const InSpatialDOM = {
-  DOMParser,
-  parseHTML,
-  // Core DOM interfaces with original names
-  DOMDocument,
-  DOMElement,
-  DOMNode,
-  DOMNodeList,
-  DOMDocumentFragment,
-  DOMEvent,
-  DOMCustomEvent,
-  DOMEventTarget,
-
-  // Add all DOM interfaces to the namespace for easy access
-  Element,
-  HTMLElement,
-  Text,
-  Comment,
-  CDATASection,
-  ProcessingInstruction,
-  DocumentType,
-  DocumentFragment,
-  CharacterData,
-  ShadowRoot,
-  NodeFilter,
-  NodeList,
-  NamedNodeMap,
-  HTMLCollection,
-  Document: DOMDocument,
-  XMLDocument,
-  HTMLDocument,
-  DOMImplementation,
-  Attr,
-  Event,
-  CustomEvent,
-  EventTarget,
-  InputEvent,
-  Range,
-  CSSStyleDeclaration,
-  MutationObserver,
-};
-
-// Individual exports of DOM original naming
-export {
-  DOMParser,
-  DOMDocument,
-  DOMElement,
-  DOMNode,
-  DOMNodeList,
-  DOMDocumentFragment,
-  DOMEvent,
-  DOMCustomEvent,
-  DOMEventTarget,
-};
-
-// Export the standard DOM interfaces directly
-export {
-  Element,
-  HTMLElement,
-  Text,
-  Comment,
-  CDATASection,
-  ProcessingInstruction,
-  DocumentType,
-  CharacterData,
-  ShadowRoot,
-  HTMLCollection,
-  XMLDocument,
-  HTMLDocument,
-  DOMImplementation,
-  Attr,
-  Range,
-  CSSStyleDeclaration,
-  MutationObserver,
-};
-
-// Export only what's available from facades
-export { illegalConstructor } from "./shared/facades.ts";
-
-// Export HTML classes
-export * from "./shared/html-classes.ts";
-
 /**
  * Document constructor placeholder
  * @throws Illegal constructor error
@@ -268,19 +222,40 @@ Object.defineProperties(
 // Ensure the function name is preserved
 Object.defineProperty(Document, "name", { value: "Document" });
 
-// Export JSON utility functions
+/**
+ * Exports the diffStream functionality for DOM diffing
+ *
+ * This is useful for comparing DOM states and generating minimal updates.
+ */
+// @ts-ignore - Ignoring TS extension import error
+export { diffStream } from "./diff-stream.ts";
+
+/**
+ * Exports JSON utility functions for DOM serialization
+ */
+// @ts-ignore - Ignoring TS extension import error
 export { parseJSON, toJSON } from "./shared/parse-json.ts";
 
 /**
- * InSpatial DOM Main Module
+ * CSS Houdini API exports
+ *
+ * These provide access to the low-level CSS APIs for advanced styling capabilities.
  */
-
-// Export CSS Houdini implementation
+// @ts-ignore - Ignoring TS extension import error
 export * from "./houdini/css-typed-om.ts";
+// @ts-ignore - Ignoring TS extension import error
 export * from "./interface/element-css-houdini.ts";
 
 /**
+ * HTML class name utilities
+ */
+// @ts-ignore - Ignoring TS extension import error
+export * from "./shared/html-classes.ts";
+
+/**
  * Initialize the DOM with enhanced features
+ *
+ * This applies all CSS Houdini enhancements to the Element interface.
  */
 export function initializeDOM() {
   // Apply CSS Houdini enhancements to Element

@@ -1,4 +1,4 @@
-import { parseHTML } from "../cached.ts";
+import { InSpatialDOM } from "../cached.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for IFrameElement
@@ -6,7 +6,7 @@ import { describe, it, assert } from "@inspatial/test";
 describe("IFrameElement", () => {
   it("should set the src attribute correctly", () => {
     // GIVEN an iframe element with a src attribute
-    const { document } = parseHTML('<html><iframe src="./test.html"></html>');
+    const { document } = InSpatialDOM('<html><iframe src="./test.html"></html>');
     const { firstElementChild: iframe } = document.documentElement;
 
     // THEN the src attribute should be set correctly
@@ -15,7 +15,7 @@ describe("IFrameElement", () => {
 
   it("should handle srcdoc attribute correctly", () => {
     // GIVEN an iframe element
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       "<html><body><iframe></iframe></body></html>"
     );
     const iframe = document.body.querySelector("iframe");
@@ -32,7 +32,7 @@ describe("IFrameElement", () => {
 
   it("should set multiple attributes correctly", () => {
     // GIVEN an iframe element
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       "<html><body><iframe></iframe></body></html>"
     );
     const iframe = document.body.querySelector("iframe");
@@ -52,7 +52,7 @@ describe("IFrameElement", () => {
 
   it("should handle allowFullscreen attribute correctly", () => {
     // GIVEN an iframe element with allowfullscreen attribute
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       "<html><body><iframe allowfullscreen></iframe></body></html>"
     );
     const iframe = document.body.querySelector("iframe");
@@ -69,7 +69,7 @@ describe("IFrameElement", () => {
 
   it("should verify multiple attributes on an existing iframe", () => {
     // GIVEN an iframe element with multiple attributes
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       `<html><body><iframe loading=\"lazy\" referrerpolicy=\"no-referrer\" name=\"iframe-name\" allow=\"geolocation\"></iframe></body></html>`
     );
     const iframe = document.body.querySelector("iframe");

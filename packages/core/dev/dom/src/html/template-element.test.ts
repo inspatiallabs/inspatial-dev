@@ -1,11 +1,11 @@
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for TemplateElement
 
 describe("TemplateElement", () => {
   it("should correctly parse and maintain innerHTML", () => {
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       "<template><div>foo</div><div>bar</div></template>"
     );
     const template = document.documentElement;
@@ -14,7 +14,7 @@ describe("TemplateElement", () => {
   });
 
   it("should convert template to string correctly", () => {
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       "<template><div>foo</div><div>bar</div></template>"
     );
     const template = document.documentElement;
@@ -26,14 +26,14 @@ describe("TemplateElement", () => {
   });
 
   it("should handle empty template content correctly", () => {
-    const { document } = parseHTML("<template></template>");
+    const { document } = InSpatialDOM("<template></template>");
     const template = document.documentElement;
     assert(template !== null, "Template element should not be null");
     assert(template.innerHTML, "");
   });
 
   it("should append and clear children correctly", () => {
-    const { document } = parseHTML("<template></template>");
+    const { document } = InSpatialDOM("<template></template>");
     const template = document.documentElement;
     assert(template !== null, "Template element should not be null");
     template.innerHTML = "<p>ok</p>";
@@ -43,7 +43,7 @@ describe("TemplateElement", () => {
   });
 
   it("should handle template attributes correctly", () => {
-    const docWithTemplateAttribute = parseHTML(
+    const docWithTemplateAttribute = InSpatialDOM(
       '<div template="anything"><p>not inside a template</p></div>'
     ).document.documentElement;
     assert(
@@ -58,7 +58,7 @@ describe("TemplateElement", () => {
   });
 });
 
-let { document } = parseHTML(
+let { document } = InSpatialDOM(
   "<template><div>foo</div><div>bar</div></template>"
 );
 
@@ -104,11 +104,11 @@ let html = `<!DOCTYPE html>
 </html>
 `;
 
-({ document } = parseHTML(html));
+({ document } = InSpatialDOM(html));
 
 assert(document.toString(), html);
 
-const docWithTemplateAttribute = parseHTML(
+const docWithTemplateAttribute = InSpatialDOM(
   '<div template="anything"><p>not inside a template</p></div>'
 ).document.documentElement;
 assert(

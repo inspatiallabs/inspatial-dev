@@ -1,11 +1,11 @@
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for character data handling
 
 describe("Character Data Handling", () => {
   it("should correctly parse and clone comment and text nodes", () => {
-    let { document } = parseHTML("<html><!--comment-->text</html>");
+    let { document } = InSpatialDOM("<html><!--comment-->text</html>");
 
     const documentElement = document.documentElement;
     if (documentElement) {
@@ -35,7 +35,7 @@ describe("Character Data Handling", () => {
   });
 
   it("should correctly serialize HTML with comments", () => {
-    let { document } = parseHTML(
+    let { document } = InSpatialDOM(
       "<html><!-- a comment with a <div> tag --></html>"
     );
     assert(

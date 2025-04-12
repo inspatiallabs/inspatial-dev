@@ -6,7 +6,7 @@
  */
 
 // @ts-ignore - Ignoring TS extension import error
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { NamedNodeMap } from "../interface/named-node-map.ts";
 import { describe, it, expect } from "@inspatial/test";
@@ -14,7 +14,7 @@ import { describe, it, expect } from "@inspatial/test";
 describe("NamedNodeMap", () => {
   // Common setup for all tests
   const setupTest = () => {
-    const { document } = parseHTML("<html><div tmp>abc</div></html>");
+    const { document } = InSpatialDOM("<html><div tmp>abc</div></html>");
 
     if (!document.documentElement) {
       throw new Error("documentElement is null");

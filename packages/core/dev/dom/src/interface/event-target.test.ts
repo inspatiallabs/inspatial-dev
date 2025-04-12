@@ -5,13 +5,13 @@
  * including event listener registration, event dispatch, and propagation.
  */
 
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("EventTarget", () => {
   // Common setup for all tests
   const getTestEnvironment = () => {
-    const { Event, document, window, EventTarget } = parseHTML(
+    const { Event, document, window, EventTarget } = InSpatialDOM(
       '<html><div id="container"><button id="buttonTarget" type="button">Click me!</button></div></html>'
     );
     const buttonTarget = document.getElementById("buttonTarget");

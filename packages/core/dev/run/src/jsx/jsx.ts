@@ -12,8 +12,8 @@
 
 // import { InSpatialDOM } from "../../../renderer/src/dom/src/dom.ts";
 
-// const { parseHTML } = InSpatialDOM;
-// const { document, Node, Element, DocumentFragment } = parseHTML("");
+// const { InSpatialDOM } = InSpatialDOM;
+// const { document, Node, Element, DocumentFragment } = InSpatialDOM("");
 
 // declare global {
 //   namespace JSX {

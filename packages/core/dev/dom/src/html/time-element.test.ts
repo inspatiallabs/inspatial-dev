@@ -1,11 +1,11 @@
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for TimeElement
 
 describe("TimeElement", () => {
   it("should correctly parse and maintain datetime attribute", () => {
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<time datetime="2001-05-10 16:00:00">A big event</time>'
     );
     const time = document.lastElementChild;
@@ -14,7 +14,7 @@ describe("TimeElement", () => {
   });
 
   it("should update datetime attribute correctly", () => {
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<time datetime="2001-05-10 16:00:00">A big event</time>'
     );
     const time = document.lastElementChild;
@@ -24,7 +24,7 @@ describe("TimeElement", () => {
   });
 
   it("should set datetime property correctly", () => {
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<time datetime="2001-05-10 16:00:00">A big event</time>'
     );
     const time = document.lastElementChild;

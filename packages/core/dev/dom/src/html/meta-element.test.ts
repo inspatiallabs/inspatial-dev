@@ -1,12 +1,12 @@
 import { describe, it, assert } from "@inspatial/test";
-import { parseHTML } from "../index.ts";
+import { InSpatialDOM } from "../index.ts";
 
 // Test suite for MetaElement
 
 describe("MetaElement", () => {
   it("should handle name and content attributes", () => {
     // GIVEN a meta element with name and content attributes
-    const { document } = parseHTML('<meta name="test" content="testContent">');
+    const { document } = InSpatialDOM('<meta name="test" content="testContent">');
     const a = document.lastElementChild;
 
     // THEN the attributes should be set correctly
@@ -19,7 +19,7 @@ describe("MetaElement", () => {
 
   it("should handle charset attribute", () => {
     // GIVEN a meta element with charset attribute
-    const { document } = parseHTML('<meta charset="utf-8">');
+    const { document } = InSpatialDOM('<meta charset="utf-8">');
     const b = document.lastElementChild;
 
     // THEN the charset attribute should be set correctly
@@ -31,7 +31,7 @@ describe("MetaElement", () => {
 
   it("should handle httpEquiv and content attributes for refresh", () => {
     // GIVEN a meta element with httpEquiv refresh and content attributes
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<meta http-equiv="refresh" content="0; url=https://google.com/?q=1&page=2">'
     );
     const c = document.lastElementChild;
@@ -49,7 +49,7 @@ describe("MetaElement", () => {
 
   it("should handle httpEquiv and content attributes for content-security-policy", () => {
     // GIVEN a meta element with httpEquiv content-security-policy and content attributes
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       "<meta http-equiv=\"content-security-policy\" content=\"default-src 'self'; img-src https://*; child-src 'none';\">"
     );
     const d = document.lastElementChild;
@@ -69,7 +69,7 @@ describe("MetaElement", () => {
 
   it("should handle httpEquiv and content attributes for content-type", () => {
     // GIVEN a meta element with httpEquiv content-type and content attributes
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<meta http-equiv="content-type" content="text/html; charset=utf-8">'
     );
     const e = document.lastElementChild;
@@ -87,7 +87,7 @@ describe("MetaElement", () => {
 
   it("should handle httpEquiv and content attributes for default-style", () => {
     // GIVEN a meta element with httpEquiv default-style and content attributes
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<meta http-equiv="default-style" content="text/css">'
     );
     const f = document.lastElementChild;
@@ -104,7 +104,7 @@ describe("MetaElement", () => {
 
   it("should handle name, content, and media attributes for theme-color", () => {
     // GIVEN a meta element with name, content, and media attributes
-    const { document } = parseHTML(
+    const { document } = InSpatialDOM(
       '<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: dark)">'
     );
     const g = document.lastElementChild;

@@ -15,12 +15,12 @@
 // @ts-ignore - Ignoring TS extension import error
 // @ts-ignore - Ignoring TS extension import error
 import { universalRenderer } from "../../../renderer/src/render.ts";
-import { DOMParser, parseHTML } from "../../..//dom/src/index.ts";
+import { DOMParser, InSpatialDOM } from "../../..//dom/src/index.ts";
 
 
 // Create a new HTML document using the upstreamed DOM implementation
 const { document, window, Node, Element } =
-parseHTML(`<!DOCTYPE html><html><body></body></html>`);
+InSpatialDOM(`<!DOCTYPE html><html><body></body></html>`);
 
 // Make document globally available for Deno environment
 (globalThis as any).document = document;
