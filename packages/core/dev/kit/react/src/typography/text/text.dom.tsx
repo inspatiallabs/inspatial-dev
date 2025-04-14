@@ -50,7 +50,6 @@ const InTextPropsType = createType({
 });
 
 type TextProps = typeof InTextPropsType.infer &
-  TypographyProps &
   ITypographyProps &
   SharedProps & {
     animate?: AnimationStyleType;
