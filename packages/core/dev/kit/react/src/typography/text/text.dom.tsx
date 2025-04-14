@@ -13,7 +13,7 @@ import { kit } from "@inspatial/theme";
 import { SharedProps } from "@inspatial/type/util";
 import { ITypographyProps } from "@inspatial/theme";
 import { type as createType } from "@inspatial/type";
-import { TypographyProps } from "./variant.ts"
+import { TypographyProps } from "./variant.ts";
 
 /*##############################################(TYPE)##############################################*/
 
@@ -42,12 +42,13 @@ type AnimationStyleType =
   | "fadeOut"
   | "scaleDown";
 
+// Explicitly typed constant for JSR
 const InTextPropsType = createType({
   words: "string | string[]?",
-  motions: "object?", // For HTMLMotionProps
+  motions: "object?",
   duration: "number?",
   delay: "number?",
-});
+}) as any;
 
 type TextProps = typeof InTextPropsType.infer &
   ITypographyProps &
