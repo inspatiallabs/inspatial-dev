@@ -4,19 +4,44 @@ import { kit } from "@inspatial/theme/variant";
 import { SharedProps } from "@inspatial/type/util";
 import React from "react";
 
+// TypeScript interface for static type-checking
 interface MarqueeProps extends SharedProps {
+  /**
+   * The direction the marquee should scroll
+   */
   direction?: "left" | "right";
+
+  /**
+   * The speed of the scrolling animation
+   */
   speed?: "slow" | "very-slow" | "ultra-slow" | "normal" | "fast";
+
+  /**
+   * Whether to pause the animation when hovering
+   */
   pauseOnHover?: boolean;
+
+  /**
+   * Content to be displayed in the marquee
+   */
+  children?: SharedProps["children"];
+
+  /**
+   * Optional CSS class name
+   */
+  className?: SharedProps["className"];
 }
 
+/**
+ * A component that creates a horizontal scrolling marquee effect
+ */
 export function Marquee({
   children,
   direction = "left",
   speed = "normal",
   pauseOnHover = true,
   className,
-}: MarqueeProps) {
+}: MarqueeProps): any {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLDivElement>(null);
   const [start, setStart] = React.useState(false);
@@ -35,10 +60,10 @@ export function Marquee({
     return () => clearTimeout(timer);
   }, []);
 
-  function addAnimation() {
+  function addAnimation(): void {
     if (containerRef.current && scrollerRef.current) {
       const scrollerContent = Array.from(scrollerRef.current.children);
-      scrollerContent.forEach((item) => {
+      scrollerContent.forEach((item: Element) => {
         const duplicatedItem = item.cloneNode(true);
         if (scrollerRef.current) {
           scrollerRef.current.appendChild(duplicatedItem);
@@ -50,7 +75,7 @@ export function Marquee({
     }
   }
 
-  const getDirection = () => {
+  const getDirection = (): void => {
     if (containerRef.current) {
       if (direction === "left") {
         containerRef.current.style.setProperty(
@@ -66,7 +91,7 @@ export function Marquee({
     }
   };
 
-  const getSpeed = () => {
+  const getSpeed = (): void => {
     if (containerRef.current) {
       const speedSettings = {
         fast: "20s",

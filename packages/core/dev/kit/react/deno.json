@@ -33,7 +33,9 @@
     "react-router": "npm:react-router@^7.5.0"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./structure": "./src/structure/index.ts",
+    "./structure/marquee": "./src/structure/marquee/index.tsx"
   },
   "tasks": {
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
