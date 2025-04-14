@@ -25,7 +25,6 @@
     "./typography/text": "./src/typography/text/text.dom.tsx"
   },
   "tasks": {
-    "build": "deno run --allow-read --allow-write --allow-env --allow-net scripts/build.ts",
     "publish": "deno task build && deno publish --no-check --allow-slow-types",
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
   }
