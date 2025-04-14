@@ -1,6 +1,6 @@
 // Imports
-import hljs from "npm:highlight.js@^11.10.0/lib/core";
-import typescript from "npm:highlight.js@^11.10.0/lib/languages/typescript";
+import hljs from "npm:highlight.js@11.10.0/lib/core";
+import typescript from "npm:highlight.js@11.10.0/lib/languages/typescript";
 import {
   bgBlack,
   bgWhite,
@@ -14,7 +14,7 @@ import {
   underline,
   yellow,
 } from "@inspatial/theme";
-import { unescape } from "jsr:/@std/html@1/entities";
+import { unescape } from "jsr:@std/html@1.0.0/entities";
 hljs.registerLanguage("typescript", typescript);
 
 /**
@@ -64,24 +64,29 @@ function process(html: string) {
     a: number;
     b: number;
   }> = [];
-  const regex =
-    /(?<open><span[^>]*class="(?<classname>[^"]*)"[^>]*>)|(?<close><\/span>)/gs;
-  
-  let match = null as ReturnType<typeof regex.exec>;
+  const regex = /<span[^>]*class="([^"]*)"[^>]*>|<\/span>/g;
+
+  let match: RegExpExecArray | null = null;
   while ((match = regex.exec(html)) !== null) {
     const [captured] = match;
-    const { open, close, classname } = match.groups!;
-    if (open) {
+    const isOpen = captured.startsWith("<span");
+    const isClose = captured === "</span>";
+    const classname = isOpen ? match[1] : "";
+
+    if (isOpen) {
       stack.push({
         classname,
         a: match.index,
         b: match.index + captured.length,
       });
     }
-    if (close) {
+    if (isClose) {
       const { a, b, classname } = stack.pop()!;
       return process(
-        `${html.substring(0, a)}${color(html.substring(b, match.index), classname)}${html.substring(match.index + close.length)}`
+        `${html.substring(0, a)}${color(
+          html.substring(b, match.index),
+          classname
+        )}${html.substring(match.index + captured.length)}`
       );
     }
   }

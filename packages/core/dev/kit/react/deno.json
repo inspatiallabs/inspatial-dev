@@ -1,9 +1,11 @@
 {
   "name": "@inspatial/kit-rct",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "Apache-2.0",
   "compilerOptions": {
     "allowJs": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "lib": ["deno.window", "dom", "dom.iterable", "dom.asynciterable", "esnext"]
   },
   "imports": {
@@ -11,20 +13,20 @@
     "@inspatial/theme": "jsr:@inspatial/theme@^0.1.0",
     "@inspatial/type": "jsr:@inspatial/type@^0.1.3",
     "@inspatial/util": "jsr:@inspatial/utils@^0.1.7",
-    "react": "npm:react@^19.0.0",
-    "react-dom": "npm:react-dom@^19.0.0"
+    "react": "npm:react@^18.2.0",
+    "react-dom": "npm:react-dom@^18.2.0",
+    "react/jsx-runtime": "npm:react@^18.2.0/jsx-runtime"
   },
   "exports": {
     ".": "./src/index.ts",
-
     "./structure": "./src/structure/index.ts",
     "./structure/marquee": "./src/structure/marquee/index.tsx",
-
     "./typography": "./src/typography/index.ts",
     "./typography/text": "./src/typography/text/text.dom.tsx"
   },
   "tasks": {
-    "publish": "deno publish --no-check --allow-slow-types",
+    "build": "deno run --allow-read --allow-write --allow-env --allow-net scripts/build.ts",
+    "publish": "deno task build && deno publish --no-check --allow-slow-types",
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
   }
 }

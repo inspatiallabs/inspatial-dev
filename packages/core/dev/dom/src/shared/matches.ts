@@ -1,5 +1,5 @@
 // TODO(@benemma): get Selector from @inspatial/theme
-import * as CSSselect from "css-select";
+import * as CSSselect from "npm:css-select@^5.1.0";
 // @ts-ignore - Ignoring TS extension import error
 import { ELEMENT_NODE, TEXT_NODE } from "./constants.ts";
 // @ts-ignore - Ignoring TS extension import error
