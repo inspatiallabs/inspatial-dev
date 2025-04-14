@@ -4,7 +4,7 @@ import { kit } from "@inspatial/theme/variant";
 import { SharedProps } from "@inspatial/type/util";
 import React from "react";
 
-// TypeScript interface for static type-checking
+/*#########################################(Types)#########################################*/
 interface MarqueeProps extends SharedProps {
   /**
    * The direction the marquee should scroll
@@ -32,6 +32,7 @@ interface MarqueeProps extends SharedProps {
   className?: SharedProps["className"];
 }
 
+/*#########################################(Marquee)#########################################*/
 /**
  * A component that creates a horizontal scrolling marquee effect
  */
