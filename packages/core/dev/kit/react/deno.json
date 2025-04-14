@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/kit-rct",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --external react",
@@ -9,6 +9,10 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "npm:react@^19.0.0",
+    "jsxImportSourceTypes": "npm:@types/react@^19.0.0",
+    "allowJs": true,
     "lib": ["deno.window", "dom", "dom.iterable", "dom.asynciterable", "esnext"]
   },
   "imports": {
