@@ -26,9 +26,7 @@
     "react-router": "npm:react-router@^7.5.0"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./ornament": "./src/ornament/index.ts",
-    "./presentation": "./src/presentation/index.ts"
+    ".": "./src/index.ts"
   },
   "tasks": {
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
