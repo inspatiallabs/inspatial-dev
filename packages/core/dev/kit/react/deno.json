@@ -27,7 +27,6 @@
     "@inspatial/util": "jsr:@inspatial/utils@^0.1.7",
     "prop-types": "npm:prop-types@^15.8.1",
     "@types/prop-types": "npm:@types/prop-types@^15.7.14",
-    "react/jsx-runtime": "npm:react/jsx-runtime",
     "react": "npm:react@^19.0.0",
     "@types/react": "npm:@types/react@^19.0.0",
     "react-dom": "npm:react-dom@^19.0.0",
