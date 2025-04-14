@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/kit-rct",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --external react",

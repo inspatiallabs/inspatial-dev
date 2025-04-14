@@ -13,7 +13,12 @@ import { kit } from "@inspatial/theme";
 import { SharedProps } from "@inspatial/type/util";
 import { ITypographyProps } from "@inspatial/theme";
 import { type as createType } from "@inspatial/type";
-import { TypographyProps } from "./variant.ts";
+import {
+  sizeClassMap,
+  weightClassMap,
+  transformClassMap,
+  letterSpacingMap,
+} from "./helpers.ts";
 
 /*##############################################(TYPE)##############################################*/
 
@@ -48,7 +53,7 @@ const InTextPropsType = createType({
   motions: "object?",
   duration: "number?",
   delay: "number?",
-}) as any;
+});
 
 type TextProps = typeof InTextPropsType.infer &
   ITypographyProps &
@@ -136,51 +141,6 @@ const gradualVariants: Variants = {
   visible: { opacity: 1, x: 0 },
 };
 
-// Helper to generate typography size classes
-const sizeClassMap = {
-  h1: "text-4xl lg:text-5xl xl:text-6xl",
-  h2: "text-3xl lg:text-4xl xl:text-5xl",
-  h3: "text-2xl lg:text-3xl xl:text-4xl",
-  h4: "text-xl lg:text-2xl xl:text-3xl",
-  h5: "text-lg lg:text-xl xl:text-2xl",
-  h6: "text-base lg:text-lg xl:text-xl",
-  base: "text-base",
-  xs: "text-xs",
-  sm: "text-sm",
-  md: "text-md",
-  lg: "text-lg",
-  xl: "text-xl",
-};
-
-// Helper to generate typography weight classes
-const weightClassMap = {
-  thin: "font-thin",
-  light: "font-light",
-  regular: "font-normal",
-  medium: "font-medium",
-  bold: "font-bold",
-  black: "font-black",
-};
-
-// Helper to generate typography transform classes
-const transformClassMap = {
-  none: "",
-  uppercase: "uppercase",
-  lowercase: "lowercase",
-  capitalize: "capitalize",
-  "full-width": "", // Needs custom CSS
-};
-
-// Helper for letter spacing
-const letterSpacingMap = {
-  xs: "-tracking-tighter", // -0.05em
-  sm: "-tracking-tight", // -0.03em
-  base: "tracking-normal", // 0em
-  md: "tracking-wide", // 0.03em
-  lg: "tracking-wider", // 0.05em
-  xl: "tracking-widest", // 0.1em
-};
-
 /*##############################################(TEXT COMPONENT)##############################################*/
 /**
  * A Spatial Kit component that renders text with various animation effects.
@@ -213,6 +173,7 @@ export const Text: React.FC<TextProps> = ({
   /*##############################################(HOOKS)##############################################*/
   const [scope, animateGenerate] = useAnimate();
   const tickerRef = React.useRef<HTMLSpanElement>(null);
+  const textRef = React.useRef<HTMLParagraphElement>(null);
   const isInView = useInView(tickerRef, { once: true, margin: "0px" });
 
   /*##############################################(FUNCTIONS)##############################################*/
@@ -632,20 +593,19 @@ export const Text: React.FC<TextProps> = ({
 
   return (
     <p
-      ref={ref}
-      className={kit(
-        // TypographyVariant.variant({
-        //   ...settings,
-        // }),
-        // Apply the typography classes based on props
-        getTypographyClasses(),
-        // Base classes for proper display
-        "overflow-hidden flex w-full",
-        // User-provided className is applied last to override defaults
-        className
-      )}
+      ref={textRef}
+      className={
+        typeof kit === "function"
+          ? kit(
+              getTypographyClasses(),
+              "overflow-hidden flex w-full",
+              className
+            )
+          : `${getTypographyClasses()} overflow-hidden flex w-full ${
+              className || ""
+            }`
+      }
       style={{
-        // Inline styles for properties that don't map well to Tailwind
         lineHeight: lineHeight,
         ...(font?.heading && { fontFamily: font.heading }),
         ...(font?.body && { fontFamily: font.body }),
