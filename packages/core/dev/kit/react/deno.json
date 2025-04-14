@@ -12,7 +12,18 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "jsxFragmentFactory": "React.Fragment",
-    "allowJs": true
+    "lib": [
+      "deno.window",
+      "dom",
+      "dom.iterable",
+      "dom.asynciterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true
   },
   "imports": {
     "motion": "npm:motion@^11.13.1",
