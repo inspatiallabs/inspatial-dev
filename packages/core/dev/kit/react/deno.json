@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/kit-rct",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --external react",
@@ -11,32 +11,26 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "jsxFragmentFactory": "React.Fragment"
+    "jsxFragmentFactory": "React.Fragment",
+    "allowJs": true
   },
   "imports": {
     "motion": "npm:motion@^11.13.1",
     "@inspatial/theme": "jsr:@inspatial/theme@^0.1.0",
-    "@inspatial/types": "jsr:@inspatial/types@^0.1.2",
-    "@lynx-js/react": "npm:@lynx-js/react@^0.106.3"
+    "@inspatial/type": "jsr:@inspatial/type@^0.1.3",
+    "@inspatial/util": "jsr:@inspatial/utils@^0.1.7",
+    "prop-types": "npm:prop-types@^15.8.1",
+    "@types/prop-types": "npm:@types/prop-types@^15.7.14",
+    "react": "npm:react@^19.0.0",
+    "react-dom": "npm:react-dom@^19.0.0",
+    "react-router": "npm:react-router@^7.5.0"
   },
   "exports": {
     ".": "./src/index.ts",
     "./ornament": "./src/ornament/index.ts",
-    "./button": "./src/button/index.ts",
-    "./tab": "./src/tab/index.ts",
     "./presentation": "./src/presentation/index.ts"
   },
   "tasks": {
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
-  },
-  "publish": {
-    "exclude": [
-      ".github",
-      ".vscode",
-      "examples",
-      "fixtures",
-      "**/*.test.ts",
-      "test_deps.ts"
-    ]
   }
 }

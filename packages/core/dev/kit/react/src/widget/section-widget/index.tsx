@@ -1,7 +1,7 @@
-import { useState, useEffect } from "@lynx-js/react";
+import React from "react";
 import Pattern from "@/inspatial/kit/ui/pattern";
 import { PatternProps } from "@/inspatial/kit/ui/pattern/variant";
-import ScrollView from "@/inspatial/kit/ui/structure/scrollview/scroll-view";
+import ScrollView from "@/inspatial/kit/ui/structure/scrolldiv/scroll-div";
 import { Text } from "@/inspatial/kit/ui/typography/text.2d";
 import { kit } from "@inspatial/theme";
 // Define SharedProps interface directly
@@ -77,17 +77,17 @@ export default function ScreenWidget(props: ScreenWidgetProps) {
   const isButtonAction = !isTabAction && action && "button" in action;
 
   // State to keep track of the active tab and content
-  const [activeTab, setActiveTab] = useState("tab1");
-  const [currentTitle, setCurrentTitle] = useState(defaultTitle);
+  const [activeTab, setActiveTab] = React.useState("tab1");
+  const [currentTitle, setCurrentTitle] = React.useState(defaultTitle);
   const [currentDescription, setCurrentDescription] =
-    useState(defaultDescription);
-  const [currentImage, setCurrentImage] = useState(defaultImage);
+    React.useState(defaultDescription);
+  const [currentImage, setCurrentImage] = React.useState(defaultImage);
 
   // Create tab data structure
   const tabItems = isTabAction ? (action as TabType[]).slice(0, 3) : [];
 
   // Update content when tab changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (isTabAction) {
       const tabIndex = parseInt(activeTab.replace("tab", "")) - 1;
       const selectedTab = (action as TabType[])[tabIndex];
@@ -115,8 +115,8 @@ export default function ScreenWidget(props: ScreenWidgetProps) {
 
   // Content section with title, description, and action
   const ContentSection = () => (
-    <view className="flex flex-col gap-6">
-      <view className="flex flex-col gap-2">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
         <Text
           animate="none"
           className={`w-auto text-h2 text-wrap md:text-lg font-bold ${
@@ -139,10 +139,10 @@ export default function ScreenWidget(props: ScreenWidgetProps) {
             {currentDescription}
           </Text>
         )}
-      </view>
+      </div>
 
       {action && (
-        <view
+        <div
           className={`w-full ${layout === "Left" && "text-left"} ${
             layout === "Right" && "text-right"
           } ${
@@ -184,9 +184,9 @@ export default function ScreenWidget(props: ScreenWidgetProps) {
               </Tabs>
             )
           )}
-        </view>
+        </div>
       )}
-    </view>
+    </div>
   );
 
   // Image section
@@ -205,7 +205,7 @@ export default function ScreenWidget(props: ScreenWidgetProps) {
       {layout === "Center" ? (
         // Center layout (vertical stacking)
         <section className="flex flex-col items-center justify-center w-full max-w-4xl h-full mx-auto gap-12 px-4 relative m-auto antialiased">
-          <view className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             <Text
               animate="none"
               className="w-auto justify-center text-h2 text-wrap md:text-lg font-bold text-center"
@@ -220,7 +220,7 @@ export default function ScreenWidget(props: ScreenWidgetProps) {
                 {currentDescription}
               </Text>
             )}
-          </view>
+          </div>
 
           <ImageSection />
 
@@ -266,18 +266,18 @@ export default function ScreenWidget(props: ScreenWidgetProps) {
         </section>
       ) : (
         <section className="flex flex-row md:flex-col items-center justify-center w-full max-w-7xl h-full mx-auto gap-12 px-4 relative m-auto antialiased">
-          <view
+          <div
             className={`flex gap-12 md:flex-col ${
               layout === "Right" ? "flex-row-reverse" : "flex-row"
             } w-full`}
           >
-            <view className="w-full">
+            <div className="w-full">
               <ImageSection />
-            </view>
-            <view className="flex flex-col w-full h-auto items-center justify-center">
+            </div>
+            <div className="flex flex-col w-full h-auto items-center justify-center">
               <ContentSection />
-            </view>
-          </view>
+            </div>
+          </div>
         </section>
       )}
     </Pattern>
