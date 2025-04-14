@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/kit-rct",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --external react",
@@ -34,8 +34,12 @@
   },
   "exports": {
     ".": "./src/index.ts",
+
     "./structure": "./src/structure/index.ts",
-    "./structure/marquee": "./src/structure/marquee/index.tsx"
+    "./structure/marquee": "./src/structure/marquee/index.tsx",
+
+    "./typography": "./src/typography/index.ts",
+    "./typography/text": "./src/typography/text/text.dom.tsx"
   },
   "tasks": {
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
