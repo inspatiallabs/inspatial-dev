@@ -47,13 +47,12 @@ type AnimationStyleType =
   | "fadeOut"
   | "scaleDown";
 
-// Explicitly typed constant for JSR
 const InTextPropsType = createType({
   words: "string | string[]?",
   motions: "object?",
   duration: "number?",
   delay: "number?",
-});
+}) 
 
 type TextProps = typeof InTextPropsType.infer &
   ITypographyProps &

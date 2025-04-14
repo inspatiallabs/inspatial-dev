@@ -11,14 +11,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "lib": [
-      "deno.window",
-      "dom",
-      "dom.iterable",
-      "dom.asynciterable",
-      "esnext"
-    ],
-    "allowJs": true
+    "lib": ["deno.window", "dom", "dom.iterable", "dom.asynciterable", "esnext"]
   },
   "imports": {
     "motion": "npm:motion@^11.13.1",
@@ -42,6 +35,7 @@
     "./typography/text": "./src/typography/text/text.dom.tsx"
   },
   "tasks": {
+    "publish": "deno publish --no-check --allow-slow-types",
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
   }
 }
