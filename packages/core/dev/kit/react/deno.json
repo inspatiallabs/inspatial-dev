@@ -9,13 +9,13 @@
     "lib": ["deno.window", "dom", "dom.iterable", "dom.asynciterable", "esnext"]
   },
   "imports": {
-    "motion": "npm:motion@^11.13.1",
+    "motion": "npm:motion@^11.18.2",
     "@inspatial/theme": "jsr:@inspatial/theme@^0.1.0",
     "@inspatial/type": "jsr:@inspatial/type@^0.1.3",
-    "@inspatial/util": "jsr:@inspatial/utils@^0.1.7",
-    "react": "npm:react@^18.2.0",
-    "react-dom": "npm:react-dom@^18.2.0",
-    "react/jsx-runtime": "npm:react@^18.2.0/jsx-runtime"
+    "@inspatial/util": "jsr:@inspatial/util@^0.1.7",
+    "react": "npm:react@^19.1.0",
+    "react-dom": "npm:react-dom@^19.1.0",
+    "react/jsx-runtime": "npm:react@^19.1.0/jsx-runtime"
   },
   "exports": {
     ".": "./src/index.ts",
