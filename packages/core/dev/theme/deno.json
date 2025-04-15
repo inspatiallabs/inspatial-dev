@@ -6,7 +6,8 @@
     "lib": ["deno.window", "dom", "esnext"]
   },
   "tasks": {
-    "generate-google-fonts": "deno run --allow-read --allow-write ./src/font/google/font-generator-cli.ts"
+    "generate-google-fonts": "deno run --allow-read --allow-write ./src/font/google/font-generator-cli.ts",
+    "publish": "deno publish --no-check --allow-slow-types"
   },
   "imports": {
     "@std/path": "jsr:@std/path"
