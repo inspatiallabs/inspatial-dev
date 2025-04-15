@@ -475,40 +475,43 @@ test({
 });
 
 test({
-  name: "createVariant() with config should return a preconfigured variant",
+  name: "createVariant() with config should provide useVariant API",
   fn: () => {
-    // Given a direct variant configuration
+    // Given a variant with the useVariant API
     const buttonVariant = createVariant({
       base: "rounded",
       settings: {
+        intent: {
+          primary: "bg-blue-500 text-white",
+          secondary: "bg-gray-200 text-gray-800"
+        },
         size: {
-          sm: "text-sm",
-          lg: "text-lg"
+          sm: "text-sm px-2 py-1",
+          lg: "text-lg px-6 py-3"
         }
       },
       defaultSettings: {
+        intent: "primary",
         size: "sm"
       }
     });
     
-    // Create a variant function using the system
-    const button = buttonVariant.variant({
-      base: "rounded",
-      settings: {
-        size: {
-          sm: "text-sm",
-          lg: "text-lg"
-        }
-      }
+    // When using the API method with props
+    const button = buttonVariant.useVariant({ 
+      intent: "secondary", 
+      size: "lg" 
     });
     
-    // When using it to create buttons
-    const smallButton = button({ size: "sm" });
-    const largeButton = button({ size: "lg" });
+    // Then the variant should be applied correctly
+    expect(button).toContain("bg-gray-200");
+    expect(button).toContain("text-lg");
     
-    // Then it should work as expected
-    expect(smallButton).toContain("text-sm");
-    expect(largeButton).toContain("text-lg");
+    // Test with default values
+    const defaultButton = buttonVariant.useVariant();
+    
+    // Default values should be applied
+    expect(defaultButton).toContain("bg-blue-500");
+    expect(defaultButton).toContain("text-sm");
   }
 });
 

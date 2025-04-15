@@ -14,6 +14,7 @@
     "./packages/core/dev/*",
     "./packages/core/dev/cli/*",
     "./packages/core/dev/kit/*",
+    "./packages/core/dev/kit/react/*",
     "./packages/core/dev/xr/*",
     "./packages/core/dev/run/*",
     "./packages/core/dev/renderer/*",
@@ -57,7 +58,8 @@
       "dom.asynciterable",
       "deno.unstable",
       "deno.worker",
-      "deno.window"
+      "deno.window",
+      "esnext"
     ]
   },
   "unstable": [
@@ -81,7 +83,7 @@
   },
   "lint": {
     "rules": {
-      "tags": ["recommended"],
+      "tags": ["recommended", "jsx", "jsr"],
       "include": [
         "no-var",
         "no-window",

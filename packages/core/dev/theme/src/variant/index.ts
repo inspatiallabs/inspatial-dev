@@ -399,7 +399,7 @@ const variantSystem: VariantSystemReturn = createVariantSystem();
  * @example
  * ### Basic Usage
  * ```typescript
- * import { kit } from '@inspatial/util/kit';
+ * import { kit } from '@inspatial/theme/variant';
  *
  * // Combining simple classes
  * const className = kit('bg-pop-500 text-white', 'hover:bg-pop-600');
@@ -553,12 +553,13 @@ export const composeVariant = variantSystem.composeVariant;
  * ### 📚 Terminology
  * > **Variant System**: A structured way to manage different style variations of a component
  * > **Style Hooks**: Functions that can modify the final output of class names
+ * > **useVariant**: Method to apply variant styles to components
  *
  * @example 
  * ### Basic Configuration
  * 
- * import { createVariant } from "@inspatial/util/kit";
- * import type { VariantProps } from "@inspatial/util/kit";
+ * import { createVariant } from "@inspatial/theme/variant";
+ * import type { VariantProps } from "@inspatial/theme/variant";
  * 
  * ```typescript
  * const ComponentVariant = createVariant({
@@ -568,16 +569,18 @@ export const composeVariant = variantSystem.composeVariant;
  *   }
  * });
  * 
- * // type inference
- * type ComponentVariantProps = VariantProps<typeof ComponentVariant.__variant> & {
+ * // type inference with useVariant
+ * type ComponentVariantProps = VariantProps<typeof ComponentVariant.useVariant> & {
  *   // Add any additional props here that are not part of the variant system (optional)
  * }
  *
+ * // Apply styles with the variant
+ * const className = ComponentVariant.useVariant({ size: "sm", theme: "dark" });
  * ```
  * 
  * ### Custom System
  * ```typescript
- * import { createVariant } from '@inspatial/util/kit';
+ * import { createVariant } from '@inspatial/theme/variant';
  *
  * // Create a custom variant system with a class name transformer
  * const { variant, kit } = createVariant({
@@ -599,8 +602,8 @@ export const composeVariant = variantSystem.composeVariant;
  * ```
  *
  * @param {VariantConfigProp} [options] - Configuration options for the variant system
- * @returns {{ kit: Function, variant: VariantProp, composeVariant: ComposeVariantProp }}
- * Returns an object containing the core styling utilities
+ * @returns {{ kit: Function, variant: VariantProp, composeVariant: ComposeVariantProp, useVariant?: Function }}
+ * Returns an object containing the core styling utilities and variant functions
  */
 
 /**
@@ -618,8 +621,8 @@ export function createVariant<V extends VariantShapeProp>(
   variant: VariantProp;
   composeVariant: ComposeVariantProp;
   config: InSpatialVariantConfig<V>;
-  // The directly created variant function
-  __variant: (
+  // Only keep the modern API name, remove the legacy __variant
+  useVariant: (
     props?: VariantSchemaProp<V> & {
       class?: ClassValueProp;
       className?: ClassValueProp;
@@ -736,8 +739,8 @@ export function createVariant(options?: VariantConfigProp): any {
       variant,
       composeVariant,
       config: options,
-      // Include the directly created variant function
-      __variant: variantFn,
+      // Include only the modern API name
+      useVariant: variantFn,
     };
   }
 
@@ -764,8 +767,8 @@ export type VariantReturnType<V extends VariantShapeProp> = {
   /** The configuration object used to create this variant */
   config: InSpatialVariantConfig<V>;
 
-  /** The variant function created from the provided configuration */
-  __variant: (
+  /** The modern API for applying variants */
+  useVariant: (
     props?: VariantSchemaProp<V> & {
       class?: ClassValueProp;
       className?: ClassValueProp;

@@ -1,4 +1,5 @@
-import { GoogleFontProp } from "./prop.ts";
+// @ts-ignore: Allow importing .ts files in Deno
+import type { GoogleFontProp as _GoogleFontProp } from "./prop.ts";
 
 interface FontDefinition {
   name: string;
@@ -28,12 +29,14 @@ export interface InSpatialFontProp {
 type Display = "auto" | "block" | "swap" | "fallback" | "optional";
 
 function generateFontTypeUnion(fontMap: Record<string, any>): string {
-  const fontNames = Object.keys(fontMap).map((key) => {
-    // Convert snake_case to exact font family name from the map
-    const fontFamily = fontMap[key].family;
-    // Escape any special characters and wrap in quotes
-    return `"${fontFamily.replace(/"/g, '\\"')}"`;
-  });
+  const fontNames = Object.keys(fontMap)
+    .filter(key => fontMap[key] && fontMap[key].family) // Filter out entries without family property
+    .map((key) => {
+      // Convert snake_case to exact font family name from the map
+      const fontFamily = fontMap[key].family;
+      // Escape any special characters and wrap in quotes
+      return `"${fontFamily.replace(/"/g, '\\"')}"`;
+    });
 
   return `/**
    * All available Google Font families
@@ -46,14 +49,17 @@ function generateFontTypeUnion(fontMap: Record<string, any>): string {
 /**
  * Generates TypeScript declarations for Google Fonts
  */
-export async function generateGoogleFontTypes(
-  fontMap: Record<string, GoogleFontProp["font"]>,
-  outputPath: string
-): Promise<void> {
+export function generateGoogleFontTypes(
+  fontMap: Record<string, any>,
+  _outputPath: string
+): string {
   let output = `// Auto-generated Google Font declarations
   // Generated on ${new Date().toISOString()}
   
-  import { InSpatialFontProp } from '../types'
+  // @ts-ignore: Allow importing .ts files in Deno
+  import type { InSpatialFontProp } from '../types.ts'
+  // @ts-ignore: Allow importing .ts files in Deno
+  import type { PrimitiveFontTypes } from '../primitive/types.ts'
   
   type Display = 'auto' | 'block' | 'swap' | 'fallback' | 'optional'
   
@@ -81,14 +87,25 @@ export async function generateGoogleFontTypes(
    */\n\n`;
 
   for (const [key, font] of Object.entries(fontMap)) {
-    const fontName = formatFontNameForDeclaration(key);
-    const fontDef = processFontDefinition(font);
+    try {
+      if (!font) {
+        console.warn(`Skipping undefined font for key: ${key}`);
+        continue;
+      }
+      
+      const fontName = formatFontNameForDeclaration(key);
+      const fontDef = processFontDefinition(font);
 
-    output += generateFontDeclaration(fontName, fontDef);
-    output += "\n";
+      output += generateFontDeclaration(fontName, fontDef);
+      output += "\n";
+    } catch (err) {
+      console.error(`Error processing font ${key}:`, err);
+      // Continue with the next font rather than aborting the entire process
+    }
   }
 
-  await Deno.writeTextFile(outputPath, output);
+  // Return the generated content as a string
+  return output;
 }
 
 /**
@@ -104,12 +121,37 @@ function formatFontNameForDeclaration(key: string): string {
 /**
  * Processes raw font data into a structured definition
  */
-function processFontDefinition(font: GoogleFontProp["font"]): FontDefinition {
+function processFontDefinition(font: any): FontDefinition {
+  if (!font) {
+    // Return a default empty definition if font is undefined
+    return {
+      name: "Unknown",
+      weights: [],
+      styles: [],
+      subsets: [],
+      axes: undefined,
+    };
+  }
+
+  // Safely extract properties, ensuring they are the right type
+  const name = typeof font.family === 'string' ? font.family : "Unknown";
+  const weights = Array.isArray(font.weights) ? font.weights : [];
+  
+  // Handle styles - convert to string array
+  let styles: string[] = [];
+  if (Array.isArray(font.style)) {
+    styles = font.style.filter((style: any) => typeof style === 'string') as string[];
+  } else if (typeof font.style === 'string') {
+    styles = [font.style];
+  }
+  
+  const subsets = Array.isArray(font.subsets) ? font.subsets : [];
+
   return {
-    name: font.family,
-    weights: font.weights,
-    styles: Array.isArray(font.style) ? font.style : [font.style],
-    subsets: font.subsets,
+    name,
+    weights,
+    styles,
+    subsets,
     axes: font.axes,
   };
 }
@@ -149,10 +191,4 @@ function generateAxesOptions(axes: FontDefinition["axes"]): string {
       ${axis.tag}?: number // min: ${axis.min}, max: ${axis.max}, default: ${axis.defaultValue}`
     )
     .join("");
-}
-
-// CLI script for Deno
-if (import.meta.main) {
-  const fontMap = JSON.parse(await Deno.readTextFile("./font-map.json"));
-  await generateGoogleFontTypes(fontMap, "./fonts.ts");
 }

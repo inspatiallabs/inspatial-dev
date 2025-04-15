@@ -4,26 +4,31 @@
    </a> -->
 
 <a href="https://inspatiallabs.com" target="_blank">
-    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg" alt="InSpatial" width="300"/>
-   </a>
+    <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-light.svg">
+        <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg">
+        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg" alt="InSpatial" width="300"/>
+    </picture>
+</a>
 
 <br>
    <br>
 
+<a href="https://inspatiallabs.com" target="_blank">
 <p align="center">
-  <!-- <a href="https://inspatiallabs.com#gh-dark-mode-only" target="_blank">
-        <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg" height="75" alt="InSpatial">
-    </a> -->
-      <a href="https://inspatiallabs.com" target="_blank">
+    <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg">
+        <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg">
         <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg" height="75" alt="InSpatial">
-    </a>
+    </picture>
 </p>
+</a>
 
 _Reality is your canvas_
 
 <h3 align="center">
-  InSpatial is a spatial computing platform <br> for building universal and XR (AR/MR/VR) applications
-</h3>
+    InSpatial is a universal development environment (UDE) <br> for building cross-platform and spatial (AR/MR/VR) applications
+  </h3>
 
 [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
 [![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud)
@@ -37,38 +42,315 @@ _Reality is your canvas_
 
 </div>
 
-## 
+##
 
 <div align="center">
 
-| InSpatial                                                                                                                     | Description                          | Link                                           |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ---------------------------------------------- |
-| [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)       | Universal Libraries & Frameworks          | [inspatial.dev](https://www.inspatial.dev)     |
+| InSpatial                                        | Description                          | Link             |
+| --- | --- | ---- |
+| [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)     | Universal Libraries & Frameworks     | [inspatial.dev](https://www.inspatial.dev)   |
 | [![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud) | Backend APIs and SDKs                | [inspatial.cloud](https://www.inspatial.cloud) |
-| [![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)       | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.app)     |
+| [![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)     | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.app)   |
 | [![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store) | Deploy and discover InSpatial apps   | [inspatial.store](https://www.inspatial.store) |
 
 </div>
 
 ---
 
-## 🎨 InSpatial Theme (🟡 Preview)
+## 🔍 InSpatial Theme (🟡 Preview)
 
-A powerful, type-safe and headless theming system for Universal and Spatial applications with support for custom fonts, color schemes, and dynamic theme generation - can be extended to build your own custom component Library.
+A comprehensive theming system for building cross-platform and spatial applications with consistent design language. InSpatial Theme provides a type-safe foundation for colors, typography, effects, and design variables with support for light/dark modes and dynamic theme switching.
+
+### 👨‍💻 What Can I Do With InSpatial Theme?
+
+- **Create Cohesive UIs**: Build applications with consistent design using theme variables and design tokens
+- **Switch Themes Dynamically**: Support light/dark mode with real-time theme switching
+- **Use Premium Fonts**: Access 70+ built-in premium fonts plus Google Fonts integration
+- **Apply Color Systems**: Use InSpatial's comprehensive color system with light/dark mode support
+- **Build Component Variants**: Create flexible component styles with the powerful variant system
 
 ## 🌟 Features
 
-- 📦 70+ Premium built-in (Primitive) fonts with full TypeScript support
-- 🌐 Google Fonts Integration
-- 🎯 Multi-theme variant support (Flat, Neutral, Soft, Brutal)
-- 🔄 Real-time theme switching
-- 📊 Built-in Design Variables (Tokens) with semantic naming
-- 💪 A comprehensive color system with terminal utilities, RGB manipulation, APCA text contrast, and more...
-- 🎨 Dynamic theme generation with light/dark mode support
-- 🔒 Type-safe theme configuration and validation
-- 🚀 Optimized font loading and fallback strategies
-- 🧩 Modular and extensible architecture
+- 🎨 **Theme Manager**: Control theme state with type-safe APIs and system preference detection
+- 🌓 **Light/Dark Mode**: Built-in support for both light and dark color schemes
+- 📊 **Design Variables**: Comprehensive token system for spacing, radius, cursor styles, and more
+- 🎯 **Multiple Theme Variants**: Choose from flat, neutral, brutal, and soft theme styles
+- 🔄 **40+ Color Formats**: Choose from lavender, blossom, sky, sunset, forest, and many more
+- 🌈 **Rich Color System**: Terminal colors, RGB manipulation, and automatic CSS variables
+- 📦 **70+ Premium Fonts**: Built-in high-quality fonts with complete TypeScript support
+- 🌐 **Google Fonts Integration**: Access and use any Google Font with proper TypeScript types
+- 🚀 **Font Loading Optimization**: Efficient font loading with fallback strategies
+- 💨 **Tailwind-Compatible**: Works seamlessly with Tailwind CSS
+- 🧩 **Variant System**: Create complex, composable component styles with intelligent CSS class handling
+- ✨ **Effect System**: Apply beautiful animations and transitions to your UI elements
+- 🔒 **Type Safety**: Complete TypeScript support across all APIs
+- 🔌 **Framework Agnostic**: Works with any JavaScript framework or vanilla JS
 
+## ✨ Advanced Features ✨
+
+<div class="features-grid">
+  <div class="feature-tile" onclick="showFeatureDetails('feature-system-1')">
+    <span class="feature-icon">🎨</span>
+    <h4>Theme Management</h4>
+    <p class="feature-brief">Dynamic theme control with system preference detection</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('feature-system-2')">
+    <span class="feature-icon">🌈</span>
+    <h4>Color System</h4>
+    <p class="feature-brief">Comprehensive color tools and utilities</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('feature-system-3')">
+    <span class="feature-icon">📝</span>
+    <h4>Typography System</h4>
+    <p class="feature-brief">Premium fonts and text styling</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('feature-system-4')">
+    <span class="feature-icon">🧩</span>
+    <h4>Variant System</h4>
+    <p class="feature-brief">Flexible component styling with intelligent class handling</p>
+  </div>
+  
+  <div class="feature-tile" onclick="showFeatureDetails('feature-system-5')">
+    <span class="feature-icon">✨</span>
+    <h4>Effect System</h4>
+    <p class="feature-brief">Beautiful animations and transitions</p>
+  </div>
+</div>
+
+<div id="feature-details-container">
+  <div class="feature-detail" id="feature-system-1">
+    <h4>🎨 Theme Management</h4>
+    <p>Control your application's theme with a powerful, type-safe manager that handles light/dark mode switching, system preference detection, and theme variable updates.</p>
+    <pre><code>import { ThemeManager, initTheme } from "@inspatial/theme";
+
+// Initialize theme system
+const theme = initTheme();
+
+// Subscribe to theme changes
+theme.subscribe((state) => {
+  console.log("Theme updated:", state.isDarkMode ? "dark" : "light");
+});
+
+// Toggle between light and dark mode
+theme.setDarkMode(true);
+
+// Follow system preferences
+theme.followSystem();</code></pre>
+    <ul class="feature-benefits">
+      <li>Benefit 1: Automatic system preference detection</li>
+      <li>Benefit 2: Real-time theme updates with subscription pattern</li>
+      <li>Benefit 3: Complete TypeScript type safety</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="feature-system-2">
+    <h4>🌈 Color System</h4>
+    <p>A comprehensive color system with built-in palettes, terminal utilities, RGB manipulation, and CSS variable generation.</p>
+    <pre><code>import {
+  inspatialColors,
+  generateColorVariables,
+  red, bgBlue,
+  rgb24, rgb8,
+  stripAnsiCode
+} from "@inspatial/theme";
+
+// Access InSpatial's built-in colors
+const { pop, crystal, trackloud } = inspatialColors;
+
+// Generate CSS variables
+const lightThemeVars = generateColorVariables(false);
+const darkThemeVars = generateColorVariables(true);
+
+// Terminal color utilities
+console.log(red("Error:"), bgBlue("Status"));
+
+// RGB color manipulation
+console.log(rgb24("RGB Color", { r: 255, g: 0, b: 255 }));
+console.log(rgb8("8-bit Color", 42));</code></pre>
+    <ul class="feature-benefits">
+      <li>Benefit 1: 50+ built-in semantic colors</li>
+      <li>Benefit 2: Automatic light/dark mode variants</li>
+      <li>Benefit 3: Terminal color utilities for CLI applications</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="feature-system-3">
+    <h4>📝 Typography System</h4>
+    <p>Access over 70 premium fonts and Google Fonts with type-safe declarations, optimized loading, and fallback support.</p>
+    <pre><code>// Using built-in premium fonts
+import { PrimitiveFontProps } from "@inspatial/theme";
+const { poppins, montserrat, inter } = PrimitiveFontProps;
+
+// Using Google Fonts
+import { Roboto, Open_Sans, Lato } from "@inspatial/theme";
+
+// Creating fonts with options
+const robotoFont = Roboto({
+  weight: ["400", "700"],
+  style: "normal",
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  fallback: ["system-ui", "sans-serif"]
+});</code></pre>
+    <ul class="feature-benefits">
+      <li>Benefit 1: 70+ premium fonts included</li>
+      <li>Benefit 2: Complete Google Fonts integration</li>
+      <li>Benefit 3: Optimized font loading with fallback support</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="feature-system-4">
+    <h4>🧩 Variant System</h4>
+    <p>Create flexible, composable component styles with a powerful variant system that intelligently handles CSS class conflicts.</p>
+    <pre><code>import { createVariant } from "@inspatial/theme";
+
+// Create a button variant
+const ButtonVariant = createVariant({
+  base: "px-4 py-2 rounded-md",
+  settings: {
+    intent: {
+      primary: "bg-blue-500 text-white",
+      secondary: "bg-gray-200 text-gray-800",
+      danger: "bg-red-500 text-white"
+    },
+    size: {
+      sm: "text-sm",
+      md: "text-base",
+      lg: "text-lg px-6 py-3"
+    }
+  },
+  defaultSettings: {
+    intent: "primary",
+    size: "md"
+  }
+});
+
+// Use the variant
+const buttonClass = ButtonVariant.useVariant({
+  intent: "danger",
+  size: "lg",
+  className: "my-custom-class"
+});</code></pre>
+    <ul class="feature-benefits">
+      <li>Benefit 1: Intelligent CSS class conflict resolution</li>
+      <li>Benefit 2: Composable variants for complex components</li>
+      <li>Benefit 3: Compatible with Tailwind CSS</li>
+    </ul>
+  </div>
+  
+  <div class="feature-detail" id="feature-system-5">
+    <h4>✨ Effect System</h4>
+    <p>Apply beautiful animations and transitions to your UI elements with a type-safe effect system.</p>
+    <pre><code>import { Effect } from "@inspatial/theme";
+
+// Available effects
+const textEffect: Effect = "fadeUp";  
+const patternEffect: Effect = "slideRight";
+
+// Apply effects in your UI
+<div className={`transition ${textEffect}`}>
+  Animated Content
+</div></code></pre>
+    <ul class="feature-benefits">
+      <li>Benefit 1: 20+ predefined animation effects</li>
+      <li>Benefit 2: Text and pattern effect categories</li>
+      <li>Benefit 3: TypeScript type safety for all effects</li>
+    </ul>
+  </div>
+</div>
+
+<style>
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.feature-tile {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.feature-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  background-color: #fff;
+}
+
+.feature-icon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.feature-brief {
+  color: #555;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+#feature-details-container {
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.feature-detail {
+  display: none;
+  animation: fadeIn 0.5s;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  margin-bottom: 20px;
+}
+
+.feature-detail h4 {
+  margin-top: 0;
+}
+
+.feature-benefits {
+  margin-top: 15px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+</style>
+
+<script>
+function showFeatureDetails(featureId) {
+  // Hide all feature details
+  document.querySelectorAll('.feature-detail').forEach(detail => {
+    detail.style.display = 'none';
+  });
+  
+  // Show the selected feature detail
+  const selectedFeature = document.getElementById(featureId);
+  if (selectedFeature) {
+    selectedFeature.style.display = 'block';
+    selectedFeature.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// Show the first feature by default
+document.addEventListener('DOMContentLoaded', function() {
+  showFeatureDetails('feature-system-1');
+});
+</script>
+
+<div align="center">
+  <h4>🚀 Keep reading to learn how to use all these amazing features! 🚀</h4>
+</div>
 
 ## 📦 Install InSpatial Theme:
 
@@ -78,170 +360,377 @@ Choose your preferred package manager:
 deno install jsr:@inspatial/theme
 ```
 
-## 
+##
 
 ```bash
 npx jsr add @inspatial/theme
 ```
 
-## 
+##
 
 ```bash
 yarn dlx jsr add @inspatial/theme
 ```
 
-## 
+##
 
 ```bash
 pnpm dlx jsr add @inspatial/theme
 ```
 
-## 
+##
 
 ```bash
 bunx jsr add @inspatial/theme
 ```
 
-## 🛠️ Usage
+## 🛠️ Step-by-Step Usage Guide
 
-### Step-by-Step Usage Guide
+Here are the essential usage patterns for working with InSpatial Theme:
 
-Follow these simple steps to get started with **InSpatial Theme**:
-
-#### 1. **Initialize Theme**
+### 1. **Theme Management**
 
 ```typescript
-import { initTheme } from "@inspatial/theme"
-const theme = initTheme()
-```
+import { ThemeManager, initTheme, useTheme } from "@inspatial/theme"
 
-#### 2. **Use Built-in Fonts**
+// Initialize the theme manager
+const theme = initTheme();
 
-```typescript
-import { PrimitiveFontProps } from "@inspatial/theme"
-// Access any of the 70+ premium fonts
-const { actual, aeion, alternox } = PrimitiveFontProps
-```
+// Get the current theme state
+const currentTheme = theme.getCurrentTheme();
+console.log("Dark mode:", currentTheme.isDarkMode);
 
-#### 3. **Generate Custom Theme**
-
-```typescript
-import { generateThemeMode } from "@inspatial/theme"
-const customTheme = generateThemeMode("hsl(200, 100%, 50%)")
-```
-
-#### 4. **Theme Management**
-
-```typescript
-import { ThemeManager } from "@inspatial/theme"
-// Get theme instance
-const manager = ThemeManager.getInstance()
-// Subscribe to theme changes
-manager.subscribe((theme) => {
-  console.log("Theme updated:", theme)
-})
 // Toggle dark mode
-manager.toggleDarkMode()
+theme.setDarkMode(!currentTheme.isDarkMode);
+
+// Subscribe to theme changes
+const unsubscribe = theme.subscribe((updatedTheme) => {
+  console.log("Theme updated:", updatedTheme);
+});
+
+// Set custom color variables
+theme.setColorVariables({
+  primary: "#0088ff",
+  secondary: "#6600cc"
+});
+
+// Follow system preferences for dark/light mode
+theme.followSystem();
 ```
 
-#### 5. **Theme Variables**
-
-```typescript
-import { ThemeVariable } from "@inspatial/theme"
-// Access predefined theme variables
-const flatTheme = ThemeVariable.find((theme) => theme.variant === "flat")
-```
-
-#### 6. **Color System**
+### 2. **Color System**
 
 ```typescript
 import {
-  bgBlue,
-  generateColorVariables,
   inspatialColors,
-  red,
-  rgb24,
-  rgb8,
-  stripAnsiCode,
+  generateColorVariables,
+  red, green, blue, yellow,
+  bgRed, bgGreen, bgBlue, bgYellow,
+  rgb24, rgb8, stripAnsiCode
 } from "@inspatial/theme"
 
-// Access InSpatial's built-in HEX color palette
-const {
+// Access InSpatial's color palette
+const { 
   skyblack, // "#03082E"
-  pop, // "#9000FF"
+  pop,      // "#9000FF"
   trackloud, // "#EF0381"
-  crystal, // "#8BD8F4"
-} = inspatialColors
+  crystal   // "#8BD8F4"
+} = inspatialColors;
 
 // Generate theme-aware CSS variables
-const lightThemeVars = generateColorVariables(false)
-const darkThemeVars = generateColorVariables(true)
+const lightModeVars = generateColorVariables(false);
+const darkModeVars = generateColorVariables(true);
 
 // Terminal color utilities
-console.log(red("Error:"), bgBlue("Status"))
+console.log(red("Error message"), green("Success!"));
+console.log(bgBlue(yellow("Warning!")));
 
-// RGB color manipulation
+// RGB color manipulation 
 // 24-bit RGB (16.7 million colors)
-console.log(rgb24("Custom Color", 0xff00ff))
-console.log(rgb24("Custom RGB", { r: 255, g: 0, b: 255 }))
+console.log(rgb24("Custom Color", 0xff00ff));
+console.log(rgb24("Custom RGB", { r: 255, g: 0, b: 255 }));
 
 // 8-bit RGB (256 colors)
-console.log(rgb8("Paletted Color", 42))
+console.log(rgb8("Paletted Color", 42));
 
-// Remove ANSI color codes
-const coloredText = red("Error!")
-const plainText = stripAnsiCode(coloredText)
-
-// CSS Variable Usage
-const styles = {
-  // Inline styles
-  color: "var(--color-pop)",
-  // Tailwind classes
-  className: "text-[var(--color-crystal)]",
-}
+// Remove ANSI color codes from colored text
+const coloredText = red("Error!");
+const plainText = stripAnsiCode(coloredText);
 ```
 
-## 📚 API Reference
+### 3. **Typography with Built-in Fonts**
 
-### Theme Components
+```typescript
+import { PrimitiveFontProps } from "@inspatial/theme"
 
-- `ThemeManager`: Core class for managing theme state
-- `generateThemeMode`: Function for generating theme color schemes
-- `PrimitiveFontProps`: Collection of premium fonts
-- `ThemeVariable`: Predefined theme configurations
-  ...
+// Access any of the 70+ premium fonts
+const { 
+  inter,
+  poppins,
+  montserrat,
+  lato,
+  rubik,
+  roboto
+} = PrimitiveFontProps;
 
-### Typography Font Types
+// Use fonts in your application
+const myFont = inter({
+  src: "/path/to/inter.woff2",
+  weight: "400",
+  style: "normal",
+  fallback: ["system-ui", "sans-serif"],
+  preload: true,
+  variable: "--font-inter",
+});
 
-- `PrimitiveFontTypes`: Built-in premium fonts
-- `GoogleFontTypes`: Google Fonts integration
-- `AllFontVariants`: Union of all available fonts
-  ...
+// Access font properties
+console.log(myFont.className); // CSS class name
+console.log(myFont.style);     // Font style properties
+```
 
-### Theme Types
+### 4. **Google Fonts Integration**
 
-- `ThemeProps`: Main theme configuration interface
-- `TypographyProps`: Typography configuration
-- `ThemeFormatProps`: Color scheme configuration
-  ...
+```typescript
+import { Roboto, Open_Sans, Lato } from "@inspatial/theme"
+
+// Create a Google Font instance with options
+const robotoFont = Roboto({
+  weight: ["400", "700"],
+  style: "normal",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+  preload: true,
+  fallback: ["system-ui", "sans-serif"],
+  adjustFontFallback: true,
+  variable: "--font-roboto"
+});
+
+// Use the font in your styling
+const styles = {
+  fontFamily: robotoFont.style.fontFamily,
+  className: robotoFont.className
+};
+```
+
+### 5. **Variant System for Component Styling**
+
+```tsx
+import { createVariant, type VariantProps } from "@inspatial/theme/variant";
+
+// Create a component variant
+const ButtonVariant = createVariant({
+  // Base styles applied to all buttons
+  base: "inline-flex",
+  
+  // Variant settings
+  settings: {
+    intent: {
+      primary: "bg-(--primary)",
+      secondary: "bg-(--secondary)",
+      danger: "bg-red-50 text-red hover:bg-red hover:text-white"
+    },
+    size: {
+      sm: "text-sm py-1 px-3",
+      md: "text-base",
+      lg: "text-lg py-3 px-6"
+    },
+    rounded: {
+      none: "rounded-none",
+      md: "rounded-md",
+      full: "rounded-full"
+    }
+  },
+  
+  // Compound variants for specific combinations
+  composition: [
+    {
+      intent: "primary",
+      size: "lg",
+      className: "font-bold"
+    }
+  ],
+  
+  // Default settings
+  defaultSettings: {
+    intent: "primary",
+    size: "md",
+    rounded: "md"
+  }
+});
+
+// Use the variant in components
+const buttonClass = ButtonVariant.useVariant({
+  intent: "danger",
+  size: "lg",
+  className: "mt-4" // Additional classes
+});
+
+// Use kit to safely combine classes
+const combinedClasses = ButtonVariant.kit(
+  "text-center",
+  isActive && "bg-green-500",
+  isBold ? "font-bold" : "font-normal"
+);
+
+// Compose multiple variants together
+const CardButtonVariant = ButtonVariant.composeVariant(CardVariant);
+
+
+// use derived variant class in component
+<Button className={kit(buttonClass, className)} />
+```
+
+### 6. **Effect System**
+
+```typescript
+import { Effect } from "@inspatial/theme"
+
+// Text effects
+const textEffects: Effect[] = [
+  "rotate", "flip", "pullUp", "fadeUp", "fadeDown",
+  "fadeLeft", "fadeRight", "fadeIn", "reveal",
+  "blurIn", "typing", "generate", "ticker", "reUp", "gradual"
+];
+
+// Pattern effects
+const patternEffects: Effect[] = [
+  "slideRight", "fadeOut", "scaleDown"
+];
+
+// Use effects in your UI components
+<div className={`transition ${textEffects[0]}`}>
+  Animated Text
+</div>
+```
+
+### 7. **Design Variables and Theme Configuration**
+
+```typescript
+import { ThemeProps, ThemeVariable } from "@inspatial/theme"
+
+// Create a custom theme configuration
+const myTheme: ThemeProps = {
+  // Theme style: flat, neutral, brutal, or soft
+  variant: "brutal",
+  
+  // Color scheme
+  format: {
+    name: "ocean",
+    light: {
+      brand: "#0088ff",
+      background: "#ffffff",
+      surface: "#f5f8fc",
+      primary: "#0088ff",
+      secondary: "#6600cc"
+    },
+    dark: {
+      brand: "#0088ff",
+      background: "#121212",
+      surface: "#1e1e1e", 
+      primary: "#0088ff",
+      secondary: "#8833ff"
+    }
+  },
+  
+  // Light/dark mode
+  mode: "light",
+  
+  // Spacing scale
+  spacing: "md",
+  
+  // Border radius
+  radius: "md",
+  
+  // Cursor style
+  cursor: "pointer",
+  
+  // Typography settings
+  typography: {
+    font: {
+      heading: "montserrat",
+      body: "inter"
+    },
+    size: "base",
+    weight: "regular",
+    lineHeight: "24px",
+    letterSpacing: "base"
+  }
+};
+
+// Access predefined theme variables
+const flatTheme = ThemeVariable.find(theme => theme.variant === "flat");
+const oceanTheme = ThemeVariable.find(theme => theme.format.name === "ocean");
+```
+
+---
+
+## 🔍 API Reference
+
+### Theme Manager
+
+| Function/Class | Description |
+| ---- | --- |
+| `ThemeManager` | Core class for managing theme state with light/dark mode detection |
+| `initTheme()` | Initialize the theme manager (singleton pattern) |
+| `theme.getCurrentTheme()` | Get the current theme state including colors and variables |
+| `theme.setDarkMode(boolean)` | Set dark or light mode explicitly |
+| `theme.followSystem()` | Use system preference for light/dark mode |
+| `theme.subscribe(listener)` | Subscribe to theme changes (returns unsubscribe function) |
+| `theme.setColorVariables(vars)` | Set custom color variables |
 
 ### Color System
 
-- `inspatialColors`/`inspatialColorPatterns`: InSpatial's built-in HEX color palette/patterns
-- `generateColorVariables`: Generate theme-aware CSS variables
-- `rgb24`: 24-bit RGB color manipulation
-- `rgb8`: 8-bit RGB color manipulation
-- `stripAnsiCode`: Remove ANSI color codes
+| Function/Object | Description |
+| ---- | --- |
+| `inspatialColors` | InSpatial's built-in color palette with 50+ semantic colors |
+| `inspatialColorPatterns` | RegExp patterns for finding colors in text/code |
+| `generateColorVariables(isDark)` | Generate CSS variables for light or dark theme |
+| `rgb24(text, color)` | Apply 24-bit RGB color to text (16.7M colors) |
+| `rgb8(text, color)` | Apply 8-bit RGB color to text (256 colors) |
+| `red`, `green`, `blue`, etc. | Terminal foreground color utilities |
+| `bgRed`, `bgGreen`, `bgBlue`, etc. | Terminal background color utilities |
+| `stripAnsiCode(text)` | Remove ANSI color codes from text |
 
-  ...
+### Typography System
 
-## 🎯 Best Practices
+| Function/Object | Description |
+| ---- | --- |
+| `PrimitiveFontProps` | Collection of 70+ premium built-in fonts |
+| `GoogleFontTypes` | Type representing all available Google Fonts |
+| `AllFontVariants` | Union type of all font options (Google + Primitive) |
+| `InSpatialFontProp` | Interface for font properties with className and style |
+| `fontGenerator` | Tool for generating font type declarations |
 
-1. Use the built-in theme manager for consistent state management
-2. Leverage TypeScript for type-safe theme configurations
-3. Implement proper font loading strategies
-4. Use CSS variables for dynamic theme updates
-5. Follow the mobile-first responsive approach
+### Variant System
+
+| Function/Object | Description |
+| ---- | --- |
+| `createVariant(config)` | Create a variant component with style configurations |
+| `variant.useVariant(props)` | Apply variants with specific properties |
+| `variant.kit(...classes)` | Utility for safely combining CSS classes |
+| `variant.composeVariant(...variants)` | Combine multiple variants together |
+| `VariantProps<T>` | Extract props type from a variant component |
+
+### Effect System
+
+| Type | Description |
+| ---- | --- |
+| `Effect` | Union type of all available effects for animations |
+
+### Design Variables
+
+| Type/Object | Description |
+| ---- | --- |
+| `ThemeProps` | Main theme configuration interface |
+| `ThemeVariantProps` | Theme style options (flat, neutral, brutal, soft) |
+| `ThemeFormatNameProps` | Color scheme names (40+ options) |
+| `ThemeFormatProps` | Color format configuration with light/dark variants |
+| `ThemeModeProps` | Theme mode options (light, dark, auto) |
+| `ThemeSizeScaleProps` | Size scale from xs to 4xl |
+| `ThemeSpacingProps` | Spacing scale options |
+| `ThemeRadiusProps` | Border radius scale options |
+| `ThemeCursorProps` | Cursor style options |
+| `ThemeVariable` | Predefined theme configurations |
 
 ## 📄 License
 
@@ -250,7 +739,7 @@ InSpatial Theme is released under the Apache 2.0 License. See the [LICENSE](LICE
 ---
 
 <div align="center">
-  <strong>Ready to build beautiful, consistent universal and spatial UIs?</strong>
+  <strong>Ready to shape the future of spatial computing?</strong>
   <br>
-  <a href="https://www.inspatial.app">Start Building with InSpatial</a>
+  <a href="https://www.inspatiallabs.com">Start Building with InSpatial</a>
 </div>

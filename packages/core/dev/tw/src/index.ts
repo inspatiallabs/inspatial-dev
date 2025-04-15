@@ -85,7 +85,7 @@ const inSpatialTailwindConfig = withTV({
    ********************************************************************************/
   plugins: [
     // InSpatial Plugins
-    // addMotion, // TOFIX
+    // addinmotion, // TOFIX
     addVariablesForColors,
     addGridBackgrounds,
     addCursorBase,
@@ -108,19 +108,19 @@ const inSpatialTailwindConfig = withTV({
 
   theme: {
     /*===============================================================================
-     * MOTION:
+     * inmotion:
      *===============================================================================*/
 
     // // Animation Timing Functions
     // animationTimingFunction: ({ theme }) => ({
     //   ...theme("transitionTimingFunction"),
-    //   "spring-smooth": "var(--motion-spring-smooth)",
-    //   "spring-snappy": "var(--motion-spring-snappy)",
-    //   "spring-bouncy": "var(--motion-spring-bouncy)",
-    //   "spring-bouncier": "var(--motion-spring-bouncier)",
-    //   "spring-bounciest": "var(--motion-spring-bounciest)",
+    //   "spring-smooth": "var(--inmotion-spring-smooth)",
+    //   "spring-snappy": "var(--inmotion-spring-snappy)",
+    //   "spring-bouncy": "var(--inmotion-spring-bouncy)",
+    //   "spring-bouncier": "var(--inmotion-spring-bouncier)",
+    //   "spring-bounciest": "var(--inmotion-spring-bounciest)",
 
-    //   bounce: "var(--motion-bounce)",
+    //   bounce: "var(--inmotion-bounce)",
 
     //   "in-quad": "cubic-bezier(.55, .085, .68, .53)",
     //   "in-cubic": "cubic-bezier(.550, .055, .675, .19)",
@@ -144,9 +144,9 @@ const inSpatialTailwindConfig = withTV({
     //   2000: "2000ms",
     // }),
 
-    // // Motion
-    // motionScale: ({ theme }) => ({ ...theme("scale"), DEFAULT: "50%" }),
-    // motionTranslate: {
+    // // inmotion
+    // inmotionScale: ({ theme }) => ({ ...theme("scale"), DEFAULT: "50%" }),
+    // inmotionTranslate: {
     //   0: "0%",
     //   25: "25%",
     //   50: "50%",
@@ -155,17 +155,17 @@ const inSpatialTailwindConfig = withTV({
     //   150: "150%",
     //   DEFAULT: "25%",
     // },
-    // motionRotate: ({ theme }) => ({ ...theme("rotate"), DEFAULT: "12deg" }),
-    // motionBlur: ({ theme }) => theme("blur"),
-    // motionGrayscale: ({ theme }) => theme("grayscale"),
-    // motionOpacity: ({ theme }) => ({
+    // inmotionRotate: ({ theme }) => ({ ...theme("rotate"), DEFAULT: "12deg" }),
+    // inmotionBlur: ({ theme }) => theme("blur"),
+    // inmotionGrayscale: ({ theme }) => theme("grayscale"),
+    // inmotionOpacity: ({ theme }) => ({
     //   ...theme("opacity"),
     //   DEFAULT: "0",
     //   0: "0.001",
     // }),
 
-    // motionBackgroundColor: ({ theme }) => flattenColorPalette(theme("colors")),
-    // motionTextColor: ({ theme }) => flattenColorPalette(theme("colors")),
+    // inmotionBackgroundColor: ({ theme }) => flattenColorPalette(theme("colors")),
+    // inmotionTextColor: ({ theme }) => flattenColorPalette(theme("colors")),
 
     /*===============================================================================
      * ACCENT COLOR:
@@ -414,6 +414,7 @@ const inSpatialTailwindConfig = withTV({
       },
 
       /***************PRIME VARIABLES***************/
+      window: "hsl(var(--window))",
       background: "hsl(var(--background))",
       surface: "hsl(var(--surface))",
       brand: "hsl(var(--brand))",

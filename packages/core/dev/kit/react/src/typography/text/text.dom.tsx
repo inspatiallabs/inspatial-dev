@@ -12,7 +12,6 @@ import {
 import { kit } from "@inspatial/theme";
 import { SharedProps } from "@inspatial/type/util";
 import { ITypographyProps } from "@inspatial/theme";
-import { type as createType } from "@inspatial/type";
 import {
   sizeClassMap,
   weightClassMap,
@@ -47,18 +46,15 @@ type AnimationStyleType =
   | "fadeOut"
   | "scaleDown";
 
-const InTextPropsType = createType({
-  words: "string | string[]?",
-  motions: "object?",
-  duration: "number?",
-  delay: "number?",
-}) 
-
-type TextProps = typeof InTextPropsType.infer &
-  ITypographyProps &
-  SharedProps & {
-    animate?: AnimationStyleType;
-  };
+// Using the type directly in the type definition
+type TextProps = {
+  words?: string | string[];
+  motions?: Record<string, unknown>;
+  duration?: number;
+  delay?: number;
+  animate?: AnimationStyleType;
+} & ITypographyProps &
+  SharedProps;
 
 /*##############################################(ANIMATION VARIANTS)##############################################*/
 
