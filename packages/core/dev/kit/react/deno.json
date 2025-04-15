@@ -8,6 +8,25 @@
     "jsxImportSource": "react",
     "lib": ["deno.window", "dom", "dom.iterable", "dom.asynciterable", "esnext"]
   },
+  "exports": {
+    ".": "./src/index.ts",
+    "./structure": "./src/structure/index.ts",
+    "./structure/marquee": "./src/structure/marquee/index.tsx",
+    "./typography": "./src/typography/index.ts",
+    "./typography/text": "./src/typography/text/text.dom.tsx",
+    "./widget": "./src/widget/index.ts"
+  },
+  "dependencies": {
+    "motion": "npm:motion@^11.18.2",
+    "react": "npm:react@^19.1.0",
+    "react-dom": "npm:react-dom@^19.1.0",
+    "react-router": "npm:react-router@^7.5.0"
+  },
+  "imports": {
+    "@inspatial/theme": "../../theme/src/index.ts",
+    "@inspatial/type": "../../type/src/index.ts",
+    "@inspatial/util": "../../util/src/index.ts"
+  },
   "tasks": {
     "publish": "deno publish --no-check --allow-slow-types",
     "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
