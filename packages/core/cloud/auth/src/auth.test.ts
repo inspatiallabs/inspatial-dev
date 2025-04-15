@@ -16,7 +16,7 @@ import {
 } from "./auth-methods/social-auth/index.ts";
 import { MemoryStorage } from "./storage/memory.ts";
 import { createSubjectSchema, string, email } from "./schema.ts";
-import { mockSession, restoreTest } from "@inspatial/test/mock";
+import { mockSession, restoreTest } from "../../../dev/test/src/mock/mock.ts";
 // import { FakeTime } from "@inspatial/test/time";
 import { setEnv } from "./helpers.ts";
 

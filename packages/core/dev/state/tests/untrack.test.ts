@@ -1,5 +1,5 @@
 import { test, expect, describe } from "@inspatial/test";
-import { spy, mockFn } from "../../test/src/mock.ts";
+import { spy, mockFn } from "../../test/src/mock/mock.ts";
 import {
   createRoot,
   createEffect,

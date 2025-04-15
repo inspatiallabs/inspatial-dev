@@ -1,4 +1,4 @@
-import { mockFn } from "../../test/src/mock.ts";
+import { mockFn } from "../../test/src/mock/mock.ts";
 
 // Simple debug helper to print object properties
 function inspectObject(obj, label) {

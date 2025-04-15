@@ -4,7 +4,7 @@
  * This file provides compatibility between different mock/spy implementations
  */
 
-import { mockFn, getMockCalls } from "../../test/src/mock.ts";
+import { mockFn, getMockCalls } from "../../test/src/mock/mock.ts";
 import { createEffect as originalCreateEffect, createRenderEffect as originalCreateRenderEffect } from "../signal/src/index.ts";
 
 // Mark this file as a type module

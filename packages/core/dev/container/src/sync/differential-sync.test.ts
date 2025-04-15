@@ -3,7 +3,7 @@
  */
 
 import { test, expect } from "@inspatial/test";
-import { spy } from "@inspatial/test/mock";
+import { spy } from "../../../test/src/mock/mock.ts";
 import { DifferentialStateSynchronizer } from "./differential-sync.ts";
 
 test("DifferentialStateSynchronizer can initialize sync for a container", async () => {

@@ -65,7 +65,7 @@ alwaysApply: true
   - Prioritize test creation before any implementation work begins
   - Focus on making tests pass with the simplest possible solution before optimizing
 
-**IMPORTANT:** All tests must be written with InSpatial Test, and implementation must never precede test creation. The test-first discipline is essential to maintain throughout the entire development process.
+**IMPORTANT:** All tests must be written with InSpatial Test module and implementation must never precede test creation. The test-first discipline is essential to maintain throughout the entire development process.
 
 
 
@@ -81,6 +81,7 @@ alwaysApply: true
  * - Structure: "should [expected behavior] when [condition]"
  */
 // Example in user-class.test.ts:
+// import { test, describe, it, expect, assert, mockFn}
 // 
 // describe('UserClass', () => {
 //   it('should return the correct name when getName is called', () => {

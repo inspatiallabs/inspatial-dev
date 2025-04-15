@@ -3,7 +3,7 @@
  */
 
 import { test, expect } from "@inspatial/test";
-import { spy } from "@inspatial/test/mock";
+import { spy } from "../../../test/src/mock/mock.ts";
 import { WebSocketConnectionManager } from "./connection-manager.ts";
 import { MessagePriority } from "./connection-types.ts";
 

@@ -621,7 +621,7 @@ export function createVariant<V extends VariantShapeProp>(
   variant: VariantProp;
   composeVariant: ComposeVariantProp;
   config: InSpatialVariantConfig<V>;
-  // Only keep the modern API name, remove the legacy __variant
+  /** This will get all your defined variants in settings */
   useVariant: (
     props?: VariantSchemaProp<V> & {
       class?: ClassValueProp;
@@ -767,7 +767,7 @@ export type VariantReturnType<V extends VariantShapeProp> = {
   /** The configuration object used to create this variant */
   config: InSpatialVariantConfig<V>;
 
-  /** The modern API for applying variants */
+  /** Get all your defined variants in settings */
   useVariant: (
     props?: VariantSchemaProp<V> & {
       class?: ClassValueProp;

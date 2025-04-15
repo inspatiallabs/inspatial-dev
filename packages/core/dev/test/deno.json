@@ -13,7 +13,10 @@
     ".": "./src/index.ts",
     "./assert": "./src/assert.ts",
     "./expect": "./src/expect.ts",
-    "./mock": "./src/mock.ts",
+    "./mock": "./src/mock/index.ts",
+    "./fs": "./src/fs.ts",
+    "./highlight": "./src/highlight.ts",
+    "./describe": "./src/describe.ts",
     "./log": "./src/log/index.ts",
     "./snapshot": "./src/snapshot/index.ts",
     "./bdd": "./src/bdd/bdd.ts"

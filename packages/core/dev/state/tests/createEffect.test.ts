@@ -10,7 +10,7 @@ import {
 import { EffectClass } from "../signal/src/core/effect.ts";
 import { STATE_DIRTY } from "../signal/src/core/constants.ts";
 import { test, expect, describe } from "@inspatial/test";
-import { spy, mockFn, getMockCalls } from "../../test/src/mock.ts";
+import { spy, mockFn, getMockCalls } from "../../test/src/mock/mock.ts";
 import { 
   createEffectAdapter, 
   createRenderEffectAdapter, 

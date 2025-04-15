@@ -1,5 +1,5 @@
 import { test, expect, describe, it } from "@inspatial/test";
-import { spy, mockFn } from "../../../test/src/mock.ts";
+import { spy, mockFn } from "../../../test/src/mock/mock.ts";
 import { createEffectAdapter } from "../test-helpers.ts";
 // Import our test setup - this applies the array detection fix
 import { fixArrayDetection } from "../test-setup.ts";

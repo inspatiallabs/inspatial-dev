@@ -3,7 +3,7 @@
  */
 
 import { test, expect } from "@inspatial/test";
-import { spy } from "@inspatial/test/mock";
+import { spy } from "../../../../test/src/mock/mock.ts";
 import { ServerContainerManager } from "../gvisor/server-container.ts";
 import type { ContainerConfig, SecurityContext } from "../../shared/types.ts";
 

@@ -18,7 +18,7 @@ import {
     it,
   } from "./bdd.ts";
   import { TestSuiteInternal } from "./test-suite.ts";
-  import { assertSpyCall, assertSpyCalls, type SpyProp, spy, stub } from "../mock.ts";
+  import { assertSpyCall, assertSpyCalls, type SpyProp, spy, stub } from "../mock/mock.ts";
   
   class TestContext implements Deno.TestContext {
     name: string;

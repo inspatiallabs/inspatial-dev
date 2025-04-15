@@ -380,6 +380,43 @@ const styles = {
 };
 ```
 
+> **Note about Google Fonts**: While InSpatial is all about `Ejectable Defaults` i.e Pre-configured primitives that you remove yourself. It can be very hard to apply similar concept when dealing with Fonts especially Google Fonts. By default, the module includes stubs for all Google Fonts to keep bundle size small. To use actual Google Fonts, you need to install them manually via our CLI.
+
+#### Installing Google Fonts
+
+```bash
+# Install all Google Fonts
+deno task fonts:google:install
+
+# Install only popular fonts (recommended, much smaller)
+deno task fonts:google:install -- --popular
+
+# Install specific fonts
+deno task fonts:google:install -- --families=Roboto,Open+Sans,Lato
+```
+
+#### Uninstalling Google Fonts
+
+```bash
+deno task fonts:google:uninstall
+```
+
+#### Available Popular Fonts
+
+The following popular Google Fonts are available when using the `--popular` flag:
+
+- Roboto
+- Open Sans
+- Lato
+- Montserrat
+- Poppins
+- Inter
+- Raleway
+- Nunito
+- Ubuntu
+- Rubik
+- And more...
+
 ### 5. **Variant System for Component Styling**
 
 ```tsx
