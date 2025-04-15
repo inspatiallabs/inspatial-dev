@@ -38,12 +38,21 @@ function generateFontTypeUnion(fontMap: Record<string, any>): string {
       return `"${fontFamily.replace(/"/g, '\\"')}"`;
     });
 
+  // Check if fontNames is empty and provide a default type
+  if (fontNames.length === 0) {
+    return `/**
+   * All available Google Font families
+   * Auto-generated from font-map.json
+   */
+  export type GoogleFontTypes = string;\n`;
+  }
+
   return `/**
    * All available Google Font families
    * Auto-generated from font-map.json
    */
   export type GoogleFontTypes =
-    | ${fontNames.join("\n  | ")};\n`;
+    | ${fontNames.join("\n    | ")};\n`;
 }
 
 /**
@@ -112,7 +121,10 @@ export function generateGoogleFontTypes(
  * Formats a snake_case font name for TypeScript declaration
  */
 function formatFontNameForDeclaration(key: string): string {
-  return key
+  // First, replace any spaces in the key with underscores
+  const keyWithUnderscores = key.replace(/\s+/g, "_");
+  
+  return keyWithUnderscores
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join("_");
@@ -164,7 +176,10 @@ function generateFontDeclaration(name: string, font: FontDefinition): string {
   const stylesUnion = font.styles.map((s) => `'${s}'`).join(" | ");
   const subsetsUnion = font.subsets.map((s) => `'${s}'`).join(" | ");
 
-  return `export declare function ${name}(
+  // Sanitize function name - replace spaces with underscores
+  const safeFunctionName = name.replace(/\s+/g, "_");
+
+  return `export declare function ${safeFunctionName}(
     options: {
       weight: ${weightsUnion} | Array<${weightsUnion}>
       style?: ${stylesUnion} | Array<${stylesUnion}>
