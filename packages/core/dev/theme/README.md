@@ -356,9 +356,7 @@ console.log(myFont.className); // CSS class name
 console.log(myFont.style); // Font style properties
 ```
 
-> **Note about Primitive Fonts**: InSpatial Primitive Fonts are included by default and require no CLI installation. They’re served via a highly optimized CDN and include a curated set of fewer than 100 fonts, designed for performance and minimal payload.
-
-
+> **Note about Primitive Fonts**: InSpatial Primitive Fonts are included by default and require no CLI installation. They're served via a highly optimized CDN and include a curated set of fewer than 100 fonts, designed for performance and minimal payload.
 
 ### 4. **Google Fonts Integration**
 
@@ -384,8 +382,75 @@ const styles = {
 };
 ```
 
-> **Note about Google Fonts**: InSpatial embraces the concept of `Ejectable Defaults` pre-configured primitives that you can selectively remove or override. However, applying this pattern to fonts, especially Google Fonts, presents unique challenges. To keep the bundle size lean, the module ships with lightweight stubs for all Google Fonts by default. If you want to use the actual fonts, you’ll need to manually install them using our CLI.
+> **Note about Google Fonts**: InSpatial embraces the concept of `Ejectable Defaults` pre-configured primitives that you can selectively remove or override. However, applying this pattern to fonts, especially Google Fonts, presents unique challenges. To keep the bundle size lean, the module ships with lightweight stubs for all Google Fonts by default. If you want to use the actual fonts, you'll need to manually install them using our CLI.
 
+#### ✨ How Google Font Stubs Work ✨
+
+InSpatial Theme uses a smart stub system for Google Fonts:
+
+```ascii
+┏━━━━━━━━━━━━━━━━━━━━━━━ INITIAL PACKAGE ━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                              ┃
+┃  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓  ┃
+┃  ┃                    LIGHTWEIGHT STUBS                    ┃  ┃
+┃  ┃                                                         ┃  ┃
+┃  ┃  ┏━━━━━━━━━━━━━━┓      ┏━━━━━━━━━━━━━━━━━━━━━━━┓      ┃  ┃
+┃  ┃  ┃  Google Font ┃      ┃      stub.ts          ┃      ┃  ┃
+┃  ┃  ┃  Interface   ┃━━━━━▶┃  ┏━━━━━━━━━━━━━━━┓   ┃      ┃  ┃
+┃  ┃  ┗━━━━━━━━━━━━━━┛      ┃  ┃ export const ┃   ┃      ┃  ┃
+┃  ┃                        ┃  ┃ Roboto = ... ┃   ┃      ┃  ┃
+┃  ┃                        ┃  ┃ Open_Sans = .┃   ┃      ┃  ┃
+┃  ┃        PROVIDES        ┃  ┃ Lato = ...   ┃   ┃      ┃  ┃
+┃  ┃      CONSISTENT        ┃  ┃ ...          ┃   ┃      ┃  ┃
+┃  ┃         API            ┃  ┗━━━━━━━━━━━━━━━┛   ┃      ┃  ┃
+┃  ┃                        ┗━━━━━━━━━━━━━━━━━━━━━━━┛      ┃  ┃
+┃  ┃                                                         ┃  ┃
+┃  ┃  ⚠️ System fonts used as fallbacks                      ┃  ┃
+┃  ┃  ⚠️ Warning messages shown when used                    ┃  ┃
+┃  ┃  ⚠️ Small footprint (~15KB total)                       ┃  ┃
+┃  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛  ┃
+┃                                                              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+                               │
+                               │
+                               ▼
+┏━━━━━━━━━━━━ AFTER RUNNING: deno task fonts:google:install ━━━━━━━━━━━┓
+┃                                                                      ┃
+┃  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓    ┏━━━━━━━━━━━━━━━━━┓  ┃
+┃  ┃         REAL IMPLEMENTATIONS           ┃    ┃                  ┃  ┃
+┃  ┃                                        ┃    ┃    FONT FILES    ┃  ┃
+┃  ┃  ┏━━━━━━━━━━━━━━┓     ┏━━━━━━━━━━━━━━┓ ┃    ┃  ┏━━━━━━━━━━━┓  ┃  ┃
+┃  ┃  ┃  Google Font ┃     ┃   fonts.ts   ┃ ┃    ┃  ┃ roboto.woff┃  ┃  ┃
+┃  ┃  ┃  Interface   ┃━━━━▶┃ ┏━━━━━━━━━━┓ ┃ ┃    ┃  ┗━━━━━━━━━━━┛  ┃  ┃
+┃  ┃  ┗━━━━━━━━━━━━━━┛     ┃ ┃Roboto    ┃ ┃ ┃    ┃                  ┃  ┃
+┃  ┃                       ┃ ┃Open_Sans ┃◀┫─┼────╋─▶┏━━━━━━━━━━━┓  ┃  ┃
+┃  ┃                       ┃ ┃Lato      ┃◀┫─┼────╋─▶┃opensans.woff┃  ┃  ┃
+┃  ┃                       ┃ ┃...       ┃ ┃ ┃    ┃  ┗━━━━━━━━━━━┛  ┃  ┃
+┃  ┃  SAME API,            ┃ ┗━━━━━━━━━━┛ ┃ ┃    ┃                  ┃  ┃
+┃  ┃  REAL FUNCTIONALITY   ┗━━━━━━━━━━━━━━┛ ┃    ┃  ┏━━━━━━━━━━━┓  ┃  ┃
+┃  ┃                                        ┃    ┃  ┃ lato.woff  ┃  ┃  ┃
+┃  ┃  ✅ Actual font loading                 ┃    ┃  ┗━━━━━━━━━━━┛  ┃  ┃
+┃  ┃  ✅ CSS @font-face integration          ┃    ┃                  ┃  ┃
+┃  ┃  ✅ Optimized font display              ┃    ┗━━━━━━━━━━━━━━━━━┛  ┃
+┃  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛                         ┃
+┃                                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+```
+
+- **Before Installation**: The package includes lightweight stubs that:
+  - Provide the same API/interface as real font implementations
+  - Return warnings when used (suggesting font installation)
+  - Use system fonts as fallbacks
+  - Add minimal bundle size (~15KB for all Google Fonts)
+
+- **After Installation**: When you run the install command:
+  - Stubs are completely replaced with real implementations
+  - Font files are downloaded or referenced from Google's CDN
+  - Proper CSS is generated for @font-face declarations
+  - Full font functionality becomes available
+  - Variable name consistency is maintained for seamless transition
+
+This approach gives you the best of both worlds: lightweight distribution and full functionality when needed!
 
 #### Install Google Fonts
 
