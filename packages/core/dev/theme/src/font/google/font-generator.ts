@@ -30,7 +30,7 @@ type Display = "auto" | "block" | "swap" | "fallback" | "optional";
 
 function generateFontTypeUnion(fontMap: Record<string, any>): string {
   const fontNames = Object.keys(fontMap)
-    .filter(key => fontMap[key] && fontMap[key].family) // Filter out entries without family property
+    .filter((key) => fontMap[key] && fontMap[key].family) // Filter out entries without family property
     .map((key) => {
       // Convert snake_case to exact font family name from the map
       const fontFamily = fontMap[key].family;
@@ -101,7 +101,7 @@ export function generateGoogleFontTypes(
         console.warn(`Skipping undefined font for key: ${key}`);
         continue;
       }
-      
+
       const fontName = formatFontNameForDeclaration(key);
       const fontDef = processFontDefinition(font);
 
@@ -123,7 +123,7 @@ export function generateGoogleFontTypes(
 function formatFontNameForDeclaration(key: string): string {
   // First, replace any spaces in the key with underscores
   const keyWithUnderscores = key.replace(/\s+/g, "_");
-  
+
   return keyWithUnderscores
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -146,17 +146,19 @@ function processFontDefinition(font: any): FontDefinition {
   }
 
   // Safely extract properties, ensuring they are the right type
-  const name = typeof font.family === 'string' ? font.family : "Unknown";
+  const name = typeof font.family === "string" ? font.family : "Unknown";
   const weights = Array.isArray(font.weights) ? font.weights : [];
-  
+
   // Handle styles - convert to string array
   let styles: string[] = [];
   if (Array.isArray(font.style)) {
-    styles = font.style.filter((style: any) => typeof style === 'string') as string[];
-  } else if (typeof font.style === 'string') {
+    styles = font.style.filter(
+      (style: any) => typeof style === "string"
+    ) as string[];
+  } else if (typeof font.style === "string") {
     styles = [font.style];
   }
-  
+
   const subsets = Array.isArray(font.subsets) ? font.subsets : [];
 
   return {
@@ -179,7 +181,88 @@ function generateFontDeclaration(name: string, font: FontDefinition): string {
   // Sanitize function name - replace spaces with underscores
   const safeFunctionName = name.replace(/\s+/g, "_");
 
-  return `export declare function ${safeFunctionName}(
+  // Create JSDoc documentation following @doc.mdc guidelines
+  const jsDoc = `/**
+ * # ${font.name}
+ * @summary #### Google font family with type-safe configuration
+ * 
+ * The \`${
+   font.name
+ }\` font provides a clean and professional typographic style.
+ * Use it to enhance readability and visual appeal in your applications.
+ * 
+ * @since ${process.env.npm_package_version || "0.1.1"}
+ * @category InSpatial Theme
+ * @module @inspatial/theme/font
+ * @kind function
+ * @access public
+ * 
+ * ### 💡 Core Concepts
+ * - Configurable font weights: ${font.weights.join(", ")}
+ * - Available styles: ${font.styles.join(", ")}
+ * - Supported character subsets: ${font.subsets.join(", ")}
+ * ${font.axes ? `- Variable font axes support` : ""}
+ * 
+ * ### 📚 Example Usage
+ * 
+ * @example
+ * ### Basic Font Configuration
+ * \`\`\`typescript
+ * import { ${safeFunctionName} } from '@inspatial/theme/font';
+ * 
+ * // Create a font configuration
+ * const myFont = ${safeFunctionName}({
+ *   weight: '${font.weights[0]}',
+ *   style: '${font.styles[0] || "normal"}',
+ *   display: 'swap',
+ *   subsets: ['${font.subsets[0]}']
+ * });
+ * 
+ * // Use the font in your component
+ * function MyComponent() {
+ *   return (
+ *     <div className={myFont.className}>
+ *       This text uses ${font.name} font
+ *     </div>
+ *   );
+ * }
+ * \`\`\`
+ * 
+ * @example
+ * ### Using Multiple Weights and Custom CSS Variable
+ * \`\`\`typescript
+ * import { ${safeFunctionName} } from '@inspatial/theme/font';
+ * 
+ * const myFont = ${safeFunctionName}({
+ *   weight: [${font.weights.map((w) => `'${w}'`).join(", ")}],
+ *   display: 'swap',
+ *   variable: '--font-${safeFunctionName.toLowerCase()}',
+ *   preload: true,
+ *   fallback: ['system-ui', 'sans-serif']
+ * });
+ * 
+ * // In your CSS:
+ * // h1 { font-family: var(--font-${safeFunctionName.toLowerCase()}); font-weight: ${
+    font.weights[font.weights.length > 1 ? 1 : 0]
+  }; }
+ * \`\`\`
+ * 
+ * @param {Object} options - Configuration options for the ${font.name} font
+ * @param {${weightsUnion} | Array<${weightsUnion}>} options.weight - Font weight(s) to load
+ * @param {${stylesUnion} | Array<${stylesUnion}>} [options.style] - Font style(s) to load
+ * @param {Display} [options.display='swap'] - Font display strategy
+ * @param {string} [options.variable] - CSS variable name for the font
+ * @param {boolean} [options.preload=false] - Whether to preload the font
+ * @param {string[]} [options.fallback] - Fallback fonts to use if this font fails to load
+ * @param {boolean} [options.adjustFontFallback=true] - Whether to adjust fallback size metrics
+ * @param {Array<${subsetsUnion}>} [options.subsets] - Character subsets to include
+ * ${font.axes ? generateAxesDocumentation(font.axes) : ""}
+ * 
+ * @returns {InSpatialFontProp} Font configuration object with className and style properties
+ */`;
+
+  return `${jsDoc}
+export declare function ${safeFunctionName}(
     options: {
       weight: ${weightsUnion} | Array<${weightsUnion}>
       style?: ${stylesUnion} | Array<${stylesUnion}>
@@ -206,4 +289,18 @@ function generateAxesOptions(axes: FontDefinition["axes"]): string {
       ${axis.tag}?: number // min: ${axis.min}, max: ${axis.max}, default: ${axis.defaultValue}`
     )
     .join("");
+}
+
+/**
+ * Generates JSDoc documentation for font axes options
+ */
+function generateAxesDocumentation(axes: FontDefinition["axes"]): string {
+  if (!axes) return "";
+
+  return axes
+    .map(
+      (axis) =>
+        `* @param {number} [options.${axis.tag}] - Controls the ${axis.tag} axis (min: ${axis.min}, max: ${axis.max}, default: ${axis.defaultValue})`
+    )
+    .join("\n");
 }
