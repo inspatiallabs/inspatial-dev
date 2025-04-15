@@ -112,11 +112,44 @@ export async function generateGoogleFontStubs(deps: Dependencies = {}) {
 }
 
 /**
- * Generates the stub content from a font map
+ * Formats a font name for use as a valid JavaScript variable name
+ * by replacing spaces with underscores and handling invalid characters
+ */
+function formatFontNameForVariable(fontName: string): string {
+  // Replace spaces with underscores
+  let formattedName = fontName.replace(/\s+/g, "_");
+
+  // Replace characters that can't be used in variable names
+  formattedName = formattedName.replace(/[^a-zA-Z0-9_$]/g, "_");
+
+  // Ensure the name doesn't start with a number
+  if (/^[0-9]/.test(formattedName)) {
+    formattedName = "_" + formattedName;
+  }
+
+  return formattedName;
+}
+
+/**
+ * Generates the content for the stub.ts file
  */
 function generateStubContent(fontMap: Record<string, any>): string {
-  // Start building the stub file content
-  let stubContent = `// @ts-ignore: Allow importing .ts files in Deno
+  // Generate font placeholder declarations
+  const fontDeclarations = Object.entries(fontMap)
+    .map(([key, font]) => {
+      if (!font) return "";
+
+      // Use the family name from the font data
+      const fontFamily = (font.family || key).replace(/_/g, " ");
+
+      // Format the name for use as a variable
+      const formattedName = formatFontNameForVariable(fontFamily);
+
+      return `export const ${formattedName} = createGoogleFontPlaceholder("${fontFamily}");`;
+    })
+    .join("\n");
+
+  const stubContent = `// @ts-ignore: Allow importing .ts files in Deno
 import type { InSpatialFontProp } from "../types.ts";
 // @ts-ignore: Allow importing .ts files in Deno
 import type { PrimitiveFontTypes } from "../primitive/types.ts";
@@ -159,33 +192,22 @@ function createGoogleFontPlaceholder(fontName: string): (options: any) => InSpat
 }
 
 // Export placeholder functions for all Google Fonts from font-map.json
-`;
-
-  // Generate export statements for all fonts
-  for (const [key, _value] of Object.entries(fontMap)) {
-    const fontName = key.replace(/_/g, " ");
-    stubContent += `export const ${key} = createGoogleFontPlaceholder("${fontName}");\n`;
-  }
-
-  // Add utility functions
-  stubContent += `
-/**
- * Google Fonts stub implementation
- * This file provides placeholder implementations when Google Fonts are not installed.
- */
+${fontDeclarations}
 
 /**
- * Returns a stub CSS string for a Google Font
+ * Function to generate font-face CSS for a Google Font
+ * This is a placeholder that returns an empty string
  */
 export function fontFace(family: string): string {
-  return \`/* Placeholder for Google Font: \${family} */\`;
+  console.warn(\`Font face CSS for "\${family}" is not available. Install Google Fonts first.\`);
+  return "";
 }
 
 /**
- * Returns a map of all available Google Fonts
+ * Returns an empty font map object
+ * This is a placeholder for when Google Fonts are not installed
  */
 export function getFontMap(): Record<string, any> {
-  console.warn("Google Fonts are not installed. Using stub implementation.");
   return {};
 }
 
