@@ -333,7 +333,7 @@ const coloredText = red("Error!");
 const plainText = stripAnsiCode(coloredText);
 ```
 
-### 3. **Typography with Built-in Fonts**
+### 3. **Primitive Font - InSpatial Built-in Fonts**
 
 ```typescript
 import { PrimitiveFontProps } from "@inspatial/theme";
@@ -355,6 +355,10 @@ const myFont = inter({
 console.log(myFont.className); // CSS class name
 console.log(myFont.style); // Font style properties
 ```
+
+> **Note about Primitive Fonts**: InSpatial Primitive Fonts are included by default and require no CLI installation. They’re served via a highly optimized CDN and include a curated set of fewer than 100 fonts, designed for performance and minimal payload.
+
+
 
 ### 4. **Google Fonts Integration**
 
@@ -380,22 +384,28 @@ const styles = {
 };
 ```
 
-> **Note about Google Fonts**: While InSpatial is all about `Ejectable Defaults` i.e Pre-configured primitives that you remove yourself. It can be very hard to apply similar concept when dealing with Fonts especially Google Fonts. By default, the module includes stubs for all Google Fonts to keep bundle size small. To use actual Google Fonts, you need to install them manually via our CLI.
+> **Note about Google Fonts**: InSpatial embraces the concept of `Ejectable Defaults` pre-configured primitives that you can selectively remove or override. However, applying this pattern to fonts, especially Google Fonts, presents unique challenges. To keep the bundle size lean, the module ships with lightweight stubs for all Google Fonts by default. If you want to use the actual fonts, you’ll need to manually install them using our CLI.
 
-#### Installing Google Fonts
+
+#### Install Google Fonts
 
 ```bash
-# Install all Google Fonts
 deno task fonts:google:install
+```
 
-# Install only popular fonts (recommended, much smaller)
+#### Install only popular fonts (recommended, much smaller)
+
+```
 deno task fonts:google:install -- --popular
+```
 
-# Install specific fonts
+#### Install specific fonts
+
+```
 deno task fonts:google:install -- --families=Roboto,Open+Sans,Lato
 ```
 
-#### Uninstalling Google Fonts
+#### Uninstall Google Fonts
 
 ```bash
 deno task fonts:google:uninstall
