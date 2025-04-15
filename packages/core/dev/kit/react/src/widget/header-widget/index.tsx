@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import * as React from "react";
 // import { button } from "../../ornament/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useLocation, Link } from "react-router";

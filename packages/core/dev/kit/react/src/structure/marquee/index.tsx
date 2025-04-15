@@ -2,7 +2,7 @@
 "use client";
 import { kit } from "@inspatial/theme/variant";
 import { SharedProps } from "@inspatial/type/util";
-import React from "react";
+import * as React from "react";
 
 /*#########################################(Types)#########################################*/
 interface MarqueeProps extends SharedProps {

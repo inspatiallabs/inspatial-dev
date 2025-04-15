@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import * as React from "react";
 import { AnimatePresence, motion, useInView, Variants } from "motion/react";
 import { kit } from "@inspatial/theme/variant";
 import { SharedProps } from "@inspatial/type/util";
