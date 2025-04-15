@@ -1,0 +1,15 @@
+{
+  "name": "@inspatial/kit-rct",
+  "version": "0.0.9",
+  "license": "Apache-2.0",
+  "compilerOptions": {
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "lib": ["deno.window", "dom", "dom.iterable", "dom.asynciterable", "esnext"]
+  },
+  "tasks": {
+    "publish": "deno publish --no-check --allow-slow-types",
+    "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
+  }
+}

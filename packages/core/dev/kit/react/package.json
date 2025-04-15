@@ -1,19 +1,4 @@
 {
-  "name": "@inspatial/kit-rct",
-  "version": "0.0.9",
-  "license": "Apache-2.0",
-  "compilerOptions": {
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "lib": [
-      "deno.window",
-      "dom",
-      "dom.iterable",
-      "dom.asynciterable",
-      "esnext"
-    ]
-  },
   "dependencies": {
     "motion": "npm:motion@^11.18.2",
     "react": "npm:react@^19.1.0",
@@ -32,9 +17,5 @@
     "./typography": "./src/typography/index.ts",
     "./typography/text": "./src/typography/text/text.dom.tsx",
     "./widget": "./src/widget/index.ts"
-  },
-  "tasks": {
-    "publish": "deno publish --no-check --allow-slow-types",
-    "dev": "deno run --watch --allow-read --allow-write --allow-net --allow-env src/index.ts"
   }
 }
