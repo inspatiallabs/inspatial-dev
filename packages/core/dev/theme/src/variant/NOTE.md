@@ -41,7 +41,7 @@ const ButtonVariant = createVariant({
 });
 
 // Extract the props type
-export type ButtonVariantType = VariantProps<typeof ButtonVariant.applyVariant>;
+export type ButtonVariantType = VariantProps<typeof ButtonVariant>;
 
 // Use the variant
 const primaryButton = ButtonVariant.applyVariant({
@@ -149,8 +149,7 @@ const buttonVariant = createVariant({ ...config }); // Returns {applyVariant, ki
 
 ```typescript
 // Consistent type extraction from any variant pattern:
-type ButtonVariantType = VariantProps<typeof buttonVariant.applyVariant>; // Works with new API
-type ButtonVariantType = VariantProps<typeof directVariantFn>; // Works with direct variant functions
+type ButtonVariantType = VariantProps<typeof ButtonVariant>;
 ```
 
 ## Using Factory Functions
