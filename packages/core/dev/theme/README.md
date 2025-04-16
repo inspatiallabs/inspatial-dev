@@ -86,135 +86,6 @@ A comprehensive theming system for building cross-platform and spatial applicati
 - 🔒 **Type Safety**: Complete TypeScript support across all APIs
 - 🔌 **Framework Agnostic**: Works with any JavaScript framework or vanilla JS
 
-## ✨ Advanced Features ✨
-
-<table>
-  <tr>
-    <td>
-      <h4>🎨 Theme Management</h4>
-      <p>Control your application's theme with a powerful, type-safe manager that handles light/dark mode switching, system preference detection, and theme variable updates.</p>
-      <pre><code>import { ThemeManager, initTheme } from "@inspatial/theme";
-
-// Initialize theme system
-const theme = initTheme();
-
-// Subscribe to theme changes
-theme.subscribe((state) => {
-console.log("Theme updated:", state.isDarkMode ? "dark" : "light");
-});
-
-// Toggle between light and dark mode
-theme.setDarkMode(true);
-
-// Follow system preferences
-theme.followSystem();</code></pre>
-
-</td>
-<td>
-<h4>🌈 Color System</h4>
-<p>A comprehensive color system with built-in palettes, terminal utilities, RGB manipulation, and CSS variable generation.</p>
-<pre><code>import {
-inspatialColors,
-generateColorVariables,
-red, bgBlue,
-rgb24, rgb8,
-stripAnsiCode
-} from "@inspatial/theme";
-
-// Access InSpatial's built-in colors
-const { pop, crystal, trackloud } = inspatialColors;
-
-// Generate CSS variables
-const lightThemeVars = generateColorVariables(false);
-const darkThemeVars = generateColorVariables(true);
-
-// Terminal color utilities
-console.log(red("Error:"), bgBlue("Status"));
-
-// RGB color manipulation
-console.log(rgb24("RGB Color", { r: 255, g: 0, b: 255 }));
-console.log(rgb8("8-bit Color", 42));</code></pre>
-
-</td>
-
-  </tr>
-  <tr>
-    <td>
-      <h4>📝 Typography System</h4>
-      <p>Access over 70 premium fonts and Google Fonts with type-safe declarations, optimized loading, and fallback support.</p>
-      <pre><code>// Using built-in premium fonts
-import { PrimitiveFontProps } from "@inspatial/theme";
-const { poppins, montserrat, inter } = PrimitiveFontProps;
-
-// Using Google Fonts
-import { Roboto, Open_Sans, Lato } from "@inspatial/theme";
-
-// Creating fonts with options
-const robotoFont = Roboto({
-weight: ["400", "700"],
-style: "normal",
-subsets: ["latin"],
-display: "swap",
-preload: true,
-fallback: ["system-ui", "sans-serif"]
-});</code></pre>
-
-</td>
-<td>
-<h4>🧩 Variant System</h4>
-<p>Create flexible, composable component styles with a powerful variant system that intelligently handles CSS class conflicts.</p>
-<pre><code>import { createVariant } from "@inspatial/theme";
-
-// Create a button variant
-const ButtonVariant = createVariant({
-base: "px-4 py-2 rounded-md",
-settings: {
-format: {
-primary: "bg-blue-500 text-white",
-secondary: "bg-gray-200 text-gray-800",
-danger: "bg-red-500 text-white"
-},
-size: {
-sm: "text-sm",
-md: "text-base",
-lg: "text-lg px-6 py-3"
-}
-},
-defaultSettings: {
-format: "primary",
-size: "md"
-}
-});
-
-// Use the variant
-const buttonClass = ButtonVariant.useVariant({
-format: "danger",
-size: "lg",
-className: "my-custom-class"
-});</code></pre>
-
-</td>
-
-  </tr>
-  <tr>
-    <td colspan="2" align="center">
-      <h4>✨ Effect System</h4>
-      <p>Apply beautiful animations and transitions to your UI elements with a type-safe effect system.</p>
-      <pre><code>import { Effect } from "@inspatial/theme";
-
-// Available effects
-const textEffect: Effect = "fadeUp";  
-const patternEffect: Effect = "slideRight";
-
-// Apply effects in your UI
-
-<div className={`transition ${textEffect}`}>
-  Animated Content
-</div></code></pre>
-    </td>
-  </tr>
-</table>
-
 <div align="center">
   <h4>🚀 Keep reading to learn how to use all these amazing features! 🚀</h4>
 </div>
@@ -477,29 +348,13 @@ deno task fonts:google:install -- --families=Roboto,Open+Sans,Lato
 deno task fonts:google:uninstall
 ```
 
-#### Available Popular Fonts
-
-The following popular Google Fonts are available when using the `--popular` flag:
-
-- Roboto
-- Open Sans
-- Lato
-- Montserrat
-- Poppins
-- Inter
-- Raleway
-- Nunito
-- Ubuntu
-- Rubik
-- And more...
-
 ### 5. **Variant System for Component Styling**
 
 ```tsx
-import { kit, createVariant } from "@inspatial/theme/variant";
+import { createVariant } from "@inspatial/theme/variant";
 
 /***********************(Create Variant)*************************/
-const ButtonVariant = createVariant({
+export const ButtonVariant = createVariant({
   // Base styles applied to all buttons
   base: "inline-flex",
 
@@ -541,24 +396,91 @@ const ButtonVariant = createVariant({
   hooks: {},
 });
 
-/***********************(Variant Class Extraction)*************************/
-// Extract variant class
-const variantClass = ButtonVariant.applyVariant({
+/***********************(Variant Extraction)*************************/
+export const buttonVariantClass = ButtonVariant.applyVariant({
   format: "danger",
   size: "lg",
 });
 
 /***********************(Render)*************************/
-// Render variant class in component
-<Button className={kit(`${variantClass}`, className)} />;
+<Button className={ButtonVariant.kit(`${buttonVariantClass}`, className)} />;
 ```
 
-#### You can optionally extract the types of a variant e.g
+### TypeScript Integration
 
 ```typescript
-import { type VariantProps } from "@inspatial/theme/variant";
+// Import the variant utilities
+import {
+  createVariant,
+  kit,
+  type VariantProps,
+} from "@inspatial/theme/variant";
 
-type ButtonVariantType = VariantProps<typeof ButtonVariant.applyVariant>;
+import { ButtonVariant } from "./variant";
+
+/***********************(Type)*************************/
+// Extract prop types from your variant
+type ButtonVariantType = VariantProps<typeof ButtonVariant>;
+
+// Use the extracted type in your components
+interface MyButtonProps extends ButtonVariantType {
+ // These are already part of a universal SharedProps you can import from @inspatial/type
+  children?: unknown;
+  asChild?: boolean;
+  disabled?: boolean;
+  debug?: boolean;
+  ...rest
+}
+
+/***********************(Render)*************************/
+function Button({ format, size, theme, disabled, ...rest  }: MyButtonProps) {
+  return (
+    <component
+       className={kit(ButtonVariant.applyVariant({ format, size, theme }))}
+       disabled={disabled}
+    >
+      Click
+    </component>
+  );
+}
+```
+
+### Rendering Variants
+
+There are two recommended approaches for applying variant styles in components:
+
+#### 1. Direct Application
+
+Best for single component usage where variant props aren't passed down:
+
+```tsx
+// Apply variant directly in the component
+<Button
+  className={ButtonVariant.applyVariant({
+    format: "ghost",
+    size: "lg",
+    theme: "flat",
+  })}
+/>
+```
+
+#### 2. Prop-Driven Approach (Founders-Choice)
+
+Best for component systems where variant properties flow from parent to children:
+
+```tsx
+// Component accepts variant props from parent
+function CustomButton({ format, size, theme, className, ...props }) {
+  return (
+    <Button
+      className={kit(
+        `${ButtonVariant.applyVariant({ format, size, theme })}`,
+        className
+      )}
+      {...props}
+    />
+  );
+}
 ```
 
 ### 6. **Effect System**
@@ -695,7 +617,7 @@ const oceanTheme = ThemeVariable.find((theme) => theme.format.name === "ocean");
 | Function/Object                       | Description                                          |
 | ------------------------------------- | ---------------------------------------------------- |
 | `createVariant(config)`               | Create a variant component with style configurations |
-| `variant.useVariant(props)`           | Apply variants with specific properties              |
+| `variant.applyVariant(props)`         | Apply variants with specific properties              |
 | `variant.kit(...classes)`             | Utility for safely combining CSS classes             |
 | `variant.composeVariant(...variants)` | Combine multiple variants together                   |
 | `VariantProps<T>`                     | Extract props type from a variant component          |
