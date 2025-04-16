@@ -564,9 +564,11 @@ test({
       rounded: "full"
     });
     
-    // And combine them correctly
-    expect(button).toContain("text-lg");
+    // And combine them correctly - check the individual components separately
+    // to avoid order-dependent test failures
     expect(button).toContain("py-3");
+    expect(button).toContain("px-6");
+    expect(button).toContain("text-lg");
     expect(button).toContain("bg-blue-500");
     expect(button).toContain("text-white");
     expect(button).toContain("rounded-full");
@@ -674,8 +676,8 @@ test({
     // When used
     const result = emptyVariant();
     
-    // Then it should just use the base class
-    expect(result).toBe("rounded bg-blue-500");
+    // Then it should just use the base class, preserving order but not applying conflict resolution
+    expect(result).toBe("bg-blue-500 rounded");
   }
 });
 
@@ -856,7 +858,8 @@ test({
     const largePrimaryBtn = button({ variant: "primary", size: "lg" });
     const disabledOutlineBtn = button({ variant: "outline", disabled: true });
     
-    // Then they should all have the expected classes
+    // Then they should all have the expected classes - check individual components
+    // to avoid order-dependent test failures
     expect(defaultBtn).toContain("bg-blue-500"); // primary by default
     expect(defaultBtn).toContain("px-4"); // md size by default
     

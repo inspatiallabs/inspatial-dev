@@ -34,6 +34,7 @@ type VariantProps<T> = T extends (props?: infer P) => string
 
 // Tailwind-style class merging
 const TW_PROPERTIES: Record<string, boolean> = {
+  // Layout
   float: true,
   clear: true,
   position: true,
@@ -43,11 +44,15 @@ const TW_PROPERTIES: Record<string, boolean> = {
   left: true,
   z: true,
   order: true,
+
+  // Display & Box Behavior
   grid: true,
   flex: true,
   basis: true,
   grow: true,
   shrink: true,
+
+  // Spacing (Margin/Padding)
   m: true,
   mx: true,
   my: true,
@@ -62,12 +67,16 @@ const TW_PROPERTIES: Record<string, boolean> = {
   pr: true,
   pb: true,
   pl: true,
+
+  // Sizing
   w: true,
   "min-w": true,
   "max-w": true,
   h: true,
   "min-h": true,
   "max-h": true,
+
+  // Typography
   text: true,
   font: true,
   tracking: true,
@@ -77,26 +86,99 @@ const TW_PROPERTIES: Record<string, boolean> = {
   underline: true,
   "line-through": true,
   "no-underline": true,
+
+  // Backgrounds
   bg: true,
   from: true,
   via: true,
   to: true,
+
+  // Borders
   border: true,
+  "border-t": true,
+  "border-r": true,
+  "border-b": true,
+  "border-l": true,
   rounded: true,
+  "rounded-t": true,
+  "rounded-r": true,
+  "rounded-b": true,
+  "rounded-l": true,
+  "rounded-tl": true,
+  "rounded-tr": true,
+  "rounded-br": true,
+  "rounded-bl": true,
   divide: true,
+
+  // Effects
   shadow: true,
   opacity: true,
   "mix-blend": true,
   blur: true,
+
+  // Transitions & Animation
   transition: true,
   duration: true,
   ease: true,
   delay: true,
+
+  // Transforms
   scale: true,
   rotate: true,
   translate: true,
   skew: true,
   origin: true,
+
+  // Interactivity
+  cursor: true,
+  select: true,
+  resize: true,
+
+  // SVG
+  fill: true,
+  stroke: true,
+
+  // Accessibility
+  sr: true,
+
+  // Tables
+  table: true,
+
+  // Effects
+  filter: true,
+  backdrop: true,
+
+  // Color utilities
+  color: true,
+  accent: true,
+
+  // Display
+  display: true,
+  visibility: true,
+
+  // Flexbox & Grid
+  items: true,
+  justify: true,
+  content: true,
+  place: true,
+  self: true,
+
+  // Columns & Gaps
+  gap: true,
+  "gap-x": true,
+  "gap-y": true,
+  col: true,
+  row: true,
+
+  // Overflow
+  overflow: true,
+  "overflow-x": true,
+  "overflow-y": true,
+
+  // Overscroll
+  overscroll: true,
+  "overscroll-x": true,
+  "overscroll-y": true,
 };
 
 /*##############################################(SPLIT-TAILWIND-CLASS)##############################################*/
@@ -118,35 +200,79 @@ function splitTailwindClass(className: string): [string, string, string] {
 /*##############################################(MERGE-CLASSES)##############################################*/
 
 function mergeClasses(classes: string[]): string {
-  const result: Record<string, string> = {};
-  
-  // First flatten all classes into a single array of individual class names
-  const allClasses: string[] = [];
-  classes.forEach(cls => {
+  // Flatten the input classes and filter out falsy values
+  const allClassNames: string[] = [];
+  classes.forEach((cls) => {
     if (!cls) return;
-    allClasses.push(...cls.split(/\s+/).filter(Boolean));
+    allClassNames.push(...cls.split(/\s+/).filter(Boolean));
   });
-  
-  // Process all classes in reverse order (so later ones override earlier ones)
-  for (let i = allClasses.length - 1; i >= 0; i--) {
-    const className = allClasses[i];
-    
-    // Special handling for p-* and m-* classes
-    if (className.startsWith('p-')) {
-      if (!result['p']) {
-        result['p'] = className;
-      }
-    } else if (className.startsWith('m-')) {
-      if (!result['m']) {
-        result['m'] = className;
+
+  // Track the utilities we've seen and the final class list
+  const utilityMap: Record<string, string> = {};
+  const finalClasses: string[] = [];
+
+  // Process class names in reverse order (so later ones win)
+  for (let i = allClassNames.length - 1; i >= 0; i--) {
+    const className = allClassNames[i];
+    if (!className) continue;
+
+    // For Tailwind utility classes, parse and handle conflicts
+    if (isTailwindClass(className)) {
+      const { variant, utility } = parseTailwindClass(className);
+      const key = variant ? `${variant}:${utility}` : utility;
+
+      // If we haven't seen this utility before or there's a variant, add it
+      if (!utilityMap[key]) {
+        utilityMap[key] = className;
+        finalClasses.unshift(className); // Add to the beginning to preserve original order
       }
     } else {
-      // For all other classes, use the full class name as key
-      result[className] = className;
+      // For non-Tailwind classes, just add them if we haven't seen them
+      if (!finalClasses.includes(className)) {
+        finalClasses.unshift(className);
+      }
     }
   }
-  
-  return Object.values(result).join(' ');
+
+  return finalClasses.join(" ");
+}
+
+/**
+ * Checks if a class name is a Tailwind utility class
+ */
+function isTailwindClass(className: string): boolean {
+  // Get the base class without variants
+  const baseName = className.split(":").pop() || "";
+  // Extract the utility prefix
+  const utilityPrefix = baseName.split("-")[0];
+
+  return Boolean(utilityPrefix && TW_PROPERTIES[utilityPrefix]);
+}
+
+/**
+ * Parses a Tailwind class into its variant and utility parts
+ */
+function parseTailwindClass(className: string): {
+  variant: string;
+  utility: string;
+} {
+  const parts = className.split(":");
+  let variant = "";
+  let baseClass = className;
+
+  // Handle variant prefixes
+  if (parts.length > 1) {
+    variant = parts.slice(0, -1).join(":");
+    baseClass = parts[parts.length - 1];
+  }
+
+  // Extract the utility prefix from the base class
+  const utilityPrefix = baseClass.split("-")[0];
+
+  return {
+    variant,
+    utility: utilityPrefix,
+  };
 }
 
 /*##############################################(TO-VAL)##############################################*/
@@ -238,9 +364,7 @@ export interface InSpatialVariantConfig<V extends VariantShapeProp> {
 type VariantConfigProp = InSpatialVariantConfig<any>;
 
 interface ComposeVariantProp {
-  <T extends ReturnType<VariantProp>[]>(
-    ...components: [...T]
-  ): (
+  <T extends ReturnType<VariantProp>[]>(...components: [...T]): (
     props?: (
       | UnionToIntersection<
           {
@@ -257,9 +381,7 @@ interface ComposeVariantProp {
 }
 
 interface VariantProp {
-  <V extends VariantShapeProp>(
-    config: InSpatialVariantConfig<V>
-  ): (
+  <V extends VariantShapeProp>(config: InSpatialVariantConfig<V>): (
     props?: VariantSchemaProp<V> & {
       class?: ClassValueProp;
       className?: ClassValueProp;
@@ -281,16 +403,16 @@ interface VariantSystemReturn<V extends VariantShapeProp = any> {
       css?: ClassValueProp;
     }
   ) => string;
-  
+
   /** Utility for combining classes with intelligent conflict resolution */
   kit: (...inputs: ClassValueProp[]) => string;
-  
+
   /** Creates variant functions with configurable styles */
   variant: VariantProp;
-  
+
   /** Utility for combining multiple variant components */
   composeVariant: ComposeVariantProp;
-  
+
   /** Configuration used to create this variant (only if direct config was provided) */
   config?: InSpatialVariantConfig<V>;
 }
@@ -384,10 +506,10 @@ function createVariantCore<V extends VariantShapeProp>(
 
   // Return a minimal system with placeholder functions that will be overridden if needed
   return {
-    applyVariant: (props) => "",  // Placeholder
+    applyVariant: (props) => "", // Placeholder
     kit,
     variant,
-    composeVariant
+    composeVariant,
   };
 }
 
@@ -531,18 +653,23 @@ export function createVariant<V extends VariantShapeProp>(
   const system = createVariantCore<V>(
     configOrOptions && "hooks" in configOrOptions ? configOrOptions : undefined
   );
-  
+
   // If direct config was provided (with settings or base), create specific variant function
-  if (configOrOptions && ("settings" in configOrOptions || "base" in configOrOptions)) {
-    const variantFn = system.variant(configOrOptions as InSpatialVariantConfig<V>);
-    
+  if (
+    configOrOptions &&
+    ("settings" in configOrOptions || "base" in configOrOptions)
+  ) {
+    const variantFn = system.variant(
+      configOrOptions as InSpatialVariantConfig<V>
+    );
+
     return {
       ...system,
       applyVariant: variantFn,
-      config: configOrOptions as InSpatialVariantConfig<V>
+      config: configOrOptions as InSpatialVariantConfig<V>,
     };
   }
-  
+
   // Otherwise return the base system (for factory usage)
   return {
     ...system,
@@ -554,7 +681,8 @@ export function createVariant<V extends VariantShapeProp>(
  * Return type for createVariant when used with a configuration
  * Used for documentation purposes
  */
-export type VariantReturnType<V extends VariantShapeProp> = VariantSystemReturn<V>;
+export type VariantReturnType<V extends VariantShapeProp> =
+  VariantSystemReturn<V>;
 
 export type {
   /** Type for CSS class values that can be used in the variant system */
