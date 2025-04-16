@@ -519,14 +519,18 @@ function createVariantCore<V extends VariantShapeProp>(
       return kit(...allClasses);
     };
 
-  // Create a variant function handler
-  const variantFn = (config: InSpatialVariantConfig<V>): any => {
-    return variant(config as InSpatialVariantConfig<V>);
-  };
+  // Define the placeholder applyVariant function
+  const applyVariant = ((props?: any) => "") as (
+    props?: VariantSchemaProp<V> & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
+    }
+  ) => string;
 
-  // Return a minimal system with placeholder functions that will be overridden if needed
+  // Return a minimal system with the properly typed methods
   return {
-    applyVariant: (props) => "", // Placeholder
+    applyVariant,
     kit,
     variant,
     composeVariant,
@@ -582,8 +586,13 @@ function createVariantCore<V extends VariantShapeProp>(
 const baseSystem = createVariantCore();
 
 // Export the global utilities
+/** Utility for intelligent class name composition and conflict resolution */
 export const kit = baseSystem.kit;
+
+/** Creates variant functions with configurable styles */
 export const variant = baseSystem.variant;
+
+/** Utility for combining multiple variant components */
 export const composeVariant = baseSystem.composeVariant;
 
 /*##############################################(CREATE-VARIANT)##############################################*/
@@ -683,18 +692,22 @@ export function createVariant<V extends VariantShapeProp>(
       configOrOptions as InSpatialVariantConfig<V>
     );
 
+    // Return with strongly typed applyVariant
     return {
       ...system,
-      applyVariant: variantFn,
+      applyVariant: variantFn as (
+        props?: VariantSchemaProp<V> & {
+          class?: ClassValueProp;
+          className?: ClassValueProp;
+          css?: ClassValueProp;
+        }
+      ) => string,
       config: configOrOptions as InSpatialVariantConfig<V>,
     };
   }
 
   // Otherwise return the base system (for factory usage)
-  return {
-    ...system,
-    applyVariant: (props) => "", // Empty implementation for factory pattern
-  };
+  return system;
 }
 
 /**
@@ -708,7 +721,21 @@ export type {
   /** Type for CSS class values that can be used in the variant system */
   ClassValueProp,
 
-  /** Utility type for extracting props from a variant component */
+  /**
+   * Utility type for extracting props from a variant function or object
+   * Works with direct variant functions and objects with applyVariant method
+   *
+   * @example
+   * ```typescript
+   * // With direct variant function
+   * const button = variant({ ... });
+   * type ButtonProps = VariantProps<typeof button>;
+   *
+   * // With createVariant result
+   * const ButtonVariant = createVariant({ ... });
+   * type ButtonProps = VariantProps<typeof ButtonVariant.applyVariant>;
+   * ```
+   */
   VariantProps,
 
   /** Type for defining the shape of variants in a component */
