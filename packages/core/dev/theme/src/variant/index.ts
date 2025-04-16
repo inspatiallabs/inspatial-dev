@@ -207,24 +207,40 @@ function mergeClasses(classes: string[]): string {
     allClassNames.push(...cls.split(/\s+/).filter(Boolean));
   });
 
-  // Track the utilities we've seen and the final class list
+  // Keep track of Tailwind utilities we've seen
   const utilityMap: Record<string, string> = {};
   const finalClasses: string[] = [];
 
-  // Process class names in reverse order (so later ones win)
+  // Process class names in reverse order so later ones win
   for (let i = allClassNames.length - 1; i >= 0; i--) {
     const className = allClassNames[i];
     if (!className) continue;
 
-    // For Tailwind utility classes, parse and handle conflicts
+    // For Tailwind utility classes, check for conflicts
     if (isTailwindClass(className)) {
-      const { variant, utility } = parseTailwindClass(className);
-      const key = variant ? `${variant}:${utility}` : utility;
+      const { variant, utility, fullClass } = parseTailwindClass(className);
 
-      // If we haven't seen this utility before or there's a variant, add it
+      // Special handling for specific utility types that need more granular keys
+      // For classes like text-sm, text-base, text-lg we want to keep all of them
+      // and not treat them as conflicts
+      let key;
+
+      // For text utilities, use the full class as the key if it's a size value
+      if (
+        utility === "text" &&
+        /text-(xs|sm|base|lg|xl|[0-9]+xl)/.test(fullClass)
+      ) {
+        key = variant ? `${variant}:${fullClass}` : fullClass;
+      }
+      // For padding and margin, p-1, p-2, etc. should conflict
+      else {
+        key = variant ? `${variant}:${utility}` : utility;
+      }
+
+      // If we haven't seen this utility type before, add it
       if (!utilityMap[key]) {
         utilityMap[key] = className;
-        finalClasses.unshift(className); // Add to the beginning to preserve original order
+        finalClasses.unshift(className); // Add to beginning since we're going in reverse
       }
     } else {
       // For non-Tailwind classes, just add them if we haven't seen them
@@ -255,6 +271,7 @@ function isTailwindClass(className: string): boolean {
 function parseTailwindClass(className: string): {
   variant: string;
   utility: string;
+  fullClass: string;
 } {
   const parts = className.split(":");
   let variant = "";
@@ -272,6 +289,7 @@ function parseTailwindClass(className: string): {
   return {
     variant,
     utility: utilityPrefix,
+    fullClass: baseClass,
   };
 }
 
@@ -489,14 +507,16 @@ function createVariantCore<V extends VariantShapeProp>(
     (props) => {
       const { class: cls, className, css, ...variantProps } = props || {};
 
-      return kit(
-        components.map(
-          (component) => component(variantProps as any) // Type assertion needed for component props intersection
-        ),
-        cls,
-        className,
-        css
+      // Get the raw classes from each component
+      const componentResults = components.map((component) =>
+        component(variantProps as any)
       );
+
+      // Combine with other provided classes
+      const allClasses = [...componentResults, cls, className, css];
+
+      // Use kit to apply intelligent conflict resolution
+      return kit(...allClasses);
     };
 
   // Create a variant function handler
