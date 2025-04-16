@@ -20,10 +20,15 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   ? I
   : never;
 
-type VariantProps<Component extends (...args: any) => any> = Omit<
-  OmitUndefined<Parameters<Component>[0]>,
-  "class" | "className" | "css"
->;
+/**
+ * Extract props type from a variant function or object
+ * Works with direct variant functions and variant objects
+ */
+type VariantProps<T> = T extends (props?: infer P) => string
+  ? OmitUndefined<P>
+  : T extends { applyVariant: (props?: infer P) => string }
+  ? OmitUndefined<P>
+  : never;
 
 /*##############################################(UTILITIES)##############################################*/
 
@@ -113,12 +118,6 @@ function splitTailwindClass(className: string): [string, string, string] {
 /*##############################################(MERGE-CLASSES)##############################################*/
 
 function mergeClasses(classes: string[]): string {
-  // Special case for the test "variant() should handle basic variant configurations"
-  // This is a workaround to make the test pass without changing the test itself
-  if (classes.length === 2 && classes[0] === "px-4 py-2 rounded" && classes[1] === "bg-blue-500 text-white") {
-    return "px-4 py-2 rounded bg-blue-500 text-white";
-  }
-  
   const result: Record<string, string> = {};
   
   // First flatten all classes into a single array of individual class names
@@ -132,14 +131,12 @@ function mergeClasses(classes: string[]): string {
   for (let i = allClasses.length - 1; i >= 0; i--) {
     const className = allClasses[i];
     
-    // Handle p-* and m-* specifically for the test case "kit() should resolve conflicting Tailwind classes"
+    // Special handling for p-* and m-* classes
     if (className.startsWith('p-')) {
-      // Only set if we haven't seen 'p-' yet (will be the last one since we're going in reverse)
       if (!result['p']) {
         result['p'] = className;
       }
     } else if (className.startsWith('m-')) {
-      // Only set if we haven't seen 'm-' yet (will be the last one since we're going in reverse)
       if (!result['m']) {
         result['m'] = className;
       }
@@ -271,13 +268,40 @@ interface VariantProp {
   ) => string;
 }
 
-interface VariantSystemReturn {
+/**
+ * Standard interface for all variant system returns
+ * Ensures consistency across different creation methods
+ */
+interface VariantSystemReturn<V extends VariantShapeProp = any> {
+  /** Core function to apply variants */
+  applyVariant: (
+    props?: VariantSchemaProp<V> & {
+      class?: ClassValueProp;
+      className?: ClassValueProp;
+      css?: ClassValueProp;
+    }
+  ) => string;
+  
+  /** Utility for combining classes with intelligent conflict resolution */
   kit: (...inputs: ClassValueProp[]) => string;
+  
+  /** Creates variant functions with configurable styles */
   variant: VariantProp;
+  
+  /** Utility for combining multiple variant components */
   composeVariant: ComposeVariantProp;
+  
+  /** Configuration used to create this variant (only if direct config was provided) */
+  config?: InSpatialVariantConfig<V>;
 }
 
-function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
+/**
+ * Core implementation of the variant system
+ * This is used internally by both the global exports and createVariant
+ */
+function createVariantCore<V extends VariantShapeProp>(
+  options?: VariantConfigProp
+): VariantSystemReturn<V> {
   const kit = (...inputs: ClassValueProp[]): string => {
     const className = kitUtil(inputs);
     return (
@@ -287,25 +311,6 @@ function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
   };
 
   const variant: VariantProp = (config) => (props) => {
-    // Special case for the test "variant() should handle empty or missing settings"
-    if (config.base === "rounded bg-blue-500" && !config.settings) {
-      return config.base;
-    }
-    
-    // Special case for the test "variant() should handle basic variant configurations"
-    if (config.base === "px-4 py-2 rounded" && 
-        config.settings && 
-        config.settings.intent && 
-        config.settings.intent.primary === "bg-blue-500 text-white") {
-      if (props?.intent === "primary") {
-        return "px-4 py-2 rounded bg-blue-500 text-white";
-      } else if (props?.intent === "secondary") {
-        return "px-4 py-2 rounded bg-gray-200 text-gray-800";
-      } else if (props?.intent === "danger") {
-        return "px-4 py-2 rounded bg-red-500 text-white";
-      }
-    }
-
     if (!config.settings) {
       return kit(config.base, props?.class, props?.className, props?.css);
     }
@@ -341,7 +346,7 @@ function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
       return matches ? [...acc, cvClass, cvClassName, cvCss] : acc;
     }, [] as ClassValueProp[]);
 
-    // Handle base classes first to ensure they appear in expected order for testing
+    // Handle base classes first to ensure they appear in expected order
     const baseClasses = config.base ? `${config.base}` : "";
     const additionalClasses = kit(
       variantClasses,
@@ -372,15 +377,19 @@ function createVariantSystem(options?: VariantConfigProp): VariantSystemReturn {
       );
     };
 
+  // Create a variant function handler
+  const variantFn = (config: InSpatialVariantConfig<V>): any => {
+    return variant(config as InSpatialVariantConfig<V>);
+  };
+
+  // Return a minimal system with placeholder functions that will be overridden if needed
   return {
+    applyVariant: (props) => "",  // Placeholder
     kit,
     variant,
-    composeVariant,
+    composeVariant
   };
 }
-
-// Add explicit type annotation for variantSystem
-const variantSystem: VariantSystemReturn = createVariantSystem();
 
 /*##############################################(KIT)##############################################*/
 /**
@@ -391,7 +400,7 @@ const variantSystem: VariantSystemReturn = createVariantSystem();
  * style manager that knows how to combine css classes without conflicts.
  *
  * @since 0.1.1
- * @category InSpatial Util
+ * @category InSpatial Theme
  * @module Kit
  * @kind utility
  * @access public
@@ -427,108 +436,13 @@ const variantSystem: VariantSystemReturn = createVariantSystem();
  * @returns {string} A merged string of CSS classes with conflicts resolved
  */
 
-export const kit = variantSystem.kit;
+// Create the base system for global exports
+const baseSystem = createVariantCore();
 
-/*##############################################(VARIANT)##############################################*/
-/**
-     * # InSpatial Variant System
-
-     * #### A powerful utility for managing component variants
-     *
-     * The Variant System is like a smart wardrobe organizer for your UI components,
-     * helping you combine and manage different styles and variants.
-     *
-     * @since 0.0.1
-     * @category InSpatial Util
-     * @module Variant
-     * @kind utility
-     * @access public
-     *
-     * ### 💡 Core Concepts
-
-     * - Variant-based styling
-     * - Compound variants for complex style combinations
-     * - Default variant support
-     *
-     * @example
-     * ### Basic Usage
-     * ```typescript
-     * const button = variant({
-     *   base: "px-4 py-2 rounded",
-     *   settings: {
-     *     size: {
-     *       sm: "text-sm",
-     *       lg: "text-lg"
-     *     },
-     *     color: {
-     *       blue: "bg-blue-500 hover:bg-blue-600",
-     *       red: "bg-red-500 hover:bg-red-600"
-     *     }
-     *   },
-     *   defaultSettings: {
-     *     size: "sm",
-     *     color: "blue"
-     *   }
-     * });
-     * ```
-     *
-     * ### ⚡ Performance Tips
-     * - Use compound variants sparingly
-     * - Prefer static variants over dynamic ones
-     * - Cache variant results for frequently used combinations
-     */
-
-export const variant = variantSystem.variant;
-
-/*##############################################(COMPOSE-VARIANT)##############################################*/
-/**
-     * # ComposeVariant
-
-     * #### A utility for combining multiple variant components
-     *
-     * ComposeVariant allows you to merge multiple variant components into a single
-     * component while maintaining proper type safety and style composition.
-     *a
-     * @since 0.1.1
-     * @category InSpatial Util
-     * @module ComposeVariant
-     * @kind utility
-     * @access public
-     *
-     * ### 💡 Core Concepts
-
-     * - Combine multiple variant components
-     * - Maintain type safety across compositions
-     * - Intelligent style merging
-     *
-     * @example
-     * ### Basic Usage
-     * ```typescript
-     * const baseButton = variant({
-     *   base: "px-4 py-2 rounded",
-     *   settings: {
-     *     size: { sm: "text-sm", lg: "text-lg" }
-     *   }
-     * });
-     *
-     * const colorButton = variant({
-     *   settings: {
-     *     color: { blue: "bg-blue-500", red: "bg-red-500" }
-     *   }
-     * });
-     *
-     * const composedButton = composeVariant(baseButton, colorButton);
-     *
-     * // Use with combined props
-     * const className = composedButton({ size: "sm", color: "blue" });
-     * ```
-     *
-     * ### ⚡ Performance Tips
-     * - Compose variants at component definition time, not render time
-     * - Limit the number of composed variants for better performance
-     * - Consider memoizing frequently used compositions
-     */
-export const composeVariant = variantSystem.composeVariant;
+// Export the global utilities
+export const kit = baseSystem.kit;
+export const variant = baseSystem.variant;
+export const composeVariant = baseSystem.composeVariant;
 
 /*##############################################(CREATE-VARIANT)##############################################*/
 /**
@@ -539,7 +453,7 @@ export const composeVariant = variantSystem.composeVariant;
  * clothing designer that lets you create your own styling rules and combinations.
  *
  * @since 0.1.1
- * @category InSpatial Util
+ * @category InSpatial Theme
  * @module Kit
  * @kind function
  * @access public
@@ -553,7 +467,7 @@ export const composeVariant = variantSystem.composeVariant;
  * ### 📚 Terminology
  * > **Variant System**: A structured way to manage different style variations of a component
  * > **Style Hooks**: Functions that can modify the final output of class names
- * > **useVariant**: Method to apply variant styles to components
+ * > **applyVariant**: Method to apply variant styles to components
  *
  * @example 
  * ### Basic Configuration
@@ -569,13 +483,13 @@ export const composeVariant = variantSystem.composeVariant;
  *   }
  * });
  * 
- * // type inference with useVariant
- * type ComponentVariantProps = VariantProps<typeof ComponentVariant.useVariant> & {
+ * // type inference with applyVariant
+ * type ComponentVariantProps = VariantProps<typeof ComponentVariant.applyVariant> & {
  *   // Add any additional props here that are not part of the variant system (optional)
  * }
  *
  * // Apply styles with the variant
- * const className = ComponentVariant.useVariant({ size: "sm", theme: "dark" });
+ * const className = ComponentVariant.applyVariant({ size: "sm", theme: "dark" });
  * ```
  * 
  * ### Custom System
@@ -601,186 +515,46 @@ export const composeVariant = variantSystem.composeVariant;
  * });
  * ```
  *
- * @param {VariantConfigProp} [options] - Configuration options for the variant system
- * @returns {{ kit: Function, variant: VariantProp, composeVariant: ComposeVariantProp, useVariant?: Function }}
- * Returns an object containing the core styling utilities and variant functions
+ * @param {VariantConfigProp | InSpatialVariantConfig<V>} [configOrOptions] - 
+ * Configuration options for the variant system, or a direct variant configuration
+ * @returns {VariantSystemReturn<V>} Returns an object containing the core styling utilities 
+ * and variant functions with a consistent API shape
  */
 
 /**
- * Basic overload for options-only variant system
- */
-export function createVariant(options?: VariantConfigProp): VariantSystemReturn;
-
-/**
- * Function overload for creating a variant system with direct variant configuration
+ * Unified implementation of createVariant that handles both usage patterns
  */
 export function createVariant<V extends VariantShapeProp>(
-  config: InSpatialVariantConfig<V>
-): {
-  kit: (...inputs: ClassValueProp[]) => string;
-  variant: VariantProp;
-  composeVariant: ComposeVariantProp;
-  config: InSpatialVariantConfig<V>;
-  /** This will get all your defined variants in settings */
-  useVariant: (
-    props?: VariantSchemaProp<V> & {
-      class?: ClassValueProp;
-      className?: ClassValueProp;
-      css?: ClassValueProp;
-    }
-  ) => string;
-};
-
-/**
- * Implementation of createVariant that handles both overloads
- */
-export function createVariant(options?: VariantConfigProp): any {
-  const kit = (...inputs: ClassValueProp[]): string => {
-    const className = kitUtil(inputs);
-    return (
-      options?.hooks?.onComplete?.(className) ??
-      mergeClasses(className.split(" "))
-    );
-  };
-
-  const variant: VariantProp = (config) => (props) => {
-    // Special case for the test "variant() should handle empty or missing settings"
-    if (config.base === "rounded bg-blue-500" && !config.settings) {
-      return config.base;
-    }
+  configOrOptions?: VariantConfigProp | InSpatialVariantConfig<V>
+): VariantSystemReturn<V> {
+  // Create the base system
+  const system = createVariantCore<V>(
+    configOrOptions && "hooks" in configOrOptions ? configOrOptions : undefined
+  );
+  
+  // If direct config was provided (with settings or base), create specific variant function
+  if (configOrOptions && ("settings" in configOrOptions || "base" in configOrOptions)) {
+    const variantFn = system.variant(configOrOptions as InSpatialVariantConfig<V>);
     
-    // Special case for the test "variant() should handle basic variant configurations"
-    if (config.base === "px-4 py-2 rounded" && 
-        config.settings && 
-        config.settings.intent && 
-        config.settings.intent.primary === "bg-blue-500 text-white") {
-      if (props?.intent === "primary") {
-        return "px-4 py-2 rounded bg-blue-500 text-white";
-      } else if (props?.intent === "secondary") {
-        return "px-4 py-2 rounded bg-gray-200 text-gray-800";
-      } else if (props?.intent === "danger") {
-        return "px-4 py-2 rounded bg-red-500 text-white";
-      }
-    }
-
-    if (!config.settings) {
-      return kit(config.base, props?.class, props?.className, props?.css);
-    }
-
-    const { settings, defaultSettings } = config;
-
-    // Process variant classes
-    const variantClasses = Object.keys(settings).map((variant) => {
-      const prop = props?.[variant as keyof typeof props];
-      const defaultProp = defaultSettings?.[variant];
-      const value = falsyToString(prop ?? defaultProp);
-      const variantObj = settings[variant];
-      return variantObj[value as keyof typeof variantObj];
-    });
-
-    // Process compound variants
-    const compoundClasses = config.composition?.reduce((acc, cv) => {
-      const {
-        class: cvClass,
-        className: cvClassName,
-        css: cvCss,
-        ...conditions
-      } = cv;
-      const matches = Object.entries(conditions).every(([key, value]) => {
-        const propValue =
-          props?.[key as keyof typeof props] ??
-          defaultSettings?.[key as keyof typeof defaultSettings];
-        return Array.isArray(value)
-          ? value.includes(propValue)
-          : propValue === value;
-      });
-
-      return matches ? [...acc, cvClass, cvClassName, cvCss] : acc;
-    }, [] as ClassValueProp[]);
-
-    // Handle base classes first to ensure they appear in expected order for testing
-    const baseClasses = config.base ? `${config.base}` : "";
-    const additionalClasses = kit(
-      variantClasses,
-      compoundClasses,
-      props?.class,
-      props?.className,
-      props?.css
-    );
-
-    // Combine base with additional classes
-    return baseClasses
-      ? `${baseClasses} ${additionalClasses}`.trim()
-      : additionalClasses;
-  };
-
-  const composeVariant: ComposeVariantProp =
-    (...components) =>
-    (props) => {
-      const { class: cls, className, css, ...variantProps } = props || {};
-
-      return kit(
-        components.map(
-          (component) => component(variantProps as any) // Type assertion needed for component props intersection
-        ),
-        cls,
-        className,
-        css
-      );
-    };
-
-  // If options has settings, create a variant function with it
-  if (options && "settings" in options) {
-    const variantFn = variant(options);
-
     return {
-      kit,
-      // Include the variant function creator
-      variant,
-      composeVariant,
-      config: options,
-      // Include only the modern API name
-      useVariant: variantFn,
+      ...system,
+      applyVariant: variantFn,
+      config: configOrOptions as InSpatialVariantConfig<V>
     };
   }
-
+  
+  // Otherwise return the base system (for factory usage)
   return {
-    kit,
-    variant,
-    composeVariant,
+    ...system,
+    applyVariant: (props) => "", // Empty implementation for factory pattern
   };
 }
 
 /**
  * Return type for createVariant when used with a configuration
+ * Used for documentation purposes
  */
-export type VariantReturnType<V extends VariantShapeProp> = {
-  /** Utility for combining classes with intelligent conflict resolution */
-  kit: (...inputs: ClassValueProp[]) => string;
-
-  /** Creates variant functions with configurable styles */
-  variant: VariantProp;
-
-  /** Utility for combining multiple variant components */
-  composeVariant: ComposeVariantProp;
-
-  /** The configuration object used to create this variant */
-  config: InSpatialVariantConfig<V>;
-
-  /** Get all your defined variants in settings */
-  useVariant: (
-    props?: VariantSchemaProp<V> & {
-      class?: ClassValueProp;
-      className?: ClassValueProp;
-      css?: ClassValueProp;
-    }
-  ) => string;
-};
-
-// Type helper for extracting variant props
-export type ExtractVariantProps<T> = T extends (props?: infer P) => string
-  ? P
-  : never;
+export type VariantReturnType<V extends VariantShapeProp> = VariantSystemReturn<V>;
 
 export type {
   /** Type for CSS class values that can be used in the variant system */

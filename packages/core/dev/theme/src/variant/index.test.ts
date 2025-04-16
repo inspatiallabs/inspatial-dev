@@ -120,13 +120,16 @@ test({
     
     // Then it should apply the correct classes
     expect(primaryBtn).toContain("px-4 py-2 rounded");
-    expect(primaryBtn).toContain("bg-blue-500 text-white");
+    expect(primaryBtn).toContain("bg-blue-500");
+    expect(primaryBtn).toContain("text-white");
     
     expect(secondaryBtn).toContain("px-4 py-2 rounded");
-    expect(secondaryBtn).toContain("bg-gray-200 text-gray-800");
+    expect(secondaryBtn).toContain("bg-gray-200");
+    expect(secondaryBtn).toContain("text-gray-800");
     
     expect(dangerBtn).toContain("px-4 py-2 rounded");
-    expect(dangerBtn).toContain("bg-red-500 text-white");
+    expect(dangerBtn).toContain("bg-red-500");
+    expect(dangerBtn).toContain("text-white");
   }
 });
 
@@ -475,9 +478,9 @@ test({
 });
 
 test({
-  name: "createVariant() with config should provide useVariant API",
+  name: "createVariant() with config should provide applyVariant API",
   fn: () => {
-    // Given a variant with the useVariant API
+    // Given a variant with the applyVariant API
     const buttonVariant = createVariant({
       base: "rounded",
       settings: {
@@ -497,7 +500,7 @@ test({
     });
     
     // When using the API method with props
-    const button = buttonVariant.useVariant({ 
+    const button = buttonVariant.applyVariant({ 
       intent: "secondary", 
       size: "lg" 
     });
@@ -507,7 +510,7 @@ test({
     expect(button).toContain("text-lg");
     
     // Test with default values
-    const defaultButton = buttonVariant.useVariant();
+    const defaultButton = buttonVariant.applyVariant();
     
     // Default values should be applied
     expect(defaultButton).toContain("bg-blue-500");
@@ -665,7 +668,7 @@ test({
   fn: () => {
     // Given a variant with no settings
     const emptyVariant = variant({
-      base: "rounded bg-blue-500"
+      base: "bg-blue-500 rounded"
     });
     
     // When used

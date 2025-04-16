@@ -169,7 +169,7 @@ fallback: ["system-ui", "sans-serif"]
 const ButtonVariant = createVariant({
 base: "px-4 py-2 rounded-md",
 settings: {
-intent: {
+format: {
 primary: "bg-blue-500 text-white",
 secondary: "bg-gray-200 text-gray-800",
 danger: "bg-red-500 text-white"
@@ -181,14 +181,14 @@ lg: "text-lg px-6 py-3"
 }
 },
 defaultSettings: {
-intent: "primary",
+format: "primary",
 size: "md"
 }
 });
 
 // Use the variant
 const buttonClass = ButtonVariant.useVariant({
-intent: "danger",
+format: "danger",
 size: "lg",
 className: "my-custom-class"
 });</code></pre>
@@ -438,6 +438,7 @@ InSpatial Theme uses a smart stub system for Google Fonts:
 ```
 
 - **Before Installation**: The package includes lightweight stubs that:
+
   - Provide the same API/interface as real font implementations
   - Return warnings when used (suggesting font installation)
   - Use system fonts as fallbacks
@@ -495,16 +496,16 @@ The following popular Google Fonts are available when using the `--popular` flag
 ### 5. **Variant System for Component Styling**
 
 ```tsx
-import { createVariant, type VariantProps } from "@inspatial/theme/variant";
+import { kit, createVariant } from "@inspatial/theme/variant";
 
-// Create a component variant
+/***********************(Create Variant)*************************/
 const ButtonVariant = createVariant({
   // Base styles applied to all buttons
   base: "inline-flex",
 
-  // Variant settings
+  // Core Variant settings
   settings: {
-    intent: {
+    format: {
       primary: "bg-(--primary)",
       secondary: "bg-(--secondary)",
       danger: "bg-red-50 text-red hover:bg-red hover:text-white",
@@ -521,42 +522,43 @@ const ButtonVariant = createVariant({
     },
   },
 
-  // Compound variants for specific combinations
-  composition: [
-    {
-      intent: "primary",
-      size: "lg",
-      className: "font-bold",
-    },
-  ],
-
-  // Default settings
+  // Specify default variant settings
   defaultSettings: {
-    intent: "primary",
+    format: "primary",
     size: "md",
     rounded: "md",
   },
+
+  // Optional: Compound variants for specific combinations
+  composition: [
+    {
+      format: "primary",
+      size: "lg",
+    },
+  ],
+
+  // Optional
+  hooks: {},
 });
 
-// Use the variant in components
-const buttonClass = ButtonVariant.useVariant({
-  intent: "danger",
+/***********************(Variant Class Extraction)*************************/
+// Extract variant class
+const variantClass = ButtonVariant.applyVariant({
+  format: "danger",
   size: "lg",
-  className: "mt-4", // Additional classes
 });
 
-// Use kit to safely combine classes
-const combinedClasses = ButtonVariant.kit(
-  "text-center",
-  isActive && "bg-green-500",
-  isBold ? "font-bold" : "font-normal"
-);
+/***********************(Render)*************************/
+// Render variant class in component
+<Button className={kit(`${variantClass}`, className)} />;
+```
 
-// Compose multiple variants together
-const CardButtonVariant = ButtonVariant.composeVariant(CardVariant);
+#### You can optionally extract the types of a variant e.g
 
-// use derived variant class in component
-<Button className={kit(buttonClass, className)} />;
+```typescript
+import { type VariantProps } from "@inspatial/theme/variant";
+
+type ButtonVariantType = VariantProps<typeof ButtonVariant.applyVariant>;
 ```
 
 ### 6. **Effect System**

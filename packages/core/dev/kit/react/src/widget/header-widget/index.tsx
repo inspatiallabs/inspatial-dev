@@ -75,7 +75,7 @@ export function HeaderWidget(props: HeaderWidgetProps) {
     // composition,
     // defaultSettings,
     // hooks,
-  } = props || {};
+  } = props;
 
   const variantClass = headerWidgetVariants.useVariant({
     variant: "full",
