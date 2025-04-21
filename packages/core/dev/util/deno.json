@@ -54,7 +54,8 @@
     "./svg-to-src-set": "./src/svg-to-src-set.ts",
     "./stringify": "./src/stringify.ts",
     "./hyphenize": "./src/hyphenize.ts",
-    "./escape-html": "./src/escape-html.ts"
+    "./escape-html": "./src/escape-html.ts",
+    "./window-size": "./src/window-size.ts"
   },
 
   "publish": {
