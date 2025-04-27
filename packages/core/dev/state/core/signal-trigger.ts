@@ -16,143 +16,188 @@
 import { 
   createSignal, 
   createEffect, 
-  AccessorType, 
-  SetterType 
+  type AccessorType 
 } from "../signal/src/signals.ts";
 
 import {
   onCleanup
 } from "../signal/src/core/owner.ts";
 
-import {
-  RegisteredTriggerType,
-  TriggerConfigType,
-  TriggerInstanceType,
-  TriggerEventDeliveryStatusEnum
-} from "../trigger/src/types.ts";
-
-import {
-  createTriggerInstance
-} from "../trigger/src/action.ts";
-
-import {
-  getRegisteredTrigger
-} from "../trigger/src/registry.ts";
-
+import { createTriggerInstance as defaultCreateTriggerInstance } from "../trigger/src/action.ts";
+import { getRegisteredTrigger as defaultGetRegisteredTrigger } from "../trigger/src/registry.ts";
 import { TriggerManagerClass } from "../trigger/src/action.ts";
 
+import type {
+  TriggerConfigType,
+  TriggerInstanceType,
+  RegisteredTriggerType
+} from "../trigger/src/types.ts";
+
 /**
- * # createTriggerSignal
- * @summary #### Creates a signal that's directly connected to trigger events
- * 
- * This function creates a reactive signal that automatically updates when 
- * specified triggers fire, providing seamless integration between the reactive 
- * system and the event system.
- * 
- * @param initialValue The initial value for the signal
- * @param options Configuration for the trigger connection
- * @returns A tuple containing the signal accessor, setter, and control API
- * 
- * @example
- * ### Example 1: Mouse Position Signal
- * ```typescript
- * // Create a signal that tracks mouse position
- * const [mousePosition, setMousePosition, controls] = createTriggerSignal(
- *   { x: 0, y: 0 },  // Initial position
- *   {
- *     trigger: "onMouseMove",
- *     transform: (eventData) => ({ 
- *       x: eventData.clientX, 
- *       y: eventData.clientY 
- *     })
- *   }
- * );
- * 
- * // Use the reactive position in UI
- * createEffect(() => {
- *   const pos = mousePosition();
- *   cursor.style.left = `${pos.x}px`;
- *   cursor.style.top = `${pos.y}px`;
- * });
- * 
- * // Later, when no longer needed
- * controls.disconnect();
- * ```
- * 
- * @example
- * ### Example 2: Touch Events with Throttling
- * ```typescript
- * // Create a signal for touch events with throttling
- * const [touchPoint, setTouchPoint, controls] = createTriggerSignal(
- *   null,  // No touch initially
- *   {
- *     trigger: "onTouch",
- *     transform: (event) => ({
- *       x: event.touches[0].clientX,
- *       y: event.touches[0].clientY,
- *       force: event.touches[0].force || 0
- *     }),
- *     throttle: 16  // Limit to ~60fps
- *   }
- * );
- * ```
+ * Interface defining the options for trigger signals
  */
-export function createTriggerSignal<T, P extends any[]>(
-  initialValue: T,
-  options: {
-    trigger: RegisteredTriggerType<any, P> | string,
-    transform?: (event: P, currentValue: T) => T,
-    condition?: (event: P, currentValue: T) => boolean,
-    throttle?: number,
-    debounce?: number
-  }
-): [AccessorType<T>, SetterType<T>, { disconnect: () => void }] {
-  // Create the base signal
-  // Use type assertion to handle the function check in createSignal
-  const [value, setValue] = createSignal<T>(initialValue as Exclude<T, Function>);
+interface TriggerSignalOptions<TValue, TEvent> {
+  /** Name or identifier of the trigger to connect to */
+  trigger: string | RegisteredTriggerType<any, any>;
+  /** Optional function to transform trigger event data into signal value */
+  transform?: (eventData: TEvent[], currentValue: TValue) => TValue;
+  /** Optional function to determine if the signal should update based on the event */
+  condition?: (eventData: TEvent[], currentValue: TValue) => boolean;
+}
+
+/**
+ * Interface for dependency injection in the trigger signal system
+ */
+interface TriggerDeps {
+  /** Function to get registered triggers */
+  getRegisteredTrigger?: typeof defaultGetRegisteredTrigger;
+  /** Function to create trigger instances */
+  createTriggerInstance?: typeof defaultCreateTriggerInstance;
+}
+
+/**
+ * Interface for the controls returned by createTriggerSignal
+ */
+interface TriggerSignalControls {
+  /** Disconnects the signal from the trigger */
+  disconnect: () => void;
+}
+
+/**
+ * # CreateTriggerSignal
+ * @summary #### Creates a signal that updates when a trigger activates
+ * 
+ * The `createTriggerSignal` function creates a signal that updates its value when a specified trigger fires.
+ * It's like setting up an automatic sensor that changes a value when it detects something.
+ * 
+ * @since 0.0.1
+ * @category InSpatial State
+ * @kind function
+ * @access public
+ * 
+ * @param initialValue - The starting value for the signal
+ * @param options - Configuration options including trigger, transform, and condition functions
+ * @param deps - Optional dependencies for testing
+ * 
+ * @returns A tuple with the signal getter, setter, and control functions
+ */
+export function createTriggerSignal<TValue, TEvent = any>(
+  initialValue: TValue,
+  options: TriggerSignalOptions<TValue, TEvent>,
+  deps: Partial<TriggerDeps> = {}
+): [() => TValue, (value: TValue) => void, TriggerSignalControls] {
+  const {
+    getRegisteredTrigger = defaultGetRegisteredTrigger,
+    createTriggerInstance = defaultCreateTriggerInstance
+  } = deps;
   
-  // Handle the trigger registration and connection
-  const triggerObj = typeof options.trigger === 'string' 
-    ? getRegisteredTrigger(options.trigger)
-    : options.trigger;
+  // Create the signal with initial value
+  const [value, setValue] = createSignal<any>(initialValue as any);
+
+  const { trigger: triggerName, transform, condition } = options;
+
+  // Determine the trigger name based on input type
+  const triggerNameToUse = typeof triggerName === 'string' 
+    ? triggerName 
+    : (triggerName as RegisteredTriggerType<any, any>).name;
+  
+  // Get registered trigger if it's a string name
+  const registeredTrigger = typeof triggerName === 'string'
+    ? getRegisteredTrigger(triggerName)
+    : triggerName;
     
-  if (!triggerObj) {
-    throw new Error(`Trigger "${options.trigger}" not found`);
+  if (!registeredTrigger) {
+    console.error(`Trigger "${triggerName}" not found for signal`);
+    return [value as () => TValue, setValue as (value: TValue) => void, { disconnect: () => {} }];
   }
-  
-  // Create the handler function
-  const handler = (...eventData: P) => {
-    // Apply condition if provided
-    if (options.condition && !options.condition(eventData, value())) {
+
+  // Track disconnection state
+  let isDisconnected = false;
+
+  // Create a handler for the trigger event
+  const handler = (eventData: TEvent) => {
+    // Don't process events if disconnected
+    if (isDisconnected) {
       return;
     }
-    
-    // Transform the event data
-    const newValue = options.transform
-      ? options.transform(eventData, value())
-      : eventData[0] as unknown as T;
+
+    // Get the current value
+    const currentValue = value() as TValue;
+
+    // Apply condition if provided
+    if (condition) {
+      // Handle array data for condition functions
+      const eventDataArr = Array.isArray(eventData) ? eventData : [eventData];
       
-    // Update the signal
-    setValue(() => newValue as Exclude<T, Function>);
+      // Check if the condition passes
+      if (!condition(eventDataArr, currentValue)) {
+        return; // Skip if condition doesn't pass
+      }
+      
+      // If condition passes and no transform, we directly set the first item
+      // from event data if it's an array, otherwise the event data itself
+      if (!transform) {
+        if (Array.isArray(eventData) && eventData.length > 0) {
+          setValue(eventData[0] as any);
+        } else {
+          setValue(eventData as any);
+        }
+        return;
+      }
+    }
+
+    // Apply transform if provided
+    if (transform) {
+      // Handle array data for transform functions
+      const eventDataForTransform = Array.isArray(eventData) ? eventData : [eventData];
+      
+      // Apply the transformation
+      const transformedValue = transform(eventDataForTransform, currentValue);
+      setValue(transformedValue as any);
+      return;
+    }
+
+    // If no condition or transform, just set the event data
+    setValue(eventData as any);
   };
-  
-  // Create the trigger instance with handling for throttle/debounce
-  let config: any = { 
-    type: triggerObj.name,
-    action: handler 
+
+  // Create a trigger configuration directly
+  const triggerConfig: TriggerConfigType = {
+    type: typeof triggerName === 'string' ? triggerName : triggerName.name,
+    action: handler
   };
-  
-  if (options.throttle) config.throttle = options.throttle;
-  if (options.debounce) config.debounce = options.debounce;
-  
-  const triggerInstance = createTriggerInstance(config);
-  
-  // Return the signal getter, setter, and control API
+
+  // Create an instance of the trigger with our handler
+  const triggerInstance = defaultCreateTriggerInstance(triggerConfig);
+
+  // Return the signal and disconnect function
   return [
-    value, 
-    setValue, 
-    { disconnect: () => triggerInstance.destroy() }
+    value as () => TValue,
+    setValue as (value: TValue) => void,
+    {
+      disconnect: () => {
+        isDisconnected = true;
+        if (triggerInstance) {
+          triggerInstance.destroy();
+        }
+      }
+    }
   ];
+}
+
+// Support dependency injection for tests
+// This is used by the test suite to override dependencies
+(createTriggerSignal as any).__deps = {
+  getRegisteredTrigger: defaultGetRegisteredTrigger,
+  createTriggerInstance: defaultCreateTriggerInstance
+};
+
+// Allow resetting dependencies for testing
+export function _resetDependencies() {
+  (createTriggerSignal as any).__deps = {
+    getRegisteredTrigger: defaultGetRegisteredTrigger,
+    createTriggerInstance: defaultCreateTriggerInstance
+  };
 }
 
 /**
@@ -255,8 +300,8 @@ export function createSignalConditionTrigger<T>(
   };
   
   const activeTrigger = initialTriggerConfig 
-    ? createTriggerInstance(initialTriggerConfig)
-    : createTriggerInstance(dummyTriggerConfig);
+    ? defaultCreateTriggerInstance(initialTriggerConfig)
+    : defaultCreateTriggerInstance(dummyTriggerConfig);
   
   // Store active config reference for later cleanup
   let activeConfig = initialTriggerConfig;
@@ -278,7 +323,7 @@ export function createSignalConditionTrigger<T>(
         }
         
         // Create new trigger
-        const newTrigger = createTriggerInstance(newTriggerConfig);
+        const newTrigger = defaultCreateTriggerInstance(newTriggerConfig);
         
         // Copy all properties from new trigger to our existing reference
         Object.entries(newTrigger).forEach(([key, value]) => {
@@ -509,7 +554,7 @@ export class StateLens<
     };
     
     // Create trigger with our action handler
-    const trigger = createTriggerInstance({
+    const trigger = defaultCreateTriggerInstance({
       ...triggerConfig,
       type: triggerConfig.type || "event",
       action: actionHandler
@@ -567,7 +612,7 @@ export class StateLens<
     triggerConfig: Omit<TriggerConfigType, 'action'>
   ): { trigger: TriggerInstanceType, disconnect: () => void } {
     // Create trigger with empty action (will be fired manually)
-    const trigger = createTriggerInstance({
+    const trigger = defaultCreateTriggerInstance({
       ...triggerConfig,
       type: triggerConfig.type || "event",
       action: () => {} // Placeholder

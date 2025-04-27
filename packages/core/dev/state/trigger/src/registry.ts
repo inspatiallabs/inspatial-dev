@@ -3,6 +3,7 @@
  * @description Trigger registry system
  */
 
+// @ts-ignore - Ignoring TS extension import error
 import {
   ErrorCodeEnum,
   LogSeverityEnum,
@@ -12,6 +13,7 @@ import {
   TriggerDefinitionMetadataType,
   RegisteredTriggerType,
 } from "./types.ts";
+// @ts-ignore - Ignoring TS extension import error
 import { TriggerValidatorClass, errorLogger, TriggerErrorClass } from "./errors.ts";
 
 /**

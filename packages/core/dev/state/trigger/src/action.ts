@@ -3,19 +3,28 @@
  * @description Trigger Action API for creating and managing triggers
  */
 
-import { TriggerBridgeClass } from "./bridge.ts";
-import { triggerRegistry, getRegisteredTrigger, getTriggerMetadata, registerTrigger as registerTriggerInRegistry } from "./registry.ts";
-import { triggerPerformanceMonitor } from "./monitoring.ts";
-import { errorLogger, TriggerErrorClass } from "./errors.ts";
+// @ts-ignore - Ignoring TS extension import error
+import type { TriggerBridgeClass } from "./bridge.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { triggerRegistry, getRegisteredTrigger, getTriggerMetadata, type registerTrigger as _registerTriggerInRegistry } from "./registry.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { triggerMonitoringInstance } from "./monitoring.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { errorLogger, type TriggerErrorClass as _TriggerErrorClass } from "./errors.ts";
+// @ts-ignore - Ignoring TS extension import error
 import {
+  ErrorCodeEnum,
+  TriggerEventDeliveryStatusEnum,
+} from "./types.ts";
+// @ts-ignore - Ignoring TS extension import error
+import type {
   TriggerInstanceType,
   TriggerConfigType,
   PlatformType,
   HierarchicalPlatformType,
-  TriggerEventDeliveryStatusEnum,
-  ErrorCodeEnum,
   RegisteredTriggerType,
   TriggerDefinitionMetadataType,
+  TriggerCategoryEnum as _TriggerCategoryEnum
 } from "./types.ts";
 
 /**
@@ -140,7 +149,7 @@ export class TriggerManagerClass {
       type: config.type,
       enabled: true,
       params: { ...config },
-      execute: (...args: any[]) => undefined, // Simple mock function implementation
+      execute: (_args: any[]) => undefined, // Simple mock function implementation with underscore for unused param
 
       // Management methods
       disable: () => this.disableTrigger(triggerId),
@@ -167,7 +176,7 @@ export class TriggerManagerClass {
   ): TriggerInstanceType {
     // Implementation details would go here
     // This is a simplified placeholder
-    const chainId = `chain-${Date.now()}`;
+    const _chainId = `chain-${Date.now()}`; // Prefix with underscore to indicate intentionally unused
 
     // Create individual triggers but connect them
     const triggers = configs.map((config) => this.createTrigger(config));
@@ -206,7 +215,7 @@ export class TriggerManagerClass {
   }): TriggerInstanceType {
     // Implementation details would go here
     // This is a simplified placeholder
-    const conditionalId = `conditional-${Date.now()}`;
+    const _conditionalId = `conditional-${Date.now()}`; // Prefix with underscore to indicate intentionally unused
 
     // Simple implementation - just create trueTrigger for now
     return this.createTrigger(config.trueTrigger);
@@ -355,7 +364,7 @@ export class TriggerManagerClass {
     }
 
     // Log performance data
-    triggerPerformanceMonitor.trackEventCompletion(
+    triggerMonitoringInstance.trackEventCompletion(
       triggerId,
       trigger.params.platform as PlatformType,
       trigger.type,
@@ -384,7 +393,7 @@ export class TriggerManagerClass {
       if (!trigger || !trigger.enabled) return;
 
       // Track performance at start
-      triggerPerformanceMonitor.trackEventStart(
+      triggerMonitoringInstance.trackEventStart(
         triggerId,
         platform as PlatformType,
         config.type,
@@ -443,7 +452,7 @@ export class TriggerManagerClass {
             }
 
             // Track completion
-            triggerPerformanceMonitor.trackEventCompletion(
+            triggerMonitoringInstance.trackEventCompletion(
               triggerId,
               platform as PlatformType,
               config.type,
@@ -475,7 +484,7 @@ export class TriggerManagerClass {
         }
 
         // Track completion
-        triggerPerformanceMonitor.trackEventCompletion(
+        triggerMonitoringInstance.trackEventCompletion(
           triggerId,
           platform as PlatformType,
           config.type,
@@ -491,7 +500,7 @@ export class TriggerManagerClass {
         );
 
         // Track error
-        triggerPerformanceMonitor.trackEventCompletion(
+        triggerMonitoringInstance.trackEventCompletion(
           triggerId,
           platform as PlatformType,
           config.type,
@@ -696,16 +705,194 @@ export function createTrigger<S = any, P extends any[] = any[]>(
 }
 
 /**
- * Activates a registered trigger by name, executing its action.
- * This is the core function called internally when `state.action.triggerName()` is invoked.
+ * # ActivateTrigger
+ * @summary #### Executes a registered trigger and updates the application state
+ * 
+ * The `activateTrigger` function locates a trigger in the registry by name and executes its action
+ * with the current state and provided payload. Think of it like pressing a button on a remote control
+ * that's already been programmed - you provide the button name (trigger) and it performs the specific
+ * action associated with that button.
+ * 
+ * @since 1.0.0   
+ * @category InSpatial State
+ * @module @inspatial/state/trigger
+ * @kind function
+ * @access public
+ * 
+ * ### 💡 Core Concepts
+ * - Triggers are state transition mechanisms that respond to events or manual activation
+ * - Each trigger has a unique name and an action function that knows how to update the state
+ * - When activated, the trigger's action receives the current state and optional payload parameters
+ * - The function safely handles state transitions and provides appropriate error handling
  *
- * @template S The type of the state object.
- * @template P The types of the payload arguments.
- * @param triggerName The unique name of the trigger to activate.
- * @param currentState The current state object to pass to the trigger's action.
- * @param payload The arguments to pass to the trigger's action.
- * @returns The new state returned by the trigger's action, or the original state if the trigger is not found or the action returns void.
- * @throws {TriggerErrorClass} If the trigger is not found in the registry.
+ * ### 🎯 Prerequisites
+ * Before you start:
+ * - The trigger must already be registered in the system using `registerTrigger`
+ * - You need to know the exact name of the trigger you want to activate
+ * 
+ * ### 📚 Terminology
+ * > **Trigger**: A named function that can modify application state in response to an activation.
+ * > **State Transition**: The process of transforming the current state to a new state based on specific logic.
+ * 
+ * ### ⚠️ Important Notes
+ * <details>
+ * <summary>Click to learn more about edge cases</summary>
+ * 
+ * > [!NOTE]
+ * > This function is primarily called internally by the state management system when
+ * > triggers are invoked via `state.action.triggerName()`. You rarely need to call this directly.
+ * 
+ * > [!NOTE]
+ * > If the trigger's action returns `undefined`, the original state is returned unchanged.
+ * </details>
+ * 
+ * @param {string} triggerName - Identifies which registered trigger to activate (e.g., "player:jump" or "ui:showMenu")
+ *    Must match exactly with a name in the trigger registry.
+ * 
+ * @param {S} currentState - The current application state that will be passed to the trigger's action
+ *    This state object will be the foundation for any modifications made by the trigger.
+ * 
+ * @param {...P} payload - Additional arguments to pass to the trigger's action function
+ *    Can include any data needed for the trigger to perform its state transition correctly.
+ * 
+ * ### 🎮 Usage
+ * 
+ * @example
+ * ### Example 1: Basic Trigger Activation
+ * ```typescript
+ * // First, we need to register a trigger that defines a state transition
+ * import { registerTrigger, activateTrigger } from "@inspatial/state/trigger";
+ * 
+ * // Let's create a simple trigger that increments a counter in our state
+ * registerTrigger({
+ *   name: "counter:increment",
+ *   action: (state, amount = 1) => {
+ *     // Return a new state with the counter increased by the specified amount
+ *     return { ...state, counter: (state.counter || 0) + amount };
+ *   }
+ * });
+ * 
+ * // Now we can activate this trigger with our current state
+ * const initialState = { counter: 5 };
+ * 
+ * // Activate the trigger to increment by the default amount (1)
+ * const newState = activateTrigger("counter:increment", initialState);
+ * console.log(newState); // Output: { counter: 6 }
+ * 
+ * // We can also pass custom arguments to the trigger action
+ * const newStateWithCustomIncrement = activateTrigger("counter:increment", initialState, 3);
+ * console.log(newStateWithCustomIncrement); // Output: { counter: 8 }
+ * ```
+ * 
+ * @example
+ * ### Example 2: Handling Complex State Transitions
+ * ```typescript
+ * // Let's create a trigger for managing a shopping cart
+ * registerTrigger({
+ *   name: "cart:addItem",
+ *   action: (state, item) => {
+ *     // Check if the item is valid
+ *     if (!item || !item.id) {
+ *       console.warn("Attempted to add invalid item to cart");
+ *       return state; // Return unchanged state for invalid items
+ *     }
+ *     
+ *     // Create a new items array with the new item added
+ *     const existingItems = state.cart?.items || [];
+ *     const newItems = [...existingItems, item];
+ *     
+ *     // Calculate the new total price
+ *     const totalPrice = newItems.reduce((sum, item) => sum + (item.price || 0), 0);
+ *     
+ *     // Return the new state with updated cart
+ *     return {
+ *       ...state,
+ *       cart: {
+ *         ...state.cart,
+ *         items: newItems,
+ *         totalPrice,
+ *         itemCount: newItems.length
+ *       }
+ *     };
+ *   }
+ * });
+ * 
+ * // Initial state with an empty cart
+ * const appState = {
+ *   user: { id: "user123", name: "Alice" },
+ *   cart: { items: [], totalPrice: 0, itemCount: 0 }
+ * };
+ * 
+ * // Add a product to the cart
+ * const newState = activateTrigger("cart:addItem", appState, { 
+ *   id: "prod-101", 
+ *   name: "Wireless Headphones", 
+ *   price: 59.99 
+ * });
+ * 
+ * console.log(newState.cart);
+ * // Output: { 
+ * //   items: [{ id: "prod-101", name: "Wireless Headphones", price: 59.99 }], 
+ * //   totalPrice: 59.99, 
+ * //   itemCount: 1 
+ * // }
+ * ```
+ * 
+ * @example
+ * ### Example 3: Error Handling When Trigger Doesn't Exist
+ * ```typescript
+ * // Try to activate a trigger that hasn't been registered
+ * try {
+ *   const state = { data: "important" };
+ *   const newState = activateTrigger("nonexistent:trigger", state);
+ * } catch (error) {
+ *   console.error("Expected error:", error.message);
+ *   // Output: Expected error: Trigger named "nonexistent:trigger" not found in registry.
+ * }
+ * ```
+ * 
+ * ### ⚡ Performance Tips
+ * <details>
+ * <summary>Click to learn about performance</summary>
+ * 
+ * - Keep your trigger actions lightweight and focused on state transitions
+ * - For expensive operations, consider using async actions with promises
+ * - When handling large state objects, use immutable update patterns for better performance
+ * </details>
+ * 
+ * ### ❌ Common Mistakes
+ * <details>
+ * <summary>Click to see what to avoid</summary>
+ * 
+ * - Activating triggers that haven't been registered yet
+ * - Modifying the state object directly inside trigger actions instead of returning a new one
+ * - Forgetting to handle potential errors when the trigger isn't found
+ * </details>
+ * 
+ * @throws {Error}
+ * Throws an error if the specified trigger name is not found in the registry.
+ * This often happens when you try to activate a trigger before registering it.
+ * 
+ * @returns {S}
+ * The new state after the trigger's action has been applied. If the action returns
+ * undefined (no changes), the original state is returned instead.
+ * 
+ * ### 📝 Uncommon Knowledge
+ * `When designing state transitions, think of your state as a directed graph where triggers
+ * are the edges connecting different state nodes. This mental model helps build more predictable
+ * and testable application behavior.`
+ * 
+ * ### 🔧 Runtime Support
+ * - ✅ Node.js
+ * - ✅ Deno
+ * - ✅ Bun
+ * 
+ * ### 🔗 Related Resources
+ * 
+ * #### Internal References
+ * - {@link createTrigger} - Function for creating trigger definitions
+ * - {@link registerTrigger} - Function for registering triggers with the system
+ * - {@link TriggerConfigType} - Type definition for trigger configuration
  */
 export function activateTrigger<S = any, P extends any[] = any[]>(
   triggerName: string,

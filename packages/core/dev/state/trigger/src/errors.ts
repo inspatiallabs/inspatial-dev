@@ -3,6 +3,7 @@
  * @description Error handling utilities and custom error classes for TriggerBridge
  */
 
+// @ts-ignore - Ignoring TS extension import error
 import { ErrorCodeEnum, LogSeverityEnum } from "./types.ts";
 
 /**

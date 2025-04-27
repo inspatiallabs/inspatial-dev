@@ -2,6 +2,7 @@
  * @file bridge.ts
  * @description Cross-platform event system with hierarchical platform support
  */
+// @ts-ignore - Ignoring TS extension import error
 import {
   EventMessageType,
   PlatformType,

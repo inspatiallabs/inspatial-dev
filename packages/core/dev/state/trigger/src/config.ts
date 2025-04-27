@@ -2,6 +2,7 @@
  * @file config.ts
  * @description Configuration system for TriggerBridge
  */
+// @ts-ignore - Ignoring TS extension import error
 import { LogSeverityEnum } from "./types.ts";
 
 /**
