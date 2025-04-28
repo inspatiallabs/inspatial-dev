@@ -478,9 +478,9 @@ test({
 });
 
 test({
-  name: "createVariant() with config should provide applyVariant API",
+  name: "createVariant() with config should provide getVariant API",
   fn: () => {
-    // Given a variant with the applyVariant API
+    // Given a variant with the getVariant API
     const buttonVariant = createVariant({
       base: "rounded",
       settings: {
@@ -500,7 +500,7 @@ test({
     });
     
     // When using the API method with props
-    const button = buttonVariant.applyVariant({ 
+    const button = buttonVariant.getVariant({ 
       intent: "secondary", 
       size: "lg" 
     });
@@ -510,7 +510,7 @@ test({
     expect(button).toContain("text-lg");
     
     // Test with default values
-    const defaultButton = buttonVariant.applyVariant();
+    const defaultButton = buttonVariant.getVariant();
     
     // Default values should be applied
     expect(defaultButton).toContain("bg-blue-500");

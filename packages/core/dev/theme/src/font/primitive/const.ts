@@ -118,6 +118,11 @@ export const PrimitiveFontProps = [
     variable: "--font-dumeh",
   },
   {
+    name: "Editors Note",
+    font: family.editorsNote,
+    variable: "--font-editorsNote",
+  },
+  {
     name: "Elsone",
     font: family.elsone,
     variable: "--font-elsone",
@@ -131,6 +136,11 @@ export const PrimitiveFontProps = [
     name: "Enrique",
     font: family.enrique,
     variable: "--font-enrique",
+  },
+  {
+    name: "Euclid Circular",
+    font: family.euclidCircular,
+    variable: "--font-euclidCircular",
   },
   {
     name: "Folker",

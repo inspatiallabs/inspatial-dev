@@ -26,7 +26,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  */
 type VariantProps<T> = T extends (props?: infer P) => string
   ? OmitUndefined<P>
-  : T extends { applyVariant: (props?: infer P) => string }
+  : T extends { getVariant: (props?: infer P) => string }
   ? OmitUndefined<P>
   : never;
 
@@ -414,7 +414,7 @@ interface VariantProp {
  */
 interface VariantSystemReturn<V extends VariantShapeProp = any> {
   /** Core function to apply variants */
-  applyVariant: (
+  getVariant: (
     props?: VariantSchemaProp<V> & {
       class?: ClassValueProp;
       className?: ClassValueProp;
@@ -519,8 +519,8 @@ function createVariantCore<V extends VariantShapeProp>(
       return kit(...allClasses);
     };
 
-  // Define the placeholder applyVariant function
-  const applyVariant = ((props?: any) => "") as (
+  // Define the placeholder getVariant function
+  const getVariant = ((props?: any) => "") as (
     props?: VariantSchemaProp<V> & {
       class?: ClassValueProp;
       className?: ClassValueProp;
@@ -530,7 +530,7 @@ function createVariantCore<V extends VariantShapeProp>(
 
   // Return a minimal system with the properly typed methods
   return {
-    applyVariant,
+    getVariant,
     kit,
     variant,
     composeVariant,
@@ -618,7 +618,7 @@ export const composeVariant = baseSystem.composeVariant;
  * ### 📚 Terminology
  * > **Variant System**: A structured way to manage different style variations of a component
  * > **Style Hooks**: Functions that can modify the final output of class names
- * > **applyVariant**: Method to apply variant styles to components
+ * > **getVariant**: Method to apply variant styles to components
  *
  * @example 
  * ### Basic Configuration
@@ -634,13 +634,13 @@ export const composeVariant = baseSystem.composeVariant;
  *   }
  * });
  * 
- * // type inference with applyVariant
- * type ComponentVariantProps = VariantProps<typeof ComponentVariant.applyVariant> & {
+ * // type inference with getVariant
+ * type ComponentVariantProps = VariantProps<typeof ComponentVariant.getVariant> & {
  *   // Add any additional props here that are not part of the variant system (optional)
  * }
  *
  * // Apply styles with the variant
- * const className = ComponentVariant.applyVariant({ size: "sm", theme: "dark" });
+ * const className = ComponentVariant.getVariant({ size: "sm", theme: "dark" });
  * ```
  * 
  * ### Custom System
@@ -692,10 +692,10 @@ export function createVariant<V extends VariantShapeProp>(
       configOrOptions as InSpatialVariantConfig<V>
     );
 
-    // Return with strongly typed applyVariant
+    // Return with strongly typed getVariant
     return {
       ...system,
-      applyVariant: variantFn as (
+      getVariant: variantFn as (
         props?: VariantSchemaProp<V> & {
           class?: ClassValueProp;
           className?: ClassValueProp;
@@ -723,7 +723,7 @@ export type {
 
   /**
    * Utility type for extracting props from a variant function or object
-   * Works with direct variant functions and objects with applyVariant method
+   * Works with direct variant functions and objects with getVariant method
    *
    * @example
    * ```typescript
@@ -733,7 +733,7 @@ export type {
    *
    * // With createVariant result
    * const ButtonVariant = createVariant({ ... });
-   * type ButtonProps = VariantProps<typeof ButtonVariant.applyVariant>;
+   * type ButtonProps = VariantProps<typeof ButtonVariant.getVariant>;
    * ```
    */
   VariantProps,

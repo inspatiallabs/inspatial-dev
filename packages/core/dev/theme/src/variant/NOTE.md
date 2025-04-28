@@ -6,12 +6,12 @@ Variant composition can be tricky when working with deeply nested and complex va
 
 ## API Methods
 
-### Using the `applyVariant` Method
+### Using the `getVariant` Method
 
 <details>
 <summary>💡 <strong>Terminology:</strong> Variant API</summary>
 
-The variant system provides the `applyVariant` method for applying variant styles. This method takes your variant props and returns the generated class names.
+The variant system provides the `getVariant` method for applying variant styles. This method takes your variant props and returns the generated class names.
 
 </details>
 
@@ -44,12 +44,12 @@ const ButtonVariant = createVariant({
 export type ButtonVariantType = VariantProps<typeof ButtonVariant>;
 
 // Use the variant
-const primaryButton = ButtonVariant.applyVariant({
+const primaryButton = ButtonVariant.getVariant({
   size: "lg",
 });
 
 // With className prop
-const customButton = ButtonVariant.applyVariant({
+const customButton = ButtonVariant.getVariant({
   format: "secondary",
   className: "font-bold",
 });
@@ -85,8 +85,8 @@ export const HeaderWidgetVariant = createVariant({
 });
 
 // Later usage will generate error:
-// Property 'applyVariant' does not exist on type 'VariantSystemReturn'
-const variantClass = HeaderWidgetVariant.applyVariant({
+// Property 'getVariant' does not exist on type 'VariantSystemReturn'
+const variantClass = HeaderWidgetVariant.getVariant({
   format: "full",
   ...settings,
 });
@@ -119,7 +119,7 @@ export const HeaderWidgetVariant = createVariant({
 });
 
 // Usage
-const variantClass = HeaderWidgetVariant.applyVariant({
+const variantClass = HeaderWidgetVariant.getVariant({
   variant: "full",
   ...settings,
 });
@@ -129,7 +129,7 @@ const variantClass = HeaderWidgetVariant.applyVariant({
 
 1. **Always define at least one property** for each variant category
 2. **Use empty strings** (`""`) when no classes are needed
-3. **Export typed props** using `VariantProps<typeof yourVariant.applyVariant>`
+3. **Export typed props** using `VariantProps<typeof yourVariant.getVariant>`
 4. **Include all possible options** in your `defaultSettings`
 
 > [!NOTE]
@@ -141,8 +141,8 @@ const variantClass = HeaderWidgetVariant.applyVariant({
 
 ```typescript
 // Consistent API shape regardless of how it's called:
-const system = createVariant(); // Returns {applyVariant, kit, variant, composeVariant}
-const buttonVariant = createVariant({ ...config }); // Returns {applyVariant, kit, variant, composeVariant, config}
+const system = createVariant(); // Returns {getVariant, kit, variant, composeVariant}
+const buttonVariant = createVariant({ ...config }); // Returns {getVariant, kit, variant, composeVariant, config}
 ```
 
 ### 2. Type Extraction

@@ -819,9 +819,11 @@ const inSpatialTailwindConfig = withTV({
       dakar: ["var(--font-dakar)"],
       denson: ["var(--font-denson)"],
       dumeh: ["var(--font-dumeh)"],
+      "editors-note": ["var(--font-editors-note)"],
       elsone: ["var(--font-elsone)"],
       engine: ["var(--font-engine)"],
       enrique: ["var(--font-enrique)"],
+      "euclid-circular": ["var(--font-euclid-circular)"],
       folker: ["var(--font-folker)"],
       fonzy: ["var(--font-fonzy)"],
       foregen: ["var(--font-foregen)"],
@@ -1620,7 +1622,6 @@ const inSpatialTailwindConfig = withTV({
     placeholderColor: ({ theme }) => ({
       ...theme("colors"),
     }),
-
 
     /*===============================================================================
      * RING:

@@ -8,27 +8,33 @@ import {
 /*##############################################(RENDER)##############################################*/
 
 export default function primitiveFont<
-  T extends StyleSheetVariable | undefined = undefined,
+  T extends StyleSheetVariable | undefined = undefined
 >(
   options: PrimitiveTypefaceProp<T>
 ): T extends undefined ? InSpatialFontProp : InSpatialFontProp {
   // Basic implementation to make the tests pass
   return {
     font: {
-      variable: options.variable || '',
-      className: typeof options.variable === 'string' 
-        ? options.variable.replace('--', '') 
-        : 'font-default',
-      style: typeof options.src === 'string'
-        ? {
-            fontFamily: Array.isArray(options.fallback) 
-              ? `"${options.src.split('/').pop()?.split('.')[0] || 'default'}", ${options.fallback.join(', ')}`
-              : `"${options.src.split('/').pop()?.split('.')[0] || 'default'}", system-ui`,
-            fontWeight: options.weight ? parseInt(options.weight) : 400,
-            fontStyle: options.style || 'normal'
-          }
-        : []
-    }
+      variable: options.variable || "",
+      className:
+        typeof options.variable === "string"
+          ? options.variable.replace("--", "")
+          : "font-default",
+      style:
+        typeof options.src === "string"
+          ? {
+              fontFamily: Array.isArray(options.fallback)
+                ? `"${
+                    options.src.split("/").pop()?.split(".")[0] || "default"
+                  }", ${options.fallback.join(", ")}`
+                : `"${
+                    options.src.split("/").pop()?.split(".")[0] || "default"
+                  }", system-ui`,
+              fontWeight: options.weight ? parseInt(options.weight) : 400,
+              fontStyle: options.style || "normal",
+            }
+          : [],
+    },
   } as any; // Use type assertion for quick fix
 }
 
@@ -406,6 +412,31 @@ export const dumeh: AssignPrimitiveFont = primitiveFont({
   fallback: ["system-ui"],
 });
 
+// Editors Note Font
+export const editorsNote: AssignPrimitiveFont = primitiveFont({
+  src: [
+    {
+      path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/editors-note/editors-note-regular.otf",
+      weight: "400",
+      style: "regular",
+    },
+    {
+      path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/editors-note/editors-note-italic.otf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/editors-note/editors-note-bold.otf",
+      weight: "700",
+      style: "bold",
+    },
+  ],
+  variable: "--font-editors-note",
+  display: "auto",
+  preload: false,
+  fallback: ["system-ui"],
+});
+
 // Elsone Font
 export const elsone: AssignPrimitiveFont = primitiveFont({
   src: [
@@ -465,6 +496,31 @@ export const enrique: AssignPrimitiveFont = primitiveFont({
     },
   ],
   variable: "--font-enrique",
+  display: "auto",
+  preload: false,
+  fallback: ["system-ui"],
+});
+
+// Euclid Circular Font
+export const euclidCircular: AssignPrimitiveFont = primitiveFont({
+  src: [
+    {
+      path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/euclid-circular/euclid-circular-regular.otf",
+      weight: "400",
+      style: "regular",
+    },
+    {
+      path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/euclid-circular/euclid-circular-bold.otf",
+      weight: "700",
+      style: "bold",
+    },
+    {
+      path: "https://inspatial-storage.s3.eu-west-2.amazonaws.com/fonts/euclid-circular/euclid-circular-regular-italic.otf",
+      weight: "400",
+      style: "italic",
+    },
+  ],
+  variable: "--font-euclid-circular",
   display: "auto",
   preload: false,
   fallback: ["system-ui"],

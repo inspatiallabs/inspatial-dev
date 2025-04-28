@@ -397,7 +397,7 @@ export const ButtonVariant = createVariant({
 });
 
 /***********************(Variant Extraction)*************************/
-export const buttonVariantClass = ButtonVariant.applyVariant({
+export const buttonVariantClass = ButtonVariant.getVariant({
   format: "danger",
   size: "lg",
 });
@@ -436,7 +436,7 @@ interface MyButtonProps extends ButtonVariantType {
 function Button({ format, size, theme, disabled, ...rest  }: MyButtonProps) {
   return (
     <component
-       className={kit(ButtonVariant.applyVariant({ format, size, theme }))}
+       className={kit(ButtonVariant.getVariant({ format, size, theme }))}
        disabled={disabled}
     >
       Click
@@ -456,7 +456,7 @@ Best for single component usage where variant props aren't passed down:
 ```tsx
 // Apply variant directly in the component
 <Button
-  className={ButtonVariant.applyVariant({
+  className={ButtonVariant.getVariant({
     format: "ghost",
     size: "lg",
     theme: "flat",
@@ -474,7 +474,7 @@ function CustomButton({ format, size, theme, className, ...props }) {
   return (
     <Button
       className={kit(
-        `${ButtonVariant.applyVariant({ format, size, theme })}`,
+        `${ButtonVariant.getVariant({ format, size, theme })}`,
         className
       )}
       {...props}
@@ -617,7 +617,7 @@ const oceanTheme = ThemeVariable.find((theme) => theme.format.name === "ocean");
 | Function/Object                       | Description                                          |
 | ------------------------------------- | ---------------------------------------------------- |
 | `createVariant(config)`               | Create a variant component with style configurations |
-| `variant.applyVariant(props)`         | Apply variants with specific properties              |
+| `variant.getVariant(props)`         | Apply variants with specific properties              |
 | `variant.kit(...classes)`             | Utility for safely combining CSS classes             |
 | `variant.composeVariant(...variants)` | Combine multiple variants together                   |
 | `VariantProps<T>`                     | Extract props type from a variant component          |

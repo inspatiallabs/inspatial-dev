@@ -24,7 +24,7 @@ test({
     });
     
     // Then it should have a consistent API shape
-    expect(typeof system.applyVariant).toBe("function");
+    expect(typeof system.getVariant).toBe("function");
     expect(typeof system.variant).toBe("function");
     expect(typeof system.composeVariant).toBe("function");
     expect(typeof system.kit).toBe("function");
@@ -46,7 +46,7 @@ test({
     });
     
     // Then it should have a consistent API shape
-    expect(typeof buttonVariant.applyVariant).toBe("function");
+    expect(typeof buttonVariant.getVariant).toBe("function");
     expect(typeof buttonVariant.variant).toBe("function");
     expect(typeof buttonVariant.composeVariant).toBe("function");
     expect(typeof buttonVariant.kit).toBe("function");
@@ -60,7 +60,7 @@ test({
 /*##############################################(API-FUNCTIONALITY)##############################################*/
 
 test({
-  name: "applyVariant() handles all variant features",
+  name: "getVariant() handles all variant features",
   fn: () => {
     // Given a complex variant
     const buttonVariant = createVariant({
@@ -95,9 +95,9 @@ test({
     });
     
     // When applying with different props
-    const defaultButton = buttonVariant.applyVariant();
-    const primarySmall = buttonVariant.applyVariant({ intent: "primary", size: "sm" });
-    const secondaryDisabled = buttonVariant.applyVariant({
+    const defaultButton = buttonVariant.getVariant();
+    const primarySmall = buttonVariant.getVariant({ intent: "primary", size: "sm" });
+    const secondaryDisabled = buttonVariant.getVariant({
       intent: "secondary", 
       disabled: true,
       className: "custom-class"
@@ -126,7 +126,7 @@ test({
 /*##############################################(TYPE-EXTRACTION)##############################################*/
 
 test({
-  name: "VariantProps works with applyVariant",
+  name: "VariantProps works with getVariant",
   fn: () => {
     // Given a button variant
     const buttonVariant = createVariant({
@@ -143,7 +143,7 @@ test({
     });
     
     // TypeScript type extraction (compile-time check)
-    // type ButtonProps = VariantProps<typeof buttonVariant.applyVariant>;
+    // type ButtonProps = VariantProps<typeof buttonVariant.getVariant>;
     
     // Runtime verification with record
     const props: Record<string, unknown> = {
@@ -152,7 +152,7 @@ test({
     };
     
     // Method should work with the props
-    const result = buttonVariant.applyVariant(props as any);
+    const result = buttonVariant.getVariant(props as any);
     
     expect(result).toContain("text-sm");
     expect(result).toContain("bg-blue-500");

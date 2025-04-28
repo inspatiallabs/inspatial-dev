@@ -33,9 +33,11 @@ export type PrimitiveFontTypes =
   | "dakar"
   | "denson"
   | "dumeh"
+  | "editors-note"
   | "elsone"
   | "engine"
   | "enrique"
+  | "euclid-circular"
   | "folker"
   | "fonzy"
   | "foregen"
@@ -95,7 +97,7 @@ export type InSpatialFontProp = {
 };
 
 export type PrimitiveTypefaceProp<
-  T extends StyleSheetVariable | undefined = undefined,
+  T extends StyleSheetVariable | undefined = undefined
 > = {
   /**
    * The font file source. Can be either:
