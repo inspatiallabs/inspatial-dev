@@ -3,7 +3,10 @@
   "license": "Apache-2.0",
   "version": "0.0.1",
   "imports": {
-    "@inspatial/run": "./src/index.ts"
+    "@inspatial/run": "./src/index.ts",
+    "@inspatial/run/jsx": "./src/jsx/index.ts",
+    "@inspatial/run/itx": "./src/itx/index.ts",
+    "@inspatial/run/xml": "./src/xml/index.ts"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -18,7 +21,6 @@
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   },
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
     "jsxImportSource": "@inspatial/run",
     "lib": ["dom", "dom.iterable", "esnext"]

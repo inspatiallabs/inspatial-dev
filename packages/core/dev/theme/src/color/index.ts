@@ -42,6 +42,7 @@ interface Code {
   regexp: RegExp;
 }
 /**
+ * TODO(@benemma): Unify the color system with the color system in @inspatial/iss types called `NamedColor`
  * inspatialColors is for reference and direct use of colors,
  * it is not recommended to use it in the code.
  *
@@ -130,6 +131,7 @@ const HEX_PATTERN = (hex: string): RegExp =>
   new RegExp(`#${hex}(ff)?(?!\\w)`, "gi");
 
 /**
+ * TODO(@benemma): Unify the color system with the color system in @inspatial/iss types called `NamedColor`
  * inspatialColorPatterns is for finding and manipulating colors within text/code
  *
  * @example Usage
