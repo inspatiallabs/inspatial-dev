@@ -1,58 +1,120 @@
-import { assertEquals, assertRejects, assertExists } from "@inspatial/test";
 import {
-  inSpatialKV,
-  setKV,
+  test,
+  assertEquals,
+  assertRejects,
+  assertExists,
+} from "@inspatial/test";
+import {
+  atomic,
+  deleteKV,
   getKV,
   getManyKV,
-  deleteKV,
+  inSpatialKV,
   listKV,
-  atomic,
+  setKV,
   transaction,
   createKVQueueProcessor,
   watchKV,
   createKVWatcher,
   type KvSchema,
 } from "./index.ts";
+import { type, TypeErrors } from "@inspatial/type";
 
-
-// Define the schema types
-type UserSchema = {
-  key: ["user", number];
+/**
+ * # User Schema Type
+ * @summary #### Defines the structure for user data in the KV store
+ *
+ * The `UserSchema` validates and provides type safety for user records.
+ * Think of it like a form validator for user information.
+ *
+ * @since 1.0.0
+ * @category InSpatial KV
+ * @module Schema
+ * @kind type
+ * @access public
+ */
+const InUserSchema = type({
+  key: `["user", number]`,
   schema: {
-    id: string;
-    name: string;
-    email: string;
-  };
-};
+    id: "string",
+    name: "string",
+    email: "string",
+  },
+});
 
-type PostSchema = {
-  key: ["post", string];
+/**
+ * # Post Schema Type
+ * @summary #### Defines the structure for post data in the KV store
+ *
+ * The `PostSchema` validates and provides type safety for post records.
+ * Think of it like a document template for blog posts.
+ *
+ * @since 1.0.0
+ * @category InSpatial KV
+ * @module Schema
+ * @kind type
+ * @access public
+ */
+const InPostSchema = type({
+  key: `["post", string]`,
   schema: {
-    title: string;
-    content: string;
-    authorId: string;
-  };
-};
+    title: "string",
+    content: "string",
+    authorId: "string",
+  },
+});
 
-type TagsSchema = {
-  key: ["tags", string];
-  schema: string[];
-};
+/**
+ * # Tags Schema Type
+ * @summary #### Defines the structure for tags data in the KV store
+ *
+ * The `TagsSchema` validates and provides type safety for tag collections.
+ * Think of it like a list organizer for content categories.
+ *
+ * @since 1.0.0
+ * @category InSpatial KV
+ * @module Schema
+ * @kind type
+ * @access public
+ */
+const InTagsSchema = type({
+  key: `["tags", string]`,
+  schema: "string[]",
+});
 
-type CounterSchema = {
-  key: ["counter", string];
-  schema: { value: number };
-};
+/**
+ * # Counter Schema Type
+ * @summary #### Defines the structure for counter data in the KV store
+ *
+ * The `CounterSchema` validates and provides type safety for numeric counters.
+ * Think of it like a digital tally counter for tracking values.
+ *
+ * @since 1.0.0
+ * @category InSpatial KV
+ * @module Schema
+ * @kind type
+ * @access public
+ */
+const InCounterSchema = type({
+  key: `["counter", string]`,
+  schema: { value: "number" },
+});
+
+// Extract TypeScript types for static type checking
+type UserSchema = typeof InUserSchema.infer;
+type PostSchema = typeof InPostSchema.infer;
+type TagsSchema = typeof InTagsSchema.infer;
+type CounterSchema = typeof InCounterSchema.infer;
 
 // Combine schemas into single type
 type TestSchema = [UserSchema, PostSchema, TagsSchema, CounterSchema];
 
-Deno.test("InSpatial KV Tests", async (t) => {
+test("InSpatial KV Tests", async (t) => {
   const kv = await inSpatialKV.create<TestSchema>();
 
   await t.step("Basic CRUD Operations", async (t) => {
     await t.step("should create and retrieve a user", async () => {
-      const user: UserSchema["schema"] = {
+      const user: (typeof InUserSchema.infer)["schema"] = {
         id: "user1",
         name: "Ben Emma",
         email: "ben@inspatiallabs.com",
@@ -66,7 +128,7 @@ Deno.test("InSpatial KV Tests", async (t) => {
     });
 
     await t.step("should update a user", async () => {
-      const updatedUser: UserSchema["schema"] = {
+      const updatedUser: (typeof InUserSchema.infer)["schema"] = {
         id: "user1",
         name: "John Updated",
         email: "ben@inspatiallabs.com",
@@ -87,7 +149,7 @@ Deno.test("InSpatial KV Tests", async (t) => {
   });
 
   await t.step("Multiple Key Operations", async () => {
-    const users: UserSchema["schema"][] = [
+    const users: (typeof InUserSchema.infer)["schema"][] = [
       { id: "user1", name: "User 1", email: "user1@example.com" },
       { id: "user2", name: "User 2", email: "user2@example.com" },
     ];
@@ -110,83 +172,81 @@ Deno.test("InSpatial KV Tests", async (t) => {
       const users = [
         { id: "user1", name: "User A", email: "a@example.com" },
         { id: "user2", name: "User B", email: "b@example.com" },
-        { id: "user3", name: "User C", email: "c@example.com" }
+        { id: "user3", name: "User C", email: "c@example.com" },
       ];
-  
+
       for (let i = 0; i < users.length; i++) {
         await setKV(kv, ["user", i + 1], users[i]);
       }
     });
-  
+
     await t.step("should list all users with prefix", async () => {
       const results = await Array.fromAsync(
         listKV(kv, { prefix: ["user"] as const })
       );
-  
+
       assertEquals(results.length, 3);
       assertEquals(results[0].value.name, "User A");
       assertEquals(results[1].value.name, "User B");
       assertEquals(results[2].value.name, "User C");
     });
-  
+
     await t.step("should list users with start and end bounds", async () => {
       const results = await Array.fromAsync(
         listKV(kv, {
           prefix: ["user"] as const,
           start: ["user", 1] as const,
-          end: ["user", 3] as const
+          end: ["user", 3] as const,
         })
       );
-  
+
       assertEquals(results.length, 2);
       assertEquals(results[0].value.name, "User A");
       assertEquals(results[1].value.name, "User B");
     });
-  
+
     await t.step("should list users with limit", async () => {
       const results = await Array.fromAsync(
         listKV(kv, {
           prefix: ["user"] as const,
-          limit: 2
+          limit: 2,
         })
       );
-  
+
       assertEquals(results.length, 2);
     });
-  
+
     await t.step("should list users in reverse", async () => {
       const results = await Array.fromAsync(
         listKV(kv, {
           prefix: ["user"] as const,
-          reverse: true
+          reverse: true,
         })
       );
-  
+
       assertEquals(results.length, 3);
       assertEquals(results[0].value.name, "User C");
       assertEquals(results[1].value.name, "User B");
       assertEquals(results[2].value.name, "User A");
     });
-  
+
     // Cleanup test data
     await t.step("should cleanup test data", async () => {
       await deleteKV(kv, ["user", 1]);
-      await deleteKV(kv, ["user", 2]); 
+      await deleteKV(kv, ["user", 2]);
       await deleteKV(kv, ["user", 3]);
     });
   });
 
   await t.step("Atomic Operations", async (t) => {
     await t.step("should perform atomic operations", async () => {
-      const newUser: UserSchema["schema"] = {
+      const newUser: (typeof InUserSchema.infer)["schema"] = {
         id: "user3",
         name: "User 3",
         email: "user3@example.com",
       };
 
-      const result = await atomic(kv)
-        .set(["user", 3], newUser)
-        .commit();
+      const result = await atomic(kv).set(["user", 3], newUser).commit();
 
       assertEquals(result.ok, true);
     });
@@ -195,13 +255,13 @@ Deno.test("InSpatial KV Tests", async (t) => {
       const result = await transaction(kv, async (tx) => {
         const user = await getKV(kv, ["user", 3]);
         if (!user.value) throw new Error("User not found");
-        
+
         return tx
           .check({ key: ["user", 3], versionstamp: user.versionstamp })
           .set(["user", 3], {
             ...user.value,
             name: "User 3 Updated",
-          });
+          } as (typeof InUserSchema.infer)["schema"]);
       });
 
       assertEquals(result.ok, true);
@@ -239,7 +299,7 @@ Deno.test("InSpatial KV Tests", async (t) => {
         id: "user1",
         name: "Updated via Watch",
         email: "user1@example.com",
-      } as UserSchema["schema"]);
+      } as (typeof InUserSchema.infer)["schema"]);
 
       for await (const [entry] of watcher) {
         if (entry.value?.name === "Updated via Watch") {
@@ -256,17 +316,27 @@ Deno.test("InSpatial KV Tests", async (t) => {
 });
 
 // Schema Type Tests
-Deno.test("Schema Type Safety", async (t) => {
+test("Schema Type Safety", async (t) => {
   const kv = await inSpatialKV.create<TestSchema>();
 
   await t.step("should enforce schema types", async () => {
-    // @ts-expect-error - Testing type safety for incorrect schema
-    await assertRejects(() => setKV(kv, ["user", 1], { incorrect: "schema" }));
+    // Testing runtime validation for incorrect schema through API rejections
+    const invalidUser = { incorrect: "schema" };
+    await assertRejects(() => setKV(kv, ["user", 1], invalidUser as any));
 
-    // @ts-expect-error - Testing type safety for incorrect key type
-    await assertRejects(() => setKV(kv, ["user", "string"], { id: "1" }));
+    // Testing key type validation
+    await assertRejects(() =>
+      setKV(kv, ["user", "string" as any], {
+        id: "1",
+        name: "Test",
+        email: "test@example.com",
+      })
+    );
 
-    // @ts-expect-error - Testing type safety for incorrect value type
-    await assertRejects(() => setKV(kv, ["tags", "test"], { not: "array" }));
+    // Testing array type validation
+    const invalidTagsValue = { not: "array" };
+    await assertRejects(() =>
+      setKV(kv, ["tags", "test"], invalidTagsValue as any)
+    );
   });
 });
