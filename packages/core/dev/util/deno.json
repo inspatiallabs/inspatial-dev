@@ -55,7 +55,8 @@
     "./stringify": "./src/stringify.ts",
     "./hyphenize": "./src/hyphenize.ts",
     "./escape-html": "./src/escape-html.ts",
-    "./window-size": "./src/window-size.ts"
+    "./window-size": "./src/window-size.ts",
+    "./array": "./src/array.ts"
   },
 
   "publish": {

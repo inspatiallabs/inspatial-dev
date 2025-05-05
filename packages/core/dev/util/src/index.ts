@@ -49,6 +49,7 @@ export * from "./stringify.ts";
 export * from "./hyphenize.ts";
 export * from "./escape-html.ts";
 export * from "./window-size.ts";
+export * from "./array.ts";
 
 // export * from "./getletterspacing.ts";
 // export * from "./server-action.ts"; moved to InSpatial Run as part of the Framework Runtime
