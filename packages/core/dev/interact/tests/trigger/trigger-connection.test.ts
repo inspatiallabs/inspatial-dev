@@ -9,7 +9,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from "../../../test/src/index.ts";
 
-import { createState } from "../../core/state.ts";
+import { createState } from "../../state/state.ts";
 import { createTrigger } from "../../trigger/src/action.ts";
 
 import {

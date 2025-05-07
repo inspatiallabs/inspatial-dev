@@ -4,9 +4,9 @@
  */
 
 import { test, expect, spy, assertSpyCalls, mockSession, mockFn } from "@inspatial/test";
-import { createSignalConditionTrigger } from "../../core/signal-trigger.ts";
 import { createSignal } from "../../signal/src/signals.ts";
 import { createTriggerInstance } from "../../trigger/src/action.ts";
+import { createSignalConditionTrigger } from "../../state/signal-trigger.ts"
 
 // Mock the trigger system
 mockSession();

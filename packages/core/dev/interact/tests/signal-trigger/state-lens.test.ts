@@ -4,7 +4,7 @@
  */
 
 import { test, expect, spy, assertSpyCalls, mockSession } from "@inspatial/test";
-import { StateLens, createStateLens } from "../../core/signal-trigger.ts";
+import { StateLens, createStateLens } from "../../state/signal-trigger.ts";
 import { createSignal } from "../../signal/src/signals.ts";
 
 // Mock the trigger system

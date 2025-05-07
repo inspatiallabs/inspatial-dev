@@ -4,7 +4,7 @@
  */
 
 import { test, expect } from "@inspatial/test";
-import { createTriggerSignal } from "../../core/signal-trigger.ts";
+import { createTriggerSignal } from "../../state/signal-trigger.ts";
 
 // Track destroy calls
 let destroyCalls = 0;
