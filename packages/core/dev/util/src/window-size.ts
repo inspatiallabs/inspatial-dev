@@ -441,10 +441,27 @@ function createWindowSizeProvider(): WindowSizeProvider {
 }
 
 /**
+ * Interface for the WindowSize utility
+ */
+export interface WindowSizeUtilType {
+  /** Get the current Window size */
+  getSize(): WindowSize;
+
+  /** Check if current Window width is below a specific breakpoint */
+  isBelowBreakpoint(size: ScreenSize): boolean;
+
+  /** Subscribe to Window size changes */
+  subscribe(callback: SizeSubscriber): () => void;
+
+  /** Clean up event listeners and resources - call when done */
+  cleanup(): void;
+}
+
+/**
  * A module to track Window size changes with TypeScript support
  * Works across DOM, GPU, and Native environments
  */
-const WindowSize = (function () {
+const WindowSize: WindowSizeUtilType = (function () {
   // Create the appropriate provider for the current environment
   const provider = createWindowSizeProvider();
 
