@@ -1,0 +1,62 @@
+{
+  "name": "@inspatial/motion",
+  "version": "0.1.0",
+  "description": "Universal Motion Module",
+  "author": "InSpatial Labs <in@spatiallabs.email>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inspatiallabs/inspatial-core.git",
+    "directory": "packages/core/dev/motion"
+  },
+  "bugs": {
+    "url": "https://github.com/inspatiallabs/inspatial-core/issues"
+  },
+  "homepage": "https://inspatial.dev/motion",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {},
+  "files": ["src", "dist"],
+  "keywords": [
+    "animation",
+    "motion",
+    "interpolation",
+    "tween",
+    "timeline",
+    "inspatial",
+    "physics",
+    "spring",
+    "easing",
+    "animation-library",
+    "animation-engine",
+    "animation-library",
+    "animation-engine"
+  ],
+
+  "imports": {
+    "@inspatial/test": "jsr:@inspatial/test@^0.1.1"
+  },
+  "tasks": {
+    "test": "deno test --allow-all --no-check --unstable-sloppy-imports",
+    "dev": "deno run --allow-all --no-check --unstable-sloppy-imports --watch src/index.ts",
+    "build": "deno check src/index.ts",
+    "lint-fix": "deno lint --rules-exclude=no-url-import-extension src/"
+  },
+  "compilerOptions": {
+    "checkJs": false,
+    "strict": true,
+    "noImplicitAny": false,
+    "lib": ["DOM", "ES2022"]
+  },
+  "lint": {
+    "include": ["src/"],
+    "exclude": ["node_modules/", "dist/"],
+    "rules": {
+      "tags": ["recommended"],
+      "exclude": ["no-explicit-any"]
+    }
+  },
+  "fmt": {
+    "include": ["src/"]
+  }
+}

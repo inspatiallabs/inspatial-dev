@@ -1,0 +1,309 @@
+import { doc, win } from "./consts.ts";
+import { globals } from "./globals.ts";
+import { parseTargets } from "./targets.ts";
+
+// Define helper functions instead of importing from helpers.ts
+const isFnc = (value: unknown): value is Function => typeof value === 'function';
+
+const mergeObjects = <T extends Record<string, any>, U extends Record<string, any>>(
+  target: T, 
+  source?: U
+): T & Partial<U> => {
+  if (!source) return target as T & Partial<U>;
+  
+  const result = { ...target };
+  for (const key in source) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      result[key] = source[key];
+    }
+  }
+  return result as T & Partial<U>;
+};
+
+
+// Define interfaces
+export interface ScopeInterface {
+  defaults: any;
+  root: Document | DOMTarget;
+  constructors: ScopeConstructor[];
+  revertConstructors: Function[];
+  revertibles: Revertible[];
+  methods: Record<string, Function>;
+  matches: Record<string, boolean>;
+  mediaQueryLists: Record<string, MediaQueryList>;
+  data: Record<string, any>;
+  execute<T>(cb: (scope: Scope) => T): T;
+  refresh(): Scope;
+  add(a1: ScopeConstructor | string, a2?: ScopeMethod): Scope;
+  handleEvent(e: Event): void;
+  revert(): void;
+}
+
+export interface ReactRef {
+  current?: HTMLElement | SVGElement | null;
+}
+
+export interface AngularRef {
+  nativeElement?: HTMLElement | SVGElement;
+}
+
+export interface ScopeParams {
+  root?: DOMTargetSelector | ReactRef | AngularRef;
+  defaults?: Record<string, any>;
+  mediaQueries?: Record<string, string>;
+}
+
+export interface Revertible {
+  revert(): void;
+}
+
+export type DOMTarget = HTMLElement | SVGElement;
+export type DOMTargetSelector = string | DOMTarget | NodeList | HTMLCollection | Array<DOMTarget>;
+
+export type ScopeCleanup = (scope?: Scope) => void;
+export type ScopeConstructor = (scope: Scope) => ScopeCleanup | void;
+export type ScopeMethod = (...args: any[]) => ScopeCleanup | void;
+
+/**
+ * @callback ScopeCleanup
+ * @param {Scope} [scope]
+ */
+
+/**
+ * @callback ScopeConstructor
+ * @param {Scope} [scope]
+ * @return {ScopeCleanup|void}
+ */
+
+/**
+ * @callback ScopeMethod
+ * @param {...*} args
+ * @return {ScopeCleanup|void}
+ */
+
+/**
+ * # Scope
+ * #### A container for animations, media queries, and shared data
+ * 
+ * The `Scope` class manages animations and provides a container for sharing data
+ * and handling responsive behaviors through media queries.
+ * 
+ * @since 0.1.0
+ * @implements {ScopeInterface}
+ */
+ export class Scope implements ScopeInterface {
+  /** Default parameters for animations in this scope */
+  public defaults: any;
+  
+  /** Root element for targeting elements within the scope */
+  public root: Document | DOMTarget;
+  
+  /** Array of constructor functions that create scope components */
+  public constructors: ScopeConstructor[];
+  
+  /** Array of functions to revert constructor effects */
+  public revertConstructors: Function[];
+  
+  /** Array of objects that can be reverted */
+  public revertibles: Revertible[];
+  
+  /** Object of methods attached to the scope */
+  public methods: Record<string, Function>;
+  
+  /** Object of media query matches */
+  public matches: Record<string, boolean>;
+  
+  /** Object of media query lists */
+  public mediaQueryLists: Record<string, MediaQueryList>;
+  
+  /** Object for storing arbitrary data */
+  public data: Record<string, any>;
+
+  /**
+   * Create a new scope instance
+   * @param parameters - Configuration options for the scope
+   */
+  constructor(parameters: ScopeParams = {}) {
+    // Add scope to global revertibles if global scope exists
+    if (globals.scope) {
+      (globals.scope as unknown as ScopeInterface).revertibles.push(this as unknown as Revertible);
+    }
+    
+    const rootParam = parameters.root;
+    // Use document as fallback if doc is null
+    let root: Document | DOMTarget = doc || document;
+    
+    if (rootParam) {
+      const refCurrent = (rootParam as ReactRef).current;
+      const nativeElement = (rootParam as AngularRef).nativeElement;
+      const targetElement = parseTargets(rootParam as DOMTargetSelector)[0];
+      
+      root = refCurrent || nativeElement || targetElement || root;
+    }
+    
+    const scopeDefaults = parameters.defaults;
+    const globalDefault = globals.defaults;
+    const mediaQueries = parameters.mediaQueries;
+    
+    this.defaults = scopeDefaults
+      ? mergeObjects(scopeDefaults, globalDefault)
+      : globalDefault;
+    this.root = root;
+    this.constructors = [];
+    this.revertConstructors = [];
+    this.revertibles = [];
+    this.methods = {};
+    this.matches = {};
+    this.mediaQueryLists = {};
+    this.data = {};
+    
+    if (mediaQueries && win) {
+      for (let mq in mediaQueries) {
+        const _mq = win.matchMedia(mediaQueries[mq]);
+        if (_mq) {
+          this.mediaQueryLists[mq] = _mq;
+          _mq.addEventListener("change", this);
+        }
+      }
+    }
+  }
+
+  /**
+   * Execute a callback with this scope as the active scope
+   * 
+   * @param cb - Callback function to execute
+   * @returns The result of the callback
+   */
+  execute<T>(cb: (scope: Scope) => T): T {
+    const activeScope = globals.scope;
+    const activeRoot = globals.root;
+    const activeDefaults = globals.defaults;
+    
+    // Cast to any to avoid type compatibility issues
+    globals.scope = this as unknown as typeof globals.scope;
+    globals.root = this.root as typeof globals.root;
+    globals.defaults = this.defaults;
+    
+    const mqs = this.mediaQueryLists;
+    for (let mq in mqs) this.matches[mq] = mqs[mq].matches;
+    
+    const returned = cb(this);
+    
+    globals.scope = activeScope;
+    globals.root = activeRoot;
+    globals.defaults = activeDefaults;
+    
+    return returned;
+  }
+
+  /**
+   * Refresh all constructors
+   * 
+   * @returns This scope instance for chaining
+   */
+  refresh(): Scope {
+    this.execute(() => {
+      let i = this.revertibles.length;
+      let y = this.revertConstructors.length;
+      
+      while (i--) {
+        const revertible = this.revertibles[i];
+        if (typeof revertible.revert === 'function') {
+          revertible.revert();
+        }
+      }
+      
+      while (y--) this.revertConstructors[y](this);
+      
+      this.revertibles.length = 0;
+      this.revertConstructors.length = 0;
+      
+      this.constructors.forEach((constructor) => {
+        const revertConstructor = constructor(this);
+        if (revertConstructor) {
+          this.revertConstructors.push(revertConstructor);
+        }
+      });
+    });
+    
+    return this;
+  }
+
+  /**
+   * Add a constructor or method to the scope
+   * 
+   * @param a1 - Either a constructor function or method name
+   * @param a2 - Optional method implementation when a1 is a method name
+   * @returns This scope instance for chaining
+   */
+  add(a1: ScopeConstructor | string, a2?: ScopeMethod): Scope {
+    if (isFnc(a1)) {
+      const constructor = a1 as ScopeConstructor;
+      this.constructors.push(constructor);
+      
+      this.execute(() => {
+        const revertConstructor = constructor(this);
+        if (revertConstructor) {
+          this.revertConstructors.push(revertConstructor);
+        }
+      });
+    } else if (a2) {
+      this.methods[a1 as string] = (...args: any[]) =>
+        this.execute(() => a2(...args));
+    }
+    
+    return this;
+  }
+
+  /**
+   * Handle events from event listeners
+   * 
+   * @param e - Event object
+   */
+  handleEvent(e: Event): void {
+    switch (e.type) {
+      case "change":
+        this.refresh();
+        break;
+    }
+  }
+
+  /**
+   * Revert all changes and clean up resources
+   */
+  revert(): void {
+    const revertibles = this.revertibles;
+    const revertConstructors = this.revertConstructors;
+    const mqs = this.mediaQueryLists;
+    
+    let i = revertibles.length;
+    let y = revertConstructors.length;
+    
+    while (i--) {
+      const revertible = revertibles[i];
+      if (typeof revertible.revert === 'function') {
+        revertible.revert();
+      }
+    }
+    
+    while (y--) revertConstructors[y](this);
+    
+    for (let mq in mqs) mqs[mq].removeEventListener("change", this);
+    
+    revertibles.length = 0;
+    revertConstructors.length = 0;
+    this.constructors.length = 0;
+    this.matches = {};
+    this.methods = {};
+    this.mediaQueryLists = {};
+    this.data = {};
+  }
+}
+
+/**
+ * Create a new scope instance
+ * 
+ * @param params - Configuration options for the scope
+ * @returns A new scope instance
+ */
+export const createScope = (params?: ScopeParams): Scope => new Scope(params);
