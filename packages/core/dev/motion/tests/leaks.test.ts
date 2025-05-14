@@ -1,15 +1,15 @@
 // Import test setup first to ensure DOM mocks are available
-import "../test_setup.ts";
+// import "./test_setup.ts";
 
 import { describe, it, expect, beforeEach } from "@inspatial/test";
-import { InMotion } from "./engine.ts";
-import { beforeEachTest } from "../test_setup.ts";
+import { InMotion } from "../src/engine.ts";
+// import { beforeEachTest } from "./test_setup.ts";
 
 describe("InMotion Engine Leaks Detection", () => {
   // Setup a clean environment before each test
-  beforeEach(() => {
-    beforeEachTest();
-  });
+  // beforeEach(() => {
+  //   beforeEachTest();
+  // });
 
   it("Should not contain any active tickable", async () => {
     // No init method needed, InMotion is already instantiated in engine.ts

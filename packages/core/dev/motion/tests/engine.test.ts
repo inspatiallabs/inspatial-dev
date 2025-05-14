@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@inspatial/test";
-import { createMotion, InMotion, inMotion } from "./index.ts";
+import { createMotion, InMotion, inMotion } from "../src/index.ts";
 
 describe("InMotion Engine Core", () => {
   it("Should call set useDefaultMainLoop to false should prevent animations from running", (resolve) => {

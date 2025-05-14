@@ -5,10 +5,10 @@ import {
   createMotion,
   createMotionTimer,
   createMotionTimeline,
-} from "./index.ts";
-import { getChildAtIndex } from "./utils/index.ts";
-import { compositionTypes, valueTypes } from "./consts.ts";
-import { removeChild } from "./helpers.ts";
+} from "../src/index.ts";
+import { getChildAtIndex } from "../src/utils/index.ts";
+import { compositionTypes, valueTypes } from "../src/consts.ts";
+import { removeChild } from "../src/helpers.ts";
 
 describe("InMotion Tweens", () => {
   it("Should handle single tween timings", () => {

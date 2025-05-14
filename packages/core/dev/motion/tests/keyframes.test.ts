@@ -1,7 +1,7 @@
 import { it, describe, expect } from "@inspatial/test";
-import { createMotion, inMotion } from "./index.ts";
-import { getChildAtIndex, getTweenDelay } from "./utils/index.ts";
-import { valueTypes } from "./consts.ts";
+import { createMotion, inMotion } from "../src/index.ts";
+import { getChildAtIndex, getTweenDelay } from "../src/utils/index.ts";
+import { valueTypes } from "../src/consts.ts";
 
 describe("InMotion Keyframes", () => {
   it("Should handle an array of one raw value as a simple value", () => {

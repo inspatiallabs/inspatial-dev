@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@inspatial/test";
-import { createMotionScope } from "./index.ts";
+import { createMotionScope } from "../src/index.ts";
 
 describe("InMotion Scope", () => {
   it("Should default to global root with no params", () => {

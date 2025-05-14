@@ -1,6 +1,6 @@
 import { describe, it, expect } from "@inspatial/test";
-import { getChildAtIndex, getTweenDelay } from "./utils/index.ts";
-import { createMotion, createMotionTimeline, inSequence } from "./index.ts";
+import { getChildAtIndex, getTweenDelay } from "../src/utils/index.ts";
+import { createMotion, createMotionTimeline, inSequence } from "../src/index.ts";
 
 describe("InMotion Sequence", () => {
   it("Should increase each values by a specific value for each elements", () => {

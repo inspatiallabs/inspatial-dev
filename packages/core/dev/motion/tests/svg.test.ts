@@ -1,12 +1,11 @@
 import { describe, it, expect } from "@inspatial/test";
-import { getChildAtIndex, getTweenDelay } from "./utils/index.ts";
 import {
   createMotion,
   createMotionTimeline,
   inSequence,
   inMotion,
   createMotionSVG,
-} from "./index.ts";
+} from "../src/index.ts";
 
 describe("InMotion SVG", () => {
   it("Should createMotionSVG.draw", (resolve) => {

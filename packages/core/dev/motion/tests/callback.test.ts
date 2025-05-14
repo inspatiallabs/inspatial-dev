@@ -1,5 +1,5 @@
 import { it, describe, expect } from "@inspatial/test";
-import { createMotion, createMotionTimeline, inMotion } from "./index.ts";
+import { createMotion, createMotionTimeline, inMotion } from "../src/index.ts";
 
 /*################################(FUNCTIONS)################################*/
 

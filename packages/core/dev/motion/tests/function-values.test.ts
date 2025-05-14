@@ -1,7 +1,7 @@
 import { it, describe, expect } from "@inspatial/test";
-import { createMotion, inSequence, inMotion } from "./index.ts";
-import { valueTypes, minValue } from "./consts.ts";
-import { getChildAtIndex, getTweenDelay } from "./utils/index.ts";
+import { createMotion, inSequence, inMotion } from "../src/index.ts";
+import { valueTypes, minValue } from "../src/consts.ts";
+import { getChildAtIndex, getTweenDelay } from "../src/utils/index.ts";
 
 describe("InMotion Function based values", () => {
   it("Should call basic function based values", () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "@inspatial/test";
-import { getChildAtIndex } from "./utils/index.ts";
-import { createMotion, inMotion } from "./index.ts";
+import { getChildAtIndex } from "../src/utils/index.ts";
+import { createMotion, inMotion } from "../src/index.ts";
 
 /*#########################################(VAR)#########################################*/
 const validUnits = [

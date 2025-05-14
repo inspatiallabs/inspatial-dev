@@ -3,7 +3,7 @@ import {
   createMotion,
   createMotionTimeline,
   createMotionTimer,
-} from "./index.ts";
+} from "../src/index.ts";
 
 describe("InMotion Promises", () => {
   it("Should then() on timer", (resolve) => {

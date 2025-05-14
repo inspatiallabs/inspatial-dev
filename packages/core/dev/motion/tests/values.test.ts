@@ -1,8 +1,8 @@
 import { describe, it, expect } from "@inspatial/test";
-import { inMotion, createMotion } from "./index.ts";
-import { getChildAtIndex } from "./utils/index.ts";
-import { unitsExecRgx, valueTypes } from "./consts.ts";
-import { forEachChildren } from "./helpers.ts";
+import { inMotion, createMotion } from "../src/index.ts";
+import { getChildAtIndex } from "../src/utils/index.ts";
+import { unitsExecRgx, valueTypes } from "../src/consts.ts";
+import { forEachChildren } from "../src/helpers.ts";
 
 describe("InMotion Values", () => {
   const numberTypeTestTarget = {

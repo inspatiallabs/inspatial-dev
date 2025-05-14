@@ -7,13 +7,13 @@ import {
   forEachChildren,
 } from "./helpers.ts";
 
-import { additive, addAdditiveAnimation } from "./additive.ts";
+// import { additive, addAdditiveAnimation } from "./additive.ts"; // Remove static import
 
 const lookups = {
   /** @type {TweenReplaceLookups} */
   _rep: new WeakMap(),
   /** @type {TweenAdditiveLookups} */
-  _add: new Map(),
+  _add: new Map(), // This Map might store lookups that additive.ts also uses.
 };
 
 /**
@@ -61,11 +61,10 @@ export const overrideTween = (tween) => {
  * @param  {TweenPropertySiblings} siblings
  * @return {Tween}
  */
-export const composeTween = (tween, siblings) => {
+export const composeTween = async (tween, siblings) => { // Made async for dynamic import
   const tweenCompositionType = tween._composition;
 
   // Handle replaced tweens
-
   if (tweenCompositionType === compositionTypes.replace) {
     const tweenAbsStartTime = tween._absoluteStartTime;
 
@@ -73,30 +72,19 @@ export const composeTween = (tween, siblings) => {
 
     const prevSibling = tween._prevRep;
 
-    // Update the previous siblings for composition replace tweens
-
     if (prevSibling) {
       const prevParent = prevSibling.parent;
       const prevAbsEndTime =
         prevSibling._absoluteStartTime + prevSibling._changeDuration;
 
-      // Handle looped animations tween
-
       if (
-        // Check if the previous tween is from a different animation
         tween.parent.id !== prevParent.id &&
-        // Check if the animation has loops
         prevParent.iterationCount > 1 &&
-        // Check if _absoluteChangeEndTime of last loop overlaps the current tween
         prevAbsEndTime + (prevParent.duration - prevParent.iterationDuration) >
           tweenAbsStartTime
       ) {
-        // TODO: Find a way to only override the iterations overlapping with the tween
         overrideTween(prevSibling);
-
         let prevPrevSibling = prevSibling._prevRep;
-
-        // If the tween was part of a set of keyframes, override its siblings
         while (prevPrevSibling && prevPrevSibling.parent.id === prevParent.id) {
           overrideTween(prevPrevSibling);
           prevPrevSibling = prevPrevSibling._prevRep;
@@ -120,10 +108,7 @@ export const composeTween = (tween, siblings) => {
         }
       }
 
-      // Pause (and cancel) the parent if it only contains overlapped tweens
-
       let pausePrevParentAnimation = true;
-
       forEachChildren(prevParent, (/** @type Tween */ t) => {
         if (!t._isOverlapped) pausePrevParentAnimation = false;
       });
@@ -144,43 +129,17 @@ export const composeTween = (tween, siblings) => {
           }
         } else {
           prevParent.cancel();
-          // Previously, calling .cancel() on a timeline child would affect the render order of other children
-          // Worked around this by marking it as .completed and using .pause() for safe removal in the engine loop
-          // This is no longer needed since timeline tween composition is now handled separatly
-          // Keeping this here for reference
-          // prevParent.completed = true;
-          // prevParent.pause();
         }
       }
     }
-
-    // let nextSibling = tween._nextRep;
-
-    // // All the next siblings are automatically overridden
-
-    // if (nextSibling && nextSibling._absoluteStartTime >= tweenAbsStartTime) {
-    //   while (nextSibling) {
-    //     overrideTween(nextSibling);
-    //     nextSibling = nextSibling._nextRep;
-    //   }
-    // }
-
-    // if (nextSibling && nextSibling._absoluteStartTime < tweenAbsStartTime) {
-    //   while (nextSibling) {
-    //     overrideTween(nextSibling);
-    //     console.log(tween.id, nextSibling.id);
-    //     nextSibling = nextSibling._nextRep;
-    //   }
-    // }
-
-    // Handle additive tweens composition
   } else if (tweenCompositionType === compositionTypes.blend) {
+    const { addAdditiveAnimation } = await import("./additive.ts"); // Dynamic import
     const additiveTweenSiblings = getTweenSiblings(
       tween.target,
       tween.property,
       "_add"
     );
-    const additiveAnimation = addAdditiveAnimation(lookups._add);
+    const additiveAnimation = addAdditiveAnimation(lookups._add); // lookups._add might need adjustment if additive.ts also defines/manages it
 
     let lookupTween = additiveTweenSiblings._head;
 
@@ -196,8 +155,6 @@ export const composeTween = (tween, siblings) => {
       addChild(additiveTweenSiblings, lookupTween);
       addChild(additiveAnimation, lookupTween);
     }
-
-    // Convert the values of TO to FROM and set TO to 0
 
     const toNumber = tween._toNumber;
     tween._fromNumber = lookupTween._fromNumber - toNumber;
@@ -227,7 +184,7 @@ export const composeTween = (tween, siblings) => {
  * @param  {Tween} tween
  * @return {Tween}
  */
-export const removeTweenSliblings = (tween) => {
+export const removeTweenSliblings = async (tween) => { // Made async if it might call composeTween or similar async logic due to dynamic imports elsewhere
   const tweenComposition = tween._composition;
   if (tweenComposition !== compositionTypes.none) {
     const tweenTarget = tween.target;
@@ -237,17 +194,19 @@ export const removeTweenSliblings = (tween) => {
     const tweenReplaceSiblings = replaceTargetProps[tweenProperty];
     removeChild(tweenReplaceSiblings, tween, "_prevRep", "_nextRep");
     if (tweenComposition === compositionTypes.blend) {
+      const { additive } = await import("./additive.ts"); // Dynamically import `additive` for its `animation` property
       const addTweensLookup = lookups._add;
       const addTargetProps = addTweensLookup.get(tweenTarget);
-      if (!addTargetProps) return;
+      if (!addTargetProps) return tween; // Return tween if addTargetProps is undefined
       const additiveTweenSiblings = addTargetProps[tweenProperty];
       const additiveAnimation = additive.animation;
       removeChild(additiveTweenSiblings, tween, "_prevAdd", "_nextAdd");
-      // If only one tween is left in the additive lookup, it's the tween lookup
       const lookupTween = additiveTweenSiblings._head;
       if (lookupTween && lookupTween === additiveTweenSiblings._tail) {
         removeChild(additiveTweenSiblings, lookupTween, "_prevAdd", "_nextAdd");
-        removeChild(additiveAnimation, lookupTween);
+        if (additiveAnimation) { // Check if additiveAnimation is not null
+            removeChild(additiveAnimation, lookupTween);
+        }
         let shouldClean = true;
         for (let prop in addTargetProps) {
           if (addTargetProps[prop]._head) {

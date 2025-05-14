@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@inspatial/test";
-import { createMotion, inMotion } from "./index.ts";
+import { createMotion, inMotion } from "../src/index.ts";
 
 describe("InMotion Timer", () => {
   it("Should handle specified timings parameters", (resolve) => {

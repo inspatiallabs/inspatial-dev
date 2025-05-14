@@ -1,6 +1,6 @@
 import { describe, it, expect } from "@inspatial/test";
-import { render } from "./render.ts"
-import { createMotion, createMotionTimer, createMotionTimeline, InMotion } from "./index.ts";
+import { render } from "../src/render.ts"
+import { createMotion, createMotionTimer, createMotionTimeline, InMotion } from "../src/index.ts";
 
 const totalInstances = 10000;
 const targets = [];

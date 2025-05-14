@@ -1,19 +1,19 @@
 // Import test setup to ensure DOM mocks are available
-import "../test_setup.ts";
+// import "./test_setup.ts";
 
 import { it, describe, expect, beforeEach, afterEach } from "@inspatial/test";
-import { createMotion, createMotionAnimation } from "./animation.ts";
-import { tweenTypes, minValue } from "./consts.ts";
-import { createMotionTimer } from "./timer.ts";
-import { getChildAtIndex, getChildLength } from "./utils/index.ts";
-import { inMotion } from "./index.ts";
-import { beforeEachTest } from "../test_setup.ts";
+import { createMotion, createMotionAnimation } from "../src/animation.ts";
+import { tweenTypes, minValue } from "../src/consts.ts";
+import { createMotionTimer } from "../src/timer.ts";
+import { getChildAtIndex, getChildLength } from "../src/utils/index.ts";
+import { inMotion } from "../src/index.ts";
+// import { beforeEachTest } from "./test_setup.ts";
 
 describe("InMotion Animations", () => {
   // Run beforeEach setup before every test to ensure a clean environment
-  beforeEach(() => {
-    beforeEachTest();
-  });
+  // beforeEach(() => {
+  //   beforeEachTest();
+  // });
 
   // Animation types
 

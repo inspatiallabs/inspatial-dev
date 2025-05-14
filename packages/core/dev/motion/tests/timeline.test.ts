@@ -5,9 +5,9 @@ import {
   inMotion,
   createMotionTimer,
   createMotion,
-} from "./index.ts";
-import { compositionTypes, minValue } from "./consts.ts";
-import { getChildAtIndex } from "./utils/index.ts";
+} from "../src/index.ts";
+import { compositionTypes, minValue } from "../src/consts.ts";
+import { getChildAtIndex } from "../src/utils/index.ts";
 
 describe("InMotion Timeline", () => {
   function createTL() {

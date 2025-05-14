@@ -4,9 +4,9 @@ import {
   createMotionTimeline,
   createMotionTimer,
   inMotion,
-} from "./index.ts";
-import { minValue } from "./consts.ts";
-import { getChildAtIndex, getTweenDelay } from "./utils/index.ts";
+} from "../src/index.ts";
+import { minValue } from "../src/consts.ts";
+import { getChildAtIndex, getTweenDelay } from "../src/utils/index.ts";
 
 /*#####################################(VARS)#####################################*/
 let testObject = {

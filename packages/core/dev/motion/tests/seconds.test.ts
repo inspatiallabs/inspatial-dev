@@ -1,12 +1,12 @@
 import { describe, it, expect } from "@inspatial/test";
-import { getChildAtIndex } from "./utils/index.ts";
-import { minValue } from "./consts.ts";
+import { getChildAtIndex } from "../src/utils/index.ts";
+import { minValue } from "../src/consts.ts";
 import {
   createMotion,
   createMotionTimeline,
   createMotionTimer,
   InMotion,
-} from "./index.ts";
+} from "../src/index.ts";
 
 describe("InMotion Seconds", () => {
   it("Calls added to a 0 duration timeline with a delay should not fire before the end of the delay duration", (resolve) => {

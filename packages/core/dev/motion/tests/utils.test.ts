@@ -1,7 +1,7 @@
 import { describe, it, expect } from "@inspatial/test";
-import { inMotion, createMotion, createMotionTimeline } from "./index.ts";
-import { getChildAtIndex, getChildLength } from "./utils/index.ts";
-import { addChild, removeChild } from "./helpers.ts";
+import { inMotion, createMotion, createMotionTimeline } from "../src/index.ts";
+import { getChildAtIndex, getChildLength } from "../src/utils/index.ts";
+import { addChild, removeChild } from "../src/helpers.ts";
 
 /*#########################################(VAR)#########################################*/
 const testObject = {
