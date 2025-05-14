@@ -1,52 +1,60 @@
-import { test, describe, it, expect } from "@inspatial/test";
-import { animate } from "./animation.ts";
-import { tweenTypes, minValue } from "./consts.ts";
-import { createTimer } from "./timer.ts";
-import { getChildAtIndex, getChildLength } from "./utils/index.ts";
-import { forEachChildren } from "./helpers.ts";
-import { inMotion } from "./index.ts";
+// Import test setup to ensure DOM mocks are available
+import "../test_setup.ts";
 
-describe("Animations", () => {
+import { it, describe, expect, beforeEach, afterEach } from "@inspatial/test";
+import { createMotion, createMotionAnimation } from "./animation.ts";
+import { tweenTypes, minValue } from "./consts.ts";
+import { createMotionTimer } from "./timer.ts";
+import { getChildAtIndex, getChildLength } from "./utils/index.ts";
+import { inMotion } from "./index.ts";
+import { beforeEachTest } from "../test_setup.ts";
+
+describe("InMotion Animations", () => {
+  // Run beforeEach setup before every test to ensure a clean environment
+  beforeEach(() => {
+    beforeEachTest();
+  });
+
   // Animation types
 
-  test("Get Attribute tween type with SVG attribute values", () => {
-    const animation = animate("#svg-element path", {
+  it("Should get the Attribute tween type with SVG attribute values", () => {
+    const animation = createMotion("#svg-element path", {
       stroke: "#FFFFFF",
       d: "M80 20c-30 0 0 30-30 30",
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).to.equal(
+    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(
       tweenTypes.ATTRIBUTE
     );
-    expect(getChildAtIndex(animation, 1)._tweenType).to.equal(
+    expect(getChildAtIndex(animation, 1)._tweenType).toEqual(
       tweenTypes.ATTRIBUTE
     );
   });
 
-  test("Get CSS tween type with DOM attribute values", () => {
-    const animation = animate(".with-width-attribute", {
+  it("Should get the CSS tween type with DOM attribute values", () => {
+    const animation = createMotion(".with-width-attribute", {
       width: 100,
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).to.equal(tweenTypes.CSS);
-    expect(getChildAtIndex(animation, 1)._tweenType).to.equal(tweenTypes.CSS);
+    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(tweenTypes.CSS);
+    expect(getChildAtIndex(animation, 1)._tweenType).toEqual(tweenTypes.CSS);
   });
 
-  test("Get CSS_VAR tween type with CSS variables properties", () => {
-    const animation = animate(":root", {
+  it("Should get the CSS_VAR tween type with CSS variables properties", () => {
+    const animation = createMotion(":root", {
       "--width": 200,
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).to.equal(
+    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(
       tweenTypes.CSS_VAR
     );
   });
 
-  test("Get Transform tween type with mixed transforms values", () => {
-    const animation = animate("#target-id", {
+  it("Should get the Transform tween type with mixed transforms values", () => {
+    const animation = createMotion("#target-id", {
       translateX: 100,
       translateY: 100,
       translateZ: 100,
@@ -67,13 +75,13 @@ describe("Animations", () => {
       duration: 100,
     });
 
-    forEachChildren(animation, (tween) => {
-      expect(tween._tweenType).to.equal(tweenTypes.TRANSFORM);
+    animation.forEachChild((tween) => {
+      expect(tween._tweenType).toEqual(tweenTypes.TRANSFORM);
     });
   });
 
-  test("Get CSS tween type with mixed values", () => {
-    const animation = animate(".with-inline-styles", {
+  it("Should get the CSS tween type with mixed values", () => {
+    const animation = createMotion(".with-inline-styles", {
       width: 50,
       height: 50,
       fontSize: 50,
@@ -81,51 +89,47 @@ describe("Animations", () => {
       duration: 100,
     });
 
-    forEachChildren(animation, (tween) => {
-      expect(tween._tweenType).to.equal(tweenTypes.CSS);
+    animation.forEachChild((tween) => {
+      expect(tween._tweenType).toEqual(tweenTypes.CSS);
     });
   });
 
-  test("Get Object tween type with input values", () => {
-    const animation = animate("#input-number", {
+  it("Should get the Object tween type with input values", () => {
+    const animation = createMotion("#input-number", {
       value: 50,
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).to.equal(
-      tweenTypes.OBJECT
-    );
+    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(tweenTypes.OBJECT);
   });
 
-  test("Get Object tween type with plain JS object values", () => {
-    const testObject = {
+  it("Should get the Object tween type with plain JS object values", () => {
+    const itObject = {
       plainValue: 20,
       valueWithUnit: "20px",
       multiplePLainValues: "32 64 128 256",
       multipleValuesWithUnits: "32px 64em 128% 25ch",
     };
-    const animation = animate(testObject, {
+    const animation = createMotion(itObject, {
       duration: 100,
     });
 
-    forEachChildren(animation, (tween) => {
-      expect(tween._tweenType).to.equal(tweenTypes.OBJECT);
+    animation.forEachChild((tween) => {
+      expect(tween._tweenType).toEqual(tweenTypes.OBJECT);
     });
   });
 
-  test("Get Object tween type with DOM properties that can't be accessed with getAttribute()", () => {
-    const animation = animate("#target-id", {
+  it("Should get the Object tween type with DOM properties that can't be accessed with getAttribute()", () => {
+    const animation = createMotion("#target-id", {
       innerHTML: 9999,
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).to.equal(
-      tweenTypes.OBJECT
-    );
+    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(tweenTypes.OBJECT);
   });
 
-  test("Animation's tweens timing inheritance", () => {
-    const animation = animate("#target-id", {
+  it("Should inherit the tweens timing", () => {
+    const animation = createMotion("#target-id", {
       translateX: [
         {
           to: 50,
@@ -146,14 +150,14 @@ describe("Animations", () => {
     });
 
     // The first delay is not counted in the calculation of the total duration
-    expect(animation.duration).to.equal(10 + 35 + 30 + 15 + 10);
-    expect(animation.iterationDuration).to.equal(10 + 35 + 30 + 15 + 10);
+    expect(animation.duration).toEqual(10 + 35 + 30 + 15 + 10);
+    expect(animation.iterationDuration).toEqual(10 + 35 + 30 + 15 + 10);
   });
 
-  test("Animation's values should ends to their correct end position when seeked", (resolve) => {
+  it("Should end to their correct end position when seeked", async () => {
     /** @type {NodeListOf<HTMLElement>} */
-    const targetEls = document.querySelectorAll(".target-class");
-    const animation = animate(targetEls, {
+    const targetClass = document.querySelectorAll(".target-class");
+    const animation = createMotion(targetClass, {
       translateX: 270,
       delay: function (el, i) {
         return i * 10;
@@ -162,133 +166,175 @@ describe("Animations", () => {
       autoplay: false,
     });
 
-    const seeker = createTimer({
-      duration: 35,
-      onUpdate: (self) => {
-        animation.seek(self.progress * animation.duration);
-      },
-      onComplete: () => {
-        expect(targetEls[0].style.transform).to.equal("translateX(270px)");
-        expect(targetEls[1].style.transform).to.equal("translateX(270px)");
-        expect(targetEls[2].style.transform).to.equal("translateX(270px)");
-        expect(targetEls[3].style.transform).to.equal("translateX(270px)");
-        animation.pause();
-        resolve();
-      },
+    await new Promise<void>((resolve) => {
+      const seeker = createMotionTimer({
+        duration: 35,
+        onUpdate: (self) => {
+          animation.seek(self.progress * animation.duration);
+        },
+        onComplete: () => {
+          expect(getComputedStyle(targetClass[0]).transform).toEqual(
+            "translateX(270px)"
+          );
+          expect(getComputedStyle(targetClass[1]).transform).toEqual(
+            "translateX(270px)"
+          );
+          expect(getComputedStyle(targetClass[2]).transform).toEqual(
+            "translateX(270px)"
+          );
+          expect(getComputedStyle(targetClass[3]).transform).toEqual(
+            "translateX(270px)"
+          );
+          animation.pause();
+          resolve();
+        },
+      });
     });
 
-    expect(targetEls[0].style.transform).to.equal("translateX(0px)");
-    expect(targetEls[1].style.transform).to.equal("translateX(0px)");
-    expect(targetEls[2].style.transform).to.equal("translateX(0px)");
-    expect(targetEls[3].style.transform).to.equal("translateX(0px)");
+    expect(getComputedStyle(targetClass[0]).transform).toEqual("translateX(0px)");
+    expect(getComputedStyle(targetClass[1]).transform).toEqual("translateX(0px)");
+    expect(getComputedStyle(targetClass[2]).transform).toEqual("translateX(0px)");
+    expect(getComputedStyle(targetClass[3]).transform).toEqual("translateX(0px)");
   });
 
-  test("Animation's values should end to their correct start position when seeked in reverse", (resolve) => {
+  it("Should end to their correct start position when seeked in reverse", async () => {
     /** @type {NodeListOf<HTMLElement>} */
-    const targetEls = document.querySelectorAll(".target-class");
-    const animation = animate(targetEls, {
+    const targetClass = document.querySelectorAll(".target-class");
+    const animation = createMotion(targetClass, {
       translateX: 270,
       // direction: 'reverse',
       reversed: true,
       ease: "linear",
       duration: 35,
       onComplete: () => {
-        expect(targetEls[0].style.transform).to.equal("translateX(0px)");
-        expect(targetEls[1].style.transform).to.equal("translateX(0px)");
-        expect(targetEls[2].style.transform).to.equal("translateX(0px)");
-        expect(targetEls[3].style.transform).to.equal("translateX(0px)");
-        resolve();
+        expect(getComputedStyle(targetClass[0]).transform).toEqual(
+          "translateX(0px)"
+        );
+        expect(getComputedStyle(targetClass[1]).transform).toEqual(
+          "translateX(0px)"
+        );
+        expect(getComputedStyle(targetClass[2]).transform).toEqual(
+          "translateX(0px)"
+        );
+        expect(getComputedStyle(targetClass[3]).transform).toEqual(
+          "translateX(0px)"
+        );
       },
     });
 
-    animation.seek(0);
+    // Use async/await and Promise instead of direct resolve
+    await new Promise<void>((resolve) => {
+      // Set up resolve to be called on animation completion
+      const originalOnComplete = animation.onComplete;
+      animation.onComplete = function(this: any, ...args: any[]) {
+        if (originalOnComplete) {
+          originalOnComplete.apply(this, args);
+        }
+        resolve();
+      };
+      
+      animation.seek(0);
+    });
 
-    expect(targetEls[0].style.transform).to.equal("translateX(270px)");
-    expect(targetEls[1].style.transform).to.equal("translateX(270px)");
-    expect(targetEls[2].style.transform).to.equal("translateX(270px)");
-    expect(targetEls[3].style.transform).to.equal("translateX(270px)");
+    expect(getComputedStyle(targetClass[0]).transform).toEqual(
+      "translateX(270px)"
+    );
+    expect(getComputedStyle(targetClass[1]).transform).toEqual(
+      "translateX(270px)"
+    );
+    expect(getComputedStyle(targetClass[2]).transform).toEqual(
+      "translateX(270px)"
+    );
+    expect(getComputedStyle(targetClass[3]).transform).toEqual(
+      "translateX(270px)"
+    );
   });
 
-  test("Canceled tween should update", (resolve) => {
+  it("Should update the values when a tween is canceled", async () => {
     /** @type {HTMLElement} */
     const targetEl = document.querySelector("#target-id");
-    const animation1 = animate(targetEl, {
+    const animation1 = createMotion(targetEl, {
       translateX: [
         { to: [0, 200], duration: 20 },
         { to: 300, duration: 20 },
       ],
     });
 
-    createTimer({
-      duration: 20,
-      onComplete: () => {
-        const animation2 = animate(targetEl, {
-          translateX: -100,
-          duration: 20,
-        });
-      },
-    });
-
-    createTimer({
-      duration: 80,
-      onComplete: () => {
-        expect(targetEl.style.transform).to.equal("translateX(-100px)");
-        resolve();
-      },
+    await new Promise<void>((resolve) => {
+      createMotionTimer({
+        duration: 20,
+        onComplete: () => {
+          const animation2 = createMotion(targetEl, {
+            translateX: -100,
+            duration: 20,
+          });
+          
+          setTimeout(() => {
+            expect(getComputedStyle(targetEl).transform).toEqual(
+              "translateX(-100px)"
+            );
+            resolve();
+          }, 60);
+        },
+      });
     });
   });
 
-  test("Animate the progress of an animation with 0 duration tweens", (resolve) => {
-    const anim1 = animate(".target-class", {
+  it("Should animate the progress of an animation with 0 duration tweens", async () => {
+    const anim1 = createMotion(".target-class", {
       opacity: [0, 1],
       duration: 0,
       delay: (_, i) => i * 10,
       autoplay: false,
     });
 
-    animate(anim1, {
-      progress: [0, 1],
-      ease: "linear",
-      duration: 40,
-      onComplete: (self) => {
-        expect(self.progress).to.equal(1);
-        expect(self.currentTime).to.equal(inMotion.round(self.duration, 6));
-        expect(anim1.progress).to.equal(1);
-        expect(anim1.currentTime).to.equal(inMotion.round(anim1.duration, 6));
-        resolve();
-      },
+    await new Promise<void>((resolve) => {
+      createMotion(anim1, {
+        progress: [0, 1],
+        ease: "linear",
+        duration: 40,
+        onComplete: (self) => {
+          expect(self.progress).toEqual(1);
+          expect(self.currentTime).toEqual(inMotion.round(self.duration, 6));
+          expect(anim1.progress).toEqual(1);
+          expect(anim1.currentTime).toEqual(inMotion.round(anim1.duration, 6));
+          resolve();
+        },
+      });
     });
   });
 
-  test("Animations should have currentTime = 0 if not played", () => {
-    const anim1 = animate(".target-class", {
+  it("Should have currentTime = 0 if not played", () => {
+    const anim1 = createMotion(".target-class", {
       opacity: [0, 1],
       duration: 300,
       autoplay: false,
     });
 
-    expect(anim1.currentTime).to.equal(0);
+    expect(anim1.currentTime).toEqual(0);
   });
 
-  test("Animations should complete instantly if no animatable props provided", (resolve) => {
-    const anim1 = animate(".target-class", {
+  it("Should complete instantly if no animatable props provided", async () => {
+    const anim1 = createMotion(".target-class", {
       duration: 15,
       loop: true,
     });
 
-    createTimer({
-      duration: 30,
-      onComplete: (self) => {
-        expect(anim1.duration).to.equal(minValue);
-        expect(anim1.paused).to.equal(true);
-        expect(anim1.completed).to.equal(true);
-        resolve();
-      },
+    await new Promise<void>((resolve) => {
+      createMotionTimer({
+        duration: 30,
+        onComplete: (self) => {
+          expect(anim1.duration).toEqual(minValue);
+          expect(anim1.paused).toEqual(true);
+          expect(anim1.completed).toEqual(true);
+          resolve();
+        },
+      });
     });
   });
 
-  test("Animations should have advanced by one frame imediatly after beeing played", (resolve) => {
-    const anim1 = animate(".target-class", {
+  it("Should have advanced by one frame imediatly after beeing played", async () => {
+    const anim1 = createMotion(".target-class", {
       frameRate: 60,
       opacity: [0, 1],
       duration: 300,
@@ -297,14 +343,140 @@ describe("Animations", () => {
 
     anim1.play();
 
-    createTimer({
-      duration: 1,
-      onComplete: () => {
-        expect(anim1.currentTime).to.be.at.least(16);
-        expect(anim1.currentTime).to.be.below(33);
-        anim1.pause();
-        resolve();
-      },
+    await new Promise<void>((resolve) => {
+      createMotionTimer({
+        duration: 1,
+        onComplete: () => {
+          expect(anim1.currentTime).toBeGreaterThanOrEqual(16);
+          expect(anim1.currentTime).toBeLessThan(33);
+          anim1.pause();
+          resolve();
+        },
+      });
     });
+  });
+
+  it("Should get and createMotion animatable values", async () => {
+    const animatable = createMotionAnimation("#target-id", {
+      x: 20,
+      y: 30,
+      rotate: 40,
+    });
+
+    expect(animatable.x()).toEqual(0);
+    expect(animatable.y()).toEqual(0);
+    expect(animatable.rotate()).toEqual(0);
+
+    const x = animatable.x(100);
+    const y = animatable.y(150);
+    const rotate = animatable.rotate(45);
+
+    expect(animatable.animations.x.duration).toEqual(20);
+    expect(animatable.animations.y.duration).toEqual(30);
+    expect(animatable.animations.rotate.duration).toEqual(40);
+
+    await new Promise<void>((resolve) => {
+      createMotionTimer({
+        duration: 50,
+        onComplete: () => {
+          expect(animatable.x()).toEqual(100);
+          expect(animatable.y()).toEqual(150);
+          expect(animatable.rotate()).toEqual(45);
+          resolve();
+        },
+      });
+    });
+  });
+
+  it("Should get and createMotion animatable complex values", async () => {
+    const animatable = createMotionAnimation("#target-id", {
+      backgroundColor: 20,
+    });
+
+    expect(animatable.backgroundColor()).toEqual([0, 214, 114, 1]);
+
+    const bg = animatable.backgroundColor([100, 200, 0, 1]);
+
+    expect(animatable.animations.backgroundColor.duration).toEqual(20);
+
+    await new Promise<void>((resolve) => {
+      createMotionTimer({
+        duration: 50,
+        onComplete: () => {
+          expect(animatable.backgroundColor()).toEqual([100, 200, 0, 1]);
+          resolve();
+        },
+      });
+    });
+  });
+
+  it("Should get and set animatable values", () => {
+    const animatable = createMotionAnimation("#target-id", {
+      x: 0,
+      y: 0,
+      rotate: 0,
+    });
+
+    expect(animatable.x()).toEqual(0);
+    expect(animatable.y()).toEqual(0);
+    expect(animatable.rotate()).toEqual(0);
+
+    animatable.x(100);
+    animatable.y(150);
+    animatable.rotate(45);
+
+    expect(animatable.x()).toEqual(100);
+    expect(animatable.y()).toEqual(150);
+    expect(animatable.rotate()).toEqual(45);
+  });
+
+  it("Should define custom units for animatable values", async () => {
+    const animatable = createMotionAnimation("#target-id", {
+      x: { unit: "em" },
+      y: { unit: "rem" },
+      rotate: { unit: "rad", duration: 50 },
+      duration: 40,
+    });
+
+    expect(animatable.x()).toEqual(0);
+    expect(animatable.y()).toEqual(0);
+    expect(animatable.rotate()).toEqual(0);
+
+    animatable.x(10);
+    animatable.y(15);
+    animatable.rotate(1);
+
+    await new Promise<void>((resolve) => {
+      createMotionTimer({
+        duration: 50,
+        onComplete: () => {
+          expect(animatable.x()).toEqual(10);
+          expect(animatable.y()).toEqual(15);
+          expect(animatable.rotate()).toEqual(1);
+          expect(inMotion.get("#target-id", "x")).toEqual("10em");
+          expect(inMotion.get("#target-id", "y")).toEqual("15rem");
+          expect(inMotion.get("#target-id", "rotate")).toEqual("1rad");
+          resolve();
+        },
+      });
+    });
+  });
+
+  it("Should revert an animatable", () => {
+    const animatable = createMotionAnimation("#target-id", {
+      x: { unit: "em" },
+      y: { unit: "rem" },
+      rotate: { unit: "rad", duration: 50 },
+      duration: 40,
+    });
+
+    expect(animatable.targets.length).toEqual(1);
+
+    animatable.revert();
+
+    expect(animatable.targets.length).toEqual(0);
+    expect(animatable.animations.x).toEqual(undefined);
+    expect(animatable.animations.y).toEqual(undefined);
+    expect(animatable.animations.rotate).toEqual(undefined);
   });
 });

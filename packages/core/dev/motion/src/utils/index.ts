@@ -51,6 +51,11 @@ export {
 } from "./math/index.ts";
 
 export const getChildAtIndex = (parent: any, index: number) => {
+  // If the parent has no children or is null/undefined, return null
+  if (!parent || !parent._head) {
+    return null;
+  }
+  
   let next = parent._head;
   let i = 0;
   while (next) {
@@ -71,3 +76,5 @@ export const getChildLength = (parent: any) => {
   }
   return i;
 };
+
+export const getTweenDelay = (tween: any) => tween._delay;

@@ -4,7 +4,7 @@ import { tickModes, isBrowser, K, doc } from "./consts.ts";
 
 import { now, forEachChildren, removeChild } from "./helpers.ts";
 
-import { Clock } from "./clock.ts";
+import { InMotionClock } from "./clock.ts";
 
 import { tick } from "./render.ts";
 
@@ -28,8 +28,8 @@ const browserCancelMethod = isBrowser
   : denoClearImmediate;
 
 /**
- * # Animation Engine
- * @summary Core animation engine that powers all motion functionality
+ * # InMotion Engine
+ * @summary Core animation InMotion that powers all motion functionality
  *
  * The Engine class handles the animation loop and manages tickable objects.
  * It provides methods for requesting animation frames, computing delta time,
@@ -38,7 +38,7 @@ const browserCancelMethod = isBrowser
  * @since 0.1.0
  * @category InSpatial Motion
  */
-export class Engine extends Clock {
+export class InMotionEngine extends InMotionClock {
   /**
    * Whether to use the default main animation loop
    */
@@ -55,7 +55,7 @@ export class Engine extends Clock {
   public defaults: Record<string, any>;
 
   /**
-   * Whether the engine is currently paused
+   * Whether the InMotion is currently paused
    */
   public paused: boolean = false;
 
@@ -66,7 +66,7 @@ export class Engine extends Clock {
 
   /**
    * Creates a new Engine instance
-   * @param initTime - Initial time for the engine
+   * @param initTime - Initial time for the InMotion
    */
   constructor(initTime?: number) {
     super();
@@ -104,8 +104,8 @@ export class Engine extends Clock {
     const time = (this._currentTime = now());
     if (this.requestTick(time) === tickModes.AUTO) {
       this.computeDeltaTime(time);
-      const engineSpeed = this._speed;
-      const engineFps = this._fps;
+      const InMotionSpeed = this._speed;
+      const InMotionFps = this._fps;
       let activeTickable = this._head as Tickable;
 
       while (activeTickable) {
@@ -117,8 +117,8 @@ export class Engine extends Clock {
             activeTickable,
             activeTickable.deltaTime,
             this._elapsedTime,
-            engineSpeed,
-            engineFps
+            InMotionSpeed,
+            InMotionFps
           );
         } else {
           removeChild(this, activeTickable);
@@ -145,7 +145,7 @@ export class Engine extends Clock {
   }
 
   /**
-   * Wake the animation engine
+   * Wake the animation InMotion
    */
   wake(): this {
     if (this.reqId) return this;
@@ -271,51 +271,63 @@ export class Engine extends Clock {
   }
 
   /**
-   * Check if engine has active animations
+   * Check if InMotion has active animations
    */
   hasActiveAnimations(): boolean {
+    return !!this._head;
+  }
+
+  /**
+   * Checks if the engine has any active children
+   * 
+   * @returns {boolean} True if the engine has active children
+   */
+  hasChildren(): boolean {
+    // @ts-ignore: Accessing protected property for testing
     return !!this._head;
   }
 }
 
 // Define a local function for requestAnimationFrame handling
 let localTickMethod: (callback: FrameRequestCallback) => number;
-let engine: Engine;
+let InMotion: InMotionEngine;
 
 if (typeof window !== "undefined") {
   localTickMethod = window.requestAnimationFrame.bind(window);
-  engine = new Engine(now());
+  InMotion = new InMotionEngine(now());
   if (isBrowser) {
-    globalVersions.engine = engine as any;
-    doc?.addEventListener("visibilitychange", () => {
-      if (!engine.pauseOnDocumentHidden) return;
-      doc?.hidden ? engine.pause() : engine.resume();
-    });
+    globalVersions.inMotionEngine = InMotion as any;
+    if (doc && typeof doc.addEventListener === 'function') {
+      doc.addEventListener("visibilitychange", () => {
+        if (!InMotion.pauseOnDocumentHidden) return;
+        doc.hidden ? InMotion.pause() : InMotion.resume();
+      });
+    }
   }
 } else {
   // Use setTimeout for non-browser environments
   localTickMethod = (callback) =>
     setTimeout(() => callback(now()), 16) as unknown as number;
-  engine = new Engine(now());
+  InMotion = new InMotionEngine(now());
 }
 
 /**
  * Function to request a new animation frame
  */
 const tickEngine = () => {
-  if (engine.hasActiveAnimations()) {
-    engine.reqId = localTickMethod(tickEngine);
-    engine.update();
+  if (InMotion.hasActiveAnimations()) {
+    InMotion.reqId = localTickMethod(tickEngine);
+    InMotion.update();
   } else {
-    engine.sleep();
+    InMotion.sleep();
   }
 };
 
-engine.wake();
+InMotion.wake();
 
-// Export both the browser methods and the engine instance
+// Export both the browser methods and the InMotion instance
 export {
-  browserTickMethod as engineTickMethod,
-  browserCancelMethod as engineCancelMethod,
-  engine,
+  browserTickMethod as InMotionTickMethod,
+  browserCancelMethod as InMotionCancelMethod,
+  InMotion,
 };

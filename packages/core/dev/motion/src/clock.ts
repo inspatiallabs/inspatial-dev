@@ -1,66 +1,59 @@
-import {
-  K,
-  maxFps,
-  minValue,
-  tickModes,
-} from './consts.ts';
+import { K, maxFps, minValue, tickModes } from "./consts.ts";
 
-import {
-  round,
-} from './helpers.ts';
+import { round } from "./helpers.ts";
 
-import type { Tickable, Tween } from './types.ts';
+import type { Tickable, Tween } from "./types.ts";
 
 /**
- * # Clock
+ * # InMotionClock
  * @summary Base class to control framerate and playback rate
- * 
- * The Clock class provides foundational timing functionality that is inherited by 
- * Engine, Timer, Animation and Timeline classes. It manages time calculations, 
+ *
+ * The InMotionClock class provides foundational timing functionality that is inherited by
+ * Engine, Timer, Animation and Timeline classes. It manages time calculations,
  * frame rates, and playback speed.
- * 
+ *
  * @since 0.1.0
  * @category InSpatial Motion
  */
-export class Clock {
+export class InMotionClock {
   /** Delta time between the current and previous frame */
   public deltaTime: number;
-  
+
   /** Current time of the clock */
   protected _currentTime: number;
-  
+
   /** Elapsed time since the clock started */
   protected _elapsedTime: number;
-  
+
   /** Time when the clock started */
   protected _startTime: number;
-  
+
   /** Last time the clock was updated */
   protected _lastTime: number;
-  
+
   /** Time scheduled for the next frame */
   protected _scheduledTime: number;
-  
+
   /** Duration of a single frame based on fps */
   protected _frameDuration: number;
-  
+
   /** Frames per second */
   protected _fps: number;
-  
+
   /** Playback speed multiplier */
   protected _speed: number;
-  
+
   /** Whether the clock has children */
   protected _hasChildren: boolean;
-  
+
   /** First child in the linked list */
   protected _head: Tickable | Tween | null;
-  
+
   /** Last child in the linked list */
   protected _tail: Tickable | Tween | null;
 
   /**
-   * Creates a new Clock instance
+   * Creates a new InMotionClock instance
    * @param initTime - Initial time value for the clock
    */
   constructor(initTime = 0) {
@@ -76,6 +69,26 @@ export class Clock {
     this._hasChildren = false;
     this._head = null;
     this._tail = null;
+  }
+
+  /**
+   * Gets the tail of the linked list (for testing purposes)
+   * @returns The last child in the linked list
+   */
+  getTail(): Tickable | Tween | null {
+    return this._tail;
+  }
+
+  /**
+   * Iterates over each child in the linked list (for testing purposes)
+   * @param callback - Function to call for each child
+   */
+  forEachChild(callback: (child: Tickable | Tween) => void): void {
+    let child = this._head;
+    while (child) {
+      callback(child);
+      child = (child as any)._next;
+    }
   }
 
   /**
@@ -123,7 +136,7 @@ export class Clock {
   requestTick(time: number): number {
     const scheduledTime = this._scheduledTime;
     const elapsedTime = this._elapsedTime;
-    this._elapsedTime += (time - elapsedTime);
+    this._elapsedTime += time - elapsedTime;
     // If the elapsed time is lower than the scheduled time
     // this means not enough time has passed to hit one frameDuration
     // so skip that frame
@@ -132,7 +145,8 @@ export class Clock {
     const frameDelta = elapsedTime - scheduledTime;
     // Ensures that _scheduledTime progresses in steps of at least 1 frameDuration.
     // Skips ahead if the actual elapsed time is higher.
-    this._scheduledTime += frameDelta < frameDuration ? frameDuration : frameDelta;
+    this._scheduledTime +=
+      frameDelta < frameDuration ? frameDuration : frameDelta;
     return tickModes.AUTO;
   }
 

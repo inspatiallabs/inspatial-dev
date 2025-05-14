@@ -1,7 +1,7 @@
 import { minValue, noop, valueTypes, tickModes } from "./consts.ts";
 import { cloneArray, addChild } from "./helpers.ts";
 import { render } from "./render.ts";
-import { engine } from "./engine.ts";
+import { InMotion } from "./engine.ts";
 import { Timer } from "./timer.ts";
 import type {
   TweenAdditiveLookups,
@@ -45,15 +45,15 @@ class AdditiveAnimation extends Timer {
     this._head = null;
     this._tail = null;
 
-    // Add to engine with highest priority (as first child)
+    // Add to InMotion with highest priority (as first child)
     // Using type assertions to handle protected property access across classes
-    const engineAny = engine as any;
-    if (engineAny._head) {
-      (this as any)._next = engineAny._head;
-      engineAny._head._prev = this;
-      engineAny._head = this;
+    const InMotionAny = InMotion as any;
+    if (InMotionAny._head) {
+      (this as any)._next = InMotionAny._head;
+      InMotionAny._head._prev = this;
+      InMotionAny._head = this;
     } else {
-      addChild(engineAny, this as unknown as Renderable);
+      addChild(InMotionAny, this as unknown as Renderable);
     }
   }
 
@@ -108,7 +108,7 @@ export const additive: {
 };
 
 /**
- * Adds a new additive animation to the engine
+ * Adds a new additive animation to the InMotion
  *
  * @param lookups - Collection of tween lookups for property animations
  * @returns The additive animation object

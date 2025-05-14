@@ -67,7 +67,7 @@ export const globals = {
  */
 export const globalVersions = {
   version: "__packageVersion__",
-  engine: null,
+  inMotionEngine: null,
 };
 
 // Add the library version to the window object if browser environment

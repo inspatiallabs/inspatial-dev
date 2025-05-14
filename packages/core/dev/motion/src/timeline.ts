@@ -37,46 +37,49 @@ import { parseEasings } from "./eases.ts";
 
 import { remove } from "./utils/index.ts";
 
-import type { 
-  TargetsParam, 
-  Target, 
-  Timeline as TimelineInterface,
+import type {
+  TargetsParam,
+  Target,
+  Timeline as InMotionTimelineInterface,
   Tickable,
   Renderable,
-  TimelineParams,
+  TimelineParams as InMotionTimelineParams,
   DefaultsParams,
   AnimationParams,
   TimerParams,
   Callback,
-  EasingFunction
+  EasingFunction,
 } from "./types.ts";
 
 /**
- * # Timeline
+ * # InMotionTimeline
  * @summary #### Orchestrates and sequences animations with precise timing control
- * 
- * The `Timeline` class allows you to create complex sequences of animations with precise control over timing.
- * Think of it like a music sequencer where you can place animations at specific points in time and control 
+ *
+ * The `InMotionTimeline` class allows you to create complex sequences of animations with precise control over timing.
+ * Think of it like a music sequencer where you can place animations at specific points in time and control
  * their playback as a unified whole.
- * 
+ *
  * @since 1.0.0
  * @category InSpatial Motion
  * @kind class
  * @access public
  */
 
-/** 
+/**
  * TimePosition can be a number, string, or function that determines positioning
  */
 type TimePosition = number | string | Function;
 
 /**
- * Timeline's children offsets positions parser
- * @param  {Timeline} timeline - The timeline to parse positions for
+ * InMotionTimeline's children offsets positions parser
+ * @param  {InMotionTimeline} timeline - The timeline to parse positions for
  * @param  {string} timePosition - Position string to parse
  * @return {number | undefined} Calculated offset
  */
-const getPrevChildOffset = (timeline: Timeline, timePosition: string): number | undefined => {
+const getPrevChildOffset = (
+  timeline: InMotionTimeline,
+  timePosition: string
+): number | undefined => {
   if (stringStartsWith(timePosition, "<")) {
     const goToPrevAnimationOffset = timePosition[1] === "<";
     // Need to do a type assertion here as we know this is accessing a protected property
@@ -93,11 +96,14 @@ const getPrevChildOffset = (timeline: Timeline, timePosition: string): number | 
 
 /**
  * Parses timeline position values into numeric offsets
- * @param  {Timeline} timeline - The timeline to parse positions for
+ * @param  {InMotionTimeline} timeline - The timeline to parse positions for
  * @param  {TimePosition} [timePosition] - Position to parse
  * @return {number} The calculated position in milliseconds
  */
-export const parseTimelinePosition = (timeline: Timeline, timePosition?: TimePosition): number => {
+export const parseInMotionTimelinePosition = (
+  timeline: InMotionTimeline,
+  timePosition?: TimePosition
+): number => {
   let tlDuration = timeline.iterationDuration;
   if (tlDuration === minValue) tlDuration = 0;
   if (isUnd(timePosition)) return tlDuration;
@@ -111,7 +117,8 @@ export const parseTimelinePosition = (timeline: Timeline, timePosition?: TimePos
   if (matchedRelativeOperator) {
     const fullOperator = matchedRelativeOperator[0];
     const split = timePosStr.split(fullOperator);
-    const labelOffset = hasLabels && split[0] ? tlLabels![split[0]] : tlDuration;
+    const labelOffset =
+      hasLabels && split[0] ? tlLabels![split[0]] : tlDuration;
     const parsedOffset = hasSibling
       ? prevOffset!
       : hasLabels
@@ -136,13 +143,14 @@ export const parseTimelinePosition = (timeline: Timeline, timePosition?: TimePos
 
 /**
  * Calculates the total duration of a timeline including all iterations
- * @param {Timeline} tl - The timeline to calculate duration for
+ * @param {InMotionTimeline} tl - The timeline to calculate duration for
  * @return {number} Total duration in milliseconds
  */
-function getTimelineTotalDuration(tl: Timeline): number {
+function getInMotionTimelineTotalDuration(tl: InMotionTimeline): number {
   return (
     clampInfinity(
-      (tl.iterationDuration + (tl as any)._loopDelay) * tl.iterationCount - (tl as any)._loopDelay
+      (tl.iterationDuration + (tl as any)._loopDelay) * tl.iterationCount -
+        (tl as any)._loopDelay
     ) || minValue
   );
 }
@@ -150,24 +158,23 @@ function getTimelineTotalDuration(tl: Timeline): number {
 /**
  * Adds a child to a timeline at a specific position
  * @param {TimerParams | AnimationParams} childParams - Child parameters
- * @param {Timeline} tl - Parent timeline
+ * @param {InMotionTimeline} tl - Parent timeline
  * @param {number} timePosition - Position on the timeline
  * @param {TargetsParam} [targets] - Animation targets
  * @param {number} [index] - Index for staggered animations
  * @param {number} [length] - Length for staggered animations
- * @return {Timeline} The parent timeline
+ * @return {InMotionTimeline} The parent timeline
  */
 function addTlChild(
-  childParams: TimerParams | AnimationParams, 
-  tl: Timeline, 
-  timePosition: number, 
-  targets?: TargetsParam, 
-  index?: number, 
+  childParams: TimerParams | AnimationParams,
+  tl: InMotionTimeline,
+  timePosition: number,
+  targets?: TargetsParam,
+  index?: number,
   length?: number
-): Timeline {
+): InMotionTimeline {
   const isSetter =
-    isNum(childParams.duration) &&
-    (childParams.duration as number) <= minValue;
+    isNum(childParams.duration) && (childParams.duration as number) <= minValue;
   // Offset the tl position with -minValue for 0 duration animations or .set() calls in order to align their end value with the defined position
   const adjustedPosition = isSetter ? timePosition - minValue : timePosition;
   tick(tl, adjustedPosition, 1, 1, tickModes.AUTO);
@@ -183,19 +190,23 @@ function addTlChild(
       )
     : new Timer(childParams as TimerParams, tl as any, adjustedPosition);
   tlChild.init(1);
-  
+
   // Insert at a position relative to startTime rather than at the end
   // This ensures animations are stored in chronological order which helps with performance
   let currentChild = tl._head;
   let previousChild = null;
   const childStartTime = (tlChild as any)._offset + (tlChild as any)._delay;
-  
+
   // Find the correct insertion point based on start time
-  while (currentChild && (currentChild as any)._offset + (currentChild as any)._delay < childStartTime) {
+  while (
+    currentChild &&
+    (currentChild as any)._offset + (currentChild as any)._delay <
+      childStartTime
+  ) {
     previousChild = currentChild;
     currentChild = (currentChild as any)._next;
   }
-  
+
   // Insert the child at the correct position in the linked list
   if (previousChild) {
     (tlChild as any)._prev = previousChild;
@@ -216,42 +227,45 @@ function addTlChild(
     }
     tl._head = tlChild;
   }
-  
+
   forEachChildren(tl as any, (child: Renderable) => {
     const childTLOffset = (child as any)._offset + (child as any)._delay;
     const childDur = childTLOffset + child.duration;
     if (childDur > tl.iterationDuration) tl.iterationDuration = childDur;
   });
-  tl.duration = getTimelineTotalDuration(tl);
+  tl.duration = getInMotionTimelineTotalDuration(tl);
   return tl;
 }
 
 /**
- * Timeline class for sequencing and orchestrating animations
+ * InMotionTimeline class for sequencing and orchestrating animations
  */
-// @ts-ignore - Type compatibility issues with Timeline interface
-export class Timeline extends Timer implements TimelineInterface {
-  /** Timeline duration */
+// @ts-ignore - Type compatibility issues with InMotionTimeline interface
+export class InMotionTimeline
+  extends Timer
+  implements InMotionTimelineInterface
+{
+  /** InMotionTimeline duration */
   override duration: number;
-  /** Timeline labels for positioning */
+  /** InMotionTimeline labels for positioning */
   labels: Record<string, number>;
   /** Default parameters */
   override defaults: DefaultsParams;
   /** Render callback */
-  // @ts-ignore - Type compatibility with TimelineInterface
-  onRender: Callback<Timeline>;
+  // @ts-ignore - Type compatibility with InMotionTimelineInterface
+  onRender: Callback<InMotionTimeline>;
   /** Easing function */
   _ease: EasingFunction;
   /** Duration of one iteration */
   override iterationDuration: number;
 
   /**
-   * Creates a new Timeline instance
-   * @param {TimelineParams} [parameters] - Timeline configuration
+   * Creates a new InMotionTimeline instance
+   * @param {InMotionTimelineParams} [parameters] - InMotionTimeline configuration
    */
-  constructor(parameters: TimelineParams = {}) {
+  constructor(parameters: InMotionTimelineParams = {}) {
     super(parameters as TimerParams, null, 0);
-    /** Timeline duration starts at 0 and grows when adding children */
+    /** InMotionTimeline duration starts at 0 and grows when adding children */
     this.duration = 0;
     /** Map of named positions */
     this.labels = {};
@@ -268,7 +282,9 @@ export class Timeline extends Timer implements TimelineInterface {
       parameters.playbackEase,
       globalDefaults.playbackEase
     );
-    this._ease = tlPlaybackEase ? parseEasings(tlPlaybackEase) : (t: number) => t;
+    this._ease = tlPlaybackEase
+      ? parseEasings(tlPlaybackEase)
+      : (t: number) => t;
     /** Duration of one iteration */
     this.iterationDuration = 0;
   }
@@ -281,8 +297,8 @@ export class Timeline extends Timer implements TimelineInterface {
    * @return {this} Self reference for chaining
    */
   add(
-    a1: TargetsParam | TimerParams, 
-    a2: AnimationParams | TimePosition, 
+    a1: TargetsParam | TimerParams,
+    a2: AnimationParams | TimePosition,
     a3?: TimePosition
   ): this {
     const isAnim = isObj(a2);
@@ -294,9 +310,7 @@ export class Timeline extends Timer implements TimelineInterface {
         // Check for function for children stagger positions
         if (isFnc(a3)) {
           const staggeredPosition = a3 as Function;
-          const parsedTargetsArray = parseTargets(
-            a1 as TargetsParam
-          );
+          const parsedTargetsArray = parseTargets(a1 as TargetsParam);
           // Store initial duration before adding new children that will change the duration
           const tlDuration = this.duration;
           // Store initial _iterationDuration before adding new children that will change the duration
@@ -326,7 +340,7 @@ export class Timeline extends Timer implements TimelineInterface {
           addTlChild(
             childParams,
             this,
-            parseTimelinePosition(this, a3),
+            parseInMotionTimelinePosition(this, a3),
             a1 as TargetsParam,
             undefined,
             undefined
@@ -337,7 +351,7 @@ export class Timeline extends Timer implements TimelineInterface {
         addTlChild(
           a1 as TimerParams,
           this,
-          parseTimelinePosition(this, a2 as TimePosition),
+          parseInMotionTimelinePosition(this, a2 as TimePosition),
           undefined,
           undefined,
           undefined
@@ -357,11 +371,9 @@ export class Timeline extends Timer implements TimelineInterface {
   sync(synced?: Tickable | any, position?: TimePosition): this {
     if (isUnd(synced) || (synced && isUnd(synced.pause))) return this;
     synced.pause();
-    const duration = +(
-      (synced.effect
-        ? synced.effect.getTiming().duration
-        : synced.duration)
-    );
+    const duration = +(synced.effect
+      ? synced.effect.getTiming().duration
+      : synced.duration);
     return this.add(
       synced,
       { currentTime: [0, duration], duration, ease: "linear" },
@@ -376,7 +388,11 @@ export class Timeline extends Timer implements TimelineInterface {
    * @param {TimePosition} [position] - Position on timeline
    * @return {this} Self reference for chaining
    */
-  set(targets: TargetsParam, parameters: AnimationParams, position?: TimePosition): this {
+  set(
+    targets: TargetsParam,
+    parameters: AnimationParams,
+    position?: TimePosition
+  ): this {
     if (isUnd(parameters)) return this;
     parameters.duration = minValue;
     parameters.composition = compositionTypes.replace;
@@ -392,11 +408,11 @@ export class Timeline extends Timer implements TimelineInterface {
   call(callback: Callback<Timer>, position?: TimePosition): this {
     if (isUnd(callback) || (callback && !isFnc(callback))) return this;
     return this.add(
-      { 
-        duration: 0, 
-        onComplete: function() { 
-          callback(this as unknown as Timer); 
-        } 
+      {
+        duration: 0,
+        onComplete: function () {
+          callback(this as unknown as Timer);
+        },
       } as TimerParams,
       position as TimePosition
     );
@@ -410,10 +426,7 @@ export class Timeline extends Timer implements TimelineInterface {
    */
   label(labelName: string, position?: TimePosition): this {
     if (isUnd(labelName) || (labelName && !isStr(labelName))) return this;
-    this.labels[labelName] = parseTimelinePosition(
-      this,
-      position
-    );
+    this.labels[labelName] = parseInMotionTimelinePosition(this, position);
     return this;
   }
 
@@ -438,9 +451,13 @@ export class Timeline extends Timer implements TimelineInterface {
     if (currentDuration === normalizeTime(newDuration)) return this;
     const timeScale = newDuration / currentDuration;
     const labels = this.labels;
-    forEachChildren(this as any, (child: JSAnimation) =>
-      child.stretch(child.duration * timeScale)
-    , false, undefined, undefined);
+    forEachChildren(
+      this as any,
+      (child: JSAnimation) => child.stretch(child.duration * timeScale),
+      false,
+      undefined,
+      undefined
+    );
     for (let labelName in labels) labels[labelName] *= timeScale;
     return super.stretch(newDuration);
   }
@@ -450,9 +467,15 @@ export class Timeline extends Timer implements TimelineInterface {
    * @return {this} Self reference for chaining
    */
   refresh(): this {
-    forEachChildren(this as any, (child: JSAnimation) => {
-      if (child.refresh) child.refresh();
-    }, false, undefined, undefined);
+    forEachChildren(
+      this as any,
+      (child: JSAnimation) => {
+        if (child.refresh) child.refresh();
+      },
+      false,
+      undefined,
+      undefined
+    );
     return this;
   }
 
@@ -485,22 +508,18 @@ export class Timeline extends Timer implements TimelineInterface {
 /**
  * # createMotionTimeline
  * @summary #### Creates a new timeline for sequencing animations
- * 
- * This function creates a new Timeline instance with the provided parameters,
+ *
+ * This function creates a new InMotionTimeline instance with the provided parameters,
  * allowing you to sequence and orchestrate multiple animations with precise timing.
- * 
+ *
  * @since 1.0.0
  * @category InSpatial Motion
  * @kind function
  * @access public
- * 
- * @param {TimelineParams} [parameters] - Timeline configuration options
- * @return {Timeline} Initialized timeline instance
+ *
+ * @param {InMotionTimelineParams} [parameters] - InMotionTimeline configuration options
+ * @return {InMotionTimeline} Initialized timeline instance
  */
-export const createMotionTimeline = (parameters?: TimelineParams): Timeline => 
-  new Timeline(parameters).init();
-
-/**
- * @deprecated Use createMotionTimeline instead
- */
-export const createTimeline = createMotionTimeline;
+export const createMotionTimeline = (
+  parameters?: InMotionTimelineParams
+): InMotionTimeline => new InMotionTimeline(parameters).init();

@@ -1232,7 +1232,7 @@ export class JSAnimation extends Timer implements IJSAnimation {
 }
 
 /**
- * # Animate Function
+ * # Create Motion
  * @summary Creates and initializes a new animation
  *
  * This function creates a new JSAnimation instance with the provided targets and parameters,
@@ -1245,14 +1245,14 @@ export class JSAnimation extends Timer implements IJSAnimation {
  * @param {AnimationParams} parameters - Animation parameters and properties
  * @return {JSAnimation} The initialized animation instance
  */
-export const animate = (
+export const createMotion = (
   targets: TargetsParam,
   parameters: AnimationParams
 ): JSAnimation =>
   new JSAnimation(targets, parameters, undefined, 0, false).init();
 
 /**
- * # Animatable Class
+ * # Create Motion Animation
  * @summary Creates animatable objects with property-specific animations
  *
  * This class creates objects with properties that can be animated individually.
@@ -1396,7 +1396,7 @@ export class Animatable {
  * @param {AnimatableParams} parameters - Configuration parameters
  * @return {AnimatableObject} Animatable object with animation methods
  */
-export const createAnimatable = (
+export const createMotionAnimation = (
   targets: TargetsParam,
   parameters: AnimatableParams
 ): AnimatableObject => new Animatable(targets, parameters) as AnimatableObject;

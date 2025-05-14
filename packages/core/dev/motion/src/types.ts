@@ -51,9 +51,9 @@ type Tickable = Timer | Renderable;
 type CallbackArgument = Timer & JSAnimation & Timeline;
 
 /**
- * Any object that can be reverted to its original state
+ * Type for any object that can be reverted to its original state
  */
-type Revertible = Animatable | Tickable | Draggable | ScrollObserver | Scope;
+type Revertible = IAnimatable | Tickable | Draggable | ScrollObserver | Scope;
 
 /**
  * JSAnimation interface
@@ -771,7 +771,7 @@ type AnimatableProperty = AnimatablePropertySetter & AnimatablePropertyGetter;
 /**
  * Object with animatable properties
  */
-type AnimatableObject = Animatable & Record<string, AnimatableProperty>;
+type AnimatableObject = IAnimatable & Record<string, AnimatableProperty>;
 
 /**
  * Parameters for animatable properties
@@ -807,7 +807,7 @@ type AnimatableParams = Record<
 // --------------------------------------------------------------------------
 
 /**
- * Parameters for a draggable axis
+ * @typedef {{ mapTo?: string, modifier?: TweenModifier, composition?: TweenComposition, snap?: number | number[] | ((draggable: IDraggable) => number | Array<number>) }} DraggableAxisParam
  */
 type DraggableAxisParam = {
   /** Property to map this axis to */
@@ -817,7 +817,7 @@ type DraggableAxisParam = {
   /** How drag values compose with existing animations */
   composition?: TweenComposition;
   /** Snap points for this axis */
-  snap?: number | number[] | ((draggable: Draggable) => number | Array<number>);
+  snap?: number | number[] | ((draggable: IDraggable) => number | Array<number>);
 };
 
 /**
@@ -1023,29 +1023,29 @@ type SpringParams = BaseParams & {
 // --------------------------------------------------------------------------
 
 /**
- * Parameters for staggered animations
+ * Parameters for inSequenceed animations
  */
-type StaggerParameters = {
+type SequenceParameters = {
   /** Start value */
   start?: number | string;
   /** Element to start from */
   from?: number | "first" | "center" | "last";
-  /** Whether to reverse the stagger order */
+  /** Whether to reverse the inSequence order */
   reversed?: boolean;
-  /** Grid dimensions for 2D staggering */
+  /** Grid dimensions for 2D sequencing */
   grid?: Array<number>;
-  /** Axis for grid staggering */
+  /** Axis for grid sequencing */
   axis?: "x" | "y";
-  /** Easing function for stagger timing */
+  /** Easing function for inSequence timing */
   ease?: EasingParam;
-  /** Function to modify stagger values */
+  /** Function to modify inSequence values */
   modifier?: TweenModifier;
 };
 
 /**
- * Function that returns a staggered value
+ * Function that returns a inSequenceed value
  */
-type StaggerFunction = (
+type SequenceFunction = (
   target?: Target,
   index?: number,
   length?: number,
@@ -1209,10 +1209,10 @@ declare function createDraggable(
 declare function createScope(params?: ScopeParams): Scope;
 declare function onScroll(parameters?: ScrollObserverParams): ScrollObserver;
 declare function createSpring(parameters?: SpringParams): Spring;
-declare function stagger(
+declare function inSequence(
   val: number | string | [number | string, number | string],
-  params?: StaggerParameters
-): StaggerFunction;
+  params?: SequenceParameters
+): SequenceFunction;
 
 // New API names (Phase 2 renaming)
 declare function createMotionTimer(parameters?: TimerParams): Timer;
@@ -1236,8 +1236,8 @@ declare function createMotionScroll(
 declare function createMotionSpring(parameters?: SpringParams): Spring;
 declare function inSequence(
   val: number | string | [number | string, number | string],
-  params?: StaggerParameters
-): StaggerFunction;
+  params?: SequenceParameters
+): SequenceFunction;
 
 // --------------------------------------------------------------------------
 // CLASS DECLARATIONS
@@ -1476,32 +1476,6 @@ declare const InMotion: Engine;
 declare const inMotion: any;
 declare const createMotionSVG: any;
 
-// Re-export all classes and functions
-export {
-  InMotion,
-  inMotion,
-  createMotionSVG,
-  inSequence,
-  eases,
-  createMotionTimer,
-  Timer,
-  createMotion,
-  JSAnimation,
-  createMotionTimeline,
-  Timeline,
-  createMotionAnimation,
-  Animatable,
-  createMotionDraggable,
-  Draggable,
-  createMotionScope,
-  Scope,
-  createMotionScroll,
-  ScrollObserver,
-  scrollContainers,
-  createMotionSpring,
-  Spring,
-};
-
 // Type exports
 export type {
   // Core Animation Types
@@ -1611,8 +1585,8 @@ export type {
   SpringParams,
 
   // Miscellaneous Types
-  StaggerParameters,
-  StaggerFunction,
+  SequenceParameters,
+  SequenceFunction,
   ScopeParams,
   ScopeCleanup,
   ScopeConstructor,
@@ -1829,4 +1803,30 @@ interface ScrollContainerInterface {
   handleEvent(e: Event): void;
   /** Revert all changes and clean up */
   revert(): void;
+}
+
+/**
+ * Animatable interface for animation objects with dynamic properties
+ */
+export interface IAnimatable {
+  /** Array of animation targets */
+  targets: TargetsArray;
+  /** Storage for property animations */
+  animations: Record<string, JSAnimation>;
+  /** Dynamic property indexer for animatable properties */
+  [key: string]: AnimatableProperty | any;
+  
+  /**
+   * Reverts all animations and restores original state.
+   * @return The current animatable instance
+   */
+  revert(): IAnimatable;
+}
+
+/**
+ * Draggable interface for animation objects with draggable functionality
+ */
+export interface IDraggable {
+  $target: HTMLElement;
+  animate: AnimatableObject;
 }

@@ -35,35 +35,29 @@
 export * as InMotionPhysics from "./physics/index.d.ts";
 
 // Core animation engine and components
-export { engine as InMotion } from "./engine.ts";
+export { InMotion } from "./engine.ts";
 export { createTimer as createMotionTimer, Timer } from "./timer.ts";
 export {
-  animate as createMotion,
+  createMotion,
   JSAnimation,
-  createAnimatable as createMotionAnimation,
+  createMotionAnimation,
   Animatable,
 } from "./animation.ts";
+export { createMotionTimeline, InMotionTimeline } from "./timeline.ts";
+export { createMotionDraggable, InMotionDraggable } from "./draggable.ts";
+export { createMotionScope, InMotionScope } from "./scope.ts";
 export {
-  createTimeline as createMotionTimeline,
-  Timeline,
-} from "./timeline.ts";
-export {
-  createDraggable as createMotionDraggable,
-  Draggable,
-} from "./draggable.ts";
-export { createScope as createMotionScope, Scope } from "./scope.ts";
-export {
-  onScroll as createMotionScroll,
+  createMotionScroll,
   ScrollObserver,
   scrollContainers,
 } from "./scroll.ts";
-export { createSpring as createMotionSpring, Spring } from "./spring.ts";
+export { createMotionSpring, InMotionSpring } from "./spring.ts";
 
 // Utilities
 export * as inMotion from "./utils/index.ts";
 export { svg as createMotionSVG } from "./svg.ts";
-export { stagger as inSequence } from "./stagger.ts";
+export { inSequence } from "./sequence.ts";
 export { eases } from "./eases.ts";
 
 // Re-export types
-export type * from "./types.ts";
+export * as InMotionType from "./types.ts";

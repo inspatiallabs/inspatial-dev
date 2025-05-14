@@ -13,10 +13,7 @@
     "url": "https://github.com/inspatiallabs/inspatial-core/issues"
   },
   "homepage": "https://inspatial.dev/motion",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
-  "exports": {},
-  "files": ["src", "dist"],
+  "files": ["src"],
   "keywords": [
     "animation",
     "motion",
@@ -29,31 +26,44 @@
     "easing",
     "animation-library",
     "animation-engine",
-    "animation-library",
-    "animation-engine"
+    "tweening",
+    "transitions",
+    "keyframes"
   ],
 
   "imports": {
-    "@inspatial/test": "jsr:@inspatial/test@^0.1.1"
+    "@inspatial/test": "../test/src/index.ts"
   },
+  "exports": {},
   "tasks": {
-    "test": "deno test --allow-all --no-check --unstable-sloppy-imports",
-    "dev": "deno run --allow-all --no-check --unstable-sloppy-imports --watch src/index.ts",
-    "build": "deno check src/index.ts",
-    "lint-fix": "deno lint --rules-exclude=no-url-import-extension src/"
+    "build": "deno bundle --config deno.json src/index.ts dist/index.js",
+    "test": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts",
+    "test:leaks": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/leaks.test.ts",
+    "test:animation": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/animation.test.ts",
+    "test:callbacks": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/callback.test.ts",
+    "test:draggable": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/draggable.test.ts",
+    "test:eases": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/eases.test.ts",
+    "test:keyframes": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/keyframes.test.ts",
+    "test:promises": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/promises.test.ts",
+    "test:sequences": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/sequence.test.ts",
+    "test:svg": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/svg.test.ts",
+    "test:timer": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/timer.test.ts",
+    "test:units": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/units.test.ts",
+    "test:utils": "deno run -A --no-check --unstable-sloppy-imports ./test_runner.ts ./src/utils.test.ts"
   },
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "checkJs": false,
-    "strict": true,
-    "noImplicitAny": false,
-    "lib": ["DOM", "ES2022"]
+    "allowJs": true,
+    "lib": ["deno.window", "deno.ns", "dom", "dom.iterable"],
+    "strict": true
   },
   "lint": {
     "include": ["src/"],
     "exclude": ["node_modules/", "dist/"],
     "rules": {
       "tags": ["recommended"],
-      "exclude": ["no-explicit-any"]
+      "exclude": ["no-explicit-any", "ban-ts-comment"]
     }
   },
   "fmt": {

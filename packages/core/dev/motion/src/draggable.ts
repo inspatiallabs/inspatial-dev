@@ -70,11 +70,12 @@ const preventDefault = (e: Event): void => {
  * Noop function specifically for Draggable callbacks
  * Implements the Callback<Draggable> type interface
  */
-const draggableNoop = (self: Draggable, _e?: PointerEvent): void => {};
+const draggableNoop = (self: InMotionDraggable, _e?: PointerEvent): void => {};
 
 /**
  * # DOMProxy
  * @summary Provides a DOM-like interface for non-DOM objects
+ * NOTE: This might get replaced by @inspatial/dom module
  *
  * A proxy class that mimics DOM element behavior for JavaScript objects.
  * This allows treating any object with x, y, width, height properties
@@ -306,14 +307,10 @@ class Transforms implements TransformsInterface {
  * Handles parameters that can be either static values or functions
  * that return values dynamically based on the draggable instance.
  *
- * @template T - Parameter type
- * @param {T | ((draggable: Draggable) => T)} value - Static value or function
- * @param {Draggable} draggable - Draggable instance for context
- * @return {T} - Resolved parameter value
  */
 const parseDraggableFunctionParameter = <T>(
-  value: T | ((draggable: Draggable) => T),
-  draggable: Draggable
+  value: T | ((draggable: InMotionDraggable) => T),
+  draggable: InMotionDraggable
 ): T => {
   return value && isFnc(value) ? ((value as Function)(draggable) as T) : value;
 };
@@ -413,55 +410,55 @@ export interface IDraggable {
   resizeObserver: ResizeObserver;
 
   // Callbacks
-  onGrab: Callback<Draggable>;
-  onDrag: Callback<Draggable>;
-  onRelease: Callback<Draggable>;
-  onUpdate: Callback<Draggable>;
-  onSettle: Callback<Draggable>;
-  onSnap: Callback<Draggable>;
-  onResize: Callback<Draggable>;
-  onAfterResize: Callback<Draggable>;
+  onGrab: Callback<InMotionDraggable>;
+  onDrag: Callback<InMotionDraggable>;
+  onRelease: Callback<InMotionDraggable>;
+  onUpdate: Callback<InMotionDraggable>;
+  onSettle: Callback<InMotionDraggable>;
+  onSnap: Callback<InMotionDraggable>;
+  onResize: Callback<InMotionDraggable>;
+  onAfterResize: Callback<InMotionDraggable>;
 
   // Methods
   computeVelocity(dx: number, dy: number): number;
-  setX(x: number, muteUpdateCallback?: boolean): Draggable;
-  setY(y: number, muteUpdateCallback?: boolean): Draggable;
+  setX(x: number, muteUpdateCallback?: boolean): InMotionDraggable;
+  setY(y: number, muteUpdateCallback?: boolean): InMotionDraggable;
   updateScrollCoords(): void;
   updateBoundingValues(): void;
   isOutOfBounds(bounds: number[], x: number, y: number): number;
   refresh(): void;
   update(): void;
-  stop(): Draggable;
+  stop(): InMotionDraggable;
   scrollInView(
     duration?: number,
     gap?: number,
     ease?: EasingFunction
-  ): Draggable;
+  ): InMotionDraggable;
   handleHover(): void;
   animateInView(
     duration?: number,
     gap?: number,
     ease?: EasingFunction
-  ): Draggable;
+  ): InMotionDraggable;
   handleDown(e: MouseEvent | TouchEvent): void;
   handleMove(e: MouseEvent | TouchEvent): void;
   handleUp(): void;
-  reset(): Draggable;
-  enable(): Draggable;
-  disable(): Draggable;
-  revert(): Draggable;
+  reset(): InMotionDraggable;
+  enable(): InMotionDraggable;
+  disable(): InMotionDraggable;
+  revert(): InMotionDraggable;
   handleEvent(e: Event): void;
 }
 
 /**
- * # Draggable
+ * # InMotionDraggable
  * @summary Creates draggable elements with physics-based animations
  *
  * Enables dragging and flicking of DOM elements or JavaScript objects.
  * Supports physics-based spring animations, containment, snapping, and
  * customizable interactions.
  */
-export class Draggable implements IDraggable {
+export class InMotionDraggable implements IDraggable {
   // DOM references
   $target!: HTMLElement | DOMProxyInterface;
   $trigger!: HTMLElement;
@@ -547,14 +544,14 @@ export class Draggable implements IDraggable {
   resizeObserver!: ResizeObserver;
 
   // Callbacks
-  onGrab!: Callback<Draggable>;
-  onDrag!: Callback<Draggable>;
-  onRelease!: Callback<Draggable>;
-  onUpdate!: Callback<Draggable>;
-  onSettle!: Callback<Draggable>;
-  onSnap!: Callback<Draggable>;
-  onResize!: Callback<Draggable>;
-  onAfterResize!: Callback<Draggable>;
+  onGrab!: Callback<InMotionDraggable>;
+  onDrag!: Callback<InMotionDraggable>;
+  onRelease!: Callback<InMotionDraggable>;
+  onUpdate!: Callback<InMotionDraggable>;
+  onSettle!: Callback<InMotionDraggable>;
+  onSnap!: Callback<InMotionDraggable>;
+  onResize!: Callback<InMotionDraggable>;
+  onAfterResize!: Callback<InMotionDraggable>;
 
   /**
    * Creates a new draggable element or object
@@ -592,7 +589,7 @@ export class Draggable implements IDraggable {
     // Parse container parameter which can be a function
     const container = parseDraggableFunctionParameter(
       parameters.container,
-      this as Draggable
+      this as InMotionDraggable
     );
 
     // Initialize properties
@@ -650,19 +647,22 @@ export class Draggable implements IDraggable {
     this.hasReleaseSpring = hasSpring;
 
     // Set up callbacks with type assertion
-    this.onGrab = (parameters.onGrab || draggableNoop) as Callback<Draggable>;
-    this.onDrag = (parameters.onDrag || draggableNoop) as Callback<Draggable>;
+    this.onGrab = (parameters.onGrab ||
+      draggableNoop) as Callback<InMotionDraggable>;
+    this.onDrag = (parameters.onDrag ||
+      draggableNoop) as Callback<InMotionDraggable>;
     this.onRelease = (parameters.onRelease ||
-      draggableNoop) as Callback<Draggable>;
+      draggableNoop) as Callback<InMotionDraggable>;
     this.onUpdate = (parameters.onUpdate ||
-      draggableNoop) as Callback<Draggable>;
+      draggableNoop) as Callback<InMotionDraggable>;
     this.onSettle = (parameters.onSettle ||
-      draggableNoop) as Callback<Draggable>;
-    this.onSnap = (parameters.onSnap || draggableNoop) as Callback<Draggable>;
+      draggableNoop) as Callback<InMotionDraggable>;
+    this.onSnap = (parameters.onSnap ||
+      draggableNoop) as Callback<InMotionDraggable>;
     this.onResize = (parameters.onResize ||
-      draggableNoop) as Callback<Draggable>;
+      draggableNoop) as Callback<InMotionDraggable>;
     this.onAfterResize = (parameters.onAfterResize ||
-      draggableNoop) as Callback<Draggable>;
+      draggableNoop) as Callback<InMotionDraggable>;
 
     // Set up axis enabling/disabling
     this.disabled = [0, 0];
@@ -2117,17 +2117,17 @@ export class Draggable implements IDraggable {
 }
 
 /**
- * # createDraggable
+ * # createMotionDraggable
  * @summary Creates a new Draggable instance
  *
  * Factory function to create a draggable element with the given
- * parameters. Equivalent to calling `new Draggable()` directly.
+ * parameters. Equivalent to calling `new InMotionDraggable()` directly.
  *
  * @param {DOMTargetSelector} target - Element or selector to make draggable
  * @param {DraggableParams} [parameters] - Configuration parameters
- * @return {Draggable} - New draggable instance
+ * @return {InMotionDraggable} - New draggable instance
  */
-export const createDraggable = (
+export const createMotionDraggable = (
   target: DOMTargetSelector,
   parameters?: DraggableParams
-): Draggable => new Draggable(target, parameters);
+): InMotionDraggable => new InMotionDraggable(target, parameters);

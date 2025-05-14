@@ -30,9 +30,9 @@ import {
   removeTweenSliblings,
 } from "./compositions.ts";
 
-import { engine } from "./engine.ts";
+import { InMotion } from "./engine.ts";
 
-import { Clock } from "./clock.ts";
+import { InMotionClock } from "./clock.ts";
 
 import type {
   TimerParams,
@@ -51,7 +51,7 @@ import type {
  * @summary #### Base class for animations and timelines
  *
  * The Timer class is the foundation for all time-based animations.
- * It extends Clock with animation-specific features like iteration control,
+ * It extends InMotionClock with animation-specific features like iteration control,
  * looping, playback direction, and callbacks.
  *
  * @since 0.1.0
@@ -59,7 +59,7 @@ import type {
  * @kind class
  * @access public
  */
-export class Timer extends Clock {
+export class Timer extends InMotionClock {
   /** Unique identifier for the timer */
   public id: number | string;
 
@@ -186,7 +186,7 @@ export class Timer extends Clock {
     // @ts-ignore - Type compatibility issue between Timer and Revertible
     if (globals.scope) globals.scope.revertibles.push(this);
 
-    const timerInitTime = parent ? 0 : (engine as any)._elapsedTime;
+    const timerInitTime = parent ? 0 : (InMotion as any)._elapsedTime;
     const timerDefaults = parent ? parent.defaults : globals.defaults;
     const timerDelay =
       isFnc(delay) || isUnd(delay) ? timerDefaults.delay : +(delay || 0);
@@ -205,12 +205,12 @@ export class Timer extends Clock {
       offsetPosition = parentPosition;
     } else {
       let startTime = now();
-      // Make sure to tick the engine once if suspended to avoid big gaps with the following offsetPosition calculation
-      if (engine.paused) {
-        engine.requestTick(startTime);
-        startTime = (engine as any)._elapsedTime;
+      // Make sure to tick the InMotion once if suspended to avoid big gaps with the following offsetPosition calculation
+      if (InMotion.paused) {
+        InMotion.requestTick(startTime);
+        startTime = (InMotion as any)._elapsedTime;
       }
-      offsetPosition = startTime - (engine as any)._startTime;
+      offsetPosition = startTime - (InMotion as any)._startTime;
     }
 
     // Timer's parameters
@@ -256,7 +256,7 @@ export class Timer extends Clock {
     this._prev = null;
     this._next = null;
 
-    // Clock's parameters
+    // InMotionClock's parameters
     this._elapsedTime = timerInitTime;
     this._startTime = timerInitTime;
     this._lastTime = timerInitTime;
@@ -452,7 +452,7 @@ export class Timer extends Clock {
    * @returns This timer instance
    */
   resetTime(): this {
-    const timeScale = 1 / (this._speed * (engine as any)._speed);
+    const timeScale = 1 / (this._speed * (InMotion as any)._speed);
     this._startTime = now() - (this._currentTime + this._delay) * timeScale;
     return this;
   }
@@ -483,14 +483,14 @@ export class Timer extends Clock {
     } else {
       if (!this._running) {
         // @ts-ignore - Engine will have _head and _tail at runtime
-        addChild(engine as any, this, false, undefined, undefined);
-        (engine as any)._hasChildren = true;
+        addChild(InMotion as any, this, false, undefined, undefined);
+        (InMotion as any)._hasChildren = true;
         this._running = true;
       }
       this.resetTime();
       // Forces the timer to advance by at least one frame when the next tick occurs
       this._startTime -= 12;
-      engine.wake();
+      InMotion.wake();
     }
     return this;
   }
@@ -584,7 +584,7 @@ export class Timer extends Clock {
   cancel(): this {
     // Basic timer cancellation logic - animation specific functionality moved to JSAnimation.cancel()
     this._cancelled = 1;
-    // Pausing the timer removes it from the engine
+    // Pausing the timer removes it from the InMotion
     return this.pause();
   }
 
@@ -638,7 +638,7 @@ export class Timer extends Clock {
    * @param callback - Function to call when the timer completes
    * @returns Promise resolved when the timer completes
    */
-  // @ts-ignore - this method doesn't override the Clock method
+  // @ts-ignore - this method doesn't override the InMotionClock method
   then(callback: Callback<this> = noop): Promise<unknown> {
     const then = this.then;
     const onResolve = () => {

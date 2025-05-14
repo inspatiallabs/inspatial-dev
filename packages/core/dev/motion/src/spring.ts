@@ -8,11 +8,6 @@ import { setValue } from "./values.ts";
 
 import type { SpringParams, EasingFunction } from "./types.ts";
 
-/*
- * Spring ease solver adapted from https://webkit.org/demos/spring/spring.js
- * Webkit Copyright © 2016 Apple Inc
- */
-
 /**
  * @typedef {Object} SpringParams
  * @property {Number} [mass=1] - Mass, default 1
@@ -22,34 +17,34 @@ import type { SpringParams, EasingFunction } from "./types.ts";
  */
 
 /**
- * # Spring
+ * # InMotion Spring
  * @summary #### A physics-based spring system that generates realistic easing functions
- * 
- * The `Spring` class creates easing functions based on spring physics. Think of it like a physical spring that stretches and bounces back.
+ *
+ * The `InMotionSpring` class creates easing functions based on spring physics. Think of it like a physical spring that stretches and bounces back.
  * It provides a more natural and realistic animation feel compared to traditional easing functions.
- * 
+ *
  * @since 1.0.0
  * @category InSpatial Motion
  * @kind class
  * @access public
- * 
+ *
  * ### 💡 Core Concepts
  * - Uses real physics equations to simulate spring behavior
  * - Configurable mass, stiffness, damping, and initial velocity
  * - Automatically calculates the appropriate duration based on physics
  * - Provides an easing function that can be used in animations
- * 
+ *
  * ### 📚 Terminology
  * > **Mass**: How heavy the object attached to the spring is
  * > **Stiffness**: How rigid the spring is (higher values = more rigid)
  * > **Damping**: How quickly the spring stops oscillating (higher values = faster stopping)
  * > **Velocity**: Initial speed of the object
- * 
+ *
  * @example
  * ### Example 1: Basic Spring Animation
  * ```typescript
- * import { animate, createMotionSpring } from "@inspatial/motion";
- * 
+ * import { createMotion, createMotionSpring } from "@inspatial/motion";
+ *
  * // Create a spring with custom physics parameters
  * const bouncy = createMotionSpring({
  *   mass: 1,        // Mass of the object
@@ -57,40 +52,40 @@ import type { SpringParams, EasingFunction } from "./types.ts";
  *   damping: 10,    // Damping factor
  *   velocity: 2     // Initial velocity
  * });
- * 
+ *
  * // Use the spring as an easing function in an animation
- * animate(".box", {
+ * createMotion(".box", {
  *   translateX: 200,
  *   ease: bouncy.ease,
  *   duration: bouncy.duration // Spring calculates appropriate duration
  * });
  * ```
- * 
+ *
  * @example
  * ### Example 2: Adjusting Spring Properties Dynamically
  * ```typescript
- * import { animate, createMotionSpring } from "@inspatial/motion";
- * 
+ * import { createMotion, createMotionSpring } from "@inspatial/motion";
+ *
  * // Create a spring with default values
  * const spring = createMotionSpring();
- * 
+ *
  * // Adjust properties to create a bouncier effect
  * spring.stiffness = 120;
  * spring.damping = 5;    // Less damping = more bounce
- * 
+ *
  * // The duration is automatically recalculated when properties change
  * console.log(spring.duration); // Duration updated based on new properties
- * 
- * animate(".element", {
+ *
+ * createMotion(".element", {
  *   scale: 1.5,
  *   ease: spring.ease,
  *   duration: spring.duration
  * });
  * ```
  */
-export class Spring {
+export class InMotionSpring {
   /** Interval fed to the solver to calculate duration */
-  timeStep: number; 
+  timeStep: number;
   /** Values below this threshold are considered resting position */
   restThreshold: number;
   /** Duration in ms used to check if the spring is resting after reaching restThreshold */
@@ -126,7 +121,7 @@ export class Spring {
 
   /**
    * Creates a new Spring instance with the specified parameters
-   * 
+   *
    * @param {SpringParams} [parameters] - Configuration options for the spring
    */
   constructor(parameters: SpringParams = {}) {
@@ -153,7 +148,7 @@ export class Spring {
 
   /**
    * Solves the spring equation for a given time value
-   * 
+   *
    * @param {number} time - Time value to solve the equation for
    * @returns {number} Solved value between 0 and 1
    */
@@ -266,61 +261,31 @@ export class Spring {
 }
 
 /**
- * # createSpring
- * @summary #### Creates a physics-based spring for natural easing functions
- * 
- * This function creates a new Spring instance with the given parameters.
- * It's useful for creating realistic, physics-based animations.
- * 
- * @param {SpringParams} [parameters] - Configuration options for the spring
- * @returns {Spring} A new Spring instance
- * 
- * @example
- * ```typescript
- * import { animate, createSpring } from "@inspatial/motion";
- * 
- * const spring = createSpring({
- *   mass: 1,
- *   stiffness: 80,
- *   damping: 8
- * });
- * 
- * animate(".element", {
- *   translateY: 100,
- *   ease: spring.ease,
- *   duration: spring.duration
- * });
- * ```
- * 
- * @deprecated Use createMotionSpring instead
- */
-export const createSpring = (parameters?: SpringParams): Spring => new Spring(parameters || {});
-
-/**
  * # createMotionSpring
  * @summary #### Creates a physics-based spring for natural easing functions
- * 
+ *
  * This function creates a new Spring instance with the given parameters.
  * It's useful for creating realistic, physics-based animations.
- * 
+ *
  * @param {SpringParams} [parameters] - Configuration options for the spring
  * @returns {Spring} A new Spring instance
- * 
+ *
  * @example
  * ```typescript
- * import { animate, createMotionSpring } from "@inspatial/motion";
- * 
+ * import { createMotion, createMotionSpring } from "@inspatial/motion";
+ *
  * const spring = createMotionSpring({
  *   mass: 1,
  *   stiffness: 80,
  *   damping: 8
  * });
- * 
- * animate(".element", {
+ *
+ * createMotion(".element", {
  *   translateY: 100,
  *   ease: spring.ease,
  *   duration: spring.duration
  * });
  * ```
  */
-export const createMotionSpring = (parameters?: SpringParams): Spring => new Spring(parameters || {});
+export const createMotionSpring = (parameters?: SpringParams): InMotionSpring =>
+  new InMotionSpring(parameters || {});

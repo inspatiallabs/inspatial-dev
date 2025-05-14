@@ -33,7 +33,7 @@
  * @category InSpatial Motion
  */
 
-import { engine } from "../../engine.ts";
+import { InMotion } from "../../engine.ts";
 import { Timer } from "../../timer.ts";
 import { parseTargets } from "../../targets.ts";
 import { isNode } from "../dom/index.ts";
@@ -71,7 +71,7 @@ import type {
  * @example
  * ### Simple Delayed Execution
  * ```typescript
- * import { delay } from '@inspatial/motion/utils/animation';
+ * import { delay } from '@inspatial/motion/utils';
  * 
  * // Wait 2 seconds then run a function
  * delay(() => {
@@ -82,7 +82,7 @@ import type {
  * @example
  * ### Controlled Delay
  * ```typescript
- * import { delay } from '@inspatial/motion/utils/animation';
+ * import { delay } from '@inspatial/motion/utils';
  * 
  * // Create a delay timer
  * const timer = delay(() => {
@@ -108,10 +108,10 @@ export function delay<T extends CallbackArgument>(
   
   return (
     callback
-      ? // Delay running if the engine hasn't ran once yet
-        (engine as any)._hasChildren || !engine.useDefaultMainLoop
+      ? // Delay running if the InMotion hasn't ran once yet
+        (InMotion as any)._hasChildren || !InMotion.useDefaultMainLoop
         ? start()
-        : engine.update() && start()
+        : InMotion.update() && start()
       : timer
   ) as TimerType;
 }
@@ -233,8 +233,8 @@ export const stop = (
 
   let hasRemovedTargets = false;
   
-  // Find all active animations in the engine
-  let activeAnimation = (engine as any)._head as JSAnimation;
+  // Find all active animations in the InMotion
+  let activeAnimation = (InMotion as any)._head as JSAnimation;
   
   while (activeAnimation) {
     const next = activeAnimation._next;
