@@ -43,7 +43,62 @@ type Renderable = JSAnimation | Timeline;
 /**
  * Any tickable object that can be updated in the animation loop
  */
-type Tickable = Timer | Renderable;
+// type Tickable = Timer | Renderable; // Keep original for reference, IRenderTickable is now primary for render
+
+/**
+ * Interface for objects that can be processed by the render/tick functions,
+ * exposing necessary properties publicly.
+ */
+export interface IRenderTickable {
+  // Core Clock/Timer properties
+  parent: Timeline | null;
+  duration: number;
+  completed: boolean;
+  iterationDuration: number;
+  iterationCount: number;
+  currentIteration: number; 
+  loopDelay: number;        
+  reversed: number | boolean; 
+  alternate: boolean;       
+  hasChildren: boolean;     
+  delay: number;            
+  currentTime: number;      
+  iterationTime: number;    
+  offset: number;           
+  head: IRenderTickable | Tween | null; // Use IRenderTickable for children if they also must be detailed
+  tail: IRenderTickable | Tween | null; 
+  fps: number;              
+  speed: number;            
+  deltaTime: number; 
+  paused: boolean; 
+
+  // Callbacks
+  began: boolean;
+  backwards: boolean;
+  onBegin: Callback<any>; 
+  onLoop: Callback<any>;
+  onBeforeUpdate: Callback<any>;
+  onUpdate: Callback<any>;
+  onRender: Callback<any>; 
+  onComplete: Callback<any>;
+  resolve: Function; 
+
+  // Methods
+  computeDeltaTime: (prevTime: number) => void;
+  requestTick: (time: number) => number;
+
+  // Easing - this is more specific to JSAnimation/Timeline.
+  // Timer itself might have a default/noop easing or this could be optional.
+  ease: EasingFunction; 
+
+  // Allow other properties from specific types for flexibility during transition
+  [key: string]: any;
+}
+
+/**
+ * Original Tickable for broader use where detailed public access isn't assumed.
+ */
+export type Tickable = Timer | Renderable;
 
 /**
  * Combined type for callback arguments that provide all functionality
@@ -664,7 +719,7 @@ type TimerOptions = BaseParams & {
 /**
  * Complete parameters for timer-based animations
  */
-type TimerParams = TimerOptions & TickableCallbacks<Timer>;
+type TimerParams = TimerOptions & TickableCallbacks<Timer> & RenderableCallbacks<Timer>;
 
 /**
  * Complete animation parameters
@@ -1601,6 +1656,20 @@ export type {
   TweenLookups,
   TweenReplaceLookups,
   TweenAdditiveLookups,
+
+  // Newly exposed class / interface types
+  Timeline,
+  JSAnimation,
+  Spring,
+  Scope,
+  Timer,
+  ScrollObserver,
+  Draggable,
+  DOMProxy,
+  Transforms,
+  Animatable,
+  Engine,
+  Clock,
 };
 
 /**

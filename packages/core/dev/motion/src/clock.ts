@@ -161,4 +161,24 @@ export class InMotionClock {
     this._lastTime = time;
     return delta;
   }
+
+  // Make properties required by render/tick public
+  public get currentTime(): number { return this._currentTime; }
+  public set currentTime(time: number) { this._currentTime = time; }
+  public get currentIteration(): number { 
+    // This property is specific to Timer/JSAnimation, Clock itself doesn't have it.
+    // Subclasses will need to provide a meaningful implementation or override.
+    return 0; 
+  }
+  public set currentIteration(iteration: number) { 
+    // Placeholder, subclasses to implement
+  }
+  public get loopDelay(): number { return 0; } // Placeholder
+  public get reversed(): boolean | number { return false; } // Placeholder
+  public get alternate(): boolean { return false; } // Placeholder
+  public get delay(): number { return 0; } // Placeholder
+  public get iterationTime(): number { return this._currentTime; } // Or more specific logic in Timer
+  public set iterationTime(time: number) { /* Placeholder */ }
+  public get offset(): number { return 0; } // Placeholder
+  public get head(): Tickable | Tween | null { return this._head; }
 }

@@ -11,6 +11,9 @@ import {
   minValue,
 } from "./consts.ts";
 
+// Import Tickable from types.ts
+import type { Tickable } from "./types.ts";
+
 // Define helper functions directly instead of importing from helpers.ts
 const now = (): number => performance.now();
 
@@ -35,6 +38,7 @@ function forEachChildren(parent: any, callback: (child: any) => void, backwards 
 }
 
 // Define types for parameters
+/*
 interface Tickable {
   parent: any;
   duration: number;
@@ -65,6 +69,7 @@ interface Tickable {
   _speed: number;
   requestTick: (time: number) => number;
 }
+*/
 
 interface TransformsMap {
   [key: string]: string;

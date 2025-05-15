@@ -6,7 +6,7 @@ import {
   maxValue,
 } from "./consts.ts";
 
-import { clampInfinity, round, normalizeTime } from "./utils/index.ts";
+import { clampInfinity, round, normalizeTime } from "./utils/math/index.ts";
 
 import {
   forEachChildren,
@@ -44,6 +44,7 @@ import type {
   Tween,
   ScrollObserver,
   Revertible,
+  DefaultsParams,
 } from "./types.ts";
 
 /**
@@ -98,6 +99,9 @@ export class Timer extends InMotionClock {
 
   /** Callback when the timer completes */
   public onComplete: Callback<this>;
+
+  /** Callback on each render frame */
+  public onRender: Callback<this>;
 
   /** Duration of a single iteration */
   public iterationDuration: number;
@@ -181,23 +185,25 @@ export class Timer extends InMotionClock {
       onBegin,
       onBeforeUpdate,
       onUpdate,
+      onRender,
     } = parameters;
 
     // @ts-ignore - Type compatibility issue between Timer and Revertible
     if (globals.scope) globals.scope.revertibles.push(this);
 
     const timerInitTime = parent ? 0 : (InMotion as any)._elapsedTime;
-    const timerDefaults = parent ? parent.defaults : globals.defaults;
+    const timerDefaults = (parent ? parent.defaults : globals.defaults) as DefaultsParams;
     const timerDelay =
       isFnc(delay) || isUnd(delay) ? timerDefaults.delay : +(delay || 0);
-    const timerDuration =
-      isFnc(duration) || isUnd(duration) ? Infinity : +duration!;
-    const timerLoop = setValue(loop, timerDefaults.loop);
-    const timerLoopDelay = setValue(loopDelay, timerDefaults.loopDelay);
+    const timerDuration: number =
+      isFnc(duration) ? Infinity : (isUnd(duration) ? (timerDefaults.duration as number) : +duration!);
+    const timerLoop = isUnd(loop) ? timerDefaults.loop : loop;
+    const timerLoopDelayValue = isUnd(loopDelay) ? timerDefaults.loopDelay : +loopDelay;
+
     const timerIterationCount =
-      timerLoop === true || timerLoop === Infinity || timerLoop < 0
+      timerLoop === true || timerLoop === Infinity || (typeof timerLoop === 'number' && timerLoop < 0)
         ? Infinity
-        : timerLoop + 1;
+        : (typeof timerLoop === 'number' ? timerLoop : 0) + 1;
 
     let offsetPosition = 0;
 
@@ -219,7 +225,7 @@ export class Timer extends InMotionClock {
     // Total duration of the timer
     this.duration =
       clampInfinity(
-        (timerDuration + timerLoopDelay) * timerIterationCount - timerLoopDelay
+        (timerDuration + (timerLoopDelayValue || 0)) * timerIterationCount - (timerLoopDelayValue || 0)
       ) || minValue;
     this.backwards = false;
     this.paused = true;
@@ -230,9 +236,10 @@ export class Timer extends InMotionClock {
     // @ts-ignore - Type compatibility between callbacks
     this.onBeforeUpdate = onBeforeUpdate || timerDefaults.onBeforeUpdate;
     // @ts-ignore - Type compatibility between callbacks
-    this.onUpdate = onUpdate || timerDefaults.onUpdate;
+    this.onUpdate = onUpdate || timerDefaults.onUpdate as Callback<this>;
+    this.onRender = onRender || timerDefaults.onRender as Callback<this>;
     // @ts-ignore - Type compatibility between callbacks
-    this.onLoop = onLoop || timerDefaults.onLoop;
+    this.onLoop = onLoop || timerDefaults.onLoop as Callback<this>;
     // @ts-ignore - Type compatibility between callbacks
     this.onPause = onPause || timerDefaults.onPause;
     // @ts-ignore - Type compatibility between callbacks
@@ -241,18 +248,18 @@ export class Timer extends InMotionClock {
     this.iterationCount = timerIterationCount; // Number of loops
     this._autoplay = parent
       ? false
-      : setValue(autoplay, timerDefaults.autoplay);
+      : (isUnd(autoplay) ? timerDefaults.autoplay : autoplay) as boolean | ScrollObserver;
     this._offset = offsetPosition;
-    this._delay = timerDelay;
-    this._loopDelay = timerLoopDelay;
+    this._delay = timerDelay as number;
+    this._loopDelay = (timerLoopDelayValue || 0) as number;
     this._iterationTime = 0;
     this._currentIteration = 0; // Current loop index
     this._resolve = noop; // Used by .then()
     this._running = false;
-    this._reversed = +setValue(reversed, timerDefaults.reversed);
+    this._reversed = +(isUnd(reversed) ? timerDefaults.reversed : reversed) as number;
     this._reverse = this._reversed;
     this._cancelled = 0;
-    this._alternate = setValue(alternate, timerDefaults.alternate);
+    this._alternate = (isUnd(alternate) ? timerDefaults.alternate : alternate) as boolean;
     this._prev = null;
     this._next = null;
 
@@ -260,8 +267,8 @@ export class Timer extends InMotionClock {
     this._elapsedTime = timerInitTime;
     this._startTime = timerInitTime;
     this._lastTime = timerInitTime;
-    this._fps = setValue(frameRate, timerDefaults.frameRate);
-    this._speed = setValue(playbackRate, timerDefaults.playbackRate);
+    this._fps = (isUnd(frameRate) ? timerDefaults.frameRate : frameRate) as number;
+    this._speed = (isUnd(playbackRate) ? timerDefaults.playbackRate : playbackRate) as number;
   }
 
   /**
@@ -377,14 +384,14 @@ export class Timer extends InMotionClock {
    * Playback speed
    */
   override get speed(): number {
-    return super.speed;
+    return this._speed;
   }
 
   /**
    * Set playback speed
    */
   override set speed(playbackRate: number) {
-    super.speed = playbackRate;
+    this._speed = playbackRate < minValue ? minValue : +playbackRate;
     this.resetTime();
   }
 
