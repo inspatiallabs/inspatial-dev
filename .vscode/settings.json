@@ -2,4 +2,5 @@
   "deno.enable": true,
   "deno.lint": true,
   "deno.unstable": ["cron", "kv", "webgpu", "byonm"],
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false
 }

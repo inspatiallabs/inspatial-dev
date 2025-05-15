@@ -11,8 +11,8 @@ import {
   minValue,
 } from "./consts.ts";
 
-// Import Tickable from types.ts
-import type { Tickable } from "./types.ts";
+// Import detailed internal representation of tickable
+import type { IRenderTickable as Tickable } from "./types.ts"; // Alias to reuse variable name
 
 // Define helper functions directly instead of importing from helpers.ts
 const now = (): number => performance.now();
@@ -26,9 +26,14 @@ const round = (value: number, precision: number = 0): number => {
   return Math.round(value * factor) / factor;
 };
 
-const interpolate = (a: number, b: number, t: number): number => a + (b - a) * t;
+const interpolate = (a: number, b: number, t: number): number =>
+  a + (b - a) * t;
 
-function forEachChildren(parent: any, callback: (child: any) => void, backwards = false): void {
+function forEachChildren(
+  parent: any,
+  callback: (child: any) => void,
+  backwards = false
+): void {
   let child = backwards ? parent._tail : parent._head;
   while (child) {
     const next = backwards ? child._prev : child._next;
@@ -77,7 +82,7 @@ interface TransformsMap {
 
 /**
  * Renders a tickable entity (animation, timer, etc.) at the specified time
- * 
+ *
  * @param {Tickable} tickable - The tickable entity to render
  * @param {number} time - Current time for rendering
  * @param {number} muteCallbacks - Whether to mute callbacks
@@ -145,7 +150,7 @@ export const render = (
   }
 
   // Checks if exactly one of _reversed and (_alternate && isOdd) is true
-  const isReversed = _reversed ? !(_alternate && isOdd) : (_alternate && isOdd);
+  const isReversed = _reversed ? !(_alternate && isOdd) : _alternate && isOdd;
   const _ease = tickable._ease;
   let iterationTime = isCurrentTimeEqualOrAboveDuration
     ? isReversed
@@ -201,8 +206,7 @@ export const render = (
     if (isCurrentTimeAboveZero) {
       // Trigger onUpdate callback before rendering
       tickable.computeDeltaTime(tickablePrevTime);
-      if (!muteCallbacks)
-        tickable.onBeforeUpdate(tickable);
+      if (!muteCallbacks) tickable.onBeforeUpdate(tickable);
     }
 
     // Start tweens rendering
@@ -214,7 +218,7 @@ export const render = (
           globals.tickThreshold;
       const absoluteTime =
         tickable._offset +
-        (parent ? parent._offset : 0) +
+        (parent ? (parent as any)._offset : 0) +
         tickableDelay +
         iterationTime;
 
@@ -302,9 +306,7 @@ export const render = (
             const tn = tween._toNumbers;
             const r = round(
               clamp(
-                tweenModifier(
-                  interpolate(fn[0], tn[0], tweenProgress)
-                ),
+                tweenModifier(interpolate(fn[0], tn[0], tweenProgress)),
                 0,
                 255
               ),
@@ -312,9 +314,7 @@ export const render = (
             );
             const g = round(
               clamp(
-                tweenModifier(
-                  interpolate(fn[1], tn[1], tweenProgress)
-                ),
+                tweenModifier(interpolate(fn[1], tn[1], tweenProgress)),
                 0,
                 255
               ),
@@ -322,9 +322,7 @@ export const render = (
             );
             const b = round(
               clamp(
-                tweenModifier(
-                  interpolate(fn[2], tn[2], tweenProgress)
-                ),
+                tweenModifier(interpolate(fn[2], tn[2], tweenProgress)),
                 0,
                 255
               ),
@@ -391,15 +389,13 @@ export const render = (
                   tweenTargetTransformsProperties =
                     (tweenTarget as any)[transformsSymbol] || {};
                 }
-                tweenTargetTransformsProperties[tweenProperty] = value! as string;
+                tweenTargetTransformsProperties[tweenProperty] =
+                  value! as string;
                 tweenTransformsNeedUpdate = 1;
               } else if (tweenType === tweenTypes.CSS) {
                 (tweenStyle as any)[tweenProperty] = value!;
               } else if (tweenType === tweenTypes.CSS_VAR) {
-                tweenStyle.setProperty(
-                  tweenProperty,
-                  value! as string
-                );
+                tweenStyle.setProperty(tweenProperty, value! as string);
               }
             }
 
@@ -415,7 +411,10 @@ export const render = (
         if (tweenTransformsNeedUpdate && tween._renderTransforms) {
           let str = emptyString;
           for (let key in tweenTargetTransformsProperties) {
-            const transformFragmentString = transformsFragmentStrings[key as keyof typeof transformsFragmentStrings] || '';
+            const transformFragmentString =
+              transformsFragmentStrings[
+                key as keyof typeof transformsFragmentStrings
+              ] || "";
             str += `${transformFragmentString}${tweenTargetTransformsProperties[key]}) `;
           }
           tweenStyle.transform = str;
@@ -481,7 +480,7 @@ export const render = (
 
 /**
  * Process a tick for a tickable entity
- * 
+ *
  * @param {Tickable} tickable - The tickable entity to process
  * @param {number} time - Current time for the tick
  * @param {number} muteCallbacks - Whether to mute callbacks
@@ -497,7 +496,7 @@ export const tick = (
 ): void => {
   const _currentIteration = tickable._currentIteration;
   render(tickable, time, muteCallbacks, internalRender, tickMode);
-  
+
   if (tickable._hasChildren) {
     const tl = tickable;
     const tlIsRunningBackwards = tl.backwards;
@@ -571,8 +570,7 @@ export const tick = (
     );
 
     // Renders on timeline are triggered by its children so it needs to be set after rendering the children
-    if (!muteCallbacks && tlChildrenHasRendered)
-      tl.onRender(tl);
+    if (!muteCallbacks && tlChildrenHasRendered) tl.onRender(tl);
 
     // Triggers the timeline onComplete() once all chindren all completed and the current time has reached the end
     if (tlChildrenHaveCompleted && tl._currentTime >= tl.duration) {

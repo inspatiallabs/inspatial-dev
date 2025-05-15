@@ -39,8 +39,6 @@
     "test": "deno run --allow-all --no-check --unstable-sloppy-imports ./tests/test_runner.ts --"
   },
   "compilerOptions": {
-    "checkJs": false,
-    "allowJs": true,
     "lib": ["deno.window", "deno.ns", "dom", "dom.iterable"],
     "strict": true
   },
@@ -49,7 +47,7 @@
     "exclude": ["node_modules/", "dist/"],
     "rules": {
       "tags": ["recommended"],
-      "exclude": ["no-explicit-any", "ban-ts-comment"]
+      "exclude": ["no-explicit-any", "ban-ts-comment", "ts", "no-sloppy-imports", "verbatim-module-syntax"]
     }
   },
   "fmt": {

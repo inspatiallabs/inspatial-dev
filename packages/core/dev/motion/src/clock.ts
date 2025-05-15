@@ -175,8 +175,7 @@ export class InMotionClock {
   }
   public get loopDelay(): number { return 0; } // Placeholder
   public get reversed(): boolean | number { return false; } // Placeholder
-  public get alternate(): boolean { return false; } // Placeholder
-  public get delay(): number { return 0; } // Placeholder
+  public get delay(): number { return 0; }
   public get iterationTime(): number { return this._currentTime; } // Or more specific logic in Timer
   public set iterationTime(time: number) { /* Placeholder */ }
   public get offset(): number { return 0; } // Placeholder
