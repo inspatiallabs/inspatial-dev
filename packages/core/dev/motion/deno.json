@@ -32,7 +32,8 @@
   ],
 
   "imports": {
-    "@inspatial/test": "../test/src/index.ts"
+    "@inspatial/test": "../test/src/index.ts",
+    "linkedom": "npm:linkedom@^0.18.10"
   },
   "exports": {},
   "tasks": {
@@ -47,7 +48,13 @@
     "exclude": ["node_modules/", "dist/"],
     "rules": {
       "tags": ["recommended"],
-      "exclude": ["no-explicit-any", "ban-ts-comment", "ts", "no-sloppy-imports", "verbatim-module-syntax"]
+      "exclude": [
+        "no-explicit-any",
+        "ban-ts-comment",
+        "enforce_ts_extensions",
+        "no-sloppy-imports",
+        "verbatim-module-syntax"
+      ]
     }
   },
   "fmt": {

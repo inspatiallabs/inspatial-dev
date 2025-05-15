@@ -32,7 +32,7 @@
  */
 
 // Physics module
-export * as InMotionPhysics from "./physics/index.d.ts";
+// export * as InMotionPhysics from "./physics/index.ts";
 
 // Core animation engine and components
 export { InMotion } from "./engine.ts";

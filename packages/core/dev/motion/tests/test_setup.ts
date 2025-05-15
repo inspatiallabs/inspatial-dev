@@ -1,3 +1,6 @@
+// @ts-nocheck
+import { parseHTML } from "linkedom";
+
 /**
  * # TestSetup
  * @summary #### Test environment setup for InSpatial Motion testing in Deno
@@ -8,6 +11,37 @@
  * @since 0.1.0
  * @category InSpatial Motion Testing
  */
+
+// ------------------------------------------------------------
+// 🌐 Linkedom bootstrap
+// We use the lightweight `linkedom` library to create a real-ish
+// DOM for Deno test runs.  This runs BEFORE any other logic so
+// the legacy Mock* classes further below are skipped automatically.
+// ------------------------------------------------------------
+if (typeof globalThis.document === "undefined") {
+  const { window } = parseHTML("<html><body></body></html>");
+
+  // Expose browser-like globals expected by InSpatial Motion tests
+  Object.assign(globalThis, {
+    window,
+    document: window.document,
+    Node: window.Node,
+    Element: window.Element,
+    HTMLElement: window.HTMLElement,
+    SVGElement: window.SVGElement,
+    requestAnimationFrame: (
+      window.requestAnimationFrame?.bind(window) ||
+      ((cb: FrameRequestCallback): number => setTimeout(() => cb(performance.now()), 16) as unknown as number)
+    ),
+    cancelAnimationFrame: (
+      window.cancelAnimationFrame?.bind(window) ||
+      ((id: number): void => clearTimeout(id))
+    ),
+    performance: window.performance,
+  });
+
+  console.log("✅ linkedom environment initialised");
+}
 
 // Create test objects to match the original AnimeJS test setup
 const testObject: Record<string, any> = {
@@ -529,8 +563,10 @@ function setupTestDOM() {
 
 // Helper function to parse and attach HTML content
 function parseAndAttachHTML(element: any, html: string) {
-  // Clear existing children
-  element.children = [];
+  // Clear existing children (works in linkedom)
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
   
   // Simple HTML parsing (this is a minimal implementation)
   // In a real implementation, this would use a proper HTML parser

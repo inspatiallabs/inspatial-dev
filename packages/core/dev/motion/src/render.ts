@@ -417,7 +417,9 @@ export const render = (
               ] || "";
             str += `${transformFragmentString}${tweenTargetTransformsProperties[key]}) `;
           }
-          tweenStyle.transform = str;
+          if (tweenStyle) {
+            tweenStyle.transform = str;
+          }
           tweenTransformsNeedUpdate = 0;
         }
 

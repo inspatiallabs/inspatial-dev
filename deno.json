@@ -119,8 +119,5 @@
       "**/*_test.jsx",
       "**/*_test.js"
     ]
-  },
-  "imports": {
-    "@inspatial/theme": "jsr:@inspatial/theme@^0.1.2"
   }
 }

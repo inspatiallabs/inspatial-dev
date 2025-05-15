@@ -288,7 +288,7 @@ export class Timer extends InMotionClock {
   /**
    * Current time of the timer
    */
-  get currentTime(): number {
+  override get currentTime(): number {
     return clamp(
       round(this._currentTime, globals.precision),
       -this._delay,
@@ -299,7 +299,7 @@ export class Timer extends InMotionClock {
   /**
    * Set current time
    */
-  set currentTime(time: number) {
+  override set currentTime(time: number) {
     const paused = this.paused;
     // Pausing the timer is necessary to avoid time jumps on a running instance
     this.pause().seek(+time);
@@ -353,14 +353,14 @@ export class Timer extends InMotionClock {
   /**
    * Current iteration index
    */
-  get currentIteration(): number {
+  override get currentIteration(): number {
     return this._currentIteration;
   }
 
   /**
    * Set current iteration
    */
-  set currentIteration(iterationCount: number) {
+  override set currentIteration(iterationCount: number) {
     this.currentTime =
       this.iterationDuration *
       clamp(+iterationCount, 0, this.iterationCount - 1);
@@ -369,14 +369,14 @@ export class Timer extends InMotionClock {
   /**
    * Whether playback is reversed
    */
-  get reversed(): boolean {
+  override get reversed(): boolean {
     return !!this._reversed;
   }
 
   /**
    * Set reversed state
    */
-  set reversed(reverse: boolean) {
+  override set reversed(reverse: boolean) {
     reverse ? this.reverse() : this.play();
   }
 
