@@ -1,8 +1,13 @@
 import { describe, it, expect } from "@inspatial/test";
-import { createMotion, inMotion, eases, createMotionSpring } from "./index.ts";
+import {
+  createMotion,
+  inMotion,
+  eases,
+  createMotionSpring,
+} from "../src/index.ts";
 
 /*########################################(FUNCTIONS)########################################*/
-function createEasingParam(ease) {
+function createEasingParam(ease: string) {
   return {
     opacity: [0, 1],
     ease: ease,
@@ -12,7 +17,7 @@ function createEasingParam(ease) {
 }
 
 function getOpacityValue() {
-  return inMotion.round((inMotion.get("#target-id", "opacity") as number), 2);
+  return inMotion.round(inMotion.get("#target-id", "opacity") as number, 2);
 }
 
 /*########################################(TESTS)########################################*/
@@ -20,40 +25,64 @@ describe("InMotion Eases", () => {
   it("Should call 'linear' / eases.linear()", () => {
     const anim1 = createMotion("#target-id", createEasingParam("linear"));
     anim1.seek(0);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0);
     anim1.seek(50);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0.5);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0.5);
     anim1.seek(100);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(1);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(1);
     inMotion.set("#target-id", { opacity: 0 });
     const anim2 = createMotion("#target-id", createEasingParam(eases.linear()));
     anim2.seek(0);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0);
     anim2.seek(50);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0.5);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0.5);
     anim2.seek(100);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(1);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(1);
   });
 
   it("Should call 'linear(0, 1)' / eases.linear(0, 1)", () => {
     const anim1 = createMotion("#target-id", createEasingParam("linear(0, 1)"));
     anim1.seek(0);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0);
     anim1.seek(50);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0.5);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0.5);
     anim1.seek(100);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(1);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(1);
     inMotion.set("#target-id", { opacity: 0 });
     const anim2 = createMotion(
       "#target-id",
       createEasingParam(eases.linear(0, 1))
     );
     anim2.seek(0);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0);
     anim2.seek(50);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0.5);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0.5);
     anim2.seek(100);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(1);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(1);
   });
 
   it("Should call Custom linear 'linear(0, 0.25, 1)' / eases.linear(0, 0.25, 1)", () => {
@@ -62,22 +91,34 @@ describe("InMotion Eases", () => {
       createEasingParam("linear(0, 0.25, 1)")
     );
     anim1.seek(0);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0);
     anim1.seek(50);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0.25);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0.25);
     anim1.seek(100);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(1);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(1);
     inMotion.set("#target-id", { opacity: 0 });
     const anim2 = createMotion(
       "#target-id",
       createEasingParam(eases.linear(0, 0.25, 1))
     );
     anim2.seek(0);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0);
     anim2.seek(50);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0.25);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0.25);
     anim2.seek(100);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(1);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(1);
   });
 
   it("Should call Custom uneven linear 'linear(0, 0.25 75%, 1)' / eases.linear(0, '0.25 75%', 1)", () => {
@@ -86,22 +127,34 @@ describe("InMotion Eases", () => {
       createEasingParam("linear(0, 0.25 75%, 1)")
     );
     anim1.seek(0);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0);
     anim1.seek(75);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0.25);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0.25);
     anim1.seek(100);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(1);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(1);
     inMotion.set("#target-id", { opacity: 0 });
     const anim2 = createMotion(
       "#target-id",
       createEasingParam(eases.linear(0, "0.25 75%", 1))
     );
     anim2.seek(0);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0);
     anim2.seek(75);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(0.25);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(0.25);
     anim2.seek(100);
-    expect(parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)).toEqual(1);
+    expect(
+      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+    ).toEqual(1);
   });
 
   const builtInNames = [
