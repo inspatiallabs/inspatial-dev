@@ -30,11 +30,15 @@ describe("InMotion Eases", () => {
     ).toEqual(0);
     anim1.seek(50);
     expect(
-      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+      parseFloat(
+        getComputedStyle(document.querySelector("#target-id")!).opacity
+      )
     ).toEqual(0.5);
     anim1.seek(100);
     expect(
-      parseFloat(getComputedStyle(document.querySelector("#target-id")).opacity)
+      parseFloat(
+        getComputedStyle(document.querySelector("#target-id")!).opacity
+      )
     ).toEqual(1);
     inMotion.set("#target-id", { opacity: 0 });
     const anim2 = createMotion("#target-id", createEasingParam(eases.linear()));
