@@ -1,0 +1,16 @@
+{
+  "scriptId": "369",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/replace-non-digits.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 607, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "replaceNonDigits",
+      "ranges": [{ "startOffset": 532, "endOffset": 606, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

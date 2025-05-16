@@ -75,7 +75,7 @@ export class EffectClass extends ComputationClass<any> {
   /**
    * Clear all disposers registered since the last run
    */
-  emptyDisposal(): void {
+  override emptyDisposal(): void {
     super.emptyDisposal();
     
     // Also run any registered disposers in reverse order

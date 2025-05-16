@@ -1,0 +1,37 @@
+{
+  "scriptId": "521",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/prop.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 2229, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        { "startOffset": 356, "endOffset": 1042, "count": 1735 },
+        { "startOffset": 610, "endOffset": 779, "count": 0 },
+        { "startOffset": 780, "endOffset": 793, "count": 0 },
+        { "startOffset": 989, "endOffset": 1024, "count": 0 },
+        { "startOffset": 1025, "endOffset": 1029, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 411, "endOffset": 463, "count": 1735 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "getGoogleFontProp",
+      "ranges": [{ "startOffset": 1456, "endOffset": 1559, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "initializeGoogleFont",
+      "ranges": [{ "startOffset": 1623, "endOffset": 2228, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

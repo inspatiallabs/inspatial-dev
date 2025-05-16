@@ -1,0 +1,16 @@
+{
+  "scriptId": "347",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/capitalize.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1075, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "capitalize",
+      "ranges": [{ "startOffset": 702, "endOffset": 1074, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

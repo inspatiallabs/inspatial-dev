@@ -1,0 +1,31 @@
+{
+  "scriptId": "525",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/stub.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 126879, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createGoogleFontPlaceholder",
+      "ranges": [{ "startOffset": 611, "endOffset": 1042, "count": 1735 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 669, "endOffset": 1039, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "fontFace",
+      "ranges": [{ "startOffset": 126445, "endOffset": 126582, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getFontMap",
+      "ranges": [{ "startOffset": 126699, "endOffset": 126737, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

@@ -813,7 +813,7 @@ export function flatten<T>(
     return computation._value!;
   }
 
-  let memo = new ComputationClass<T>(undefined, getValue);
+  let memo = new ComputationClass<T>(undefined, getValue as () => T);
   memo._handlerMask = ERROR_BIT | LOADING_BIT;
   return memo;
 }

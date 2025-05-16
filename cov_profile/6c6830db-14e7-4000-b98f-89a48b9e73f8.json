@@ -1,0 +1,31 @@
+{
+  "scriptId": "551",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/fallback-metrics.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 2008, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "formatName",
+      "ranges": [{ "startOffset": 303, "endOffset": 491, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "formatOverrideValue",
+      "ranges": [{ "startOffset": 492, "endOffset": 570, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "calculateSizeAdjustValues",
+      "ranges": [{ "startOffset": 578, "endOffset": 1463, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getFallbackMetrics",
+      "ranges": [{ "startOffset": 1553, "endOffset": 2007, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

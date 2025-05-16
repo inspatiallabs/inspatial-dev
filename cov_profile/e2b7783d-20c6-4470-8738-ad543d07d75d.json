@@ -1,0 +1,31 @@
+{
+  "scriptId": "378",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/countries.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1005233, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "getCountryByName",
+      "ranges": [{ "startOffset": 1003705, "endOffset": 1003819, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getCountriesByContinent",
+      "ranges": [{ "startOffset": 1004165, "endOffset": 1004303, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getCountryCoordinates",
+      "ranges": [{ "startOffset": 1004660, "endOffset": 1004782, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "isValidCountry",
+      "ranges": [{ "startOffset": 1005120, "endOffset": 1005232, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "scriptId": "553",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/fetch-font.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 877, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fetchFont",
+      "ranges": [{ "startOffset": 110, "endOffset": 876, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

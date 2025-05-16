@@ -1,0 +1,16 @@
+{
+  "scriptId": "355",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/eq.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 418, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "eq",
+      "ranges": [{ "startOffset": 370, "endOffset": 417, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

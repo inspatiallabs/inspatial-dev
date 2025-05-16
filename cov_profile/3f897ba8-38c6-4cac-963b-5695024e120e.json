@@ -1,0 +1,16 @@
+{
+  "scriptId": "351",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/range.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 688, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "range",
+      "ranges": [{ "startOffset": 242, "endOffset": 687, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

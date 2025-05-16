@@ -1,0 +1,16 @@
+{
+  "scriptId": "547",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/validate.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 4175, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "validateGoogleFont",
+      "ranges": [{ "startOffset": 367, "endOffset": 4174, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

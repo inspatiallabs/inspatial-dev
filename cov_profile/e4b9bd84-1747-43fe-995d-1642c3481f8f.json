@@ -1,0 +1,26 @@
+{
+  "scriptId": "381",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/build-message.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 5558, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createDiffColor",
+      "ranges": [{ "startOffset": 1694, "endOffset": 2076, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "createDiffSign",
+      "ranges": [{ "startOffset": 2992, "endOffset": 3167, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "buildMessage",
+      "ranges": [{ "startOffset": 4701, "endOffset": 5531, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

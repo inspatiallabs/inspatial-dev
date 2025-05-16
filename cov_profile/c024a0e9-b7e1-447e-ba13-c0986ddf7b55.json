@@ -1,0 +1,16 @@
+{
+  "scriptId": "549",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/font-url.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1837, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "getGoogleFontsUrl",
+      "ranges": [{ "startOffset": 171, "endOffset": 1836, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

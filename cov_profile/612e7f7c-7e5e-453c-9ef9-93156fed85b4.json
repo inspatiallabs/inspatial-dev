@@ -1,0 +1,21 @@
+{
+  "scriptId": "358",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/track-debug.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1109, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "debug",
+      "ranges": [{ "startOffset": 421, "endOffset": 509, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "track",
+      "ranges": [{ "startOffset": 1063, "endOffset": 1108, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

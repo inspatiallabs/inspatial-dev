@@ -1,0 +1,16 @@
+{
+  "scriptId": "382",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/same-start.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 2106, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "sameStart",
+      "ranges": [{ "startOffset": 1784, "endOffset": 2105, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

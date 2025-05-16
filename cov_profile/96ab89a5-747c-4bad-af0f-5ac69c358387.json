@@ -1,0 +1,16 @@
+{
+  "scriptId": "561",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/proxy-agent.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 824, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "proxyAgent",
+      "ranges": [{ "startOffset": 139, "endOffset": 823, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

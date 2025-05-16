@@ -1,0 +1,16 @@
+{
+  "scriptId": "364",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/merge-ref.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1632, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "mergeRefs",
+      "ranges": [{ "startOffset": 1416, "endOffset": 1631, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

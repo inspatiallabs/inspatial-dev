@@ -1,0 +1,16 @@
+{
+  "scriptId": "365",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/generate-unique-id.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 823, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "generateUniqueId",
+      "ranges": [{ "startOffset": 753, "endOffset": 822, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

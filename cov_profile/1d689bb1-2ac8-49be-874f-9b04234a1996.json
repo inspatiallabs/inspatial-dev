@@ -1,0 +1,145 @@
+{
+  "scriptId": "336",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/test/src/bdd/bdd.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 28040, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "itDefinition",
+      "ranges": [
+        { "startOffset": 5766, "endOffset": 6857, "count": 35 },
+        { "startOffset": 5975, "endOffset": 6027, "count": 0 },
+        { "startOffset": 6029, "endOffset": 6070, "count": 0 },
+        { "startOffset": 6360, "endOffset": 6434, "count": 0 },
+        { "startOffset": 6438, "endOffset": 6751, "count": 0 },
+        { "startOffset": 6790, "endOffset": 6811, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "it",
+      "ranges": [
+        { "startOffset": 7298, "endOffset": 9267, "count": 35 },
+        { "startOffset": 7363, "endOffset": 7473, "count": 0 },
+        { "startOffset": 7616, "endOffset": 7660, "count": 0 },
+        { "startOffset": 7724, "endOffset": 7757, "count": 0 },
+        { "startOffset": 7831, "endOffset": 9265, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "fn",
+      "ranges": [{ "startOffset": 8098, "endOffset": 8741, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "itOnly",
+      "ranges": [{ "startOffset": 9695, "endOffset": 9815, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "itIgnore",
+      "ranges": [{ "startOffset": 10242, "endOffset": 10366, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "itSkip",
+      "ranges": [{ "startOffset": 10784, "endOffset": 10834, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "test",
+      "ranges": [{ "startOffset": 11254, "endOffset": 11295, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "itOnly",
+      "ranges": [{ "startOffset": 11731, "endOffset": 11779, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "itIgnore",
+      "ranges": [{ "startOffset": 12214, "endOffset": 12266, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "itSkip",
+      "ranges": [{ "startOffset": 12692, "endOffset": 12742, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "addHook",
+      "ranges": [{ "startOffset": 12744, "endOffset": 13123, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "beforeAll",
+      "ranges": [{ "startOffset": 13783, "endOffset": 13837, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "before",
+      "ranges": [{ "startOffset": 14406, "endOffset": 14446, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "afterAll",
+      "ranges": [{ "startOffset": 14989, "endOffset": 15041, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "after",
+      "ranges": [{ "startOffset": 15612, "endOffset": 15650, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "beforeEach",
+      "ranges": [{ "startOffset": 19784, "endOffset": 19840, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "afterEach",
+      "ranges": [{ "startOffset": 20385, "endOffset": 20439, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "describeDefinition",
+      "ranges": [
+        { "startOffset": 20497, "endOffset": 21817, "count": 14 },
+        { "startOffset": 20712, "endOffset": 20764, "count": 0 },
+        { "startOffset": 20766, "endOffset": 20807, "count": 0 },
+        { "startOffset": 21097, "endOffset": 21208, "count": 0 },
+        { "startOffset": 21212, "endOffset": 21538, "count": 0 },
+        { "startOffset": 21655, "endOffset": 21744, "count": 13 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "describe",
+      "ranges": [
+        { "startOffset": 26000, "endOffset": 26379, "count": 14 },
+        { "startOffset": 26071, "endOffset": 26182, "count": 0 },
+        { "startOffset": 26264, "endOffset": 26297, "count": 1 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "describeOnly",
+      "ranges": [{ "startOffset": 26843, "endOffset": 26981, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "describeIgnore",
+      "ranges": [{ "startOffset": 27407, "endOffset": 27549, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "describeSkip",
+      "ranges": [{ "startOffset": 27969, "endOffset": 28038, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

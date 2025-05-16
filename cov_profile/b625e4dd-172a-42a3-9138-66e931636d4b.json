@@ -1,0 +1,16 @@
+{
+  "scriptId": "560",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/sort.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 954, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "sortFontsVariantValues",
+      "ranges": [{ "startOffset": 157, "endOffset": 953, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

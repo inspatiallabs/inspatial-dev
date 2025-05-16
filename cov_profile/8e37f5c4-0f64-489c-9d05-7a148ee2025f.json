@@ -1,0 +1,31 @@
+{
+  "scriptId": "396",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/array.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1596, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "ensureArray",
+      "ranges": [{ "startOffset": 521, "endOffset": 696, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "flattenArrays",
+      "ranges": [{ "startOffset": 848, "endOffset": 964, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "groupArrayBy",
+      "ranges": [{ "startOffset": 1168, "endOffset": 1387, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "isSingleArrayItem",
+      "ranges": [{ "startOffset": 1528, "endOffset": 1595, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

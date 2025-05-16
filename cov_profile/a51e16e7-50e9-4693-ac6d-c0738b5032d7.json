@@ -1,0 +1,11 @@
+{
+  "scriptId": "426",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/types.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 418, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

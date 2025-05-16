@@ -31,11 +31,15 @@
   "tasks": {
     "test": "deno test --no-check --allow-env --allow-read --allow-write --allow-net",
     "test:trigger": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/trigger/",
-    "test:signal": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal/",
     "test:trigger:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/trigger ./tests/trigger/",
-    "test:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage",
-    "test:ci": "deno test --no-check --allow-env --allow-read --allow-write --allow-net",
-    "test:all": "deno test --allow-env --allow-read --allow-write --allow-net"
+
+    "test:signal-lite": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./signal-lite/",
+    "test:signal-lite:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-lite ./signal-lite/",
+
+    "test:signal": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal/",
+    "test:signal:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal ./tests/signal/",
+
+    "test:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage"
   },
   "imports": {
     "@std/path": "jsr:@std/path@^1.0.8",
@@ -54,7 +58,14 @@
   "compilerOptions": {
     "checkJs": false,
     "noImplicitAny": false,
-    "lib": ["DOM", "ES2022"]
+    "lib": [
+      "DOM",
+      "ES2022",
+      "deno.ns",
+      "deno.unstable",
+      "deno.window",
+      "deno.worker"
+    ]
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]

@@ -1,0 +1,11 @@
+{
+  "scriptId": "400",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/variables/index.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 55, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

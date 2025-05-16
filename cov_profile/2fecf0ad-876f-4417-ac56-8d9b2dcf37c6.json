@@ -1,0 +1,11 @@
+{
+  "scriptId": "423",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/google/index.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 357, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

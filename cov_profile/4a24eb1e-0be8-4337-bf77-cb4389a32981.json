@@ -1,0 +1,92 @@
+{
+  "scriptId": "403",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/helpers.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 4065, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "APCAcontrast",
+      "ranges": [
+        { "startOffset": 158, "endOffset": 544, "count": 1412 },
+        { "startOffset": 433, "endOffset": 442, "count": 598 },
+        { "startOffset": 443, "endOffset": 452, "count": 814 },
+        { "startOffset": 519, "endOffset": 529, "count": 598 },
+        { "startOffset": 530, "endOffset": 541, "count": 814 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 232, "endOffset": 244, "count": 4236 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 285, "endOffset": 297, "count": 4236 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "hslToRgb",
+      "ranges": [{ "startOffset": 604, "endOffset": 891, "count": 1488 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "k",
+      "ranges": [{ "startOffset": 669, "endOffset": 691, "count": 8928 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "f",
+      "ranges": [{ "startOffset": 741, "endOffset": 809, "count": 4464 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "parseHSL",
+      "ranges": [{ "startOffset": 938, "endOffset": 1063, "count": 171 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "hslToString",
+      "ranges": [{ "startOffset": 1111, "endOffset": 1184, "count": 361 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "generateThemeMode",
+      "ranges": [{ "startOffset": 1232, "endOffset": 3847, "count": 19 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "generatePalette",
+      "ranges": [
+        { "startOffset": 1337, "endOffset": 2074, "count": 38 },
+        { "startOffset": 1407, "endOffset": 1411, "count": 19 },
+        { "startOffset": 1412, "endOffset": 1416, "count": 19 },
+        { "startOffset": 1444, "endOffset": 1448, "count": 19 },
+        { "startOffset": 1449, "endOffset": 1454, "count": 19 },
+        { "startOffset": 2045, "endOffset": 2049, "count": 19 },
+        { "startOffset": 2050, "endOffset": 2054, "count": 19 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "adjustColorForContrast",
+      "ranges": [
+        { "startOffset": 2276, "endOffset": 2829, "count": 76 },
+        { "startOffset": 2574, "endOffset": 2577, "count": 62 },
+        { "startOffset": 2578, "endOffset": 2582, "count": 14 },
+        { "startOffset": 2630, "endOffset": 2638, "count": 1356 },
+        { "startOffset": 2639, "endOffset": 2649, "count": 1356 },
+        { "startOffset": 2650, "endOffset": 2766, "count": 1336 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "formatAvailableValues",
+      "ranges": [{ "startOffset": 4011, "endOffset": 4063, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

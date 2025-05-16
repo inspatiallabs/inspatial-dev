@@ -1,0 +1,86 @@
+{
+  "scriptId": "401",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/variant/index.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 14433, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "splitTailwindClass",
+      "ranges": [{ "startOffset": 2431, "endOffset": 2959, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "mergeClasses",
+      "ranges": [{ "startOffset": 3072, "endOffset": 4748, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "isTailwindClass",
+      "ranges": [{ "startOffset": 4811, "endOffset": 5089, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "parseTailwindClass",
+      "ranges": [{ "startOffset": 5160, "endOffset": 5616, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "toVal",
+      "ranges": [{ "startOffset": 5722, "endOffset": 6306, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "kitUtil",
+      "ranges": [{ "startOffset": 6414, "endOffset": 6667, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "falsyToString",
+      "ranges": [{ "startOffset": 6804, "endOffset": 6880, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "createVariantCore",
+      "ranges": [{ "startOffset": 7007, "endOffset": 9460, "count": 2 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "kit",
+      "ranges": [{ "startOffset": 7059, "endOffset": 7206, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "variant",
+      "ranges": [{ "startOffset": 7226, "endOffset": 8727, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 7236, "endOffset": 8727, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "composeVariant",
+      "ranges": [{ "startOffset": 8754, "endOffset": 9241, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getVariant",
+      "ranges": [{ "startOffset": 9312, "endOffset": 9323, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "createVariant",
+      "ranges": [
+        { "startOffset": 13791, "endOffset": 14432, "count": 1 },
+        { "startOffset": 13942, "endOffset": 13959, "count": 0 },
+        { "startOffset": 14123, "endOffset": 14151, "count": 0 },
+        { "startOffset": 14355, "endOffset": 14431, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "scriptId": "370",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/currency.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 7438, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "isValidCurrencyValue",
+      "ranges": [{ "startOffset": 3308, "endOffset": 3464, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getCurrency",
+      "ranges": [{ "startOffset": 3972, "endOffset": 4064, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "formatCurrencyInput",
+      "ranges": [{ "startOffset": 4673, "endOffset": 5650, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "parseCurrencyValue",
+      "ranges": [{ "startOffset": 6054, "endOffset": 6243, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "formatCurrencyDisplay",
+      "ranges": [{ "startOffset": 6838, "endOffset": 7437, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

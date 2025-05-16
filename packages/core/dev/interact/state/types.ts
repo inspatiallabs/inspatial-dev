@@ -35,14 +35,14 @@ export interface PersistOptionsType {
   server?: Record<string, any>;
   
   /**
-   * InSpatialDB-specific options (placeholder for future implementation)
+   * InCloud-specific [InSpatial Cloud] options (placeholder for future implementation)
    * Future properties may include:
    * - replication: { enabled: boolean, syncInterval: number }
    * - conflictResolution: 'clientWins' | 'serverWins' | 'lastWriteWins'
    * - encryption: { enabled: boolean, level: 'standard' | 'high' }
    * - collections: string[] - specific collections to sync with
    */
-  inspatialDB?: Record<string, any>;
+  inCloud?: Record<string, any>;
 }
 
 /**

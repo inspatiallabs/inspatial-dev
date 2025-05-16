@@ -1,0 +1,21 @@
+{
+  "scriptId": "353",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/cross-array.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1972, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "crossArray",
+      "ranges": [{ "startOffset": 750, "endOffset": 986, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "crossArrays",
+      "ranges": [{ "startOffset": 1752, "endOffset": 1971, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

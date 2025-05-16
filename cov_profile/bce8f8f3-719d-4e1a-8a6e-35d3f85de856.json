@@ -1,0 +1,27 @@
+{
+  "scriptId": "527",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/theme/src/font/primitive/main.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 33289, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "primitiveFont",
+      "ranges": [
+        { "startOffset": 226, "endOffset": 933, "count": 74 },
+        { "startOffset": 365, "endOffset": 370, "count": 2 },
+        { "startOffset": 426, "endOffset": 462, "count": 72 },
+        { "startOffset": 463, "endOffset": 479, "count": 2 },
+        { "startOffset": 526, "endOffset": 879, "count": 44 },
+        { "startOffset": 632, "endOffset": 644, "count": 0 },
+        { "startOffset": 680, "endOffset": 756, "count": 0 },
+        { "startOffset": 793, "endOffset": 819, "count": 0 },
+        { "startOffset": 860, "endOffset": 871, "count": 43 },
+        { "startOffset": 880, "endOffset": 884, "count": 30 }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "scriptId": "383",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/farthest-point.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 5392, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "farthestPoint",
+      "ranges": [{ "startOffset": 2258, "endOffset": 2969, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "farthestPointAssertion",
+      "ranges": [{ "startOffset": 5135, "endOffset": 5391, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "scriptId": "394",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/escape-html.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 880, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "pe",
+      "ranges": [{ "startOffset": 519, "endOffset": 531, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "escapeHtml",
+      "ranges": [{ "startOffset": 842, "endOffset": 878, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

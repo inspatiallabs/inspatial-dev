@@ -1,0 +1,26 @@
+{
+  "scriptId": "356",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/random.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 2024, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "random",
+      "ranges": [{ "startOffset": 426, "endOffset": 564, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "randoms",
+      "ranges": [{ "startOffset": 943, "endOffset": 1021, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "randomUniques",
+      "ranges": [{ "startOffset": 1550, "endOffset": 2023, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

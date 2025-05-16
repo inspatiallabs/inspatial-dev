@@ -1,0 +1,16 @@
+{
+  "scriptId": "392",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/stringify.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 3090, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "stringify",
+      "ranges": [{ "startOffset": 2236, "endOffset": 3089, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

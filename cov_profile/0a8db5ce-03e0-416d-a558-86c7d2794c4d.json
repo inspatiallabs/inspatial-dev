@@ -1,0 +1,11 @@
+{
+  "scriptId": "375",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/extractor.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 297, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

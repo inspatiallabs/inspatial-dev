@@ -1,0 +1,16 @@
+{
+  "scriptId": "380",
+  "url": "file:///C:/Studio/inspatial-core/packages/core/dev/util/src/regex-escape.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1259, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "regEscape",
+      "ranges": [{ "startOffset": 1099, "endOffset": 1258, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}
