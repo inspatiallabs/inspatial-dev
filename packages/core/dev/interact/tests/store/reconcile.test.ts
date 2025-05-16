@@ -151,9 +151,28 @@ describe("setState with reconcile", () => {
       id: 0,
       value: "value",
     });
-    expect(() => setStore(reconcile({}, "id"))).toThrow();
-    // expect(store.id).toBe(undefined);
-    // expect(store.value).toBe(undefined);
+    
+    // Use a try-catch to verify the specific error is thrown
+    let errorThrown = false;
+    try {
+      setStore(reconcile({}, "id"));
+      // Should not reach here
+    } catch (error) {
+      // Verify it's an error object
+      expect(error instanceof Error).toBe(true);
+      // Only access message if it's an Error object
+      if (error instanceof Error) {
+        expect(error.message).toContain("Cannot reconcile with an empty object");
+      }
+      errorThrown = true;
+    }
+    
+    // Make sure an error was actually thrown
+    expect(errorThrown).toBe(true);
+    
+    // The store should not have changed
+    expect(store.id).toBe(0);
+    expect(store.value).toBe("value");
   });
 
   test("Reconcile overwrite an object with an array", () => {

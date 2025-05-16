@@ -308,7 +308,9 @@ const inCloudAdapter = (config: any = {}): StorageAdapterType => {
       console.log(
         "InCloud integration coming soon - using memory storage for now"
       );
-      return fallbackAdapter.clear();
+      if (fallbackAdapter.clear) {
+        return fallbackAdapter.clear();
+      }
     },
   };
 };

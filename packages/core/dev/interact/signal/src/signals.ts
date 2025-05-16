@@ -106,22 +106,51 @@ export function createSignal<T>(
         null,
         third
       );
-      return [node.read.bind(node), node.write.bind(node) as SetterType<T>];
+      const getter = node.read.bind(node);
+      const setter = node.write.bind(node) as SetterType<T>;
+      
+      // Expose value property for interop with store
+      Object.defineProperty(getter, 'value', {
+        get: () => node._value,
+        enumerable: true,
+        configurable: true
+      });
+      
+      return [getter, setter];
     });
-    return [
-      () => memo()[0](),
-      ((value) => memo()[1](value)) as SetterType<T | undefined>,
-    ];
+    
+    // Create the outer signal accessor and setter
+    const outerGetter = () => memo()[0]();
+    const outerSetter = ((value) => memo()[1](value)) as SetterType<T | undefined>;
+    
+    // Make value property available on the getter for external access
+    Object.defineProperty(outerGetter, 'value', {
+      get: () => untrack(outerGetter),
+      enumerable: true,
+      configurable: true
+    });
+    
+    return [outerGetter, outerSetter];
   }
+  
   const node = new ComputationClass(
     first,
     null,
     second as SignalOptionsType<T>
   );
-  return [
-    node.read.bind(node),
-    node.write.bind(node) as SetterType<T | undefined>,
-  ];
+  
+  // Create main getter and setter functions
+  const getter = node.read.bind(node);
+  const setter = node.write.bind(node) as SetterType<T | undefined>;
+  
+  // Make the getter function have a "value" property for direct access
+  Object.defineProperty(getter, "value", {
+    get: () => node._value,
+    enumerable: true,
+    configurable: true
+  });
+  
+  return [getter, setter];
 }
 
 /**
@@ -295,6 +324,34 @@ export function createEffect<Next, Init>(
   value?: Init,
   options?: EffectOptionsType
 ): void {
+  // Special handling for signal-like objects
+  if (typeof compute === 'function' && 
+      !effect && 
+      typeof (compute as any).read !== 'function' &&
+      arguments.length === 2) {
+    // This is the case where compute is a signal and effect is the handler
+    const signalGetter = compute;
+    const handler = error as EffectFunctionType<Next, Next>;
+    
+    // Create an effect that reads the signal and calls the handler
+    const effectFn = () => {
+      // Read the signal
+      const value = (signalGetter as Function)();
+      // Return the value to be passed to the handler
+      return value;
+    };
+    
+    // Now create the real effect
+    void new EffectClass(
+      value as any,
+      effectFn as any,
+      handler,
+      undefined,
+      __DEV__ ? { ...options, name: options?.name ?? "effect" } : options
+    );
+    return;
+  }
+
   // Handle the case where only compute function is provided
   const effectHandler = effect === undefined ? (() => {}) : effect;
 

@@ -15,7 +15,7 @@ import {
   onDisposeLite,
   setupCircularDependency,
   createShoppingCart,
-} from "./signal-lite.ts";
+} from "../../signal-lite/signal-lite.ts";
 
 describe("SignalLite", () => {
   describe("createSignalLite", () => {

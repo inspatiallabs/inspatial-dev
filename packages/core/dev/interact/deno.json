@@ -33,11 +33,17 @@
     "test:trigger": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/trigger/",
     "test:trigger:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/trigger ./tests/trigger/",
 
-    "test:signal-lite": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./signal-lite/",
-    "test:signal-lite:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-lite ./signal-lite/",
+    "test:signal-lite": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal-lite/",
+    "test:signal-lite:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-lite ./tests/signal-lite/",
 
     "test:signal": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal/",
     "test:signal:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal ./tests/signal/",
+
+    "test:signal-trigger": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal-trigger/",
+    "test:signal-trigger:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-trigger ./tests/signal-trigger/",
+
+    "test:store": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/store/",
+    "test:store:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/store ./tests/store/",
 
     "test:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage"
   },

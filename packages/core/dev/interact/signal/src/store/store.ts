@@ -78,7 +78,10 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
   let p = (value as any)[$PROXY];
   if (p) return p;
 
+  // Handle custom classes by preserving their prototype chain
+  const isCustomClass = value && value.constructor && value.constructor !== Object && value.constructor !== Array;
   const isArray = originalArrayIsArray(value);
+  
   const target: InternalStoreNodeType<T> = isArray
     ? ({ [STORE_VALUE]: value } as InternalStoreNodeType<T>)
     : { [STORE_VALUE]: value };
@@ -89,6 +92,29 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
     (target as any).isArray = true;
     // Also use the symbol approach
     (target as any)[$TARGET_IS_ARRAY] = true;
+  }
+  
+  // Store the original prototype and constructor for custom classes
+  if (isCustomClass) {
+    const proto = Object.getPrototypeOf(value);
+    (target as any).originalPrototype = proto;
+    (target as any).originalConstructor = value.constructor;
+    
+    // Store instance properties separately to ensure they're accessible
+    (target as any).instanceProperties = Object.getOwnPropertyNames(value)
+      .filter(prop => typeof value[prop] !== 'function')
+      .reduce((props, prop) => {
+        props[prop] = value[prop];
+        return props;
+      }, {} as Record<string, any>);
+      
+    // Store instance methods to ensure they're properly bound
+    (target as any).instanceMethods = Object.getOwnPropertyNames(value)
+      .filter(prop => typeof value[prop] === 'function')
+      .reduce((methods, prop) => {
+        methods[prop] = value[prop];
+        return methods;
+      }, {} as Record<string, Function>);
   }
 
   // Create proxy
@@ -233,30 +259,64 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       }
     }
     
+    // Handle custom class properties
+    if ((target as any).instanceProperties && property in (target as any).instanceProperties) {
+      return (target as any).instanceProperties[property];
+    }
+    
+    // Handle custom class methods
+    if ((target as any).instanceMethods && property in (target as any).instanceMethods) {
+      return (target as any).instanceMethods[property].bind(target[STORE_VALUE]);
+    }
+    
     const nodes = getNodes(target, STORE_NODE);
     const storeValue = target[STORE_VALUE];
     const tracked = nodes[property];
+    
+    // Handle getters on the original object
     if (!tracked) {
       const desc = Object.getOwnPropertyDescriptor(storeValue, property);
       if (desc && desc.get) return desc.get.call(receiver);
     }
+    
+    // Handle custom class methods and properties
     if (Writing.has(storeValue)) {
       const value = tracked ? tracked._value : storeValue[property];
       return isWrappable(value) ? (Writing.add(value[$RAW] || value), wrap(value)) : value;
     }
+    
     let value = tracked ? nodes[property].read() : storeValue[property];
+    
     if (!tracked) {
-      if (typeof value === "function" && !storeValue.hasOwnProperty(property)) {
-        let proto;
-        return !Array.isArray(storeValue) &&
-          (proto = Object.getPrototypeOf(storeValue)) &&
-          proto !== Object.prototype
-          ? value.bind(storeValue)
-          : value;
+      if (typeof value === "function") {
+        // If it's a method on the prototype, bind it to the original object
+        if (!storeValue.hasOwnProperty(property)) {
+          // Check if this is a prototype method on a custom class or array
+          let proto = Object.getPrototypeOf(storeValue);
+          
+          // For custom classes or arrays, bind methods to the original object
+          if (proto && 
+              (proto !== Object.prototype || 
+               Array.isArray(storeValue) || 
+               (target as any).isArray || 
+               (target as any)[$TARGET_IS_ARRAY])) {
+            return value.bind(storeValue);
+          }
+          
+          // Also check the originalPrototype for custom classes
+          if ((target as any).originalPrototype && 
+              property in (target as any).originalPrototype) {
+            return value.bind(storeValue);
+          }
+        }
+        // Otherwise treat as a regular value
+        return value;
       } else if (getObserver()) {
+        // Track property access for reactivity
         value = getNode(nodes, property, isWrappable(value) ? wrap(value) : value).read();
       }
     }
+    
     return isWrappable(value) ? wrap(value) : value;
   },
 
@@ -271,7 +331,11 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
   set(target, property, value) {
     const storeValue = target[STORE_VALUE] as Record<PropertyKey, any>;
     if (Writing.has(storeValue)) {
-       setProperty(storeValue, property, unwrap(value, false));
+      // For custom classes, we need to update the instance properties as well
+      if ((target as any).instanceProperties && typeof property === 'string') {
+        (target as any).instanceProperties[property] = value;
+      }
+      setProperty(storeValue, property, unwrap(value, false));
     }
     return true;
   },
@@ -279,6 +343,10 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
   deleteProperty(target, property) {
     const storeValue = target[STORE_VALUE] as Record<PropertyKey, any>;
      if (Writing.has(storeValue)) {
+        // Also delete from instanceProperties if this is a custom class
+        if ((target as any).instanceProperties && typeof property === 'string') {
+          delete (target as any).instanceProperties[property];
+        }
         setProperty(storeValue, property, undefined, true);
      }
     return true;
@@ -302,34 +370,60 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
     
     // Get descriptor from the actual value
     const desc = Reflect.getOwnPropertyDescriptor(target[STORE_VALUE], property);
-    if (!desc || desc.get || !desc.configurable) return desc;
+    if (!desc) return desc;
     
     // Handle array case specifically
-    if ((target as any).isArray || (target as any)[$TARGET_IS_ARRAY]) {
-      // For array indices and length, return the actual descriptors
-      if (property === 'length' || (typeof property === 'string' && !isNaN(parseInt(property)))) {
-        return desc;
+    if ((target as any).isArray || (target as any)[$TARGET_IS_ARRAY] || Array.isArray(target[STORE_VALUE])) {
+      // For arrays, we need to ensure the length property is configurable to avoid proxy errors
+      if (property === 'length') {
+        // Create a configurable descriptor for the length property
+        return {
+          value: target[STORE_VALUE].length,
+          writable: true,
+          enumerable: false,
+          configurable: true
+        };
+      }
+      
+      // For array indices, return the actual descriptors but ensure they're configurable
+      if (typeof property === 'string' && !isNaN(parseInt(property))) {
+        return {
+          ...desc,
+          configurable: true
+        };
       }
     }
     
-    // For general properties, create a getter that returns the proxied value
-    delete desc.value;
-    delete desc.writable;
-    desc.get = () => target[STORE_VALUE][$PROXY][property];
-    return desc;
+    // For getter properties, return as-is
+    if (desc.get) return desc;
+    
+    // For regular properties, create a getter that returns the proxied value
+    return {
+      configurable: true,
+      enumerable: desc.enumerable,
+      get: () => target[STORE_VALUE][$PROXY][property]
+    };
   },
 
   getPrototypeOf(target) {
     // Check for arrays in a more robust way
     const storeValue = target[STORE_VALUE];
+    
     // First check if the target is explicitly marked as an array
     if ((target as any).isArray || (target as any)[$TARGET_IS_ARRAY]) {
       return Array.prototype;
     }
+    
+    // Then check if we have a custom class with stored original prototype
+    if ((target as any).originalPrototype) {
+      return (target as any).originalPrototype;
+    }
+    
     // Then check if the store value is an array
     if (Array.isArray(storeValue)) {
       return Array.prototype;
     }
+    
     // Finally fall back to the normal prototype chain
     return Object.getPrototypeOf(storeValue);
   },
@@ -425,10 +519,70 @@ export function createStore<T extends object = {}>(
   const unwrappedStore = unwrap(store!, false);
   let wrappedStore = wrap(unwrappedStore);
 
+  // Handle initialization if a function was provided
+  if (derived) {
+    try {
+      Writing.add(unwrappedStore);
+      (first as Function)(wrappedStore);
+    } finally {
+      Writing.clear();
+    }
+  }
+
+  // Specialized function to handle signals 
+  const extractSignalValue = (input: any): any => {
+    if (!input) return input;
+    
+    // Direct signal value property access
+    if (input && typeof input === 'object' && 'value' in input && 
+        typeof input.value !== 'function' && input.value !== undefined) {
+      return input.value;
+    }
+    
+    // Try to call the signal as a function to get its value
+    if (typeof input === 'function') {
+      try {
+        const result = input();
+        if (result !== undefined) {
+          return result;
+        }
+      } catch {}
+    }
+    
+    // Handle $RAW property for store signals
+    if (input && typeof input === 'object' && '$RAW' in input) {
+      return input.$RAW || input;
+    }
+    
+    return input;
+  };
+
   const baseSetStore: BaseStoreSetterType<T> = (fn: (draft: T) => void): void => {
     try {
       Writing.add(unwrappedStore);
-      fn(wrappedStore);
+      
+      // Handle the case where fn is actually a signal or a value to set directly
+      if (typeof fn !== 'function') {
+        const value = extractSignalValue(fn);
+        
+        if (value && typeof value === 'object') {
+          // Apply object fields to our store
+          Object.keys(value).forEach(key => {
+            if (key in unwrappedStore) {
+              (wrappedStore as any)[key] = value[key];
+            }
+          });
+        } else if (value !== undefined) {
+          // For primitive values, try to set it to the first property
+          const firstKey = Object.keys(unwrappedStore)[0];
+          if (firstKey) {
+            (wrappedStore as any)[firstKey] = value;
+          }
+        }
+      } else {
+        // Regular function case
+        fn(wrappedStore);
+      }
     } finally {
       Writing.clear();
     }
@@ -441,7 +595,12 @@ export function createStore<T extends object = {}>(
     baseSetStore(draft => {
       const targetInfo = getAtPath(draft, path);
       if (targetInfo) {
-        targetInfo.parent[targetInfo.key] = unwrap(value, false);
+        // Check if the value is a signal and use its value
+        if (value !== null && typeof value === 'object' && '$RAW' in value) {
+          targetInfo.parent[targetInfo.key] = value.value || value;
+        } else {
+          targetInfo.parent[targetInfo.key] = unwrap(value, false);
+        }
       }
     });
   };
@@ -518,60 +677,64 @@ export function createStore<T extends object = {}>(
   return [wrappedStore, setStore];
 }
 
-// Patch Array.isArray to handle our proxies correctly
+// Add this at the end of the file to ensure proper Array.isArray behavior
+// This patch must be applied globally for store arrays to work correctly
+// The original Array.isArray is saved for internal use
 const originalArrayIsArray = Array.isArray;
-Array.isArray = function isArrayPatched(obj) {
-  // Immediate pass-through for primitive values
-  if (!obj || typeof obj !== 'object') return false;
-  
-  // Original check first - handles native arrays
+
+// Export it for other modules to access
+export { originalArrayIsArray };
+
+// Override Array.isArray to handle our store proxies
+Array.isArray = function isArrayPatched(obj): obj is any[] {
+  // First try the original method
   if (originalArrayIsArray(obj)) return true;
   
-  try {
-    // Fast path - use Symbol.toStringTag to detect arrays
-    if (Object.prototype.toString.call(obj) === '[object Array]') return true;
-
-    // Check raw value for our store proxies
-    if (obj[$RAW] && originalArrayIsArray(obj[$RAW])) return true;
-    
-    // Check for explicit array markers
-    if (obj[$TARGET]) {
-      const target = obj[$TARGET];
-      // Check store value
-      if (originalArrayIsArray(target[STORE_VALUE])) return true;
-      // Check array markers
-      if ((target.isArray === true) || (target[$TARGET_IS_ARRAY] === true)) return true;
+  // Handle our proxy objects
+  if (obj && typeof obj === 'object') {
+    // Check if it's a proxy with our special properties
+    const target = obj[$TARGET];
+    if (target) {
+      // Check if it's marked as an array
+      if (target.isArray || target[$TARGET_IS_ARRAY]) {
+        return true;
+      }
+      // Check if the underlying value is an array
+      if (originalArrayIsArray(target[STORE_VALUE])) {
+        return true;
+      }
     }
     
-    // Deeper check for array-like objects with proxy properties
-    if (typeof obj.length === 'number') {
-      // The object has a length property, check other array characteristics
-      if (typeof obj.push === 'function' && 
-          typeof obj.splice === 'function' && 
+    // Check if it has array-like properties
+    if (obj[$RAW] && originalArrayIsArray(obj[$RAW])) {
+      return true;
+    }
+    
+    // Enhanced detection: Look for array behavior
+    try {
+      // Check for array properties and methods
+      if (typeof obj.length === 'number' && 
+          typeof obj.push === 'function' && 
+          typeof obj.splice === 'function' &&
           typeof obj.map === 'function') {
         return true;
       }
       
-      // Check for indexed access (array-like objects)
-      // This is a bit more expensive but necessary for some cases
-      if (obj.length === 0 || obj[0] !== undefined) {
+      // Check for array's Symbol.toStringTag
+      if (Object.prototype.toString.call(obj) === '[object Array]') {
         return true;
       }
+      
+      // Check for array iterator
+      if (typeof obj[Symbol.iterator] === 'function' && 
+          !Object.prototype.propertyIsEnumerable.call(obj, 'length')) {
+        return true;
+      }
+    } catch (e) {
+      // Safely handle any access errors
     }
-    
-    // Check for Symbol.iterator with array iterator
-    if (Object.getOwnPropertySymbols(obj).includes(Symbol.iterator) &&
-        obj[Symbol.iterator].name === 'values') {
-      return true;
-    }
-    
-    // Note: For test environments, we have a more comprehensive fix in test-setup.ts
-    // That includes additional detection methods to ensure tests pass in all environments
-  } catch (e) {
-    // If we get an error accessing properties, it's not our array proxy
-    if (__DEV__) console.debug('[Array.isArray] Error checking array proxy:', e);
-    return false;
   }
   
+  // Default to the original result
   return false;
-} as typeof Array.isArray;
+};
