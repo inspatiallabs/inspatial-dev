@@ -8,6 +8,7 @@ import {
 } from "../core/index.ts";
 import type { StoreType, StoreSetterType } from "./store.ts";
 import { EagerComputationClass } from "../core/effect.ts";
+import { createRenderEffect, untrack } from "../index.ts";
 
 // Define PathSegmentType locally as it's not exported from store.ts
 type PathSegmentType = string | number;
@@ -20,29 +21,24 @@ export function createProjection<T extends object>(
   fn: (draft: T) => void,
   initialValue: T = {} as T
 ): StoreType<T> {
-  // Create a basic store with the initial value
   const [store, setStore] = createStore<T>(initialValue);
-  
-  // Apply the function once initially to setup the store
-  setStore(draft => {
-    fn(draft);
-  });
-  
-  // Setup reactive tracking with a computation
-  const owner = getOwner() as OwnerClass;
-  if (owner) {
-    // Create an eager computation that will re-run whenever dependencies change
-    compute(owner, () => {
-      // Apply the projection function to update the store when dependencies change
-      setStore(draft => {
-        fn(draft);
-      });
-      
-      // This ensures the computation stays active and tracks properly
-      return store;
-    }, null);
-  }
-  
+
+  // Initial apply
+  untrack(() => setStore(d => { fn(d); }));
+
+  // Effect to keep projection in sync
+  createRenderEffect(
+    () => {
+      // Execute fn once to track dependencies (on dummy object)
+      fn({} as T);
+      return undefined as void;
+    },
+    () => {
+      // When deps change, update store without tracking to avoid feedback
+      untrack(() => setStore(d => { fn(d); }));
+    }
+  );
+
   return store;
 }
 
