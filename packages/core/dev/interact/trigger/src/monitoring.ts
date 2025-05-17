@@ -87,6 +87,13 @@ export class TriggerPerformanceMonitorClass {
   private errorBuffer: boolean[] = [];
   private bufferMaxLength: number = 100;
 
+  /** Per-trigger aggregate stats */
+  private perTriggerStats: Map<string, {
+    activationCount: number;
+    totalExecutionTime: number;
+    errorCount: number;
+  }> = new Map();
+
   /**
    * Get the singleton instance
    */
@@ -131,6 +138,7 @@ export class TriggerPerformanceMonitorClass {
     this.queueSizeBuffer = [];
     this.processingTimeBuffer = [];
     this.errorBuffer = [];
+    this.perTriggerStats.clear();
   }
 
   /**
@@ -286,6 +294,19 @@ export class TriggerPerformanceMonitorClass {
         );
       }
     }
+
+    // Record per-trigger stats using messageId (trigger name)
+    const tStats = this.perTriggerStats.get(messageId) ?? {
+      activationCount: 0,
+      totalExecutionTime: 0,
+      errorCount: 0,
+    };
+    tStats.activationCount += 1;
+    tStats.totalExecutionTime += totalTime;
+    if (status === TriggerEventDeliveryStatusEnum.FAILED) {
+      tStats.errorCount += 1;
+    }
+    this.perTriggerStats.set(messageId, tStats);
   }
 
   /**
@@ -400,6 +421,48 @@ export class TriggerPerformanceMonitorClass {
       { health, stats }
     );
   }
+
+  /**
+   * Returns simple aggregate statistics for a single trigger name.
+   * This API is intentionally minimal – it only exposes the bits current
+   * test-suite needs (activationCount, averageExecutionTime, errorCount).
+   */
+  public getStatsForTrigger(triggerName: string): {
+    activationCount: number;
+    averageExecutionTime: number;
+    errorCount: number;
+  } {
+    const tStats = this.perTriggerStats.get(triggerName) ?? {
+      activationCount: 0,
+      totalExecutionTime: 0,
+      errorCount: 0,
+    };
+    const avg = tStats.activationCount > 0
+      ? tStats.totalExecutionTime / tStats.activationCount
+      : 0;
+    return {
+      activationCount: tStats.activationCount,
+      averageExecutionTime: avg,
+      errorCount: tStats.errorCount,
+    };
+  }
+
+  /**
+   * Returns coarse global stats used in tests.
+   */
+  public getGlobalStats(): {
+    totalActivations: number;
+    uniqueTriggersActivated: number;
+  } {
+    let total = 0;
+    for (const { activationCount } of this.perTriggerStats.values()) {
+      total += activationCount;
+    }
+    return {
+      totalActivations: total,
+      uniqueTriggersActivated: this.perTriggerStats.size,
+    };
+  }
 }
 
 /**
@@ -407,3 +470,9 @@ export class TriggerPerformanceMonitorClass {
  * @type {TriggerPerformanceMonitorClass}
  */
 export const triggerMonitoringInstance = TriggerPerformanceMonitorClass.getInstance();
+
+/**
+ * @internal This constant is what the test-suite expects to import. It simply
+ * forwards to the singleton instance of TriggerPerformanceMonitorClass.
+ */
+export const triggerPerformanceMonitor = triggerMonitoringInstance;

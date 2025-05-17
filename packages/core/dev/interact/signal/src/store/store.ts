@@ -78,20 +78,23 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
   let p = (value as any)[$PROXY];
   if (p) return p;
 
+  // Handle special cases
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+
   // Handle custom classes by preserving their prototype chain
   const isCustomClass = value && value.constructor && value.constructor !== Object && value.constructor !== Array;
   const isArray = originalArrayIsArray(value);
   
   const target: InternalStoreNodeType<T> = isArray
-    ? ({ [STORE_VALUE]: value } as InternalStoreNodeType<T>)
+    ? ({ [STORE_VALUE]: value, [$TARGET_IS_ARRAY]: true } as InternalStoreNodeType<T>)
     : { [STORE_VALUE]: value };
 
-  // Mark the target as an array if needed (for internal use)
+  // Mark the target as an array if needed with both techniques for backward compatibility
   if (isArray) {
-    // Use a regular property for compatibility
+    // Use a regular property for compatibility with older code
     (target as any).isArray = true;
-    // Also use the symbol approach
-    (target as any)[$TARGET_IS_ARRAY] = true;
   }
   
   // Store the original prototype and constructor for custom classes
@@ -100,21 +103,58 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
     (target as any).originalPrototype = proto;
     (target as any).originalConstructor = value.constructor;
     
-    // Store instance properties separately to ensure they're accessible
-    (target as any).instanceProperties = Object.getOwnPropertyNames(value)
-      .filter(prop => typeof value[prop] !== 'function')
-      .reduce((props, prop) => {
-        props[prop] = value[prop];
-        return props;
-      }, {} as Record<string, any>);
+    // For custom classes, copy all properties including prototype inherited ones
+    // This ensures we have access to everything on the class instance
+    const instanceProperties: Record<string, any> = {};
+    const instanceMethods: Record<string, Function> = {};
+    
+    // Helper function to store property
+    const storeProperty = (obj: any, prop: string) => {
+      // Skip special properties and functions
+      if (prop === '$PROXY' || prop === '$RAW' || prop === 'constructor') return;
+        
+      const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+      if (!descriptor) return;
       
-    // Store instance methods to ensure they're properly bound
-    (target as any).instanceMethods = Object.getOwnPropertyNames(value)
-      .filter(prop => typeof value[prop] === 'function')
-      .reduce((methods, prop) => {
-        methods[prop] = value[prop];
-        return methods;
-      }, {} as Record<string, Function>);
+      // If it's a getter/setter, add a special accessor
+      if (descriptor.get || descriptor.set) {
+        // Will be handled through prototype chain
+        return;
+      }
+      
+      try {
+        // Store by type
+        const propValue = obj[prop];
+        if (typeof propValue === 'function') {
+          instanceMethods[prop] = propValue;
+        } else {
+          instanceProperties[prop] = propValue;
+        }
+      } catch (e) {
+        // Ignore errors accessing properties
+      }
+    };
+    
+    // First get all own properties from the instance
+    Object.getOwnPropertyNames(value).forEach(prop => 
+      storeProperty(value, prop)
+    );
+    
+    // Then collect inherited properties
+    let currentProto = proto;
+    while (currentProto && currentProto !== Object.prototype && currentProto !== Array.prototype) {
+      Object.getOwnPropertyNames(currentProto).forEach(prop => {
+        // Skip already stored properties
+        if (prop in instanceMethods || prop in instanceProperties) return;
+        
+        storeProperty(currentProto, prop);
+      });
+      currentProto = Object.getPrototypeOf(currentProto);
+    }
+    
+    // Store collected properties and methods
+    (target as any).instanceProperties = instanceProperties;
+    (target as any).instanceMethods = instanceMethods;
   }
 
   // Create proxy
@@ -123,7 +163,8 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
   // Store reference back to proxy
   Object.defineProperty(value, $PROXY, {
     value: p,
-    writable: true
+    writable: true,
+    configurable: true
   });
   
   // Debugging for array handling
@@ -215,18 +256,59 @@ function proxyDescriptor(target: StoreNodeType, property: PropertyKey) {
 }
 
 function trackSelf(target: StoreNodeType) {
-  getObserver() && getNode(getNodes(target, STORE_NODE), $TRACK, undefined, false).read();
+  // If there's an active observer, track access to the object itself
+  const observer = getObserver();
+  if (!observer) return;
+  
+  // Get or create the tracking nodes
+  const nodes = getNodes(target, STORE_NODE);
+  const trackNode = getNode(nodes, $TRACK, undefined, false);
+  
+  // Track the access to the object itself
+  trackNode.read();
+  
+  const storeValue = target[STORE_VALUE];
+  
+  // Additional tracking for arrays
+  if ((target as any).isArray || (target as any)[$TARGET_IS_ARRAY] || Array.isArray(storeValue)) {
+    // For arrays, we need to track length and also iterate properties
+    const lengthNode = getNode(nodes, 'length', storeValue.length);
+    lengthNode.read();
+    
+    // Optionally track access to array items based on current use case
+    if (Array.isArray(storeValue) && storeValue.length > 0) {
+      for (let i = 0; i < storeValue.length; i++) {
+        // This creates tracking nodes for all array items
+        const itemNode = getNode(nodes, i.toString(), storeValue[i]);
+        // We don't read from this node now, it'll be read on direct access
+      }
+    }
+  }
+  
+  // For custom classes, ensure we're tracking all properties correctly
+  if ((target as any).originalPrototype && 
+      (target as any).instanceProperties) {
+    // Track all instance properties
+    Object.keys((target as any).instanceProperties).forEach(key => {
+      const propNode = getNode(nodes, key, (target as any).instanceProperties[key]);
+      // We don't read here, will be read on direct access
+    });
+  }
 }
 
 function ownKeys(target: StoreNodeType) {
   trackSelf(target);
-  // Get keys from the underlying store value
-  const keys = Reflect.ownKeys(target[STORE_VALUE]);
-  // For arrays, ensure numeric indices and 'length' property are handled
-  if ((target as any).isArray || (target as any)[$TARGET_IS_ARRAY]) {
-    return keys; // For arrays, return just the array keys
+  
+  const storeValue = target[STORE_VALUE];
+  
+  // For arrays, we need to track length and also set up tracking for array indices
+  if ((target as any).isArray || (target as any)[$TARGET_IS_ARRAY] || Array.isArray(storeValue)) {
+    // Get all keys including numeric indices for arrays
+    return Reflect.ownKeys(storeValue);
   }
-  return keys;
+  
+  // For objects, get keys normally
+  return Reflect.ownKeys(storeValue);
 }
 
 const Writing = new Set<Object>();
@@ -245,41 +327,71 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       return 'Array';
     }
     
-    // Handle other array-specific methods and properties
-    if ((target as any).isArray || (target as any)[$TARGET_IS_ARRAY]) {
-      const storeValue = target[STORE_VALUE];
-      if (property === 'length' || property === Symbol.iterator || 
-          (typeof property === 'string' && !isNaN(parseInt(property)))) {
-        // Handle array-specific access (length, indices, iterator)
-        const value = storeValue[property];
-        if (typeof value === 'function') {
-          return value.bind(storeValue);
-        }
-        return isWrappable(storeValue[property]) ? wrap(storeValue[property]) : storeValue[property];
-      }
+    // Get the underlying store value
+    const storeValue = target[STORE_VALUE];
+    
+    // Handle custom class properties - check in order:
+    
+    // 1. Check for stored instance methods
+    if ((target as any).instanceMethods && 
+        property in (target as any).instanceMethods) {
+      return (target as any).instanceMethods[property].bind(storeValue);
     }
     
-    // Handle custom class properties
-    if ((target as any).instanceProperties && property in (target as any).instanceProperties) {
+    // 2. Check for stored instance properties
+    if ((target as any).instanceProperties && 
+        property in (target as any).instanceProperties && 
+        property !== $PROXY && property !== $RAW) {
       return (target as any).instanceProperties[property];
     }
     
-    // Handle custom class methods
-    if ((target as any).instanceMethods && property in (target as any).instanceMethods) {
-      return (target as any).instanceMethods[property].bind(target[STORE_VALUE]);
+    // 3. Handle array-specific methods and properties
+    if (((target as any).isArray || (target as any)[$TARGET_IS_ARRAY]) &&
+        (property === 'length' || property === Symbol.iterator ||
+        typeof property === 'string' && !isNaN(parseInt(property, 10)))) {
+      if (property === 'length') {
+        // Track length property access for reactivity
+        getObserver() && getNode(getNodes(target, STORE_NODE), 'length', storeValue.length).read();
+        return storeValue.length;
+      }
+      
+      // For array methods, bind to the original array
+      const value = storeValue[property];
+      if (typeof value === 'function') {
+        return value.bind(storeValue);
+      }
+      
+      // For array indices, return wrapped values
+      return isWrappable(value) ? wrap(value) : value;
     }
     
+    // 4. Check for properties on the prototype chain
+    if ((target as any).originalPrototype && 
+        property in (target as any).originalPrototype && 
+        !(property in storeValue)) {
+      const proto = (target as any).originalPrototype;
+      const descriptor = Object.getOwnPropertyDescriptor(proto, property);
+      if (descriptor?.get) {
+        return descriptor.get.call(storeValue);
+      }
+      const value = proto[property];
+      if (typeof value === 'function') {
+        return value.bind(storeValue);
+      }
+      return value;
+    }
+    
+    // 5. Check for properties on the original object using descriptor
+    const descriptor = Object.getOwnPropertyDescriptor(storeValue, property);
+    if (descriptor?.get) {
+      return descriptor.get.call(receiver);
+    }
+    
+    // 6. Standard property tracking logic
     const nodes = getNodes(target, STORE_NODE);
-    const storeValue = target[STORE_VALUE];
-    const tracked = nodes[property];
+    let tracked = nodes[property];
     
-    // Handle getters on the original object
-    if (!tracked) {
-      const desc = Object.getOwnPropertyDescriptor(storeValue, property);
-      if (desc && desc.get) return desc.get.call(receiver);
-    }
-    
-    // Handle custom class methods and properties
+    // Handle property access during a write operation
     if (Writing.has(storeValue)) {
       const value = tracked ? tracked._value : storeValue[property];
       return isWrappable(value) ? (Writing.add(value[$RAW] || value), wrap(value)) : value;
@@ -289,27 +401,11 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
     
     if (!tracked) {
       if (typeof value === "function") {
-        // If it's a method on the prototype, bind it to the original object
+        // If the function is on the prototype, bind it to the original
         if (!storeValue.hasOwnProperty(property)) {
-          // Check if this is a prototype method on a custom class or array
-          let proto = Object.getPrototypeOf(storeValue);
-          
-          // For custom classes or arrays, bind methods to the original object
-          if (proto && 
-              (proto !== Object.prototype || 
-               Array.isArray(storeValue) || 
-               (target as any).isArray || 
-               (target as any)[$TARGET_IS_ARRAY])) {
-            return value.bind(storeValue);
-          }
-          
-          // Also check the originalPrototype for custom classes
-          if ((target as any).originalPrototype && 
-              property in (target as any).originalPrototype) {
-            return value.bind(storeValue);
-          }
+          return value.bind(storeValue);
         }
-        // Otherwise treat as a regular value
+        // Return regular functions as-is
         return value;
       } else if (getObserver()) {
         // Track property access for reactivity
@@ -330,12 +426,31 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
 
   set(target, property, value) {
     const storeValue = target[STORE_VALUE] as Record<PropertyKey, any>;
+    
     if (Writing.has(storeValue)) {
       // For custom classes, we need to update the instance properties as well
       if ((target as any).instanceProperties && typeof property === 'string') {
         (target as any).instanceProperties[property] = value;
       }
-      setProperty(storeValue, property, unwrap(value, false));
+      
+      // Unwrap value for actual storage
+      const unwrappedValue = unwrap(value, false);
+      
+      // Update the underlying object
+      setProperty(storeValue, property, unwrappedValue);
+      
+      // Also update the original getter/setter target if this is a class
+      if ((target as any).originalPrototype) {
+        try {
+          const descriptor = Object.getOwnPropertyDescriptor((target as any).originalPrototype, property);
+          if (descriptor?.set) {
+            // If there's a setter on the prototype, call it
+            descriptor.set.call(storeValue, unwrappedValue);
+          }
+        } catch (e) {
+          // Ignore errors trying to use setters
+        }
+      }
     }
     return true;
   },
@@ -409,19 +524,19 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
     // Check for arrays in a more robust way
     const storeValue = target[STORE_VALUE];
     
-    // First check if the target is explicitly marked as an array
-    if ((target as any).isArray || (target as any)[$TARGET_IS_ARRAY]) {
+    // First check if it's explicitly marked as an array
+    if ((target as any).isArray || target[$TARGET_IS_ARRAY]) {
       return Array.prototype;
     }
     
-    // Then check if we have a custom class with stored original prototype
+    // Then check for original array
+    if (originalArrayIsArray(storeValue)) {
+      return Array.prototype;
+    }
+    
+    // Then check for custom class with stored original prototype
     if ((target as any).originalPrototype) {
       return (target as any).originalPrototype;
-    }
-    
-    // Then check if the store value is an array
-    if (Array.isArray(storeValue)) {
-      return Array.prototype;
     }
     
     // Finally fall back to the normal prototype chain
@@ -472,6 +587,7 @@ function setProperty(
   if (!deleting && prev === value) return;
   const len = Array.isArray(state) ? state.length : undefined; // Get length only if array
 
+  // Make the actual change to the state
   if (deleting) delete state[property];
   else state[property] = value;
 
@@ -479,26 +595,45 @@ function setProperty(
   const target = (state as any)[$PROXY]?.[$TARGET] as InternalStoreNodeType | undefined;
   if (!target) return;
 
-  // Update STORE_HAS signal
+  // Notify all tracking systems about the change
+
+  // 1. Update STORE_HAS signal for 'in' operator tracking
   const hasNodes = target[STORE_HAS];
   if (hasNodes?.[property]) {
-     hasNodes[property].write(!deleting);
+    hasNodes[property].write(!deleting);
   }
 
-  // Update STORE_NODE signal
+  // 2. Update STORE_NODE signal for direct property access tracking
   const nodes = target[STORE_NODE];
   if (nodes?.[property]) {
-    nodes[property].write(isWrappable(value) ? wrap(value) : value);
+    const wrappedValue = isWrappable(value) ? wrap(value) : value;
+    // Explicitly re-write even if equal to ensure notifications happen
+    nodes[property].write(wrappedValue);
   }
 
-  // Update length signal if it's an array and length changed
+  // 3. Special handling for arrays - update length tracking
   if (len !== undefined && Array.isArray(state) && state.length !== len && nodes?.length) {
+    // Notify length changes for arrays
     nodes.length.write(state.length);
   }
 
-  // Notify general tracker
+  // 4. Notify the general tracking for object/array-level changes
   if (nodes?.[$TRACK]) {
+    // Force notification for the entire object
     nodes[$TRACK].write(undefined);
+  }
+  
+  // 5. For custom classes, update any stored instance properties
+  if ((target as any).instanceProperties && typeof property === 'string') {
+    (target as any).instanceProperties[property] = value;
+    
+    // If modifying a class, we need to trigger self-tracking
+    // because the test expects the entire object to be tracked
+    if ((target as any).originalPrototype) {
+      if (nodes?.[$TRACK]) {
+        nodes[$TRACK].write(undefined);
+      }
+    }
   }
 }
 
@@ -688,53 +823,58 @@ export { originalArrayIsArray };
 // Override Array.isArray to handle our store proxies
 Array.isArray = function isArrayPatched(obj): obj is any[] {
   // First try the original method
-  if (originalArrayIsArray(obj)) return true;
+  if (originalArrayIsArray(obj)) {
+    return true;
+  }
   
-  // Handle our proxy objects
-  if (obj && typeof obj === 'object') {
-    // Check if it's a proxy with our special properties
-    const target = obj[$TARGET];
-    if (target) {
-      // Check if it's marked as an array
-      if (target.isArray || target[$TARGET_IS_ARRAY]) {
+  // If not an object, it can't be an array
+  if (!obj || typeof obj !== 'object') {
+    return false;
+  }
+  
+  try {
+    // Case 1: Our proxied array with $TARGET
+    if (obj[$TARGET]) {
+      const target = obj[$TARGET];
+      
+      // Check for explicit array flags first
+      if (target[$TARGET_IS_ARRAY] === true || (target as any).isArray === true) {
         return true;
       }
-      // Check if the underlying value is an array
-      if (originalArrayIsArray(target[STORE_VALUE])) {
+      
+      // Check if the store value is an array
+      const storeValue = target[STORE_VALUE];
+      if (storeValue && originalArrayIsArray(storeValue)) {
         return true;
       }
     }
     
-    // Check if it has array-like properties
+    // Case 2: Raw value access
     if (obj[$RAW] && originalArrayIsArray(obj[$RAW])) {
       return true;
     }
     
-    // Enhanced detection: Look for array behavior
-    try {
-      // Check for array properties and methods
-      if (typeof obj.length === 'number' && 
-          typeof obj.push === 'function' && 
-          typeof obj.splice === 'function' &&
-          typeof obj.map === 'function') {
-        return true;
-      }
-      
-      // Check for array's Symbol.toStringTag
-      if (Object.prototype.toString.call(obj) === '[object Array]') {
-        return true;
-      }
-      
-      // Check for array iterator
-      if (typeof obj[Symbol.iterator] === 'function' && 
-          !Object.prototype.propertyIsEnumerable.call(obj, 'length')) {
-        return true;
-      }
-    } catch (e) {
-      // Safely handle any access errors
+    // Case 3: Check if it has array methods (as a fallback)
+    if ('length' in obj && 
+        typeof obj.length === 'number' && 
+        typeof obj.push === 'function' && 
+        typeof obj.splice === 'function' && 
+        typeof obj.indexOf === 'function' && 
+        typeof obj.concat === 'function' &&
+        Symbol.iterator in obj) {
+      // It has all the critical array methods and properties
+      return true;
     }
+    
+    // Case 4: Special check for toString tag (last resort)
+    if (Object.prototype.toString.call(obj) === '[object Array]') {
+      return true;
+    }
+    
+  } catch (e) {
+    // Ignore errors accessing properties
   }
   
-  // Default to the original result
+  // Default to false
   return false;
 };

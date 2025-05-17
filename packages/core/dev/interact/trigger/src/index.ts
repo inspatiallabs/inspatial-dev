@@ -53,6 +53,8 @@ import { triggerConfigManager } from "./config.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { TriggerCategoryEnum } from "./types.ts";
 
+import "./env.ts"; // Ensure __DEV__ global is set early
+
 // Initialize system
 // TODO @benemma: Move initTriggerSystem() to a UDE initialization function not exposed to users potentially InSpatial State
 export function initTriggerSystem(options: {
@@ -95,4 +97,5 @@ export {
   createTriggerGroup,
   createConditionalTrigger,
   triggerRegistry,
+  initTriggerBridge,
 };

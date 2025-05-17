@@ -20,7 +20,29 @@ export function createProjection<T extends object>(
   fn: (draft: T) => void,
   initialValue: T = {} as T
 ): StoreType<T> {
-  const [store] = createStore(fn, initialValue);
+  // Create a basic store with the initial value
+  const [store, setStore] = createStore<T>(initialValue);
+  
+  // Apply the function once initially to setup the store
+  setStore(draft => {
+    fn(draft);
+  });
+  
+  // Setup reactive tracking with a computation
+  const owner = getOwner() as OwnerClass;
+  if (owner) {
+    // Create an eager computation that will re-run whenever dependencies change
+    compute(owner, () => {
+      // Apply the projection function to update the store when dependencies change
+      setStore(draft => {
+        fn(draft);
+      });
+      
+      // This ensures the computation stays active and tracks properly
+      return store;
+    }, null);
+  }
+  
   return store;
 }
 
@@ -44,21 +66,18 @@ export function wrapProjection<
     (_prev?: ComputationClass<any>) => {
       // We need to run the projection function with tracking
       // This will track any dependencies used in the projection
-      compute(owner, () => {
-        // Run the function to establish dependencies and apply projection
-        fn(store);
+      const computation = compute(owner, () => {
+        // Apply projection function to the store
+        fn(store as T);
         
-        // Return a computation that makes the store observable
+        // Return a new computation that will force tracking of the store
         return new ComputationClass(store, null, {
-          equals: false, // Never consider equal to force updates
+          equals: false, // Never consider equal
           unobserved: undefined, // Keep alive
         });
       }, null);
       
-      // Create a computation for the store itself to track access
-      return new ComputationClass(store, null, {
-        equals: false, // Force updates
-      });
+      return computation;
     },
     {
       // Configuration to ensure the computation runs eagerly and tracks properly
@@ -68,21 +87,27 @@ export function wrapProjection<
     }
   );
   
+  // Force initial evaluation to ensure the projection is applied
+  comp.read();
+  
   // Wrap the setter functions to ensure the projection is applied before setting
   const wrappedSet = Object.assign(
     (v: any) => {
-      // Read the computation to track dependencies
+      const result = set(v);
+      // Re-run the projection after each setter call
       comp.read();
-      return set(v);
+      return result;
     },
     {
       path: (...args: [...PathSegmentType[], any]) => {
+        const result = set.path(...args);
         comp.read();
-        return set.path(...args);
+        return result;
       },
       push: (path: PathSegmentType[], ...items: any[]) => {
+        const result = set.push(path, ...items);
         comp.read();
-        return set.push(path, ...items);
+        return result;
       },
       splice: (
         path: PathSegmentType[],
@@ -90,27 +115,25 @@ export function wrapProjection<
         deleteCount?: number,
         ...items: any[]
       ) => {
+        const result = set.splice(path, start, deleteCount, ...items);
         comp.read();
-        return set.splice(path, start, deleteCount, ...items);
+        return result;
       },
       insert: (path: PathSegmentType[], index: number, ...items: any[]) => {
+        const result = set.insert(path, index, ...items);
         comp.read();
-        return set.insert(path, index, ...items);
+        return result;
       },
       remove: (
         path: PathSegmentType[],
         itemOrMatcher: any | ((item: any, index: number) => boolean)
       ) => {
+        const result = set.remove(path, itemOrMatcher);
         comp.read();
-        return set.remove(path, itemOrMatcher);
+        return result;
       },
     }
   );
-  
-  // We need to ensure the projection is initially run
-  if (getObserver()) {
-    comp.read();
-  }
   
   return [store, wrappedSet];
 }

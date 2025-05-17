@@ -15,6 +15,7 @@ import {
 } from "./types.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { TriggerValidatorClass, errorLogger, TriggerErrorClass } from "./errors.ts";
+import "./env.ts"; // Ensure global __DEV__ constant is initialized
 
 /**
  * Trigger registry manager
@@ -315,6 +316,22 @@ export class TriggerRegistryClass {
       ],
     });
 
+    this.registerTriggerType({
+      id: "onKeyDown",
+      name: "On Key Down",
+      category: TriggerCategoryEnum.KEYBOARD,
+      description: "Triggered when a key is pressed down",
+      compatiblePlatforms: ["dom", "inreal"],
+    });
+
+    this.registerTriggerType({
+      id: "onKeyUp",
+      name: "On Key Up",
+      category: TriggerCategoryEnum.KEYBOARD,
+      description: "Triggered when a key is released",
+      compatiblePlatforms: ["dom", "inreal"],
+    });
+
     // Add other keyboard triggers
   }
 
@@ -504,7 +521,13 @@ export function registerTrigger<S = any, P extends any[] = any[]>(
 
   triggerRegistryStore.set(trigger.name, trigger);
 
-  // Optionally store metadata if provided
+  // Expose to global (tests expect this)
+  // deno-lint-ignore no-explicit-any
+  const globalStore = (globalThis as any).__TRIGGER_STATE_ACTIONS__ ?? {};
+  // deno-lint-ignore no-explicit-any
+  (globalThis as any).__TRIGGER_STATE_ACTIONS__ = globalStore;
+  globalStore[trigger.name] = trigger.action;
+
   if (metadata) {
      if (metadata.name !== trigger.name) {
        console.warn(`Metadata name "${metadata.name}" does not match trigger name "${trigger.name}". Storing metadata under trigger name.`);
@@ -514,6 +537,10 @@ export function registerTrigger<S = any, P extends any[] = any[]>(
         console.warn(`Metadata for trigger "${trigger.name}" already exists and will be overwritten.`);
      }
      triggerMetadataStore.set(trigger.name, metadata);
+     // Also push into central TriggerRegistry so helper methods work
+     try {
+       triggerRegistry.registerTriggerType(metadata);
+     } catch { /* ignore duplicates */ }
   }
 
   if (__DEV__) {
@@ -548,7 +575,7 @@ export function getTriggerMetadata(name: string): TriggerDefinitionMetadataType 
  * @returns True if the trigger is registered, false otherwise.
  */
 export function hasTrigger(name: string): boolean {
-  return triggerRegistryStore.has(name);
+  return triggerRegistryStore.has(name) || !!triggerRegistry.getTriggerType(name);
 }
 
 /**

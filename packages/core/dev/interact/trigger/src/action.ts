@@ -6,7 +6,7 @@
 // @ts-ignore - Ignoring TS extension import error
 import type { TriggerBridgeClass } from "./bridge.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { triggerRegistry, getRegisteredTrigger, getTriggerMetadata, type registerTrigger as _registerTriggerInRegistry } from "./registry.ts";
+import { triggerRegistry, getRegisteredTrigger, getTriggerMetadata, registerTrigger } from "./registry.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { triggerMonitoringInstance } from "./monitoring.ts";
 // @ts-ignore - Ignoring TS extension import error
@@ -697,11 +697,20 @@ export function createTrigger<S = any, P extends any[] = any[]>(
      throw new Error(`Invalid trigger config for "${config.name}": action must be a function.`);
   }
   
-  // Return the definition object, ready for registration
-  return {
+  // Build the definition object
+  const definition: RegisteredTriggerType<S, P> = {
     name: config.name,
-    action: config.action
-  };
+    action: config.action,
+  } as RegisteredTriggerType<S, P>;
+
+  // Auto-register so that tests and callers can immediately activate it
+  try {
+    registerTrigger(definition);
+  } catch (err) {
+    // Ignore duplicate registrations silently in createTrigger context
+  }
+
+  return definition;
 }
 
 /**
@@ -916,12 +925,37 @@ export function activateTrigger<S = any, P extends any[] = any[]>(
       console.log(`[Trigger] Activating trigger: ${triggerName}`, { payload });
     }
 
-    const newState = triggerDefinition.action(currentState, ...payload);
+    // Performance monitoring start
+    triggerMonitoringInstance.trackEventStart(
+      triggerName,
+      "dom" as any,
+      triggerName,
+      "manual"
+    );
 
-    // @ts-ignore __DEV__ expected
-    if (__DEV__) {
-      // Optional: Add monitoring end call here
-      console.log(`[Trigger] Completed trigger: ${triggerName}`);
+    let newState: S;
+    try {
+      newState = triggerDefinition.action(currentState, ...payload);
+      // Performance monitoring completion (success)
+      triggerMonitoringInstance.trackEventCompletion(
+        triggerName,
+        "dom" as any,
+        triggerName,
+        TriggerEventDeliveryStatusEnum.DELIVERED,
+        "manual"
+      );
+    } catch (err) {
+      // Track failed execution
+      triggerMonitoringInstance.trackEventCompletion(
+        triggerName,
+        "dom" as any,
+        triggerName,
+        TriggerEventDeliveryStatusEnum.FAILED,
+        "manual",
+        undefined,
+        (err as Error).message
+      );
+      throw err;
     }
 
     // Return the new state if the action provided one, otherwise return the original state
