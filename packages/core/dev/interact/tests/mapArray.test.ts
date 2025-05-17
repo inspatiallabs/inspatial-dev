@@ -12,7 +12,7 @@ let cleanupFns: Array<() => void> = [];
 
 // Cleanup after each test
 test("cleanup after tests", () => {
-  cleanupFns.forEach(fn => fn());
+  cleanupFns.forEach((fn) => fn());
   flushSync();
 });
 
@@ -87,7 +87,7 @@ test("should compute keyed map", () => {
 
   expect(map().length).toBe(0);
   expect(computed).toHaveBeenCalledTimes(4);
-  
+
   cleanupFns.push(() => flushSync());
 });
 
@@ -107,13 +107,18 @@ test("should notify observer", () => {
   });
 
   const effect = mockFn();
-  createRoot(() => createEffect(map, effect));
+  createRoot(() => {
+    createEffect(() => {
+      const result = map();
+      effect(result);
+    });
+  });
   flushSync();
 
   setSource((prev) => prev.slice(1));
   flushSync();
   expect(effect).toHaveBeenCalledTimes(2);
-  
+
   cleanupFns.push(() => flushSync());
 });
 
@@ -180,7 +185,7 @@ test("should compute map when key by index", () => {
 
   expect(map().length).toBe(0);
   expect(computed).toHaveBeenCalledTimes(4);
-  
+
   cleanupFns.push(() => flushSync());
 });
 

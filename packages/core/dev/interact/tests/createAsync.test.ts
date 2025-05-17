@@ -36,8 +36,8 @@ test("diamond should not cause waterfalls on read", async () => {
   const async2 = mockFn(() => Promise.resolve(s()));
 
   createRoot(() => {
-    const b = createAsync(async1);
-    const c = createAsync(async2);
+    const b = createAsync(() => async1());
+    const c = createAsync(() => async2());
     createEffect(
       () => [b(), c()],
       (v) => effect(...v)
@@ -86,8 +86,8 @@ test("should waterfall when dependent on another async with shared source", asyn
   const async2 = mockFn(() => Promise.resolve(s() + a()));
 
   createRoot(() => {
-    a = createAsync(async1);
-    const b = createAsync(async2);
+    a = createAsync(() => async1());
+    const b = createAsync(() => async2());
 
     createEffect(
       () => b(),
@@ -123,7 +123,7 @@ test("should waterfall when dependent on another async with shared source", asyn
 test("should should show stale state with `isPending`", async () => {
   const [s, set] = createSignal(1);
   const async1 = mockFn(() => Promise.resolve(s()));
-  const a = createRoot(() => createAsync(async1));
+  const a = createRoot(() => createAsync(() => async1()));
   const b = createMemo(() => (isPending(a) ? "stale" : "not stale"));
   expect(b).toThrow();
   await new Promise((r) => setTimeout(r, 0));
@@ -141,7 +141,7 @@ test("should should show stale state with `isPending`", async () => {
 test("should get latest value with `latest`", async () => {
   const [s, set] = createSignal(1);
   const async1 = mockFn(() => Promise.resolve(s()));
-  const a = createRoot(() => createAsync(async1));
+  const a = createRoot(() => createAsync(() => async1()));
   const b = createMemo(() => latest(a));
   expect(b).toThrow();
   await new Promise((r) => setTimeout(r, 0));
@@ -161,7 +161,7 @@ test("should resolve to a value with resolveAsync", async () => {
   const async1 = mockFn(() => Promise.resolve(s()));
   let value: number | undefined;
   createRoot(() => {
-    const a = createAsync(async1);
+    const a = createAsync(() => async1());
     createEffect(
       () => {},
       () => {

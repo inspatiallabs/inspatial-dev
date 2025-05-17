@@ -22,7 +22,10 @@ import { $TRACK } from "./store/index.ts";
 import { batch, globalQueue } from "./core/scheduler.ts";
 
 // Import scheduled from scheduler for flushSync
-import { globalQueue as queue, flushSync as baseFlushSync } from "./core/scheduler.ts";
+import {
+  globalQueue as queue,
+  flushSync as baseFlushSync,
+} from "./core/scheduler.ts";
 
 // Renamed Types
 export type AccessorType<T> = () => T;
@@ -108,48 +111,50 @@ export function createSignal<T>(
       );
       const getter = node.read.bind(node);
       const setter = node.write.bind(node) as SetterType<T>;
-      
+
       // Expose value property for interop with store
-      Object.defineProperty(getter, 'value', {
+      Object.defineProperty(getter, "value", {
         get: () => node._value,
         enumerable: true,
-        configurable: true
+        configurable: true,
       });
-      
+
       return [getter, setter];
     });
-    
+
     // Create the outer signal accessor and setter
     const outerGetter = () => memo()[0]();
-    const outerSetter = ((value) => memo()[1](value)) as SetterType<T | undefined>;
-    
+    const outerSetter = ((value) => memo()[1](value)) as SetterType<
+      T | undefined
+    >;
+
     // Make value property available on the getter for external access
-    Object.defineProperty(outerGetter, 'value', {
+    Object.defineProperty(outerGetter, "value", {
       get: () => untrack(outerGetter),
       enumerable: true,
-      configurable: true
+      configurable: true,
     });
-    
+
     return [outerGetter, outerSetter];
   }
-  
+
   const node = new ComputationClass(
     first,
     null,
     second as SignalOptionsType<T>
   );
-  
+
   // Create main getter and setter functions
   const getter = node.read.bind(node);
   const setter = node.write.bind(node) as SetterType<T | undefined>;
-  
+
   // Make the getter function have a "value" property for direct access
   Object.defineProperty(getter, "value", {
     get: () => node._value,
     enumerable: true,
-    configurable: true
+    configurable: true,
   });
-  
+
   return [getter, setter];
 }
 
@@ -313,7 +318,7 @@ export function createEffect<Next>(
 export function createEffect<Next, Init = Next>(
   compute: ComputeFunctionType<Init | Next, Next>,
   effect?: EffectFunctionType<Next, Next>,
-  error?: ((err: unknown) => void),
+  error?: (err: unknown) => void,
   value?: Init,
   options?: EffectOptionsType
 ): void;
@@ -325,22 +330,24 @@ export function createEffect<Next, Init>(
   options?: EffectOptionsType
 ): void {
   // Special handling for signal-like objects
-  if (typeof compute === 'function' && 
-      !effect && 
-      typeof (compute as any).read !== 'function' &&
-      arguments.length === 2) {
+  if (
+    typeof compute === "function" &&
+    !effect &&
+    typeof (compute as any).read !== "function" &&
+    arguments.length === 2
+  ) {
     // This is the case where compute is a signal and effect is the handler
     const signalGetter = compute;
     const handler = error as EffectFunctionType<Next, Next>;
-    
+
     // Create an effect that reads the signal and calls the handler
     const effectFn = () => {
-      // Read the signal
-      const value = (signalGetter as Function)();
+      // Read the signal and ensure dependencies are tracked
+      const value = untrack(() => (signalGetter as Function)());
       // Return the value to be passed to the handler
       return value;
     };
-    
+
     // Now create the real effect
     void new EffectClass(
       value as any,
@@ -353,7 +360,7 @@ export function createEffect<Next, Init>(
   }
 
   // Handle the case where only compute function is provided
-  const effectHandler = effect === undefined ? (() => {}) : effect;
+  const effectHandler = effect === undefined ? () => {} : effect;
 
   // Create the effect instance and run it
   void new EffectClass(
@@ -465,22 +472,23 @@ export function createErrorBoundary<T, U>(
   }
 
   owner._handlers = [handler];
-  const c = new ComputationClass<ComputationClass<undefined>>(
+  const c = new ComputationClass<ComputationClass<undefined>>(undefined, () => {
+    owner.dispose(false);
+    owner.emptyDisposal();
+    const result = compute(owner, fn, owner as any);
+    return new ComputationClass<undefined>(result, null);
+  });
+  const f = new EagerComputationClass<ComputationClass<U>>(
     undefined,
     () => {
-      owner.dispose(false);
-      owner.emptyDisposal();
-      const result = compute(owner, fn, owner as any);
-      return new ComputationClass<undefined>(result, null);
-    }
+      const err = error.read();
+      if (!err) return c as any;
+      const reset = () => error.write(undefined);
+      const result = fallback(err._error, reset);
+      return new ComputationClass<U>(result, null);
+    },
+    {}
   );
-  const f = new EagerComputationClass<ComputationClass<U>>(undefined, () => {
-    const err = error.read();
-    if (!err) return c as any;
-    const reset = () => error.write(undefined);
-    const result = fallback(err._error, reset);
-    return new ComputationClass<U>(result, null);
-  }, {});
   return () => f.wait().wait();
 }
 
@@ -842,7 +850,7 @@ export function isBatching(): boolean {
  * By default, changes are batched on the microtask queue which is an async process. You can flush
  * the queue synchronously to get the latest updates. This is useful for testing and synchronous situations
  * where you need the latest values immediately.
- * 
+ *
  * @param fn An optional function to execute before flushing.
  * @returns The return value of the provided function, or undefined if no function is provided.
  */

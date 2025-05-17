@@ -878,3 +878,4 @@ Array.isArray = function isArrayPatched(obj): obj is any[] {
   // Default to false
   return false;
 };
+
