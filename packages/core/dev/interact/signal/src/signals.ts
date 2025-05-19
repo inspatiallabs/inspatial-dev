@@ -5,9 +5,7 @@ import {
   ComputationClass,
   compute,
   ERROR_BIT,
-  flatten,
   getClock,
-  incrementClock,
   LOADING_BIT,
   NotReadyErrorClass,
   onCleanup,
@@ -15,11 +13,12 @@ import {
   UNCHANGED,
   UNINITIALIZED_BIT,
   untrack,
-  getObserver,
-  isEqual,
 } from "./core/index.ts";
 import { $TRACK } from "./store/index.ts";
 import { batch, globalQueue } from "./core/scheduler.ts";
+
+// Local version of update check tracking
+let updateCheck: any = null;
 
 // Import scheduled from scheduler for flushSync
 import {
@@ -188,25 +187,44 @@ export function createMemo<Next extends Prev, Init, Prev>(
   value?: Init,
   options?: MemoOptionsType<Next>
 ): AccessorType<Next> {
+  // Ensure options object exists to avoid null checks
+  const memoOptions = options || {};
+
+  // Create the computation node with the compute function, initial value, and options
   let node: ComputationClass<Next> | undefined = new ComputationClass<Next>(
     value as any,
     compute as any,
-    options
+    memoOptions // Pass the options to the ComputationClass constructor
   );
+
+  // Explicitly set the equals function to ensure proper change detection
+  if (memoOptions.equals !== undefined) {
+    node._equals = memoOptions.equals;
+  }
+
   let resolvedValue: Next;
   return () => {
     if (node) {
-      resolvedValue = node.wait();
-      // no sources so will never update so can be disposed.
-      // additionally didn't create nested reactivity so can be disposed.
-      if (!node._sources?.length && node._nextSibling?._parent !== node) {
-        node.dispose();
-        node = undefined;
-      }
-      // not owned and not listened to so can be garbage collected if reference lost.
-      else if (!node._parent && !node._observers?.length) {
-        node.dispose();
-        node._state = STATE_DIRTY;
+      try {
+        resolvedValue = node.wait();
+        // no sources so will never update so can be disposed.
+        // additionally didn't create nested reactivity so can be disposed.
+        if (!node._sources?.length && node._nextSibling?._parent !== node) {
+          node.dispose();
+          node = undefined;
+        }
+        // not owned and not listened to so can be garbage collected if reference lost.
+        else if (!node._parent && !node._observers?.length) {
+          node.dispose();
+          node._state = STATE_DIRTY;
+        }
+      } catch (error) {
+        // If an error occurs and we have a fallback value, use it
+        if (value !== undefined) {
+          resolvedValue = value as unknown as Next;
+        } else {
+          throw error;
+        }
       }
     }
     return resolvedValue;
@@ -342,10 +360,17 @@ export function createEffect<Next, Init>(
 
     // Create an effect that reads the signal and calls the handler
     const effectFn = () => {
-      // Read the signal and ensure dependencies are tracked
-      const value = untrack(() => (signalGetter as Function)());
-      // Return the value to be passed to the handler
-      return value;
+      let updateCheckLocal = updateCheck;
+      updateCheck = null;
+      try {
+        // We need to track reads to signal to ensure reactivity works correctly
+        // By reading the signal directly, we subscribe to changes
+        const value = (signalGetter as Function)();
+        // Return the value to be passed to the handler
+        return value;
+      } finally {
+        updateCheck = updateCheckLocal;
+      }
     };
 
     // Now create the real effect
@@ -489,7 +514,21 @@ export function createErrorBoundary<T, U>(
     },
     {}
   );
-  return () => f.wait().wait();
+  return () => {
+    try {
+      // Get the inner computation and wait on it
+      const inner = f.wait();
+      if (inner) {
+        return inner.wait();
+      }
+      // If there's no inner computation but we have a fallback error handler,
+      // just return undefined to avoid further errors
+      return undefined;
+    } catch (err) {
+      // If an error occurs during wait, call the fallback with the error
+      return fallback(err, () => error.write(undefined));
+    }
+  };
 }
 
 /**

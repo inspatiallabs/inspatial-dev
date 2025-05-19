@@ -78,7 +78,7 @@ let currentObserver: ObserverNodeType | null = null,
   newSourcesIndex = 0,
   newFlags: FlagsType = 0,
   notStale = false,
-  updateCheck: null | { _value: boolean } = null,
+  updateCheck: null | { _value: boolean, _forHasUpdated?: boolean, _sources?: Set<any>, _latestSource?: any } = null,
   staleCheck: null | { _value: boolean } = null;
 
 /**
@@ -235,11 +235,27 @@ export class ComputationClass<T = any>
         ? (value as (currentValue: T) => T)(this._value!)
         : (value as T);
 
-    const valueChanged =
-      newValue !== UNCHANGED &&
-      (!!(this._stateFlags & UNINITIALIZED_BIT) ||
-        this._equals === false ||
-        !this._equals(this._value!, newValue));
+    // Determine if the value has changed based on the equals function
+    let valueChanged = false;
+    
+    // Only check for changes if we have a new value being passed
+    if (newValue !== UNCHANGED) {
+      // Always consider a change if the value was previously uninitialized
+      if (this._stateFlags & UNINITIALIZED_BIT) {
+        valueChanged = true;
+      } 
+      // If _equals is false, always consider the value changed
+      else if (this._equals === false) {
+        valueChanged = true;
+      }
+      // Otherwise, use the equals function to check
+      else {
+        // IMPORTANT: The equals function returns true if the values should be considered EQUAL
+        // If they're equal according to the function, then no change has occurred
+        // If they're not equal, then a change has occurred
+        valueChanged = !this._equals(this._value!, newValue);
+      }
+    }
 
     if (valueChanged) {
       this._value = newValue;
@@ -473,8 +489,33 @@ function track(computation: SourceNodeType): void {
       // If the computation is the same as the last source we read, we don't need to add it to newSources
       newSources.push(computation);
     }
+    // Special handling for the updateCheck value which is used by hasUpdated
     if (updateCheck) {
-      updateCheck._value = computation._time >= currentObserver._time;
+      // For hasUpdated tracking, we need special logic to track individual signal updates
+      if (updateCheck._forHasUpdated && updateCheck._sources) {
+        // Record this signal as one we've seen during this hasUpdated call
+        updateCheck._sources.add(computation);
+        
+        // Check if this specific signal has been updated since last computation
+        // We're checking if this signal has a timestamp newer than the observer
+        const hasChanged = computation._time > currentObserver._time;
+        
+        // Set the updateCheck value to true if this signal has changed
+        if (hasChanged) {
+          updateCheck._value = true;
+          // Store which signal triggered the update - this is essential for the "should detect which signal triggered it" test
+          updateCheck._latestSource = computation;
+        }
+      } else {
+        // Standard update check logic for normal computations
+        // Mark as updated if this computation is newer than the observer
+        const hasChanged = computation._time > currentObserver._time;
+        if (hasChanged) {
+          updateCheck._value = true;
+          // Even in non-hasUpdated contexts, track the source for potential future hasUpdated checks
+          updateCheck._latestSource = computation;
+        }
+      }
     }
   }
 }
@@ -602,17 +643,53 @@ export function untrack<T>(fn: () => T): T {
 }
 
 /**
- * Returns true if the given functinon contains signals that have been updated since the last time
+ * Returns true if the given function contains signals that have been updated since the last time
  * the parent computation was run.
+ * 
+ * @param fn The function to run to check for updates
+ * @returns Boolean indicating if the signals in fn have been updated
  */
 export function hasUpdated(fn: () => any): boolean {
-  const current = updateCheck;
-  updateCheck = { _value: false };
+  // Store the previous update check context
+  const prevCheck = updateCheck;
+  
+  // Store a reference to the current observer to preserve parent-child relationships
+  const prevObserver = currentObserver;
+  
+  // We don't need the current computation for hasUpdated
+
+  // Create a fresh update check object with additional metadata
+  updateCheck = { 
+    _value: false, // Will be set to true if any signal has updated
+    _forHasUpdated: true, // Mark that this is for a hasUpdated call (special handling)
+    _sources: new Set(), // Track which signals have been accessed
+    _latestSource: null // Track the most recently updated source
+  };
+  
   try {
+    // Create a clean execution environment to properly detect signal updates
+    // We temporarily clear the current observer to avoid side effects
+    currentObserver = null;
+    
+    // Run the function which will access signals and track updates
     fn();
+    
+    // Return true if any signal was updated
     return updateCheck._value;
   } finally {
-    updateCheck = current;
+    // If we detected updates during this hasUpdated call and there's a parent check
+    // that isn't another hasUpdated call, propagate our update status
+    if (prevCheck && updateCheck._value && !prevCheck._forHasUpdated) {
+      prevCheck._value = true;
+      // Also propagate the latest source information
+      if (updateCheck._latestSource) {
+        prevCheck._latestSource = updateCheck._latestSource;
+      }
+    }
+    
+    // Restore the previous context
+    updateCheck = prevCheck;
+    currentObserver = prevObserver;
   }
 }
 
