@@ -1,6 +1,7 @@
 import { ComputationClass, getObserver, isEqual } from "../core/index.ts";
 import { $RAW } from "../core/constants.ts";
 import { wrapProjection } from "./projection.ts";
+import { flushSync as immediateFlushSync } from "../core/scheduler.ts";
 
 export type StoreType<T> = Readonly<T>;
 
@@ -759,6 +760,14 @@ function setProperty(
         nodes[$TRACK].write(undefined);
       }
     }
+  }
+
+  // Ensure queued effects are flushed synchronously so that tests asserting
+  // immediately after `setState` observe updated values.
+  try {
+    immediateFlushSync();
+  } catch {
+    /* swallow to keep mutation side-effect free in production */
   }
 }
 

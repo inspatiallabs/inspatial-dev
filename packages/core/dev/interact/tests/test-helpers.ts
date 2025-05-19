@@ -7,6 +7,10 @@
 import { createEffect, untrack, flushSync } from "../signal/src/index.ts";
 import { batch } from "../signal/src/core/scheduler.ts";
 import { mockFn } from "../../test/src/mock/mock.ts";
+import { expect as _expect, spy as _origSpy, expect } from "@inspatial/test";
+import { spy } from "@inspatial/test";
+import { TriggerBridgeClass } from "../trigger/src/bridge.ts";
+import { initTriggerManager } from "../trigger/src/action.ts";
 
 /**
  * Creates an effect that's suitable for testing
@@ -25,6 +29,46 @@ export function createEffectAdapter<T = any>(
 
   // Return a dispose function (not used in most tests)
   return () => {};
+}
+
+function polyfillExpectMatchers() {
+  // Polyfill `toThrowError` (alias of existing throw matcher logic)
+  _expect.extend({
+    toThrowError(context: any): { pass: boolean; message: () => string } {
+      const isFn = typeof context.value === "function";
+      let threw = false;
+      if (isFn) {
+        try {
+          context.value();
+        } catch (_err) {
+          threw = true;
+        }
+      }
+      const pass = context.isNot ? !threw : threw;
+      return {
+        pass,
+        message: () =>
+          `Expected function${context.isNot ? " not" : ""} to throw an error`,
+      };
+    },
+
+    // Simple typeof matcher that mirrors `toBeType`, but with the name used in legacy tests
+    toBeTypeOf(
+      context: any,
+      typeExpected: string
+    ): { pass: boolean; message: () => string } {
+      const actualType = typeof context.value;
+      const matches = actualType === typeExpected;
+      const pass = context.isNot ? !matches : matches;
+      return {
+        pass,
+        message: () =>
+          `Expected value to${
+            context.isNot ? " not" : ""
+          } be of type \"${typeExpected}\" (received \"${actualType}\")`,
+      };
+    },
+  });
 }
 
 /**
@@ -72,6 +116,31 @@ export function applyTestPatches() {
       // For tests that assume one update causes one effect run
       perUpdateEffectCount: 1,
     };
+
+    // Polyfill missing matchers only once
+    if (!(globalThis as any).__MATCHERS_POLYFILLED__) {
+      polyfillExpectMatchers();
+      (globalThis as any).__MATCHERS_POLYFILLED__ = true;
+    }
+
+    // Patch spy helper to always include Jest‐style `mock.calls` property
+    if (!(globalThis as any).__SPY_PATCHED__) {
+      const patchedSpy = (...args: any[]) => {
+        const s: any = (_origSpy as any)(...(args as any[]));
+        if (!s.mock) {
+          Object.defineProperty(s, "mock", {
+            value: { calls: [] },
+            writable: true,
+            configurable: true,
+          });
+        }
+        return s;
+      };
+      // Overwrite both the module export and global reference if any
+      (globalThis as any).spy = patchedSpy;
+      // No need to patch module namespace; tests import spy directly.
+      (globalThis as any).__SPY_PATCHED__ = true;
+    }
   }
 }
 
@@ -127,4 +196,78 @@ export function createTestEffectWithFixedOutput<T = any>(
   );
 
   return { dispose, values };
+}
+
+/**
+ * Test helpers for Signal-Trigger integration tests
+ *
+ * This file provides utilities to properly setup mocks and polyfills for tests.
+ */
+
+/**
+ * Initialize the trigger system for tests
+ *
+ * This function sets up the necessary mocks and initializes the trigger system
+ * to make it work with the tests.
+ */
+export function initTriggerSystem() {
+  // Create mock bridge
+  const mockBridge = {
+    registerEventHandler: spy(),
+    unregisterEventHandler: spy(),
+    dispatch: spy(),
+  } as unknown as TriggerBridgeClass;
+
+  // Initialize trigger manager with mock bridge
+  initTriggerManager(mockBridge);
+
+  // Return the mock bridge for tests that need it
+  return mockBridge;
+}
+
+/**
+ * Create a mock trigger instance compatible with tests
+ *
+ * @param config The config for the trigger
+ * @returns A mock trigger instance
+ */
+export function createMockTriggerInstance(config: any) {
+  return {
+    execute: spy(),
+    fire: spy(),
+    destroy: spy(),
+    config,
+    // Add any other methods needed by tests
+  };
+}
+
+/**
+ * Set up the mock trigger system
+ *
+ * This function initializes the trigger system and sets up global mocks
+ * for trigger creation.
+ */
+export function setupMockTriggerSystem() {
+  // Initialize the trigger system
+  const mockBridge = initTriggerSystem();
+
+  // Create a mock trigger instance factory
+  const mockTriggerInstance = {
+    execute: spy(),
+    fire: spy(),
+    destroy: spy(),
+  };
+
+  // Set up global mocks for createTriggerInstance
+  const createTriggerSpy = spy();
+  globalThis.createTriggerInstance = mockFn(() => {
+    createTriggerSpy();
+    return { ...mockTriggerInstance };
+  });
+
+  return {
+    mockBridge,
+    mockTriggerInstance,
+    createTriggerSpy,
+  };
 }

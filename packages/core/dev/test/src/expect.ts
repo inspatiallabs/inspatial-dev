@@ -861,6 +861,28 @@ _expect.extend({
   },
 });
 
+// ---------------------------------------------------------------------------
+// Compatibility aliases for older test suites --------------------------------
+// These simply forward to already-implemented matchers so we don't duplicate
+// logic and we retain consistent error messaging.
+
+_expect.extend({
+  // Alias for `toThrow`
+  toThrowError(context: any, ...args: unknown[]) {
+    // Re-use the main implementation via direct call
+    // @ts-ignore accessing private matcher map
+    return (_expect as any).matchers.toThrow(context, ...args);
+  },
+
+  // Alias for `toBeType` with slightly different naming used in legacy tests
+  toBeTypeOf(context: any, typeExpected: string) {
+    // @ts-ignore private matcher access
+    return (_expect as any).matchers.toBeType(context, typeExpected, {
+      nullable: false,
+    });
+  },
+});
+
 /**
  * A friendly testing helper that lets you check if things work the way you want.
  *
