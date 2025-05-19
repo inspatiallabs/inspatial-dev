@@ -5,10 +5,12 @@ import {
   getOwner,
   OwnerClass,
   getObserver,
+  untrack,
+  flushSync,
 } from "../core/index.ts";
 import type { StoreType, StoreSetterType } from "./store.ts";
 import { EagerComputationClass } from "../core/effect.ts";
-import { createRenderEffect, untrack } from "../index.ts";
+import { createRenderEffect, createEffect } from "../signals.ts";
 
 // Define PathSegmentType locally as it's not exported from store.ts
 type PathSegmentType = string | number;
@@ -16,29 +18,56 @@ type PathSegmentType = string | number;
 /**
  * Creates a projection store that applies the given function to the initialValue
  * A projection is a store that is derived from a transformation function
+ *
+ * @param fn - The projection function that transforms the state
+ * @param initialValue - Initial state for the projection
+ * @returns A readonly store derived from the projection function
  */
 export function createProjection<T extends object>(
   fn: (draft: T) => void,
   initialValue: T = {} as T
 ): StoreType<T> {
+  // Create the base store
   const [store, setStore] = createStore<T>(initialValue);
 
-  // Initial apply
-  untrack(() => setStore(d => { fn(d); }));
+  // Create a flag to track the first run
+  let isInitialRun = true;
 
-  // Effect to keep projection in sync
-  createRenderEffect(
-    () => {
-      // Execute fn once to track dependencies (on dummy object)
-      fn({} as T);
-      return undefined as void;
-    },
-    () => {
-      // When deps change, update store without tracking to avoid feedback
-      untrack(() => setStore(d => { fn(d); }));
+  // Track the previous dependencies
+  const runProjection = () => {
+    // Use untrack to avoid circular dependencies and feedback loops
+    untrack(() => {
+      // Apply the projection function to update the store
+      setStore((draft) => {
+        fn(draft);
+      });
+    });
+  };
+
+  // Apply the projection initially
+  runProjection();
+  isInitialRun = false;
+
+  // Setup an effect to track dependencies of the projection function
+  createEffect(() => {
+    // Create a dummy state to track dependencies only
+    const dummyState = {} as T;
+
+    // Run the function to track its dependencies
+    fn(dummyState);
+
+    // When dependencies change, run the projection to update the store
+    if (!isInitialRun) {
+      // Ensure synchronous updates
+      flushSync(() => {
+        runProjection();
+      });
     }
-  );
 
+    return undefined; // Return value doesn't matter
+  });
+
+  // Return readonly store
   return store;
 }
 
@@ -47,14 +76,19 @@ export function createProjection<T extends object>(
  * This ensures that the projection function is always applied when the store is accessed
  */
 export function wrapProjection<
-  T extends object = Record<string | number | symbol, never>,
+  T extends object = Record<string | number | symbol, never>
 >(
   fn: (store: T) => void,
   store: StoreType<T>,
   set: StoreSetterType<T>
 ): [get: StoreType<T>, set: StoreSetterType<T>] {
   const owner = getOwner() as OwnerClass;
-  
+
+  // Force the projection to run initially
+  untrack(() => {
+    fn(store as T);
+  });
+
   // Create a tracking computation that runs the projection function
   // This makes sure the projection is updated when dependencies change
   const comp = new EagerComputationClass(
@@ -62,17 +96,21 @@ export function wrapProjection<
     (_prev?: ComputationClass<any>) => {
       // We need to run the projection function with tracking
       // This will track any dependencies used in the projection
-      const computation = compute(owner, () => {
-        // Apply projection function to the store
-        fn(store as T);
-        
-        // Return a new computation that will force tracking of the store
-        return new ComputationClass(store, null, {
-          equals: false, // Never consider equal
-          unobserved: undefined, // Keep alive
-        });
-      }, null);
-      
+      const computation = compute(
+        owner,
+        () => {
+          // Apply projection function to the store
+          fn(store as T);
+
+          // Return a new computation that will force tracking of the store
+          return new ComputationClass(store, null, {
+            equals: false, // Never consider equal
+            unobserved: undefined, // Keep alive
+          });
+        },
+        null
+      );
+
       return computation;
     },
     {
@@ -82,27 +120,29 @@ export function wrapProjection<
       unobserved: undefined, // Keep alive
     }
   );
-  
+
   // Force initial evaluation to ensure the projection is applied
   comp.read();
-  
-  // Wrap the setter functions to ensure the projection is applied before setting
+
+  // Wrap the setter functions to ensure the projection is applied after setting
   const wrappedSet = Object.assign(
     (v: any) => {
       const result = set(v);
-      // Re-run the projection after each setter call
-      comp.read();
+      // Re-run the projection after each setter call and flush updates
+      flushSync(() => {
+        comp.read();
+      });
       return result;
     },
     {
       path: (...args: [...PathSegmentType[], any]) => {
         const result = set.path(...args);
-        comp.read();
+        flushSync(() => comp.read());
         return result;
       },
       push: (path: PathSegmentType[], ...items: any[]) => {
         const result = set.push(path, ...items);
-        comp.read();
+        flushSync(() => comp.read());
         return result;
       },
       splice: (
@@ -112,12 +152,12 @@ export function wrapProjection<
         ...items: any[]
       ) => {
         const result = set.splice(path, start, deleteCount, ...items);
-        comp.read();
+        flushSync(() => comp.read());
         return result;
       },
       insert: (path: PathSegmentType[], index: number, ...items: any[]) => {
         const result = set.insert(path, index, ...items);
-        comp.read();
+        flushSync(() => comp.read());
         return result;
       },
       remove: (
@@ -125,12 +165,12 @@ export function wrapProjection<
         itemOrMatcher: any | ((item: any, index: number) => boolean)
       ) => {
         const result = set.remove(path, itemOrMatcher);
-        comp.read();
+        flushSync(() => comp.read());
         return result;
       },
     }
   );
-  
+
   return [store, wrappedSet];
 }
 

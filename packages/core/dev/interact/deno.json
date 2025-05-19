@@ -29,6 +29,7 @@
     "event bridge"
   ],
   "tasks": {
+    "dev": "deno run -A --watch main.ts",
     "test": "deno test --no-check --allow-env --allow-read --allow-write --allow-net",
     "test:trigger": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/trigger/",
     "test:trigger:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/trigger ./tests/trigger/",
@@ -38,6 +39,8 @@
 
     "test:signal": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal/",
     "test:signal:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal ./tests/signal/",
+
+    "test:signal-core": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal-core.test.ts",
 
     "test:signal-trigger": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal-trigger/",
     "test:signal-trigger:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-trigger ./tests/signal-trigger/",

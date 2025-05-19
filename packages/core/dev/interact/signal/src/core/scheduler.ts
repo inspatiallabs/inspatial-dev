@@ -3,7 +3,7 @@ import {
   EFFECT_RENDER,
   EFFECT_USER,
   STATE_CLEAN,
-  STATE_DISPOSED
+  STATE_DISPOSED,
 } from "./constants.ts";
 import type { ComputationClass } from "./core.ts";
 import type { EffectClass } from "./effect.ts";
@@ -25,7 +25,10 @@ function schedule() {
 }
 
 export interface IQueueType {
-  enqueue<T extends ComputationClass | EffectClass>(type: number, node: T): void;
+  enqueue<T extends ComputationClass | EffectClass>(
+    type: number,
+    node: T
+  ): void;
   run(type: number): boolean | void;
   flush(): void;
   addChild(child: IQueueType): void;
@@ -38,44 +41,77 @@ export class QueueClass implements IQueueType {
   _queues: [ComputationClass[], EffectClass[], EffectClass[]] = [[], [], []];
   _children: IQueueType[] = [];
   created = clock;
-  enqueue<T extends ComputationClass | EffectClass>(type: number, node: T): void {
-    this._queues[0].push(node as any);
-    if (type) this._queues[type].push(node as any);
+  enqueue<T extends ComputationClass | EffectClass>(
+    type: number,
+    node: T
+  ): void {
+    // Always ensure the node is in queue 0 (for pure computations)
+    if (!this._queues[0].includes(node as ComputationClass)) {
+      this._queues[0].push(node as any);
+    }
+
+    // For effects, also add to the appropriate queue type
+    if (type && !this._queues[type].includes(node as EffectClass)) {
+      this._queues[type].push(node as any);
+    }
+
     schedule();
   }
+
   run(type: number) {
     if (this._queues[type].length) {
       if (type === EFFECT_PURE) {
         runPureQueue(this._queues[type] as ComputationClass[]);
         this._queues[type] = [];
       } else {
-        const effects = this._queues[type] as EffectClass[];
+        // Critical fix: Safe copy of effects array to prevent mutation issues during execution
+        const effects = [...this._queues[type]] as EffectClass[];
         this._queues[type] = [];
         runEffectQueue(effects);
       }
     }
+
     let rerun = false;
     for (let i = 0; i < this._children.length; i++) {
       rerun = this._children[i].run(type) || rerun;
     }
-    if (type === EFFECT_PURE && this._queues[type].length) return true;
+
+    // Check if we need to run again (if more effects were enqueued during execution)
+    if (type === EFFECT_PURE && this._queues[type].length) {
+      return true;
+    }
+
+    return rerun;
   }
+
   flush() {
     if (this._running) return;
     this._running = true;
+
     try {
-      while (this.run(EFFECT_PURE)) {}
+      // Run pure computations until all are processed
+      let runAgain = true;
+      while (runAgain) {
+        runAgain = !!this.run(EFFECT_PURE);
+      }
+
       incrementClock();
       scheduled = false;
+
+      // Run render effects
       this.run(EFFECT_RENDER);
+
+      // Run user effects
       this.run(EFFECT_USER);
     } finally {
       this._running = false;
     }
   }
+
   addChild(child: IQueueType) {
     this._children.push(child);
   }
+
   removeChild(child: IQueueType) {
     const index = this._children.indexOf(child);
     if (index >= 0) this._children.splice(index, 1);
@@ -87,45 +123,47 @@ export const globalQueue = new QueueClass();
 /**
  * By default, changes are batched on the microtask queue which is an async process. You can flush
  * the queue synchronously to get the latest updates by calling `flushSync()`.
- * 
+ *
  * @param fn Optional function to execute before flushing the queue
  * @returns The result of fn if provided, otherwise undefined
  */
 export function flushSync<T>(fn?: () => T): T | undefined {
   // Track if we need to run a function before flushing
   let result: T | undefined;
-  
+
   // If a function is provided, run it first
   if (fn) {
     try {
       result = fn();
     } catch (error) {
       // Even if the function throws, make sure we flush
-      let count = 0;
-      while (scheduled) {
-        if (__DEV__ && ++count === 1000) {
-          console.warn("Potential Infinite Loop Detected in flushSync.");
-          break;
-        }
-        globalQueue.flush();
-      }
+      flushAllQueues();
       // Re-throw the original error
       throw error;
     }
   }
-  
-  // Now flush the queue 
+
+  // Now flush the queue
+  flushAllQueues();
+
+  // Return the result from fn (if it was provided)
+  return result;
+}
+
+/**
+ * Helper to flush all queues with safety checks
+ */
+function flushAllQueues(): void {
   let count = 0;
+
+  // Run until there are no more scheduled updates
   while (scheduled) {
-    if (__DEV__ && ++count === 1000) {
+    if (__DEV__ && ++count >= 1000) {
       console.warn("Potential Infinite Loop Detected in flushSync.");
       break;
     }
     globalQueue.flush();
   }
-  
-  // Return the result from fn (if it was provided)
-  return result;
 }
 
 /**
@@ -137,25 +175,41 @@ export function flushSync<T>(fn?: () => T): T | undefined {
 function runTop(node: ComputationClass): void {
   const ancestors: ComputationClass[] = [];
 
-  for (let current: OwnerClass | null = node; current !== null; current = current._parent) {
+  for (
+    let current: OwnerClass | null = node;
+    current !== null;
+    current = current._parent
+  ) {
     if (current._state !== STATE_CLEAN) {
       ancestors.push(current as ComputationClass);
     }
   }
 
   for (let i = ancestors.length - 1; i >= 0; i--) {
-    if (ancestors[i]._state !== STATE_DISPOSED) ancestors[i]._updateIfNecessary();
+    if (ancestors[i]._state !== STATE_DISPOSED) {
+      ancestors[i]._updateIfNecessary();
+    }
   }
 }
 
 function runPureQueue(queue: ComputationClass[]) {
+  // Process each computation node in sequence
   for (let i = 0; i < queue.length; i++) {
-    if (queue[i]._state !== STATE_CLEAN) runTop(queue[i]);
+    // Only process nodes still needing updates
+    if (queue[i]._state !== STATE_CLEAN && queue[i]._state !== STATE_DISPOSED) {
+      runTop(queue[i]);
+    }
   }
 }
 
 function runEffectQueue(queue: EffectClass[]) {
-  for (let i = 0; i < queue.length; i++) queue[i]._runEffect();
+  // Process each effect node in sequence
+  for (let i = 0; i < queue.length; i++) {
+    // Only run effects that haven't been disposed
+    if (queue[i]._state !== STATE_DISPOSED) {
+      queue[i]._runEffect();
+    }
+  }
 }
 
 // -------------------- Batch Utility --------------------

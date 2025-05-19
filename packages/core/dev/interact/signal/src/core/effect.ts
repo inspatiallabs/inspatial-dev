@@ -12,7 +12,7 @@ import { onCleanup } from "./owner.ts";
 
 // Ensure that test environments suppress warnings by default
 // This is critical for tests to run cleanly
-if (typeof globalThis !== 'undefined') {
+if (typeof globalThis !== "undefined") {
   (globalThis as any).__silenceWarnings = true;
   (globalThis as any).__TEST_ENV__ = true;
 }
@@ -27,7 +27,7 @@ export class EffectClass extends ComputationClass<any> {
   _effect: (value: any, prev?: any) => (() => void) | void;
   _queueType: number;
   _errorEffect: ErrorHandlerType | undefined;
-  
+
   // Track disposers for proper cleanup between runs
   _disposers: Array<() => void> = [];
 
@@ -43,20 +43,22 @@ export class EffectClass extends ComputationClass<any> {
     this._effect = effect;
     this._errorEffect = error;
     this._queueType = options?.type || (options?.render ? 1 : 2);
-    
+
     // Always ensure effects have a valid queue, even when created without a parent context
     // This is critical for stability in all environments
     if (!options?.render) {
-      this._queue = options?.type ? globalQueue : (this._parent?._queue || globalQueue);
-      
+      this._queue = options?.type
+        ? globalQueue
+        : this._parent?._queue || globalQueue;
+
       // Suppress warnings in test environments
-      const SILENCE_WARNINGS = 
+      const SILENCE_WARNINGS =
         // Static flag for tests
-        EffectClass.silenceWarnings || 
+        EffectClass.silenceWarnings ||
         // Check for test environment markers
-        (typeof globalThis !== 'undefined' && 
-          ((globalThis as any).__silenceWarnings === true || 
-           (globalThis as any).__TEST_ENV__ === true));
+        (typeof globalThis !== "undefined" &&
+          ((globalThis as any).__silenceWarnings === true ||
+            (globalThis as any).__TEST_ENV__ === true));
 
       if (__DEV__ && !this._parent && !options?.type && !SILENCE_WARNINGS) {
         console.warn(
@@ -64,9 +66,16 @@ export class EffectClass extends ComputationClass<any> {
         );
       }
     }
-    
+
     // Mark the effect as dirty immediately so it runs on the first render
     this._notify(STATE_DIRTY);
+
+    // CRITICAL FIX: Queue the effect to run immediately upon creation
+    // This is essential for tests and normal effect behavior
+    globalQueue.enqueue(this._queueType, this);
+
+    // Run the global queue synchronously to ensure the effect runs right away
+    globalQueue.flush();
   }
 
   // Static flag to silence effect warnings for tests
@@ -77,7 +86,7 @@ export class EffectClass extends ComputationClass<any> {
    */
   override emptyDisposal(): void {
     super.emptyDisposal();
-    
+
     // Also run any registered disposers in reverse order
     // This ensures proper cleanup of resources
     if (this._disposers.length > 0) {
@@ -97,14 +106,26 @@ export class EffectClass extends ComputationClass<any> {
    * Register a disposer function that will be called when the effect reruns or is disposed
    */
   addDisposer(disposer: () => void): void {
-    if (typeof disposer === 'function') {
+    if (typeof disposer === "function") {
       this._disposers.push(disposer);
     }
   }
 
   override _notify(state: number, skipQueue?: boolean) {
+    // Track previous state to detect changes
+    const prevState = this._state;
+
     super._notify(state);
-    if (!skipQueue && this._state >= STATE_DIRTY) {
+
+    // Only enqueue the effect if:
+    // 1. We're not skipping the queue AND
+    // 2. The state is dirty (needs recomputation) AND
+    // 3. Either this is a new notification or we're forcing it
+    if (
+      !skipQueue &&
+      this._state >= STATE_DIRTY &&
+      (this._state !== prevState || this._forceNotify)
+    ) {
       // Enqueue the effect to run
       this._queue.enqueue(this._queueType, this);
     }
@@ -118,22 +139,22 @@ export class EffectClass extends ComputationClass<any> {
   _runEffect(): void {
     // Skip if already clean
     if (this._state === STATE_CLEAN) return;
-    
+
     // Save the owner and previous value
     const owner = this._parent;
     const prevValue = this._value;
     let disposer: (() => void) | void = undefined;
-    
+
     try {
       // Compute the new result with proper dependency tracking
       const result = compute(owner, this._fn, this);
-      
+
       // Only rerun the effect if the result has changed or it's the initial run
       // Adding explicit check for the first run (prevValue is undefined)
       if (result !== UNCHANGED || prevValue === undefined) {
         // Clean up any previous disposers
         this.emptyDisposal();
-        
+
         // Run the effect with proper tracking
         try {
           // Make sure the effect runs in its own tracking scope
@@ -150,40 +171,40 @@ export class EffectClass extends ComputationClass<any> {
             this.handleError(effectError);
           }
         }
-        
+
         // Store the result for future comparisons
         this._value = result;
       }
     } catch (error: unknown) {
       // Handle errors in the compute function
       this.emptyDisposal();
-      
+
       if (this._errorEffect) {
         compute(owner, () => this._errorEffect!(error, this), null);
       } else {
         this.handleError(error);
       }
-      
+
       this._value = undefined;
     }
-    
+
     // Register the disposer if one was returned
     if (disposer) {
       this.addDisposer(disposer);
       onCleanup(disposer);
     }
-    
+
     // Mark the effect as clean
     this._state = STATE_CLEAN;
   }
-  
+
   /**
    * Clean up all resources used by this effect
    */
   override _disposeNode(): void {
     // Clean up any registered disposers
     this.emptyDisposal();
-    
+
     // Call the parent's disposal method
     super._disposeNode();
   }
