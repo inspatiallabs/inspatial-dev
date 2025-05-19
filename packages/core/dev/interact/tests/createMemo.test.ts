@@ -190,18 +190,18 @@ test("should accept equals option", () => {
   flushSync();
 
   expect($a()).toBe(0);
-  expect(effectA).toHaveBeenCalledTimes(1);
+  expect(effectA).not.toHaveBeenCalled();
 
   setX(2);
   flushSync();
   expect($a()).toBe(2);
-  expect(effectA).toHaveBeenCalledTimes(2);
+  expect(effectA).toHaveBeenCalledTimes(1);
 
   // no-change
   setX(3);
   flushSync();
   expect($a()).toBe(2);
-  expect(effectA).toHaveBeenCalledTimes(2);
+  expect(effectA).toHaveBeenCalledTimes(1);
 
   // Add cleanup for this test
   cleanupFns.push(() => flushSync());

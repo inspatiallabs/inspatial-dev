@@ -29,7 +29,7 @@ test("should dispose of inner computations", () => {
 
   createRoot((dispose) => {
     $x = createSignal(10);
-    $y = createMemo(memo);
+    $y = createMemo(() => memo());
     $y();
     dispose();
   });
@@ -129,7 +129,7 @@ test("should not observe", () => {
   const [$x] = createSignal(0);
   createRoot(() => {
     $x();
-    const owner = getOwner() as Computation;
+    const owner = getOwner() as ComputationClass;
     expect(owner._sources).toBeUndefined();
     expect(owner._observers).toBeUndefined();
   });

@@ -4,9 +4,9 @@ import {
   createRenderEffect,
   createRoot,
   createSignal,
-  flushSync
+  flushSync,
 } from "../signal/src/index.ts";
-import { test, expect, mockFn } from "@inspatial/test";
+import { test, expect, spy } from "@inspatial/test";
 
 // Use test.each for setup/teardown
 let cleanupFns: Array<() => void> = [];
@@ -30,7 +30,7 @@ test("should let errors bubble up when not handled", () => {
     });
     flushSync();
   }).toThrow(error);
-  
+
   cleanupFns.push(() => flushSync());
 });
 
@@ -47,7 +47,7 @@ test("should handle error", () => {
   );
 
   expect(b()).toBe("errored");
-  
+
   cleanupFns.push(() => flushSync());
 });
 
@@ -61,7 +61,7 @@ test("should forward error to another handler", () => {
           () => {
             throw error;
           },
-          e => {
+          (e) => {
             expect(e).toBe(error);
             throw e;
           }
@@ -73,13 +73,13 @@ test("should forward error to another handler", () => {
   );
 
   expect(b()).toBe("errored");
-  
+
   cleanupFns.push(() => flushSync());
 });
 
 test("should not duplicate error handler", () => {
   const error = new Error(),
-    handler = mockFn();
+    handler = spy();
 
   let [$x, setX] = createSignal(0),
     shouldThrow = false;
@@ -99,14 +99,14 @@ test("should not duplicate error handler", () => {
   setX(2);
   flushSync();
   expect(handler).toHaveBeenCalledTimes(1);
-  
+
   cleanupFns.push(() => flushSync());
 });
 
 test("should not trigger wrong handler", () => {
   const error = new Error(),
-    rootHandler = mockFn(),
-    handler = mockFn();
+    rootHandler = spy(),
+    handler = spy();
 
   let [$x, setX] = createSignal(0),
     shouldThrow = false;
@@ -136,13 +136,13 @@ test("should not trigger wrong handler", () => {
 
   expect(rootHandler).toHaveBeenCalledTimes(1);
   expect(handler).not.toHaveBeenCalledWith(error);
-  
+
   cleanupFns.push(() => flushSync());
 });
 
 test("should throw error if there are no handlers left", () => {
   const error = new Error(),
-    handler = mockFn(e => {
+    handler = spy((e) => {
       throw e;
     });
 
@@ -155,13 +155,13 @@ test("should throw error if there are no handlers left", () => {
   }).toThrow(error);
 
   expect(handler).toHaveBeenCalledTimes(2);
-  
+
   cleanupFns.push(() => flushSync());
 });
 
 test("should handle errors when the effect is on the outside", async () => {
   const error = new Error(),
-    rootHandler = mockFn();
+    rootHandler = spy();
 
   const [$x, setX] = createSignal(0);
 
@@ -173,30 +173,27 @@ test("should handle errors when the effect is on the outside", async () => {
           () => {
             throw error;
           },
-          e => {
+          (e) => {
             expect(e).toBe(error);
           }
         );
       },
-      err => rootHandler(err)
+      (err) => rootHandler(err)
     );
-    createRenderEffect(
-      () => b()?.(),
-      () => {}
-    );
+    createRenderEffect(b, () => {});
   });
   expect(rootHandler).toHaveBeenCalledTimes(0);
   setX(1);
   flushSync();
   expect(rootHandler).toHaveBeenCalledWith(error);
   expect(rootHandler).toHaveBeenCalledTimes(1);
-  
+
   cleanupFns.push(() => flushSync());
 });
 
 test("should handle errors when the effect is on the outside and memo in the middle", async () => {
   const error = new Error(),
-    rootHandler = mockFn();
+    rootHandler = spy();
 
   createRoot(() => {
     const b = createErrorBoundary(
@@ -209,6 +206,6 @@ test("should handle errors when the effect is on the outside and memo in the mid
     createRenderEffect(b, () => {});
   });
   expect(rootHandler).toHaveBeenCalledTimes(1);
-  
+
   cleanupFns.push(() => flushSync());
 });

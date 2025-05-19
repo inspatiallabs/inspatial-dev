@@ -474,7 +474,7 @@ function track(computation: SourceNodeType): void {
       newSources.push(computation);
     }
     if (updateCheck) {
-      updateCheck._value = computation._time > currentObserver._time;
+      updateCheck._value = computation._time >= currentObserver._time;
     }
   }
 }
@@ -754,14 +754,16 @@ export function compute<T>(
 
   let result: T;
   let hadError = false;
-  
+
   try {
     result = fn();
     return result;
   } catch (error: any) {
     hadError = true;
-    if (node) node.handleError(error);
-    // TODO: Rethrow error and propagate back up the stack ot the root
+    if (node) {
+      node._setError(error);
+      return node._value!;
+    }
     throw error;
   } finally {
     setOwner(prevOwner);
