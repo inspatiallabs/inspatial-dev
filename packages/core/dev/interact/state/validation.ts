@@ -140,9 +140,9 @@ export const StateTypes = {
    * Create a type for a pagination state
    */
   Pagination: type({
-    page: "number|>0",
-    limit: "number|>0",
-    total: "number|>=0" as any,
+    page: "number>0",
+    limit: "number>0",
+    total: "number>=0" as any,
     loading: "boolean"
   }),
   
@@ -151,7 +151,7 @@ export const StateTypes = {
    */
   Notification: type({
     items: "object[]",
-    unread: "number|>=0" as any
+    unread: "number>=0" as any
   }),
   
   /**

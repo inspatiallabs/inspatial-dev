@@ -112,6 +112,10 @@ export function createState<T extends object>(
     // Connected triggers registry
     const connectedTriggers = new Map<string, () => void>();
     
+    // Track nested batch depth and batch context state
+    let _batchDepth = 0;
+    let _batchingNextState: T | null = null;
+    
     // Define core state update function
     const updateState = (newState: Partial<T> | ((prevState: T) => Partial<T>)) => {
       if (StateManager.isPauseActive()) return;
@@ -130,12 +134,17 @@ export function createState<T extends object>(
         }));
       }
       
-      // Notify subscribers
-      subscribers.forEach(listener => listener(getInternalState()));
+      // Notify subscribers only when not in a nested batch
+      if (_batchDepth === 0) {
+        subscribers.forEach(listener => listener(getInternalState()));
+      }
     };
     
-    // Create the state instance
-    const stateInstance: StateInstanceType<T> = {
+    // Create the state instance with additional internal properties for batch integration
+    const stateInstance: StateInstanceType<T> & { 
+      _batchDepth: number;
+      _batchingNextState: T | null;
+    } = {
       // Core state access
       getState: () => getInternalState(),
       get: () => getInternalState(),
@@ -188,23 +197,33 @@ export function createState<T extends object>(
       // Batch updates
       batch: (updates: Array<(state: T) => Partial<T>>) => {
         if (StateManager.isPauseActive()) return;
-        
-        // Calculate the combined state update
-        const combinedUpdate = (currentState: T) => {
-          let nextState = { ...currentState };
+
+        _batchDepth++;
+
+        try {
+          // Initialize a working copy of state for the batch operation
+          _batchingNextState = { ...getInternalState() };
           
+          // Apply each update function sequentially
           for (const update of updates) {
-            const partialUpdate = update(nextState);
-            nextState = { ...nextState, ...partialUpdate };
+            // Call the update function and get partial update
+            const partialUpdate = update(_batchingNextState);
+            
+            // Apply the partial update to our working state copy
+            // This ensures each subsequent updater sees the effects of previous updates
+            if (partialUpdate && typeof partialUpdate === 'object') {
+              _batchingNextState = { ..._batchingNextState, ...partialUpdate };
+            }
           }
           
-          return nextState;
-        };
-        
-        // Apply the combined update
-        setInternalState(combinedUpdate);
-        
-        // Notify subscribers once
+          // Finally apply the combined update
+          setInternalState(() => _batchingNextState!);
+        } finally {
+          _batchDepth--;
+          _batchingNextState = null;
+        }
+
+        // Notify subscribers once at the end of the batch
         subscribers.forEach(listener => listener(getInternalState()));
       },
       
@@ -230,7 +249,11 @@ export function createState<T extends object>(
         isGlobal,
         name: options?.name,
         createdAt
-      }
+      },
+
+      // Expose internal properties for trigger-state integration
+      _batchDepth,
+      _batchingNextState
     };
     
     // Register with StateManager

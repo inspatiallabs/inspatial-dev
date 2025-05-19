@@ -83,22 +83,42 @@ export function connectTriggerToState<S extends object, P extends any[]>(
       return;
     }
     
-    // Call the trigger action with current state and args
+    // Call the trigger action with current state and get result
     const result = trigger.action(currentState, ...processedArgs);
     
-    // If the trigger returned a new state, update the state
     if (result !== undefined && result !== currentState) {
-      state.setState(result);
+      // Check if we're in a batch operation  
+      const inBatch = (state as any)._batchDepth > 0;
+      
+      if (inBatch && (state as any)._batchingNextState) {
+        // In batch mode: apply changes directly to the current batch state object
+        // This is more reliable than returning values to be merged later
+        Object.assign((state as any)._batchingNextState, result);
+      } else {
+        // Normal mode: Apply changes via setState
+        state.setState(result);
+      }
     }
+    
+    // Return nothing - the changes are applied directly to the state
+    return undefined;
   };
   
-  // Register the action in the state's action object
-  (state.action as any)[actionName] = actionFunction;
+  // Register the action under the full trigger name (matches test expectations)
+  (state.action as any)[trigger.name] = actionFunction;
+  
+  // Also register a convenient shorthand (e.g., "connect") if it differs
+  if (actionName !== trigger.name) {
+    (state.action as any)[actionName] = actionFunction;
+  }
   
   // Return function to disconnect
   return () => {
     // Remove the action from the state
-    delete (state.action as any)[actionName];
+    delete (state.action as any)[trigger.name];
+    if ((state.action as any)[actionName] === actionFunction) {
+      delete (state.action as any)[actionName];
+    }
   };
 }
 

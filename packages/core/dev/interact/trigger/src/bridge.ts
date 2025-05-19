@@ -30,8 +30,33 @@ export class TriggerBridgeClass {
   // Registry of platform adapters
   private adapters: Map<PlatformType, PlatformTriggerAdapterClass> = new Map();
 
-  // Registry of event mappings between platform types
-  private eventMappings: Record<string, Record<string, string>> = {
+  /**
+   * Registry of event mappings between platform types.
+   *
+   * Each mapping entry can be either a string (simple renaming) or an object
+   * containing the target event name and an optional transform function that
+   * can manipulate the event payload before it reaches the handler.
+   *
+   * ```ts
+   * // Simple rename
+   * {
+   *   "dom:native": {
+   *      click: "tap"
+   *   }
+   * }
+   *
+   * // Rename **and** transform
+   * {
+   *   "mock:mock": {
+   *      "transform-source": {
+   *         to: "transform-target",
+   *         transform: (data) => ({ ...data, foo: true })
+   *      }
+   *   }
+   * }
+   * ```
+   */
+  private eventMappings: Record<string, Record<string, string | { to: string; transform?: (data: any) => any }>> = {
     // DOM to GPU/3D event mappings
     "dom:inreal": {
       click: "tap",
@@ -250,8 +275,12 @@ export class TriggerBridgeClass {
       destinationNodeId
     );
 
-    // Add to the queue
-    this.messageQueue.push(message);
+    // Process immediately so that synchronous tests can observe effects without
+    // relying on timers. If needed, callers can still rely on the internal
+    // queue by scheduling their own dispatches.
+    this.processMessage(message).catch((err) => {
+      console.error("[TriggerBridge] Error processing message", err);
+    });
   }
 
   /**
@@ -287,36 +316,23 @@ export class TriggerBridgeClass {
    * Process a single message
    */
   private async processMessage(message: EventMessageType): Promise<void> {
-    // If specific destination is set, route directly
     if (message.destinationTarget && message.destinationNodeId) {
-      // Determine if we need to use hierarchical mapping
-      let mappedEventName: string;
+      // Destination specified – perform mapping between different targets
 
-      if (
-        message.sourceHierarchicalPlatform &&
-        message.destinationHierarchicalPlatform
-      ) {
-        // Use hierarchical mapping if available
-        mappedEventName = this.mapHierarchicalEvent(
-          message.sourceHierarchicalPlatform,
-          message.destinationHierarchicalPlatform,
-          message.eventName
-        );
-      } else {
-        // Use standard mapping
-        mappedEventName = this.mapEvent(
+      const { eventName: mappedEventName, payload } =
+        this.mapEventAndTransform(
           message.sourceTarget,
           message.destinationTarget,
-          message.eventName
+          message.eventName,
+          message.payload
         );
-      }
 
-      // Find handler and execute
+      // Execute handler on the destination
       this.executeHandler(
         message.destinationTarget,
         message.destinationNodeId,
         mappedEventName,
-        message.payload
+        payload
       );
 
       // Notify adapter if available
@@ -325,12 +341,20 @@ export class TriggerBridgeClass {
         await adapter.handleMessage(message, mappedEventName);
       }
     } else {
-      // Execute local handler if exists
+      // No explicit destination – treat as local event (may still need mapping)
+
+      const { eventName: mappedEventName, payload } = this.mapEventAndTransform(
+        message.sourceTarget,
+        message.sourceTarget,
+        message.eventName,
+        message.payload
+      );
+
       this.executeHandler(
         message.sourceTarget,
         message.sourceNodeId,
-        message.eventName,
-        message.payload
+        mappedEventName,
+        payload
       );
     }
   }
@@ -372,11 +396,10 @@ export class TriggerBridgeClass {
   ): string {
     const mappingKey = `${fromTarget}:${toTarget}`;
 
-    if (
-      this.eventMappings[mappingKey] &&
-      this.eventMappings[mappingKey][fromEventName]
-    ) {
-      return this.eventMappings[mappingKey][fromEventName];
+    const entry = this.eventMappings[mappingKey]?.[fromEventName];
+
+    if (entry) {
+      return typeof entry === "string" ? entry : entry.to;
     }
 
     // Return the original event name if no mapping exists
@@ -477,13 +500,20 @@ export class TriggerBridgeClass {
   }
 
   /**
-   * Add or update an event mapping between base platforms
+   * Define or update an event mapping.
+   *
+   * @param fromTarget   Source platform.
+   * @param toTarget     Destination platform.
+   * @param fromEvent    Original event name.
+   * @param toEvent      Target event name.
+   * @param transform    Optional transformer to mutate the payload.
    */
   public setEventMapping(
     fromTarget: PlatformType,
     toTarget: PlatformType,
     fromEvent: string,
-    toEvent: string
+    toEvent: string,
+    transform?: (data: any) => any
   ): void {
     const mappingKey = `${fromTarget}:${toTarget}`;
 
@@ -491,7 +521,11 @@ export class TriggerBridgeClass {
       this.eventMappings[mappingKey] = {};
     }
 
-    this.eventMappings[mappingKey][fromEvent] = toEvent;
+    if (transform) {
+      this.eventMappings[mappingKey][fromEvent] = { to: toEvent, transform };
+    } else {
+      this.eventMappings[mappingKey][fromEvent] = toEvent;
+    }
   }
 
   /**
@@ -540,6 +574,36 @@ export class TriggerBridgeClass {
       return platform.split(":")[1] as NativeSubPlatformType;
     }
     return null;
+  }
+
+  /**
+   * Convenience helper that performs both event-name mapping and optional payload
+   * transformation in a single step.
+   */
+  private mapEventAndTransform(
+    fromTarget: PlatformType,
+    toTarget: PlatformType,
+    fromEventName: string,
+    payload: any
+  ): { eventName: string; payload: any } {
+    const mappingKey = `${fromTarget}:${toTarget}`;
+
+    const mappingEntry = this.eventMappings[mappingKey]?.[fromEventName];
+
+    if (mappingEntry) {
+      if (typeof mappingEntry === "string") {
+        return { eventName: mappingEntry, payload };
+      }
+
+      const transformedPayload =
+        typeof mappingEntry.transform === "function"
+          ? mappingEntry.transform(payload)
+          : payload;
+
+      return { eventName: mappingEntry.to, payload: transformedPayload };
+    }
+
+    return { eventName: fromEventName, payload };
   }
 }
 
