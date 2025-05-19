@@ -7,7 +7,8 @@ import {
   flushSync,
   hasUpdated,
 } from "../signal/src/index.ts";
-import { test, expect, mockFn } from "@inspatial/test";
+import { test, expect } from "@inspatial/test";
+import { fn } from "./test-setup.ts";
 
 // Use cleanup array since test.afterEach isn't available
 let cleanupFns: Array<() => void> = [];

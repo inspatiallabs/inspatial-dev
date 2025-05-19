@@ -13,7 +13,7 @@ let cleanupFns: Array<() => void> = [];
 
 // Cleanup after each test
 test("cleanup after tests", () => {
-  cleanupFns.forEach(fn => fn());
+  cleanupFns.forEach((fn) => fn());
   flushSync();
 });
 

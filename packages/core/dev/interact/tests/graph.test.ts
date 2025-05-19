@@ -1,5 +1,6 @@
 import { createMemo, createSignal } from "../signal/src/index.ts";
-import { test, expect, mockFn, afterEach } from "@inspatial/test";
+import { test, expect, afterEach } from "@inspatial/test";
+import { createTypedMockFn } from "./test-setup.ts";
 
 test("should drop X->B->X updates", () => {
   //     X
@@ -15,16 +16,21 @@ test("should drop X->B->X updates", () => {
   const $a = createMemo(() => $x() - 1);
   const $b = createMemo(() => $x() + $a());
 
-  const compute = mockFn(() => "c: " + $b());
+  const compute = createTypedMockFn(() => {
+    const value = $b();
+    return "c: " + value;
+  });
   const $c = createMemo(compute);
 
   expect($c()).toBe("c: 3");
   expect(compute).toHaveBeenCalledTimes(1);
-  compute.mockReset();
-
+  
   setX(4);
-  $c();
-  expect(compute).toHaveBeenCalledTimes(1);
+  
+  const result = $c();
+  expect(result).toBe("c: 7");
+  
+  expect(compute).toHaveBeenCalledTimes(2);
 });
 
 test("should only update every signal once (diamond graph)", () => {
@@ -40,7 +46,7 @@ test("should only update every signal once (diamond graph)", () => {
   const $a = createMemo(() => $x());
   const $b = createMemo(() => $x());
 
-  const spy = mockFn(() => $a() + " " + $b());
+  const spy = createTypedMockFn(() => $a() + " " + $b());
   const $c = createMemo(spy);
 
   expect($c()).toBe("a a");
@@ -67,7 +73,7 @@ test("should only update every signal once (diamond graph + tail)", () => {
   const $b = createMemo(() => $x());
   const $c = createMemo(() => $a() + " " + $b());
 
-  const spy = mockFn(() => $c());
+  const spy = createTypedMockFn(() => $c());
   const $d = createMemo(spy);
 
   expect($d()).toBe("a a");
@@ -89,7 +95,7 @@ test("should bail out if result is the same", () => {
     return "foo";
   });
 
-  const spy = mockFn(() => $a());
+  const spy = createTypedMockFn(() => $a());
   const $b = createMemo(spy);
 
   expect($b()).toBe("foo");
@@ -118,12 +124,12 @@ test("should only update every signal once (jagged diamond graph + tails)", () =
   const $b = createMemo(() => $x());
   const $c = createMemo(() => $b());
 
-  const dSpy = mockFn(() => $a() + " " + $c());
+  const dSpy = createTypedMockFn(() => $a() + " " + $c());
   const $d = createMemo(dSpy);
 
-  const eSpy = mockFn(() => $d());
+  const eSpy = createTypedMockFn(() => $d());
   const $e = createMemo(eSpy);
-  const fSpy = mockFn(() => $d());
+  const fSpy = createTypedMockFn(() => $d());
   const $f = createMemo(fSpy);
 
   expect($e()).toBe("a a");
@@ -170,7 +176,7 @@ test("should ensure subs update even if one dep is static", () => {
     return "c";
   });
 
-  const spy = mockFn(() => $a() + " " + $b());
+  const spy = createTypedMockFn(() => $a() + " " + $b());
   const $c = createMemo(spy);
 
   expect($c()).toBe("a c");
@@ -202,7 +208,7 @@ test("should ensure subs update even if two deps mark it clean", () => {
     return "d";
   });
 
-  const spy = mockFn(() => $b() + " " + $c() + " " + $d());
+  const spy = createTypedMockFn(() => $b() + " " + $c() + " " + $d());
   const $e = createMemo(spy);
 
   expect($e()).toBe("a c d");

@@ -3,6 +3,8 @@
  * This file should be imported at the top of test files to ensure consistent behavior
  */
 
+import { mockFn as originalMockFn } from "@inspatial/test";
+
 // Mark this as a test environment to disable certain warnings
 try {
   // Use globalThis for environment-independent access
@@ -25,7 +27,70 @@ declare global {
   var __testing: boolean;
   var __silenceWarnings: boolean;
   var ARRAY_PATCHED: boolean;
+  var fn: <T = any>(impl?: (v?: T) => any) => any;
 }
+
+/**
+ * Type definition for compute function used by createMemo
+ */
+export type ComputeFunctionType<Prev, Next extends Prev = Prev> = (
+  v: Prev
+) => Next;
+
+/**
+ * Extended mock function interface with reset capability
+ */
+export interface MockFnWithReset extends Function {
+  mockReset?: () => void;
+}
+
+/**
+ * Type for the enhanced mock function that works with createMemo and has mockReset
+ */
+export type TypedMockFn<Prev, Next extends Prev = Prev> = 
+  ComputeFunctionType<Prev, Next> & { mockReset: () => void };
+
+/**
+ * Creates a mock function that is properly typed for use with createMemo
+ * This addresses type compatibility issues between mockFn and createMemo
+ * 
+ * @param fn The function implementation to mock
+ * @returns A properly typed mock function for use with createMemo
+ */
+export function createTypedMockFn<T extends any, R extends T>(
+  fn: (v?: T) => R
+): TypedMockFn<T | undefined, R> {
+  // Create the original mock function
+  const mock = originalMockFn(fn) as MockFnWithReset;
+  
+  // Add mockReset method if it doesn't exist
+  if (!mock.mockReset) {
+    mock.mockReset = function() {
+      // Clear mock calls history if possible
+      const mockSymbol = Symbol.for("@MOCK");
+      if (mock[mockSymbol] && mock[mockSymbol].calls) {
+        mock[mockSymbol].calls = [];
+      }
+    };
+  }
+  
+  // Cast the mock to the correct type for createMemo compatibility
+  return mock as unknown as TypedMockFn<T | undefined, R>;
+}
+
+/**
+ * A helper function for tests that creates a properly typed mock function.
+ * This is compatibility wrapper for the existing `fn` pattern used in tests.
+ * 
+ * @param impl Optional function implementation 
+ * @returns A typed mock function
+ */
+export function fn<T = any>(impl?: (v?: T) => any): any {
+  return createTypedMockFn(impl || ((v?: T) => v));
+}
+
+// Add to global scope as it's used in multiple test files
+(globalThis as any).fn = fn;
 
 // CRITICAL FIX: Ensure Array.isArray works correctly with our store proxies
 // This is a direct fix that forces Array.isArray to return true for store arrays
@@ -136,4 +201,4 @@ export function enableTestCompatMode() {
 enableTestCompatMode();
 
 // Export common test utilities
-export const isTestEnvironment = true; 
+export const isTestEnvironment = true;
