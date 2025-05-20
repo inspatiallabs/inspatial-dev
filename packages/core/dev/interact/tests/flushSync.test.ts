@@ -1,5 +1,5 @@
 import { createEffect, createRoot, createSignal, flushSync } from "../signal/src/index.ts";
-import { test, expect, mockFn } from "@inspatial/test";
+import { test, expect, spy } from "@inspatial/test";
 
 // Use test.each for setup/teardown
 let cleanupFns: Array<() => void> = [];
@@ -12,7 +12,7 @@ test("cleanup after tests", () => {
 
 test("should batch updates", () => {
   const [$x, setX] = createSignal(10);
-  const effect = mockFn();
+  const effect = spy();
 
   createRoot(() => createEffect($x, effect));
   flushSync();
@@ -30,7 +30,7 @@ test("should batch updates", () => {
 
 test("should wait for queue to flush", () => {
   const [$x, setX] = createSignal(10);
-  const $effect = mockFn();
+  const $effect = spy();
 
   createRoot(() => createEffect($x, $effect));
   flushSync();
@@ -51,7 +51,7 @@ test("should wait for queue to flush", () => {
 test("should not fail if called while flushing", () => {
   const [$a, setA] = createSignal(10);
 
-  const effect = mockFn(() => {
+  const effect = spy(() => {
     flushSync();
   });
 
