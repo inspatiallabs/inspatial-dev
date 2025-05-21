@@ -1,9 +1,9 @@
 {
   "name": "@inspatial/theme",
   "license": "Apache-2.0",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "compilerOptions": {
-    "lib": ["deno.window", "dom", "esnext"]
+    "lib": ["deno.window", "dom", "esnext", "deno.ns", "deno.unstable", "scripthost"]
   },
   "tasks": {
     "generate-google-fonts": "deno run --allow-read --allow-write ./src/font/google/font-generator-cli.ts",
@@ -17,7 +17,8 @@
     "test:fonts:stub": "deno test --allow-read --allow-write --unstable-sloppy-imports ./src/font/google/tests/stub-generator.test.ts",
     "test:fonts:install": "deno test --allow-read --allow-write --unstable-sloppy-imports ./src/font/google/tests/font-installation.test.ts",
     "test:fonts:integration": "deno test --allow-read --allow-write --unstable-sloppy-imports ./src/font/google/tests/integration.test.ts",
-    "publish": "deno publish --no-check --allow-slow-types"
+    "publish": "deno publish --no-check --allow-slow-types",
+    "houdini": "deno run --allow-all ./src/iss/houdini/examples/css-houdini-demo.ts"
   },
   "imports": {
     "@std/path": "jsr:@std/path",
@@ -32,6 +33,7 @@
     "./effect": "./src/effect/index.ts",
     "./variables": "./src/variables/index.ts",
     "./variant": "./src/variant/index.ts",
-    "./type": "./src/type/index.ts"
+    "./type": "./src/type/index.ts",
+    "./iss": "./src/iss/index.ts"
   }
 }

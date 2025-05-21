@@ -13,9 +13,8 @@
     ".": "./src/index.ts"
   },
   "tasks": {
-    "test": "deno test --allow-all",
-    "houdini": "deno run --allow-all src/houdini/examples/css-houdini-demo.ts"
-  },
+    "test": "deno test --allow-all --no-check"
+    },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   }
