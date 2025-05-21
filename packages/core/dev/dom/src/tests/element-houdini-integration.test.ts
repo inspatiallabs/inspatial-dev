@@ -17,7 +17,7 @@ import {
 } from "../interface/element-css-houdini.ts";
 
 // @ts-ignore - Ignoring TS extension import error
-import { CSSOM, CSSUnitValue, CSSColorValue } from "../houdini/css-typed-om.ts";
+import { CSSOM, CSSUnitValue, CSSColorValue } from "../../../theme/src/iss/houdini/css-typed-om.ts";
 
 /**
  * Create a test document with an element

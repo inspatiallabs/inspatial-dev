@@ -241,9 +241,7 @@ export { parseJSON, toJSON } from "./shared/parse-json.ts";
  *
  * These provide access to the low-level CSS APIs for advanced styling capabilities.
  */
-// @ts-ignore - Ignoring TS extension import error
-export * from "./houdini/css-typed-om.ts";
-// @ts-ignore - Ignoring TS extension import error
+
 export * from "./interface/element-css-houdini.ts";
 
 /**

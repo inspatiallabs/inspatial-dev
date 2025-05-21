@@ -67,7 +67,7 @@ import * as ISSType from "./index.ts";
  *   code will need to handle adding the appropriate unit (e.g., converting to `"16px"`).
  * - The index signature for custom properties only captures properties that start with `--`.
  * - Regular CSS properties are provided by the extended `ISSType.Properties` and `ISSType.PropertiesHyphen` types.
- * - `iss` might include or omit some common css properties you are accustomed to support universal rendering and style across all platforms.
+ * - `iss` is a curated set of cascading style sheets tailored for InSpatial's universal rendering goals, rather than an exhaustive list of every CSS property ever conceived.
  *
  * ### ❌ Common Mistakes
  * - Forgetting to add the `--` prefix to custom properties
@@ -79,8 +79,12 @@ import * as ISSType from "./index.ts";
  * making it easier to maintain consistent styling across components and teams.
  */
 export interface ISSProps
-  extends ISSType.Properties<string | number>,
-    ISSType.PropertiesHyphen<string | number> {
+  extends ISSType.StandardLonghandProperties<string | number>,
+    ISSType.StandardShorthandProperties<string | number>,
+    ISSType.SvgProperties<string | number>,
+    ISSType.StandardLonghandPropertiesHyphen<string | number>,
+    ISSType.StandardShorthandPropertiesHyphen<string | number>,
+    ISSType.SvgPropertiesHyphen<string | number> {
   /**
    * Allows defining custom InSpatial Style Sheet (ISS) variables.
    * These are akin to CSS Custom Properties and must start with `--`.

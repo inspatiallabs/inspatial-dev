@@ -36,9 +36,9 @@ _Reality is your canvas_
 
 ---
 
-# 🏗️ InSpatial DOM (🟡 Preview)
+# 🏗️ InDOM (🟡 Preview)
 
-InSpatial DOM is a high-performance, **DOM-less** environment designed for
+InDOM is a high-performance, **DOM-less** environment designed for
 **universal rendering** across web, native, and XR applications.
 
 ## 🚀 Features
@@ -64,7 +64,7 @@ InSpatial DOM is a high-performance, **DOM-less** environment designed for
 - **Mutation Observers**: Listen for changes in the document structure in a
   performant way.
 
-## 🌍 Why InSpatial DOM?
+## 🌍 Why InDOM?
 
 - **Performance**: Eliminates browser reflows and repaints, making it ideal for
   **high-performance rendering engines**.
@@ -76,12 +76,12 @@ InSpatial DOM is a high-performance, **DOM-less** environment designed for
 
 ---
 
-## 🆚 InSpatial DOM vs Virtual-DOM?
+## 🆚 InDOM vs Virtual-DOM?
 
 Unlike traditional approaches that rely on a **Virtual DOM (VDOM)**, InSpatial
 DOM takes a radically different approach:
 
-| Feature          | Virtual DOM                                                           | InSpatial DOM                                                                          |
+| Feature          | Virtual DOM                                                           | InDOM                                                                          |
 | ---------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | **Concept**      | A lightweight representation of the real DOM that updates efficiently | A complete **DOM-less** environment optimized for **universal rendering**              |
 | **Performance**  | Still requires **diffing** and **reconciliation**                     | **No diffing or reconciliation** overhead, leading to **faster rendering**             |
@@ -90,31 +90,31 @@ DOM takes a radically different approach:
 | **Use Cases**    | Traditional web applications using React-like frameworks              | **Universal applications, including XR (AR/MR/VR), gaming, and server-side rendering** |
 
 By eliminating the reliance on both the **real DOM** and the **Virtual DOM**,
-InSpatial DOM provides an unparalleled foundation for rendering across **web,
+InDOM provides an unparalleled foundation for rendering across **web,
 native, and XR** environments.
 
 ---
 
-## 📦 Install InSpatial DOM
+## 📦 Install InDOM
 
 ```bash
-deno install jsr:@inspatial/dom
+deno install jsr:@in/dom
 ```
 
 ```bash
-npx jsr add @inspatial/dom
+npx jsr add @in/dom
 ```
 
 ```bash
-yarn dlx jsr add @inspatial/dom
+yarn dlx jsr add @in/dom
 ```
 
 ```bash
-pnpm dlx jsr add @inspatial/dom
+pnpm dlx jsr add @in/dom
 ```
 
 ```bash
-bunx jsr add @inspatial/dom
+bunx jsr add @in/dom
 ```
 
 ---
@@ -123,7 +123,7 @@ bunx jsr add @inspatial/dom
 
 ### Using DOMParser (Standard Approach)
 ```js
-import { DOMParser } from "@inspatial/dom"
+import { DOMParser } from "@in/dom"
 
 // Create a parser instance
 const parser = new DOMParser()
@@ -137,12 +137,12 @@ const document = parser.parseFromString(
 console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 ```
 
-### Using InSpatialDOM (Convenience Function)
+### Using InDOM (Convenience Function)
 ```js
-import { InSpatialDOM } from "@inspatial/dom"
+import { InDOM } from "@in/dom"
 
 // Parse HTML string in one step
-const { document, window } = InSpatialDOM("<html><body><h1>Hello, InSpatial!</h1></body></html>")
+const { document, window } = InDOM("<html><body><h1>Hello, InSpatial!</h1></body></html>")
 
 console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 
@@ -150,7 +150,7 @@ console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 console.log(window.document === document) // true
 ```
 
-The `InSpatialDOM` function is a convenient wrapper that:
+The `InDOM` function is a convenient wrapper that:
 - Creates a DOMParser instance for you
 - Sets the MIME type to "text/html"
 - Returns both document and window objects
@@ -167,7 +167,7 @@ We welcome contributions from the community! Please read our
 
 ## 📄 License
 
-InSpatial DOM is released under the Apache 2.0 License. See the
+InDOM is released under the Apache 2.0 License. See the
 [LICENSE](LICENSE) file for details.
 
 ---
@@ -175,5 +175,5 @@ InSpatial DOM is released under the Apache 2.0 License. See the
 <div align="center">
   <strong>Ready to supercharge your spatial development?</strong>
   <br>
-  <a href="https://www.inspatial.dev">Get Started with InSpatial DOM</a>
+  <a href="https://www.inspatial.dev">Get Started with InDOM</a>
 </div>

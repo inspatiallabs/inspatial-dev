@@ -61,7 +61,13 @@
       "deno.unstable",
       "deno.worker",
       "deno.window",
-      "esnext"
+      "esnext",
+      "webworker.asynciterable",
+      "webworker",
+      "webworker.importscripts",
+      "webworker.iterable",
+      "decorators",
+      "scripthost"
     ]
   },
   "unstable": [
@@ -78,7 +84,8 @@
     "node-globals",
     "bare-node-builtins",
     "detect-cjs",
-    "sloppy-imports"
+    "sloppy-imports",
+    "detect-cjs"   
   ],
   "nodeModulesDir": "auto",
   "fmt": {

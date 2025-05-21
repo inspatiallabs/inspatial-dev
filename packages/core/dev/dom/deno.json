@@ -1,20 +1,29 @@
 {
-  "name": "@inspatial/dom",
+  "name": "@in/dom",
   "license": "Apache-2.0",
   "version": "0.1.0",
   "description": "A DOM implementation for InSpatial",
   "imports": {
     "css-select": "npm:css-select@^5.1.0",
-    "@inspatial/util": "jsr:@inspatial/util@^0.1.6",
-    "@inspatial/test": "jsr:@inspatial/test@^0.1.0",
-    "csstype": "npm:csstype@^3.1.3"
+    "@inspatial/util": "jsr:@inspatial/util@^0.1.9",
+    "@inspatial/test": "jsr:@inspatial/test@^0.1.1"
   },
   "exports": {
     ".": "./src/index.ts"
   },
   "tasks": {
     "test": "deno test --allow-all --no-check"
-    },
+  },
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "deno.ns",
+      "deno.unstable",
+      "deno.window"
+    ]
+  },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   }
