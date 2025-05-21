@@ -1,5 +1,5 @@
 {
-  "name": "@inspatial/motion",
+  "name": "@in/motion",
   "version": "0.1.0",
   "description": "Universal Motion Module",
   "author": "InSpatial Labs <in@spatiallabs.email>",
@@ -32,26 +32,25 @@
   ],
 
   "imports": {
-    "@inspatial/test": "../test/src/index.ts",
-    "linkedom": "npm:linkedom@^0.18.10"
-  },
+    "@inspatial/test": "../test/src/index.ts"
+    },
   "exports": {},
   "tasks": {
     "test": "deno run --allow-all --no-check --unstable-sloppy-imports ./tests/test_runner.ts --"
   },
   "compilerOptions": {
-    "lib": ["deno.window", "deno.ns", "dom", "dom.iterable"],
+    "lib": ["deno.window", "deno.ns", "dom", "dom.iterable", "esnext", "deno.unstable"],
     "strict": true
   },
   "lint": {
     "include": ["src/"],
     "exclude": ["node_modules/", "dist/"],
     "rules": {
-      "tags": ["recommended"],
+      "tags": ["jsr", "recommended"],
       "exclude": [
         "no-explicit-any",
         "ban-ts-comment",
-        "enforce_ts_extensions",
+        "explicit-module-boundary-types",
         "no-sloppy-imports",
         "verbatim-module-syntax"
       ]

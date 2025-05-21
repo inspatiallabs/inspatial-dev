@@ -392,8 +392,14 @@ describe("InMotion Eases", () => {
   });
 
   it("Should call Steps from start", () => {
+    // Get the actual DOM element instead of using the selector string
+    // This fixes the WeakMap key issue since DOM elements are objects
+    const targetElement = document.querySelector('#target-id');
+    if (!targetElement) {
+      throw new Error('Target element #target-id not found in the DOM');
+    }
     const cubicBezierIn = createMotion(
-      "#target-id",
+      targetElement, // Use the element directly instead of the string selector
       createEasingParam("steps(4, true)")
     );
     cubicBezierIn.seek(0);

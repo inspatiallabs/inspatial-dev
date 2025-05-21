@@ -27,7 +27,12 @@ async function runTests() {
 
     // Install global beforeEach hook to ensure clean environment for each test
     const { beforeEach } = await import("@inspatial/test");
-    beforeEach(beforeEachTest);
+    
+    // Use beforeEach with async function support
+    beforeEach(async () => {
+      // We need to ensure the beforeEachTest function completes before each test
+      await beforeEachTest();
+    });
 
     // Determine test files to run
     const bootstrapFile = "./tests/test_setup.ts";
