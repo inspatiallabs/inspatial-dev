@@ -1,5 +1,5 @@
 /**
- * TODO: Replace with TriggerBridge
+ * TODO: Replace with InTeract TriggerBridge 
  * @file event-bridge.ts
  * @description Cross-renderer event system for unified event handling
  */

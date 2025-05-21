@@ -199,7 +199,13 @@ export class UniversalRenderer {
       nativeType || this.config.nativeRendererType || "nativescript";
 
     // Create cache key for this renderer combination
-    const cacheKey = `${target}:${target === "gpu" ? gpuRendererType : target === "native" ? nativeRendererType : ""}`;
+    const cacheKey = `${target}:${
+      target === "gpu"
+        ? gpuRendererType
+        : target === "native"
+        ? nativeRendererType
+        : ""
+    }`;
 
     // If we already have this renderer in the cache, return it
     if (this.rendererInstances.has(cacheKey)) {

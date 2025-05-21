@@ -1,0 +1,54 @@
+{
+    "name": "@in/telligence",
+    "version": "0.1.0",
+    "license": "Apache-2.0",
+    "homepage": "https://www.inspatial.dev",
+    "repository": "https://github.com/InSpatiallabs/inspatial-dev",
+    "author": "InSpatial Labs",
+    "bugs": "https://github.com/InSpatiallabs/inspatial-dev/issues",
+    "description": "InSpatial AI or InTelligence",
+    "keywords": [
+      "intelligence",
+      "ai",
+      "ai system",
+      "ai management",
+      "ai management system",
+      "ai sdk",
+      "ai agents",
+      "artificial intelligence",
+      "large language model",
+      "llm",
+      "model context protocol",
+      "multi agent orchestration",
+      "flow agents",
+      "flow agent",
+      "inspatial ai"
+    ],
+    "tasks": {
+      "test": "deno test --no-check --allow-env --allow-read --allow-write --allow-net"
+    },
+    "imports": {
+      "@inspatial/util": "jsr:@inspatial/util@^0.1.8",
+      "@inspatial/type": "jsr:@inspatial/type@^0.1.3",
+      "@inspatial/test": "jsr:@inspatial/test@^0.1.1"
+    },
+    "exports": {
+      ".": "./index.ts"
+    },
+    "compilerOptions": {
+      "checkJs": false,
+      "noImplicitAny": false,
+      "lib": [
+        "DOM",
+        "ES2022",
+        "deno.ns",
+        "deno.unstable",
+        "deno.window",
+        "deno.worker"
+      ]
+    },
+    "publish": {
+      "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
+    }
+  }
+  
