@@ -1,9 +1,9 @@
 {
   "name": "@inspatial/util",
   "license": "Apache-2.0",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "imports": {
-    "@inspatial/theme": "jsr:@inspatial/theme@^0.1.0"
+    "@inspatial/theme": "jsr:@inspatial/theme@^0.1.7"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -56,7 +56,10 @@
     "./hyphenize": "./src/hyphenize.ts",
     "./escape-html": "./src/escape-html.ts",
     "./window-size": "./src/window-size.ts",
-    "./array": "./src/array.ts"
+    "./array": "./src/array.ts",
+    "./splice": "./src/splice.ts",
+    "./tolower": "./src/tolower.ts",
+    "./toupper": "./src/toupper.ts"
   },
 
   "publish": {
