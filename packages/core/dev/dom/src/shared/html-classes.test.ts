@@ -5,7 +5,7 @@
  * These tests verify that all HTML element classes correctly render
  * their tags and handle their specific behaviors.
  */
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 import {
   DOMBodyElement,
   DOMHtmlElement,
@@ -74,7 +74,7 @@ import { describe, it, assert } from "@inspatial/test";
 
 describe("HTMLElementClasses", () => {
   // Initialize document and get element constructors
-  const { document } = InSpatialDOM("");
+  const { document } = createDOM("");
   const { voidElements } = document[MIME];
 
   const {

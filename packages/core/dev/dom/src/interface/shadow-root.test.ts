@@ -6,13 +6,13 @@
  */
 
 // @ts-ignore - Ignoring TS extension import error
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("ShadowRoot", () => {
   // Setup
   const getTestEnvironment = () => {
-    const { document } = InSpatialDOM("<!doctype html><html />");
+    const { document } = createDOM("<!doctype html><html />");
     const { documentElement } = document;
 
     // Ensure documentElement exists

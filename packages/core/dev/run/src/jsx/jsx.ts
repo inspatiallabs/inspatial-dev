@@ -10,10 +10,10 @@
 // // src/index.ts
 // // deno-lint-ignore-file ban-types
 
-// import { InSpatialDOM } from "../../../renderer/src/dom/src/dom.ts";
+// import { createDOM } from "../../../renderer/src/dom/src/dom.ts";
 
-// const { InSpatialDOM } = InSpatialDOM;
-// const { document, Node, Element, DocumentFragment } = InSpatialDOM("");
+// const { createDOM } = createDOM;
+// const { document, Node, Element, DocumentFragment } = createDOM("");
 
 // declare global {
 //   namespace JSX {

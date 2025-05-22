@@ -20,7 +20,7 @@ import {
   Comment,
   DocumentFragment,
   Node,
-  InSpatialDOM,
+  createDOM,
 } from "../cached.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { MIME } from "../shared/symbols.ts";
@@ -411,7 +411,7 @@ describe("DocumentAdvanced", () => {
   describe("Document cloning and equality", () => {
     it("should correctly clone a document with all its contents", () => {
       // GIVEN a document with a doctype and title
-      const { window } = InSpatialDOM(`
+      const { window } = createDOM(`
         <!doctype html>
         <html>
           <head><title>hello</title></head>
@@ -436,7 +436,7 @@ describe("DocumentAdvanced", () => {
 
     it("should correctly determine equality between documents", () => {
       // GIVEN a document and its clone
-      const { window } = InSpatialDOM(`
+      const { window } = createDOM(`
         <!doctype html>
         <html>
           <head><title>hello</title></head>
@@ -477,7 +477,7 @@ describe("DocumentAdvanced", () => {
       );
 
       // GIVEN a clone with a DOCTYPE
-      const { window } = InSpatialDOM(`<!doctype html><html></html>`);
+      const { window } = createDOM(`<!doctype html><html></html>`);
       const clone = window.document.cloneNode(true);
 
       // WHEN inserting the DOCTYPE from the clone
@@ -493,19 +493,19 @@ describe("DocumentAdvanced", () => {
 
   describe("Global objects and constructors", () => {
     it("should expose the correct global objects", () => {
-      // GIVEN a document created with InSpatialDOM
-      const { setTimeout } = InSpatialDOM(`<!doctype html><html></html>`);
+      // GIVEN a document created with createDOM
+      const { setTimeout } = createDOM(`<!doctype html><html></html>`);
 
       // THEN setTimeout should match the global setTimeout
       assert(
         setTimeout === global.setTimeout,
-        "setTimeout from InSpatialDOM should match global setTimeout"
+        "setTimeout from createDOM should match global setTimeout"
       );
     });
 
     it("should throw when incorrectly instantiating Document constructor", () => {
       // GIVEN the Document constructor
-      const { Document } = InSpatialDOM(`<!doctype html><html></html>`);
+      const { Document } = createDOM(`<!doctype html><html></html>`);
 
       // WHEN trying to use Document constructor incorrectly
       try {
@@ -612,8 +612,8 @@ describe("DocumentAdvanced", () => {
 
   describe("Window event handling", () => {
     it("should correctly handle window events", () => {
-      // GIVEN a window object from InSpatialDOM with an event listener
-      const { window } = InSpatialDOM(`<!doctype html><html></html>`);
+      // GIVEN a window object from createDOM with an event listener
+      const { window } = createDOM(`<!doctype html><html></html>`);
       let triggered = false;
 
       // WHEN adding and triggering an event
@@ -631,8 +631,8 @@ describe("DocumentAdvanced", () => {
     });
 
     it("should allow modifying window properties", () => {
-      // GIVEN a window object from InSpatialDOM
-      const { window } = InSpatialDOM(`<!doctype html><html></html>`);
+      // GIVEN a window object from createDOM
+      const { window } = createDOM(`<!doctype html><html></html>`);
 
       // WHEN setting a custom property
       window.anyValue = 123;
@@ -666,7 +666,7 @@ describe("DocumentAdvanced", () => {
   describe("HTML parsing features", () => {
     it("should correctly parse and serialize HTML fragments", () => {
       // GIVEN a HTML fragment
-      const result = InSpatialDOM("<html><body><div>asdf</div></body></html>");
+      const result = createDOM("<html><body><div>asdf</div></body></html>");
 
       // THEN it should parse into the correct structure
       assert(
@@ -680,7 +680,7 @@ describe("DocumentAdvanced", () => {
       const location = { href: "http://ok" };
 
       // WHEN parsing HTML with this location
-      const withLocation = InSpatialDOM("<html></html>", { location });
+      const withLocation = createDOM("<html></html>", { location });
 
       // THEN the location should be correctly set
       assert(
@@ -693,7 +693,7 @@ describe("DocumentAdvanced", () => {
       );
 
       // WHEN parsing HTML with a base element
-      const withBase = InSpatialDOM('<html><base href="http://base"></html>', {
+      const withBase = createDOM('<html><base href="http://base"></html>', {
         location,
       });
 

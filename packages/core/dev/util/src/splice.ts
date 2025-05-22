@@ -87,22 +87,32 @@
  * console.log(notFound); // Output: undefined
  * ```
  */
-export const findWhere = <T>(
+export function findWhere<T>(
   arr: T[],
-  fn: T | ((val: T) => boolean),
-  returnIndex: boolean,
-  byValue: boolean
-): T | number | undefined => {
-  let i = arr.length;
-  while (i) {
-    i -= 1;
-    const val = arr[i];
-    if (byValue) {
-      if (val === fn) return returnIndex ? i : val;
-    } else if ((fn as (val: T) => boolean)(val)) return returnIndex ? i : val;
+  fn: (item: T, index: number, arr: T[]) => boolean,
+  all = true,
+  fromRight = false
+): T | T[] | undefined {
+  const results: T[] = [];
+
+  if (fromRight) {
+    for (let i = arr.length - 1; i >= 0; i--) {
+      if (fn(arr[i], i, arr)) {
+        if (!all) return arr[i];
+        results.push(arr[i]);
+      }
+    }
+  } else {
+    for (let i = 0; i < arr.length; i++) {
+      if (fn(arr[i], i, arr)) {
+        if (!all) return arr[i];
+        results.push(arr[i]);
+      }
+    }
   }
-  return undefined;
-};
+
+  return all ? results : undefined;
+}
 
 /**
  * # Splice
@@ -168,20 +178,30 @@ export const findWhere = <T>(
  * // ]
  * ```
  */
-export const splice = <T>(
-  arr: T[] | undefined,
-  item: T | ((val: T) => boolean),
-  add?: T,
-  byValue?: boolean
-): number => {
-  if (!arr) return -1;
+export function splice<T>(
+  arr: T[],
+  fn: (item: T, index: number, arr: T[]) => boolean,
+  all = true,
+  fromRight = false
+): T[] {
+  const removed: T[] = [];
 
-  const finalByValue = byValue === undefined ? false : byValue;
-  const i = findWhere(arr, item, true, finalByValue) as number;
-
-  if (i > -1) {
-    if (add) arr.splice(i, 0, add);
-    else arr.splice(i, 1);
+  if (fromRight) {
+    for (let i = arr.length - 1; i >= 0; i--) {
+      if (fn(arr[i], i, arr)) {
+        removed.push(...arr.splice(i, 1));
+        if (!all) break;
+      }
+    }
+  } else {
+    for (let i = 0; i < arr.length; i++) {
+      if (fn(arr[i], i, arr)) {
+        removed.push(...arr.splice(i, 1));
+        i -= 1;
+        if (!all) break;
+      }
+    }
   }
-  return i;
-};
+
+  return removed;
+}

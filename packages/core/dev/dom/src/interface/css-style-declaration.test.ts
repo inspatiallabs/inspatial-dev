@@ -1,11 +1,11 @@
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for CSS style declaration manipulation
 
 describe("CSS Style Declaration Manipulation", () => {
   it("should handle setting and getting CSS properties", () => {
-    const { document } = InSpatialDOM("");
+    const { document } = createDOM("");
 
     let node = document.createElement("div");
     assert(node.style.cssText === "", "empty style");
@@ -30,7 +30,7 @@ describe("CSS Style Declaration Manipulation", () => {
   });
 
   it("should handle indirect CSS text setting and cleanup", () => {
-    const { document } = InSpatialDOM("");
+    const { document } = createDOM("");
 
     let node = document.createElement("div");
     const styleAttr = node.getAttributeNode("style");
@@ -61,7 +61,7 @@ describe("CSS Style Declaration Manipulation", () => {
   });
 
   it("should handle CSS property manipulation using setProperty and removeProperty", () => {
-    const { document } = InSpatialDOM("");
+    const { document } = createDOM("");
 
     let node = document.createElement("div");
     node.style.setProperty("background-color", "purple");
@@ -78,7 +78,7 @@ describe("CSS Style Declaration Manipulation", () => {
   });
 
   it("should handle style attribute manipulation and iteration", () => {
-    const { document } = InSpatialDOM("");
+    const { document } = createDOM("");
 
     /** @type {HTMLDivElement} */
     const divWithStyle = document.createElement("div");

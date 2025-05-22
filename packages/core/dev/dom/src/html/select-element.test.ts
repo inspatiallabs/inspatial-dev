@@ -1,4 +1,4 @@
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for SelectElement
@@ -6,7 +6,7 @@ import { describe, it, assert } from "@inspatial/test";
 describe("SelectElement", () => {
   it("should handle options and selected value", () => {
     // GIVEN a select element with options
-    let { document } = InSpatialDOM("<select></select>");
+    let { document } = createDOM("<select></select>");
     let select = document.firstElementChild;
 
     if (select) {
@@ -35,7 +35,7 @@ describe("SelectElement", () => {
 
   it("should handle options within optgroup", () => {
     // GIVEN a select element with options and optgroup
-    let { document } = InSpatialDOM(
+    let { document } = createDOM(
       "<select><option></option><optgroup><option></option></optgroup></select>"
     );
     let select = document.firstElementChild;

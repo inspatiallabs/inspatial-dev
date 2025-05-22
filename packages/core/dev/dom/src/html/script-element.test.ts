@@ -1,4 +1,4 @@
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for ScriptElement
@@ -6,7 +6,7 @@ import { describe, it, assert } from "@inspatial/test";
 describe("ScriptElement", () => {
   it("should handle script element with attributes and text content", () => {
     // GIVEN a script element with attributes and text content
-    const { document } = InSpatialDOM("<!DOCTYPE html><html />");
+    const { document } = createDOM("<!DOCTYPE html><html />");
     const script = document.createElement("script");
     script.setAttribute("what", "ever");
     script.appendChild(document.createTextNode('"'));
@@ -20,7 +20,7 @@ describe("ScriptElement", () => {
 
   it("should handle various elements with csp-hash attribute", () => {
     // GIVEN various elements with csp-hash attribute
-    const { document } = InSpatialDOM("<!DOCTYPE html><html />");
+    const { document } = createDOM("<!DOCTYPE html><html />");
     const head = document.head;
 
     if (head) {
@@ -71,7 +71,7 @@ describe("ScriptElement", () => {
 
   it("should handle script element with JSON content", () => {
     // GIVEN a script element with JSON content
-    const { document } = InSpatialDOM("<!DOCTYPE html><html />");
+    const { document } = createDOM("<!DOCTYPE html><html />");
     const head = document.head;
 
     if (head) {
@@ -96,7 +96,7 @@ describe("ScriptElement", () => {
 
   it("should handle script element with HTML content and comments", () => {
     // GIVEN a script element with HTML content and comments
-    const { document } = InSpatialDOM("<!DOCTYPE html><html />");
+    const { document } = createDOM("<!DOCTYPE html><html />");
     const head = document.head;
 
     if (head) {
@@ -126,7 +126,7 @@ describe("ScriptElement", () => {
 
   it("should handle script element with various attributes", () => {
     // GIVEN a script element with various attributes
-    const { document } = InSpatialDOM(
+    const { document } = createDOM(
       '<html><script src="./main.ts" type="module" nonce="111" async defer crossorigin="anonymous" nomodule referrerpolicy="no-referrer"/></html>'
     );
     const script = document.documentElement?.firstElementChild;
@@ -171,7 +171,7 @@ describe("ScriptElement", () => {
 
   it("should handle script element with special characters in content", () => {
     // GIVEN a script element with special characters in content
-    const { document } = InSpatialDOM("<html></html>");
+    const { document } = createDOM("<html></html>");
     const script = document.createElement("script");
     script.innerHTML = 'const test = "$$ $& $1"';
     document.head?.append(script);
@@ -185,7 +185,7 @@ describe("ScriptElement", () => {
 
   it("should handle script element with special characters in inline content", () => {
     // GIVEN a script element with special characters in inline content
-    const { document } = InSpatialDOM(
+    const { document } = createDOM(
       '<html><script>const test = "$$ $& $1"</script></html>'
     );
 

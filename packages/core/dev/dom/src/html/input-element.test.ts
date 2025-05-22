@@ -1,12 +1,12 @@
 import { describe, it, assert } from "@inspatial/test";
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 
 // Test suite for InputElement
 
 describe("InputElement", () => {
   it("should set the type attribute correctly", () => {
     // GIVEN an input element
-    let { document } = InSpatialDOM("<input />");
+    let { document } = createDOM("<input />");
     let input = document.firstElementChild;
 
     // WHEN setting the type attribute
@@ -20,7 +20,7 @@ describe("InputElement", () => {
 
   it("should handle input element without attributes", () => {
     // GIVEN an input element without attributes
-    let { document } = InSpatialDOM("<input>");
+    let { document } = createDOM("<input>");
     let input = document.firstElementChild;
 
     // THEN the input element should be represented correctly

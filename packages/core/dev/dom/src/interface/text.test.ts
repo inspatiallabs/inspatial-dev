@@ -6,13 +6,13 @@
  */
 
 // @ts-ignore - Ignoring TS extension import error
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("Text Node", () => {
   // Setup common test environment
   const setupTest = () => {
-    const { document } = InSpatialDOM("<html><div></div></html>");
+    const { document } = createDOM("<html><div></div></html>");
     const node = document.querySelector("div");
     if (!node) throw new Error("Test setup failed: div not found");
 

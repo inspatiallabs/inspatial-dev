@@ -1,12 +1,12 @@
 import {
-  InSpatialDOM,
+  createDOM,
   DOMElement,
   DOMButtonElement,
   DOMTemplateElement,
 } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
-const { customElements, document } = InSpatialDOM(`
+const { customElements, document } = createDOM(`
 <html>
 <body>
     <custom-element></custom-element>

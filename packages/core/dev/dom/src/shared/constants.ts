@@ -30,5 +30,12 @@ export const DOCUMENT_POSITION_CONTAINS = 0x08;
 export const DOCUMENT_POSITION_CONTAINED_BY = 0x10;
 export const DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
-// SVG
+/**
+ * SVG namespace URI as defined by the DOM specification
+ */
 export const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+
+/**
+ * HTML namespace URI as defined by the DOM specification
+ */
+export const HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';

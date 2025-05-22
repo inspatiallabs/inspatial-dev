@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { InSpatialDOM as InDOM } from "../../dom/src/index.ts";
+import { createDOM as InDOM } from "../../dom/src/index.ts";
 import {
   setupTestAnimations,
   waitForAnimations,

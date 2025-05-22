@@ -38,8 +38,7 @@ _Reality is your canvas_
 
 # 🏗️ InDOM (🟡 Preview)
 
-InDOM is a high-performance, **DOM-less** environment designed for
-**universal rendering** across web, native, and XR applications.
+InDOM A.K.A InSpatial DOM is a high-performance, **DOM-less** environment designed for **universal rendering** across web, native, embedded and XR applications. It's designed 
 
 ## 🚀 Features
 
@@ -139,10 +138,10 @@ console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 
 ### Using InDOM (Convenience Function)
 ```js
-import { InDOM } from "@in/dom"
+import { createDOM } from "@in/dom"
 
 // Parse HTML string in one step
-const { document, window } = InDOM("<html><body><h1>Hello, InSpatial!</h1></body></html>")
+const { document, window } = createDOM("<html><body><h1>Hello, InSpatial!</h1></body></html>")
 
 console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 
@@ -150,7 +149,7 @@ console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
 console.log(window.document === document) // true
 ```
 
-The `InDOM` function is a convenient wrapper that:
+The `createDOM` function is a convenient wrapper that:
 - Creates a DOMParser instance for you
 - Sets the MIME type to "text/html"
 - Returns both document and window objects

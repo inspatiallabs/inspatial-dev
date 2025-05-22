@@ -5,12 +5,12 @@
  * following the DOM standard specifications.
  */
 
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("DocumentFragment", () => {
   // Setup
-  const { document } = InSpatialDOM("");
+  const { document } = createDOM("");
 
   describe("Node manipulation", () => {
     it("should throw when trying to append a node to itself", () => {

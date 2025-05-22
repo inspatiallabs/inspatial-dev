@@ -6,7 +6,7 @@ import {
   createSignal,
   untrack,
 } from "../signal/src/index.ts";
-import { createTestSpy, createEffectAdapter } from "./test-helpers.ts";
+import { createEffectAdapter } from "./test-helpers.ts";
 // Import our test setup
 import "./test-setup.ts";
 
@@ -14,7 +14,7 @@ test("should not create dependency", () => {
   let lastCount = 0;
   const [count, setCount] = createSignal(0);
   const [other, setOther] = createSignal(0);
-  const effectFn = createTestSpy();
+  const effectFn = spy();
 
   createRoot(() => {
     createEffectAdapter(() => {
@@ -43,7 +43,7 @@ test("should not affect deep dependency being created", () => {
   let lastCount = 0;
   const [count, setCount] = createSignal(0);
   const [other, setOther] = createSignal(0);
-  const effectFn = createTestSpy();
+  const effectFn = spy();
 
   createRoot(() => {
     createEffectAdapter(() => {
@@ -76,7 +76,7 @@ test("should not affect deep dependency being created", () => {
 test("should track owner across peeks", () => {
   let secondUseCount = 0;
   let secondValue;
-  const effectFn = createTestSpy();
+  const effectFn = spy();
 
   createRoot(() => {
     const [s1, set1] = createSignal(1);

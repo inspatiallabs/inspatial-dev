@@ -5,13 +5,13 @@
  * including construction with dimensions and attribute handling.
  */
 
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 import { describe, it, expect } from "@inspatial/test";
 
 describe("Image", () => {
   // Set up a fresh environment for each test
   const getTestEnvironment = () => {
-    const { Image } = InSpatialDOM("");
+    const { Image } = createDOM("");
     return { Image };
   };
 

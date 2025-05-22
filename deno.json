@@ -83,8 +83,6 @@
     "broadcast-channel",
     "node-globals",
     "bare-node-builtins",
-    "detect-cjs",
-    "sloppy-imports",
     "detect-cjs"   
   ],
   "nodeModulesDir": "auto",

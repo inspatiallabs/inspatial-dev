@@ -85,11 +85,11 @@ import { DocumentFragment } from "./interface/document-fragment.ts";
  *
  * @example
  * // Parse HTML and access DOM elements
- * const { document, Element } = InSpatialDOM('<div>Hello World</div>');
+ * const { document, Element } = createDOM('<div>Hello World</div>');
  * const div = document.querySelector('div');
  * console.log(div.textContent); // "Hello World"
  */
-export const InSpatialDOM = (
+export const createDOM = (
   html: string,
   globals = null
 ): {

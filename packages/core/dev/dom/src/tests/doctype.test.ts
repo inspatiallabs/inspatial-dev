@@ -6,13 +6,13 @@
  * serialized to strings, converted to JSON, and can be created programmatically.
  */
 import { describe, it, assert } from "@inspatial/test";
-import { InSpatialDOM, parseJSON } from "../index.ts";
+import { createDOM, parseJSON } from "../index.ts";
 
 describe("DocumentType", () => {
   describe("PUBLIC DOCTYPE declarations", () => {
     it("should correctly parse PUBLIC DOCTYPE declarations with IDs", () => {
       // GIVEN an HTML document with a PUBLIC DOCTYPE declaration
-      const { document } = InSpatialDOM(
+      const { document } = createDOM(
         `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
             "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html></html>`
       );
@@ -32,7 +32,7 @@ describe("DocumentType", () => {
 
     it("should correctly serialize PUBLIC DOCTYPE declarations to string", () => {
       // GIVEN an HTML document with a PUBLIC DOCTYPE declaration
-      const { document } = InSpatialDOM(
+      const { document } = createDOM(
         `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
             "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html></html>`
       );
@@ -50,7 +50,7 @@ describe("DocumentType", () => {
 
     it("should correctly serialize and parse PUBLIC DOCTYPE declarations to/from JSON", () => {
       // GIVEN an HTML document with a PUBLIC DOCTYPE declaration
-      const { document } = InSpatialDOM(
+      const { document } = createDOM(
         `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN"
             "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html></html>`
       );
@@ -78,7 +78,7 @@ describe("DocumentType", () => {
   describe("SYSTEM DOCTYPE declarations", () => {
     it("should correctly parse SYSTEM DOCTYPE declarations", () => {
       // GIVEN an HTML document with a SYSTEM DOCTYPE declaration
-      const { document } = InSpatialDOM(
+      const { document } = createDOM(
         `<!DOCTYPE math SYSTEM 
           "http://www.w3.org/Math/DTD/mathml1/mathml.dtd"><html></html>`
       );
@@ -93,7 +93,7 @@ describe("DocumentType", () => {
 
     it("should correctly serialize SYSTEM DOCTYPE declarations to string", () => {
       // GIVEN an HTML document with a SYSTEM DOCTYPE declaration
-      const { document } = InSpatialDOM(
+      const { document } = createDOM(
         `<!DOCTYPE math SYSTEM 
           "http://www.w3.org/Math/DTD/mathml1/mathml.dtd"><html></html>`
       );
@@ -111,7 +111,7 @@ describe("DocumentType", () => {
 
     it("should correctly serialize and parse SYSTEM DOCTYPE declarations to/from JSON", () => {
       // GIVEN an HTML document with a SYSTEM DOCTYPE declaration
-      const { document } = InSpatialDOM(
+      const { document } = createDOM(
         `<!DOCTYPE math SYSTEM 
           "http://www.w3.org/Math/DTD/mathml1/mathml.dtd"><html></html>`
       );
@@ -139,7 +139,7 @@ describe("DocumentType", () => {
   describe("DocumentType creation", () => {
     it("should allow programmatic creation of DOCTYPE nodes", () => {
       // GIVEN a document with methods to create DocumentType nodes
-      const { document } = InSpatialDOM("<html></html>");
+      const { document } = createDOM("<html></html>");
 
       // WHEN creating a DOCTYPE node programmatically
       const doctype = document.createDocumentType(

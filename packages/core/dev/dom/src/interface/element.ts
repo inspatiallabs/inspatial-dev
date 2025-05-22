@@ -145,6 +145,7 @@ const isVoid = ({
  * @implements globalThis.Element
  */
 export class Element extends ParentNode {
+  __indom_namespace: string;
   constructor(ownerDocument: any, localName: string) {
     super(ownerDocument, localName, ELEMENT_NODE);
     this[CLASS_LIST] = null;

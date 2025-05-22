@@ -9,19 +9,17 @@
     "@inspatial/test": "jsr:@inspatial/test@^0.1.1"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./lite": "./src/lite/index.ts"
   },
   "tasks": {
-    "test": "deno test --allow-all --no-check"
+    "test": "deno test --allow-all --no-check",
+    "test:lite": "deno test --allow-all --no-check ./src/lite"
   },
   "compilerOptions": {
     "lib": [
-      "dom",
-      "dom.iterable",
       "esnext",
-      "deno.ns",
-      "deno.unstable",
-      "deno.window"
+      "deno.ns"
     ]
   },
   "publish": {

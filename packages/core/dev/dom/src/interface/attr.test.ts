@@ -1,4 +1,4 @@
-import { InSpatialDOM, DOMParser } from "../index.ts";
+import { createDOM, DOMParser } from "../index.ts";
 import { describe, it, assert } from "@inspatial/test";
 
 // Test suite for attribute manipulation
@@ -6,7 +6,7 @@ import { describe, it, assert } from "@inspatial/test";
 
 describe("Attribute Manipulation", () => {
   it("should clone attribute node correctly", () => {
-    const { document } = InSpatialDOM("<html test />");
+    const { document } = createDOM("<html test />");
     const attr = document.documentElement?.getAttributeNode("test");
     assert(attr !== null);
     if (attr) {
@@ -15,7 +15,7 @@ describe("Attribute Manipulation", () => {
   });
 
   it("should update attribute value correctly", () => {
-    const { document } = InSpatialDOM("<html test />");
+    const { document } = createDOM("<html test />");
     const attr = document.documentElement?.getAttributeNode("test");
     if (attr) {
       attr.value = "456";
@@ -24,7 +24,7 @@ describe("Attribute Manipulation", () => {
   });
 
   it("should handle attributes collection correctly", () => {
-    const { document } = InSpatialDOM("<html test />");
+    const { document } = createDOM("<html test />");
     const { attributes } = document.documentElement || {};
     assert(attributes?.length === 1);
     const attr = document.documentElement?.getAttributeNode("test");

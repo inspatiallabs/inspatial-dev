@@ -6,12 +6,12 @@
  * its attributes, properties, and serialization.
  */
 import { describe, it, assert } from "@inspatial/test";
-import { InSpatialDOM } from "../index.ts";
+import { createDOM } from "../index.ts";
 
 describe("ButtonElement", () => {
   it("should correctly toggle the disabled attribute", () => {
     // GIVEN a button element
-    const { document } = InSpatialDOM("<button>click me</button>");
+    const { document } = createDOM("<button>click me</button>");
     const { lastElementChild: button } = document;
 
     // WHEN setting the disabled property to true
@@ -37,7 +37,7 @@ describe("ButtonElement", () => {
 
   it("should be correctly serialized to JSON", () => {
     // GIVEN a button element
-    const { document } = InSpatialDOM("<button>click me</button>");
+    const { document } = createDOM("<button>click me</button>");
     const { lastElementChild: button } = document;
 
     // WHEN setting attributes and serializing to JSON
@@ -55,7 +55,7 @@ describe("ButtonElement", () => {
 
   it("should report correct tag and node names", () => {
     // GIVEN a button element
-    const { document } = InSpatialDOM("<button>click me</button>");
+    const { document } = createDOM("<button>click me</button>");
     const { lastElementChild: button } = document;
 
     // THEN it should have the correct tag and node names
@@ -65,7 +65,7 @@ describe("ButtonElement", () => {
 
   it("should report null for child elements when it has none", () => {
     // GIVEN a button element with only text content
-    const { document } = InSpatialDOM("<button>click me</button>");
+    const { document } = createDOM("<button>click me</button>");
     const { lastElementChild: button } = document;
 
     // THEN it should report null for child element properties
@@ -78,7 +78,7 @@ describe("ButtonElement", () => {
 
   it("should report child elements when they exist", () => {
     // GIVEN a button element with a child element
-    const { document } = InSpatialDOM("<button><span>click me</span></button>");
+    const { document } = createDOM("<button><span>click me</span></button>");
     const { lastElementChild: button } = document;
 
     // THEN it should report the correct child elements

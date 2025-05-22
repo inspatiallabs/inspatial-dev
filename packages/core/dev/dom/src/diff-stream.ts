@@ -1,10 +1,10 @@
-/** @module InSpatialDOM
+/** @module createDOM
  * Provides functionality for efficiently diffing and updating DOM nodes based on HTML streams.
  * This module is crucial for InSpatial DOM implementation and streaming updates.
  */
 
 // @ts-ignore - Ignoring TS extension import error
-import { InSpatialDOM } from "./index.ts";
+import { createDOM } from "./index.ts";
 
 /** Interface for the DOM tree walker used in streaming updates */
 interface InWalkerType {
@@ -252,7 +252,7 @@ async function htmlStreamWalker(
   options: InOptionsType = {}
 ): Promise<InWalkerType> {
   // Use InSpatial DOM to parse the HTML stream
-  const { document: doc } = InSpatialDOM("");
+  const { document: doc } = createDOM("");
 
   // Type assertion to inform TypeScript that doc has these methods
   (doc as any).open();
