@@ -1,5 +1,4 @@
-// TODO(@benemma): get Selector from @inspatial/theme
-import * as CSSselect from "npm:css-select@^5.1.0";
+import { ISSSelector } from "../../../theme/src/iss/selector/index.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { ELEMENT_NODE, TEXT_NODE } from "./constants.ts";
 // @ts-ignore - Ignoring TS extension import error
@@ -101,14 +100,14 @@ const adapter = {
 };
 
 export const prepareMatch = (element: any, selectors: string) =>
-  CSSselect.compile(selectors, {
+  ISSSelector.compile(selectors, {
     context: selectors.includes(":scope") ? element : void 0,
     xmlMode: !ignoreCase(element),
     adapter,
   });
 
 export const matches = (element: any, selectors: string) =>
-  CSSselect.is(element, selectors, {
+  ISSSelector.is(element, selectors, {
     context: selectors.includes(":scope") ? element : void 0,
     xmlMode: !ignoreCase(element),
     adapter,

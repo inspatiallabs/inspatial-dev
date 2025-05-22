@@ -23,7 +23,8 @@
   "imports": {
     "@std/path": "jsr:@std/path",
     "@std/fs": "jsr:@std/fs",
-    "@inspatial/test": "jsr:@inspatial/test"
+    "@inspatial/test": "jsr:@inspatial/test",
+    "css-select": "npm:css-select@^5.1.0"
   },
   "exports": {
     ".": "./src/index.ts",
