@@ -146,15 +146,19 @@ export const createDOM = (
   // Catches all other interfaces and properties not explicitly listed above
   [key: string]: any;
 } => {
-  const view = new DOMParser().parseFromString(
+  const parsed = new DOMParser().parseFromString(
     html,
     "text/html",
     globals
-  ).defaultView;
+  );
+  const view = parsed.defaultView;
 
   // Ensure all DOM interfaces are attached to the result
   const result = {
     ...view,
+    // Explicitly add document and window properties
+    document: parsed,
+    window: view,
     // Node Interfaces
     Node: DOMNode,
     Element: Element,

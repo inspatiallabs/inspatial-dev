@@ -12,7 +12,7 @@
  * await copyToClipboard('/dashboard')
  *
  * // Copy absolute URL
- * await copyToClipboard('https://example.com/path')
+ * await copyToClipboard('https://xr.new/path')
  * 
  * // With success callback
  * await copyToClipboard('/url', () => alert('Copied!'))

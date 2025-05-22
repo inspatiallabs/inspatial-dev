@@ -458,15 +458,7 @@ export class Element extends ParentNode {
     return value !== undefined ? value : null;
   }
 
-  getAttributeNode(name: string): Attr | null {
-    name = ignoreCase(this, name);
-    const map = this.attributes;
-    for (let i = 0; i < (map as any).length; i++) {
-      const attr = (map as any)[i];
-      if (attr.name === name) return attr;
-    }
-    return null;
-  }
+  getAttributeNode(name: string): Attr | null {    const shouldIgnoreCase = ignoreCase({ ownerDocument: this.ownerDocument });    const searchName = shouldIgnoreCase ? name.toLowerCase() : name;    const map = this.attributes;    for (let i = 0; i < (map as any).length; i++) {      const attr = (map as any)[i];      const attrName = shouldIgnoreCase ? attr.name.toLowerCase() : attr.name;      if (attrName === searchName) return attr;    }    return null;  }
 
   getAttributeNames(): string[] {
     return Array.from(this.attributes, (attr: AttributeWithValue) => attr.name);
@@ -534,32 +526,7 @@ export class Element extends ParentNode {
     return oldNode;
   }
 
-  toggleAttribute(name: string, force?: boolean): boolean {
-    name = ignoreCase(this, name);
-    
-    const hasAttr = this.hasAttribute(name);
-    
-    // If force is true, ensure attribute exists
-    if (force === true && !hasAttr) {
-      this.setAttribute(name, "");
-      return true;
-    }
-    
-    // If force is false, ensure attribute doesn't exist
-    if (force === false && hasAttr) {
-      this.removeAttribute(name);
-      return false;
-    }
-    
-    // Toggle behavior: remove if exists, add if doesn't
-    if (hasAttr) {
-      this.removeAttribute(name);
-      return false;
-    } else {
-      this.setAttribute(name, "");
-      return true;
-    }
-  }
+  toggleAttribute(name: string, force?: boolean): boolean {    name = ignoreCase(this, name);    const hasAttr = this.hasAttribute(name);    if (force === true && !hasAttr) {      this.setAttribute(name, "");      return true;    }    if (force === false && hasAttr) {      this.removeAttribute(name);      return false;    }    if (hasAttr) {      this.removeAttribute(name);      return false;    } else {      this.setAttribute(name, "");      return true;    }  }
   // </attributes>
 
   // <ShadowDOM>

@@ -40,7 +40,7 @@
  * registerTypeExtension(urlValidator);
  * 
  * // Use in validation
- * const result = validateTypeExtension("url", "https://example.com");
+ * const result = validateTypeExtension("url", "https://xr.new");
  * ```
  */
 
@@ -346,7 +346,7 @@ export function emailTypeExtension(): InTypeValidationExtension {
  * registerTypeExtension(urlTypeExtension());
  * 
  * // Later use it for validation
- * const url = validateTypeExtension("url", "https://example.com");
+ * const url = validateTypeExtension("url", "https://xr.new");
  * ```
  */
 export function urlTypeExtension(): InTypeValidationExtension {

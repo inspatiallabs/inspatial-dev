@@ -120,7 +120,7 @@ bunx jsr add @in/dom
 
 ## 🚀 Getting Started
 
-### Using InDOM
+### Using InDOM (🔴 Unstable)
 ```typescript
 import { createDOM } from "@in/dom"
 
@@ -139,7 +139,7 @@ The `createDOM` function is a convenient wrapper that:
 - Returns both document and window objects
 - Optionally accepts custom globals as a second parameter
 
-### Using InDOM (Lite)
+### Using InDOM (Lite)  (🟡 Preview)
 ```typescript
 import { createDOMLite } from '@in/dom/lite';
 

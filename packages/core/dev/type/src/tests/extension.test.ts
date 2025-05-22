@@ -353,13 +353,13 @@ test("URL Extension - validates valid URLs", () => {
   registerTypeExtension(urlTypeExtension());
   
   const validURLs = [
-    "https://example.com",
+    "https://xr.new",
     "http://example.com:8080/path",
     "http://user:pass@example.com",
     "ftp://example.com/file.txt",
     "file:///path/to/file",
     "http://localhost:3000",
-    "https://example.com/path?query=string#hash"
+    "https://xr.new/path?query=string#hash"
   ];
   
   for (const url of validURLs) {

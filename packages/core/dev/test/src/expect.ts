@@ -241,7 +241,7 @@ export interface ExtendedExpected<IsAsync = false> extends Expected<IsAsync> {
    *
    * ```ts
    * import { expect } from "@inspatial/test"
-   * expect("https://example.com").toBeUrl()
+   * expect("https://xr.new").toBeUrl()
    * ```
    */
   toBeUrl(): () => unknown;
