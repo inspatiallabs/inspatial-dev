@@ -120,30 +120,14 @@ bunx jsr add @in/dom
 
 ## 🚀 Getting Started
 
-### Using DOMParser (Standard Approach)
-```js
-import { DOMParser } from "@in/dom"
-
-// Create a parser instance
-const parser = new DOMParser()
-
-// Parse HTML string into a document
-const document = parser.parseFromString(
-  "<html><body><h1>Hello, InSpatial!</h1></body></html>",
-  "text/html",
-)
-
-console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
-```
-
-### Using InDOM (Convenience Function)
-```js
+### Using InDOM
+```typescript
 import { createDOM } from "@in/dom"
 
 // Parse HTML string in one step
-const { document, window } = createDOM("<html><body><h1>Hello, InSpatial!</h1></body></html>")
+const { document, window } = createDOM("<html><body><h1>I'm In Spatial!</h1></body></html>")
 
-console.log(document.querySelector("h1").textContent) // "Hello, InSpatial!"
+console.log(document.querySelector("h1").textContent) // "I'm In Spatial!"
 
 // You also get access to the window object
 console.log(window.document === document) // true
@@ -155,6 +139,18 @@ The `createDOM` function is a convenient wrapper that:
 - Returns both document and window objects
 - Optionally accepts custom globals as a second parameter
 
+### Using InDOM (Lite)
+```typescript
+import { createDOMLite } from '@in/dom/lite';
+
+const { createDocument } = createDOMLite()
+
+const document = createDocument(HTML_NAMESPACE, 'html')
+
+const asset = document.createElementNS(HTML_NAMESPACE, 'asset')
+asset.appendChild(document.createTextNode("I'm In Spatial"))
+document.body.appendChild(asset);
+```
 ---
 
 ## 🤝 Contributing

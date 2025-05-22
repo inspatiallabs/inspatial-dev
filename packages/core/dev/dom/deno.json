@@ -4,7 +4,6 @@
   "version": "0.1.0",
   "description": "A DOM implementation for InSpatial",
   "imports": {
-    "css-select": "npm:css-select@^5.1.0",
     "@inspatial/util": "jsr:@inspatial/util@^0.1.9",
     "@inspatial/test": "jsr:@inspatial/test@^0.1.1"
   },
@@ -17,10 +16,7 @@
     "test:lite": "deno test --allow-all --no-check ./src/lite"
   },
   "compilerOptions": {
-    "lib": [
-      "esnext",
-      "deno.ns"
-    ]
+    "lib": ["esnext", "deno.ns"]
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
