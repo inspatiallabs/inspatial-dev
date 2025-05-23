@@ -1,5 +1,4 @@
-import { performance } from "../commonjs/perf_hooks.cjs";
-
+import { performance } from "../shared/performance-hooks.ts";
 // @ts-ignore - Ignoring TS extension import error
 import {
   DOCUMENT_NODE,
@@ -307,41 +306,45 @@ export class Document extends NonElementParentNode {
   createAttribute(name: string): Attr {
     return new Attr(this, name);
   }
-  
+
   createCDATASection(data: string): CDATASection {
     return new CDATASection(this, data);
   }
-  
+
   createComment(textContent: string): Comment {
     return new Comment(this, textContent);
   }
-  
+
   createDocumentFragment(): DocumentFragment {
     return new DocumentFragment(this);
   }
-  
-  createDocumentType(name: string, publicId: string, systemId: string): DocumentType {
+
+  createDocumentType(
+    name: string,
+    publicId: string,
+    systemId: string
+  ): DocumentType {
     return new DocumentType(this, name, publicId, systemId);
   }
-  
+
   createElement(localName: string): Element {
     return new Element(this, localName);
   }
-  
+
   createRange(): Range {
     const range = new Range();
     range.commonAncestorContainer = this;
     return range;
   }
-  
+
   createTextNode(textContent: string): Text {
     return new Text(this, textContent);
   }
-  
+
   createTreeWalker(root: any, whatToShow: number = -1): TreeWalker {
     return new TreeWalker(root, whatToShow);
   }
-  
+
   createNodeIterator(root: any, whatToShow: number = -1): TreeWalker {
     return this.createTreeWalker(root, whatToShow);
   }
@@ -469,7 +472,7 @@ export class Document extends NonElementParentNode {
   }
 
   override toString(): string {
-    return this.documentElement?.outerHTML ?? '';
+    return this.documentElement?.outerHTML ?? "";
   }
 
   override querySelector(selectors: string): Element | null {
@@ -483,28 +486,31 @@ export class Document extends NonElementParentNode {
   getElementsByTagNameNS(_: string, name: string): NodeList {
     return this.getElementsByTagName(name);
   }
-  
+
   createAttributeNS(_: string, name: string): Attr {
     return this.createAttribute(name);
   }
-  
-  createElementNS(nsp: string | null, localName: string, options?: any): Element | SVGElement {
-    if (nsp === SVG_NAMESPACE)
-      return new SVGElement(this, localName);
+
+  createElementNS(
+    nsp: string | null,
+    localName: string,
+    options?: any
+  ): Element | SVGElement {
+    if (nsp === SVG_NAMESPACE) return new SVGElement(this, localName);
     return this.createElement(localName);
   }
-  
+
   /**
    * Opens the document for writing - Implemented in HTMLDocument
    */
   open?(): void;
-  
+
   /**
    * Writes HTML content to the document - Implemented in HTMLDocument
    * @param content - The HTML content to write
    */
   write?(content: string): void;
-  
+
   /**
    * Closes the document after writing - Implemented in HTMLDocument
    */
