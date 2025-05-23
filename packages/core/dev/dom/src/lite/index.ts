@@ -5,7 +5,7 @@ import {
   findWhere,
   createAttributeFilter,
   type AttributeType,
-} from "../../../util/src/index.ts";
+} from "@inspatial/util";
 import type { HTMLElement } from "../html/element.ts";
 import type { Comment } from "../interface/comment.ts";
 import type { DocumentFragment } from "../interface/document-fragment.ts";
