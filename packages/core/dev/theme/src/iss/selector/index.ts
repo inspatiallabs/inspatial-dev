@@ -1,3 +1,2 @@
-import * as ISSSelector from "npm:css-select@^5.1.0";
-
-export * as ISSSelector from "npm:css-select@^5.1.0";
+import * as ISSSelector from "css-select";
+export * as ISSSelector from "css-select";
