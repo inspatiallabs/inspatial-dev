@@ -5,7 +5,8 @@
   "description": "A DOM implementation for InSpatial",
   "imports": {
     "@inspatial/util": "jsr:@inspatial/util@^0.1.9",
-    "@inspatial/test": "jsr:@inspatial/test@^0.1.1"
+    "@inspatial/test": "jsr:@inspatial/test@^0.1.1",
+    "@inspatial/theme": "jsr:@inspatial/theme@^0.1.8"
   },
   "exports": {
     ".": "./src/index.ts",

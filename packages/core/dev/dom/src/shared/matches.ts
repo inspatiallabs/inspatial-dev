@@ -1,4 +1,4 @@
-import { ISSSelector } from "../../../theme/src/iss/selector/index.ts";
+import { ISSSelector } from "@inspatial/theme";
 // @ts-ignore - Ignoring TS extension import error
 import { ELEMENT_NODE, TEXT_NODE } from "./constants.ts";
 // @ts-ignore - Ignoring TS extension import error
