@@ -32,7 +32,13 @@ interface DocumentType {
 }
 
 const loopSegment = ({[NEXT]: next, [END]: end}: NodeWithSymbols, json: any[]): void => {
-  while (next !== end) {
+  while (next && next !== end) {
+    // Safety check: ensure next has a nodeType before accessing it
+    if (!next || typeof next.nodeType !== 'number') {
+      console.warn('Invalid node encountered during JSON serialization:', next);
+      break;
+    }
+    
     switch (next.nodeType) {
       case ATTRIBUTE_NODE:
         attrAsJSON(next, json);
@@ -50,8 +56,15 @@ const loopSegment = ({[NEXT]: next, [END]: end}: NodeWithSymbols, json: any[]): 
         documentTypeAsJSON(next, json);
         break;
     }
+    
+    // Safety check: ensure we can continue traversal
+    if (!next || !next[NEXT]) {
+      break;
+    }
+    
     next = next[NEXT];
   }
+  
   const last = json.length - 1;
   const value = json[last];
   if (typeof value === 'number' && value < 0)
@@ -62,15 +75,19 @@ const loopSegment = ({[NEXT]: next, [END]: end}: NodeWithSymbols, json: any[]): 
 
 export const attrAsJSON = (attr: NodeWithSymbols, json: any[]): void => {
   json.push(ATTRIBUTE_NODE, attr.name);
-  const value = attr[VALUE]?.trim();
-  if (value)
+  const value = attr[VALUE];
+  // Include the value even if it's an empty string - empty string is valid for attributes like 'disabled=""'
+  if (value !== undefined && value !== null) {
     json.push(value);
+  }
 };
 
 export const characterDataAsJSON = (node: NodeWithSymbols, json: any[]): void => {
   const value = node[VALUE];
-  if (value?.trim())
+  // Include text content if it exists (including empty strings, but excluding null/undefined)
+  if (value !== undefined && value !== null) {
     json.push(node.nodeType, value);
+  }
 };
 
 export const nonElementAsJSON = (node: NodeWithSymbols, json: any[]): void => {

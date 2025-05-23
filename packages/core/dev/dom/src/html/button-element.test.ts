@@ -7,6 +7,7 @@
  */
 import { describe, it, expect, beforeEach } from "@inspatial/test";
 import { createIsolatedDOM } from "../test-helpers.ts";
+import { NEXT, END, VALUE } from "../shared/symbols.ts";
 
 describe("ButtonElement", () => {
   let dom: ReturnType<typeof createIsolatedDOM>;
@@ -39,12 +40,54 @@ describe("ButtonElement", () => {
   it("should be correctly serialized to JSON", () => {
     // GIVEN a button element
     const button = dom.document.createElement("button") as unknown as HTMLButtonElement;
+    console.log("1. Button created, localName:", button.localName);
+    
     button.textContent = "click me";
+    console.log("2. After setting textContent:", button.textContent);
+    
     button.setAttribute("disabled", "");
+    console.log("3. After setting disabled attribute");
+    console.log("   hasAttribute('disabled'):", button.hasAttribute("disabled"));
+    console.log("   getAttribute('disabled'):", button.getAttribute("disabled"));
+    
+    // Walk the NEXT chain and check actual [VALUE] contents
+    console.log("4. Walking NEXT chain with [VALUE] inspection:");
+    let next = (button as any)[NEXT];
+    let count = 0;
+    while (next && count < 10) {
+      const nodeTypeStr = next.nodeType === 2 ? "ATTR" : next.nodeType === 3 ? "TEXT" : `TYPE_${next.nodeType}`;
+      console.log(`   [${count}] ${nodeTypeStr}: ${next.name || next.localName || '#text'}`);
+      
+      if (next.nodeType === 2) { // Attribute
+        console.log(`      -> name: "${next.name}"`);
+        console.log(`      -> value property: "${next.value}"`);
+        console.log(`      -> [VALUE] symbol: "${next[VALUE]}"`);
+        console.log(`      -> Direct access: value="${next.value}", [VALUE]="${next[VALUE]}"`);
+      } else if (next.nodeType === 3) { // Text
+        console.log(`      -> textContent: "${next.textContent}"`);
+        console.log(`      -> data: "${next.data}"`);
+        console.log(`      -> [VALUE] symbol: "${next[VALUE]}"`);
+        console.log(`      -> Direct access: textContent="${next.textContent}", data="${next.data}", [VALUE]="${next[VALUE]}"`);
+      }
+      
+      next = next[NEXT];
+      count++;
+      if (next === (button as any)[END]) {
+        console.log(`   [${count}] END marker`);
+        break;
+      }
+    }
+    
     dom.document.body!.appendChild(button);
 
     // WHEN serializing to JSON
+    console.log("5. About to call toJSON...");
+    const toJsonResult = (button as any).toJSON();
+    console.log("   button.toJSON():", toJsonResult);
+    
+    console.log("6. About to call JSON.stringify...");
     const json = JSON.stringify(button);
+    console.log("   JSON.stringify result:", json);
 
     // THEN it should include the correct structure
     expect(json).toContain('"button"');

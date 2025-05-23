@@ -325,35 +325,52 @@ export class ParentNode extends Node {
       return node;
     }
     
-    // Regular node appending
-    if (node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-    
-    node.parentNode = this;
-    
-    // Insert the node before the END marker
-    const prev = (this as any)[END][PREV];
+    // Handle different node types like insertBefore does
     const end = (this as any)[END];
     
-    node[PREV] = prev;
-    node[NEXT] = end;
-    prev[NEXT] = node;
-    end[PREV] = node;
-    
-    // Safely call mutation observer callback if available
-    try {
-      // Call lifecycle callbacks
-      const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
-      if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
-        moCallback(node, this);
-      }
-      
-      if (node.nodeType === ELEMENT_NODE) {
+    switch (node.nodeType) {
+      case ELEMENT_NODE:
+        node.remove();
+        node.parentNode = this;
+        
+        // For elements, use knownSegment to link the entire element structure
+        // without destroying the element's internal NEXT chain
+        knownSegment(end[PREV], node, node[END], end);
+        
+        // Safely call mutation observer callback
+        try {
+          const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
+          if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
+            moCallback(node, this);
+          }
+        } catch (error) {
+          console.warn('Error in mutation observer callback:', error);
+        }
+        
         connectedCallback(node);
-      }
-    } catch (error) {
-      console.warn('Error in mutation observer callback:', error);
+        break;
+        
+      case TEXT_NODE:
+      case COMMENT_NODE:
+      case CDATA_SECTION_NODE:
+        node.remove();
+        /* eslint no-fallthrough:0 */
+      // this covers DOCUMENT_TYPE_NODE too
+      default:
+        node.parentNode = this;
+        knownSiblings(end[PREV], node, end);
+        
+        // Safely call mutation observer callback
+        try {
+          const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
+          if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
+            moCallback(node, this);
+          }
+        } catch (error) {
+          console.warn('Error in mutation observer callback:', error);
+        }
+        
+        break;
     }
     
     return node;
@@ -376,7 +393,10 @@ export class ParentNode extends Node {
       case ELEMENT_NODE:
         node.remove();
         node.parentNode = this;
-        knownBoundaries(next[PREV], node, next);
+        
+        // For elements, use knownSegment to link the entire element structure
+        // without destroying the element's internal NEXT chain
+        knownSegment(next[PREV], node, node[END], next);
         
         // Safely call mutation observer callback
         try {
