@@ -34,7 +34,7 @@
     "./effect": "./src/effect/index.ts",
     "./variables": "./src/variables/index.ts",
     "./variant": "./src/variant/index.ts",
-    "./type": "./src/type/index.ts",
+    "./type": "./src/iss/type/index.ts",
     "./iss": "./src/iss/index.ts"
   }
 }
