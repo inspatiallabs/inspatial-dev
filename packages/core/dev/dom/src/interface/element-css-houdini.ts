@@ -9,7 +9,7 @@
 import { STYLE } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
-import { CSSHoudiniStyleDeclaration } from "../../../theme/src/iss/houdini/css-typed-om.ts";
+import { CSSHoudiniStyleDeclaration } from "@inspatial/theme/iss";
 
 // Create a separate interface for Houdini-enhanced elements
 export interface HoudiniElement {

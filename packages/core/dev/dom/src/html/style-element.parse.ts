@@ -1,4 +1,4 @@
-import { ISSProps } from "@inspatial/theme";
+import { ISSProps } from "@inspatial/theme/iss";
 /**
  * CSS rule types
  */
