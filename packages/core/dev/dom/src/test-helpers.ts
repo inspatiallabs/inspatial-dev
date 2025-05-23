@@ -16,7 +16,7 @@ import { createDOM } from "./index.ts";
  * @param initialHTML - Optional initial HTML to parse
  * @returns Isolated DOM environment with document, window, and all DOM interfaces
  */
-export function createIsolatedDOM(initialHTML = "<html><head></head><body></body></html>") {
+export function createIsolatedDOM(initialHTML = "<html><head></head><body></body></html>"): any {
   const domResult = createDOM(initialHTML);
   
   // Extract window and document properly
@@ -38,7 +38,7 @@ export function createIsolatedDOM(initialHTML = "<html><head></head><body></body
  */
 export function withIsolatedDOM<T>(
   testFn: (dom: ReturnType<typeof createIsolatedDOM>) => T | Promise<T>
-) {
+): () => Promise<T> {
   return async () => {
     const dom = createIsolatedDOM();
     return await testFn(dom);
@@ -55,7 +55,7 @@ export function withIsolatedDOM<T>(
 export function withElement<T>(
   html: string,
   testFn: (dom: ReturnType<typeof createIsolatedDOM>) => T | Promise<T>
-) {
+): () => Promise<T> {
   return async () => {
     const domResult = createDOM(html);
     
@@ -84,7 +84,7 @@ export function createElement(
   dom: ReturnType<typeof createIsolatedDOM>,
   tagName: string,
   attributes: Record<string, string> = {}
-) {
+): any {
   const element = dom.document.createElement(tagName);
   
   Object.entries(attributes).forEach(([name, value]) => {

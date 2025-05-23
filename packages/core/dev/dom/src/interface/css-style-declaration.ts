@@ -138,21 +138,22 @@ export class CSSStyleDeclaration extends Map implements CSSProperties {
    * @returns An iterator for the style properties
    */
   // @ts-ignore - Iterator type issues
-  override [Symbol.iterator]() {
+  override [Symbol.iterator](): IterableIterator<string> {
     updateKeys(this as unknown as StyleMap);
     const keys = getKeys(this as unknown as StyleMap);
     const { length } = keys;
     let i = 0;
 
     return {
-      next() {
+      next(): IteratorResult<string> {
         const done = i === length;
-        return {
-          done,
-          value: done ? null : keys[i++],
-        };
+        if (done) {
+          return { done: true, value: undefined };
+        } else {
+          return { done: false, value: keys[i++] };
+        }
       },
-      [Symbol.iterator]() {
+      [Symbol.iterator](): IterableIterator<string> {
         return this;
       },
     };
@@ -161,7 +162,7 @@ export class CSSStyleDeclaration extends Map implements CSSProperties {
   /**
    * Get the private reference to this instance
    */
-  get [PRIVATE]() {
+  get [PRIVATE](): CSSStyleDeclaration {
     return this;
   }
 

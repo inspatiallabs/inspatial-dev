@@ -10,7 +10,7 @@ export class SVGDocument extends Document {
   constructor() {
     super("image/svg+xml");
   }
-  override toString() {
+  override toString(): string {
     return this[MIME].docType + super.toString();
   }
 }

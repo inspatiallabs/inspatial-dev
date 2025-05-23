@@ -437,7 +437,7 @@ export class Element extends ParentNode {
     setInnerHtml(this, html);
   }
 
-  get outerHTML() {
+  get outerHTML(): string {
     return this.toString();
   }
   set outerHTML(html: string) {
