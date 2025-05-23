@@ -1,3 +1,4 @@
+import { ISSProps } from "../../../theme/src/iss/index.ts";
 /**
  * CSS rule types
  */
@@ -15,18 +16,11 @@ export enum CSSRuleType {
 }
 
 /**
- * Import CSS property types from csstype library
- * This provides comprehensive, MDN-based typing for all CSS properties
- */
-// @ts-ignore
-import type * as CSSType from "csstype";
-
-/**
  * Interface for CSS properties accessed via style object
  * This allows for proper TypeScript typing with element.style.color, etc.
- * Uses csstype library for comprehensive property definitions
+ * Uses ISSProp library for comprehensive property definitions
  */
-export type CSSProperties = CSSType.Properties<string | number>;
+export type CSSProperties = ISSProps;
 
 /**
  * CSS style declaration class to store properties and values
