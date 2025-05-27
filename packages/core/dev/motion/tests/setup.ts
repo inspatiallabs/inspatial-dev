@@ -1,4 +1,4 @@
-import { DOMParser, parseHTML } from "linkedom";
+import { createDOM } from "@in/dom";
 
 // Create mock DOM environment
 const html = `
@@ -40,13 +40,19 @@ const html = `
 `;
 
 // Parse HTML and set up global DOM objects
-const { window } = parseHTML(html);
-globalThis.window = window;
-globalThis.document = window.document;
-globalThis.Element = window.Element;
-globalThis.HTMLElement = window.HTMLElement;
-globalThis.SVGElement = window.SVGElement;
-globalThis.getComputedStyle = window.getComputedStyle;
+const { window, HTMLElement, Element, SVGElement, getComputedStyle } = createDOM(html);
+
+// Assign global DOM objects to globalThis
+Object.assign(globalThis, {
+  window,
+  document,
+  Node,
+  Element,
+  HTMLElement,
+  SVGElement,
+  getComputedStyle,
+});
+
 
 // Fix WeakMap usage by adding a safety wrapper for non-object keys
 // This is necessary to handle string keys being passed to WeakMap in the motion library

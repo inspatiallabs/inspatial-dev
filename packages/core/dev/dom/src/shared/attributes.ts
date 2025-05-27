@@ -146,8 +146,9 @@ export const booleanAttribute: AttributeAccessor = {
  * Numeric attribute accessor
  */
 export const numericAttribute: AttributeAccessor = {
-  get(element: ElementNode, name: string): number {
-    return parseFloat(element.getAttribute(name) || "0");
+  get(element: ElementNode, name: string): number | null {
+    const value = element.getAttribute(name);
+    return value !== null ? parseFloat(value) : null;
   },
   set(element: ElementNode, name: string, value: number): void {
     element.setAttribute(name, value.toString());

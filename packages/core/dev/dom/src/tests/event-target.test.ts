@@ -8,7 +8,8 @@
 // Import from test package
 import { test, expect, assertEquals } from "@inspatial/test";
 // Import DOM classes
-import { EventTarget, Event, Element, Document } from "../cached.ts";
+import { Event, Element, Document } from "../cached.ts";
+import { EventTarget } from "../interface/event-target.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { MIME } from "../shared/symbols.ts";
 
@@ -161,7 +162,7 @@ test({
     const target = new EventTarget();
 
     // Add an event listener that calls preventDefault
-    target.addEventListener("test", (event) => {
+    target.addEventListener("test", (event: Event) => {
       event.preventDefault();
     });
 
@@ -180,7 +181,7 @@ test({
     const target = new EventTarget();
 
     // Add an event listener that calls preventDefault
-    target.addEventListener("test", (event) => {
+    target.addEventListener("test", (event: Event) => {
       event.preventDefault();
     });
 
@@ -203,7 +204,7 @@ test({
     let eventCurrentTarget = null;
 
     // Add event listener to parent
-    parent.addEventListener("test", (event) => {
+    parent.addEventListener("test", (event: Event) => {
       eventTarget = event.target;
       eventCurrentTarget = event.currentTarget;
     });
@@ -271,7 +272,7 @@ test({
       parentReceived = true;
     });
 
-    child.addEventListener("test", (event) => {
+    child.addEventListener("test", (event: Event) => {
       event.stopPropagation();
     });
 

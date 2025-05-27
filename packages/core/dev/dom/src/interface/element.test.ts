@@ -341,8 +341,9 @@ describe("Element", () => {
 
   describe("Element events", () => {
     it("should support addEventListener and removeEventListener", () => {
-      const root = createDOM(`<div></div>`);
-      const element = root.firstChild;
+      const { document } = createDOM(`<html><body><div></div></body></html>`);
+      const element = document.body?.firstElementChild;
+      if (!element) throw new Error("Element not found");
       let clicked = false;
 
       // Define properly typed event handler
@@ -369,8 +370,9 @@ describe("Element", () => {
     });
 
     it("should support Level 0 event handlers", () => {
-      const root = createDOM(`<div></div>`);
-      const element = root.firstChild;
+      const { document } = createDOM(`<html><body><div></div></body></html>`);
+      const element = document.body?.firstElementChild;
+      if (!element) throw new Error("Element not found");
       let focused = false;
 
       // Define a properly typed onclick handler

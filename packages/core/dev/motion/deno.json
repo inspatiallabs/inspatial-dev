@@ -32,11 +32,13 @@
   ],
 
   "imports": {
-    "@inspatial/test": "../test/src/index.ts"
-    },
+    "@inspatial/test": "../test/src/index.ts", 
+    "@in/dom": "../dom/src/index.ts"
+  },
   "exports": {},
   "tasks": {
-    "test": "deno run --allow-all --no-check --unstable-sloppy-imports ./tests/test_runner.ts --"
+    "test": "deno run --allow-all --no-check --unstable-sloppy-imports ./tests/test_runner.ts --",
+    "test:animation": "deno test --allow-all --no-check tests/animation/animation.test.ts --reporter=pretty"
   },
   "compilerOptions": {
     "lib": ["deno.window", "deno.ns", "dom", "dom.iterable", "esnext", "deno.unstable"],

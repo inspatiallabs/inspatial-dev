@@ -41,7 +41,7 @@ import { NodeList } from "../interface/node-list.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { moCallback } from "../interface/mutation-observer.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { connectedCallback } from "../interface/custom-element-registry.ts";
+import { connectedCallback, disconnectedCallback } from "../interface/custom-element-registry.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import { nextElementSibling } from "./non-document-type-child-node.ts";
@@ -145,7 +145,7 @@ export class ParentNode extends Node {
   override get firstChild(): any {
     let next = (this as any)[NEXT];
     const end = (this as any)[END];
-    while (next.nodeType === ATTRIBUTE_NODE) next = next[NEXT];
+    while (next && next.nodeType === ATTRIBUTE_NODE) next = next[NEXT];
     return next === end ? null : next;
   }
 
@@ -215,15 +215,17 @@ export class ParentNode extends Node {
   }
 
   replaceChildren(...nodes: any[]): void {
-    let next = (this as any)[NEXT];
-    const end = (this as any)[END];
-    while (next !== end && next.nodeType === ATTRIBUTE_NODE) next = next[NEXT];
-    while (next !== end) {
-      const after = getEnd(next)[NEXT];
-      next.remove();
-      next = after;
+    // Clear all existing children first
+    while (this.firstChild) {
+      this.removeChild(this.firstChild);
     }
-    if (nodes.length) insert(this, end, nodes);
+    
+    // Add new nodes if any
+    if (nodes.length) {
+      for (const node of nodes) {
+        this.appendChild(node);
+      }
+    }
   }
 
   /**
@@ -234,15 +236,21 @@ export class ParentNode extends Node {
   getElementsByTagName(localName: string): any {
     const matches = new NodeList();
     const nodes = [];
-    let { [NEXT]: next } = this as any;
+    let next = (this as any)[NEXT];
+    const end = (this as any)[END];
     
-    // Safely traverse the DOM, handling null nodes
-    while (next && next !== this) {
+    // Traverse all descendants, not just direct children
+    while (next && next !== end) {
       if (next && next.nodeType === ELEMENT_NODE &&
-          (localName === "*" || next.nodeName === localName.toUpperCase())) {
+          (localName === "*" || next.localName === localName.toLowerCase())) {
         nodes.push(next);
       }
+      
+      // Move to the next node in document order (depth-first)
       next = next[NEXT];
+      
+      // Safety check to prevent infinite loops
+      if (!next) break;
     }
     
     for (const node of nodes)
@@ -285,13 +293,24 @@ export class ParentNode extends Node {
     const matches = prepareMatch(this, selectors);
     let next = (this as any)[NEXT];
     const end = (this as any)[END];
-    while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE && matches(next)) return next;
-      next =
-        next.nodeType === ELEMENT_NODE && next.localName === "template"
-          ? next[END]
-          : next[NEXT];
+    
+    while (next && next !== end) {
+      // Ensure next is not null and is an element before checking matches
+      if (next && next.nodeType === ELEMENT_NODE && matches(next)) {
+        return next;
+      }
+      
+      // Move to next node, handling template elements specially
+      if (next.nodeType === ELEMENT_NODE && next.localName === "template") {
+        next = next[END];
+      } else {
+        next = next[NEXT];
+      }
+      
+      // Safety check to prevent infinite loops
+      if (!next) break;
     }
+    
     return null;
   }
 
@@ -300,13 +319,24 @@ export class ParentNode extends Node {
     const elements = new NodeList();
     let next = (this as any)[NEXT];
     const end = (this as any)[END];
-    while (next !== end) {
-      if (next.nodeType === ELEMENT_NODE && matches(next)) elements.push(next);
-      next =
-        next.nodeType === ELEMENT_NODE && next.localName === "template"
-          ? next[END]
-          : next[NEXT];
+    
+    while (next && next !== end) {
+      // Ensure next is not null and is an element before checking matches
+      if (next && next.nodeType === ELEMENT_NODE && matches(next)) {
+        elements.push(next);
+      }
+      
+      // Move to next node, handling template elements specially
+      if (next.nodeType === ELEMENT_NODE && next.localName === "template") {
+        next = next[END];
+      } else {
+        next = next[NEXT];
+      }
+      
+      // Safety check to prevent infinite loops
+      if (!next) break;
     }
+    
     return elements;
   }
 
@@ -333,9 +363,9 @@ export class ParentNode extends Node {
         node.remove();
         node.parentNode = this;
         
-        // For elements, use knownSegment to link the entire element structure
-        // without destroying the element's internal NEXT chain
-        knownSegment(end[PREV], node, node[END], end);
+        // For elements, only link the element itself, not its internal structure
+        // This prevents the element's children from becoming direct children of the parent
+        knownSiblings(end[PREV], node, end);
         
         // Safely call mutation observer callback
         try {
@@ -394,9 +424,9 @@ export class ParentNode extends Node {
         node.remove();
         node.parentNode = this;
         
-        // For elements, use knownSegment to link the entire element structure
-        // without destroying the element's internal NEXT chain
-        knownSegment(next[PREV], node, node[END], next);
+        // For elements, only link the element itself, not its internal structure
+        // This prevents the element's children from becoming direct children of the parent
+        knownSiblings(next[PREV], node, next);
         
         // Safely call mutation observer callback
         try {
@@ -487,8 +517,58 @@ export class ParentNode extends Node {
   }
 
   override removeChild(node: any): any {
-    if (node.parentNode !== this) throw new Error("node is not a child");
-    node.remove();
+    if (!node) {
+      throw new Error("Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.");
+    }
+    
+    // Check if the node is actually a child by traversing the child list
+    let isChild = false;
+    let current = this.firstChild;
+    while (current) {
+      if (current === node) {
+        isChild = true;
+        break;
+      }
+      current = current.nextSibling;
+    }
+    
+    if (!isChild) {
+      throw new Error("Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.");
+    }
+    
+    // Remove the node using the remove function from child-node mixin
+    const prev = node[PREV] || null;
+    const end = getEnd(node);
+    const next = end[NEXT] || null;
+    
+    // Update adjacency
+    if (prev) prev[NEXT] = next;
+    if (next) next[PREV] = prev;
+    
+    // Clear node's connections
+    node[PREV] = null;
+    end[NEXT] = null;
+    node.parentNode = null;
+    
+    // Call mutation observer if available
+    try {
+      const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
+      if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
+        moCallback(node, this);
+      }
+    } catch (error) {
+      console.warn('Error in mutation observer callback:', error);
+    }
+    
+    // Call disconnected callback for elements
+    if (node.nodeType === ELEMENT_NODE) {
+      try {
+        disconnectedCallback(node);
+      } catch (error) {
+        console.warn('Error in disconnected callback:', error);
+      }
+    }
+    
     return node;
   }
 

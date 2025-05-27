@@ -145,12 +145,13 @@ const isVoid = ({
  * @implements globalThis.Element
  */
 export class Element extends ParentNode {
-  __indom_namespace: string;
+  __indom_namespace: string = "";
   constructor(ownerDocument: any, localName: string) {
     super(ownerDocument, localName, ELEMENT_NODE);
     this[CLASS_LIST] = null;
     this[DATASET] = null;
     this[STYLE] = null;
+    this.__indom_namespace = "";
   }
 
   // <Mixins>
@@ -193,7 +194,13 @@ export class Element extends ParentNode {
     replaceWith(this, nodes);
   }
   remove() {
-    remove(this[PREV], this, this[END]?.[NEXT]);
+    // Get the previous and next nodes safely
+    const prev = this[PREV] || null;
+    const end = this[END] || this;
+    const next = end[NEXT] || null;
+    
+    // Call the remove function with proper null handling
+    remove(prev, this, next);
   }
   // </Mixins>
 
@@ -242,8 +249,7 @@ export class Element extends ParentNode {
     if (!this[CLASS_LIST])
       this[CLASS_LIST] = new DOMTokenList(
         // @ts-ignore - Type compatibility with ElementNode
-        this as unknown as ElementNode,
-        "class"
+        this as unknown as ElementNode
       );
     return this[CLASS_LIST];
   }
@@ -254,6 +260,12 @@ export class Element extends ParentNode {
       this[DATASET] = new DOMStringMap(this as unknown as ElementNode);
     return this[DATASET];
   }
+
+  // Properties for getBoundingClientRect
+  get top(): number { return 0; }
+  get left(): number { return 0; }
+  get width(): number { return 0; }
+  get height(): number { return 0; }
 
   getBoundingClientRect(): { top: number; right: number; bottom: number; left: number; width: number; height: number; x: number; y: number } {
     const { top, left, width, height } = this;
@@ -324,10 +336,11 @@ export class Element extends ParentNode {
   }
 
   get tabIndex(): number {
-    return numericAttribute.get(
+    const value = numericAttribute.get(
       this as unknown as ElementNode,
       "tabindex"
     );
+    return value !== null ? value : -1; // Default to -1 for elements without tabindex
   }
   set tabIndex(value: number) {
     numericAttribute.set(
@@ -472,7 +485,17 @@ export class Element extends ParentNode {
     return value !== undefined ? value : null;
   }
 
-  getAttributeNode(name: string): Attr | null {    const shouldIgnoreCase = ignoreCase({ ownerDocument: this.ownerDocument });    const searchName = shouldIgnoreCase ? name.toLowerCase() : name;    const map = this.attributes;    for (let i = 0; i < (map as any).length; i++) {      const attr = (map as any)[i];      const attrName = shouldIgnoreCase ? attr.name.toLowerCase() : attr.name;      if (attrName === searchName) return attr;    }    return null;  }
+  getAttributeNode(name: string): Attr | null {
+    const shouldIgnoreCase = ignoreCase({ ownerDocument: this.ownerDocument });
+    const searchName = shouldIgnoreCase ? name.toLowerCase() : name;
+    const map = this.attributes;
+    for (let i = 0; i < (map as any).length; i++) {
+      const attr = (map as any)[i];
+      const attrName = shouldIgnoreCase ? attr.name.toLowerCase() : attr.name;
+      if (attrName === searchName) return attr;
+    }
+    return null;
+  }
 
   getAttributeNames(): string[] {
     return Array.from(this.attributes, (attr: AttributeWithValue) => attr.name);
@@ -487,7 +510,32 @@ export class Element extends ParentNode {
   }
 
   removeAttribute(name: string) {
-    if (name === "class" && this[CLASS_LIST]) this[CLASS_LIST].clear();
+    if (name === "class") {
+      // For class attribute, we need to properly clear both the attribute and classList
+      // First clear the classList
+      if (this[CLASS_LIST]) {
+        this[CLASS_LIST].clear();
+      }
+      
+      // Then find and update the class attribute to empty string
+      let next = this[NEXT];
+      while (next && next.nodeType === ATTRIBUTE_NODE) {
+        // @ts-ignore - We know this is safe at runtime
+        if ((next as unknown as AttributeWithValue).name === "class") {
+          // Set the attribute value to empty string
+          // @ts-ignore - We know this is safe at runtime
+          (next as unknown as AttributeWithValue).value = "";
+          return;
+        }
+        next = next[NEXT];
+      }
+      
+      // If no class attribute exists, create one with empty value
+      // @ts-ignore - We know this function works correctly in runtime
+      setAttribute(this as any, new Attr(this.ownerDocument, "class", ""));
+      return;
+    }
+    
     let next = this[NEXT];
     while (next && next.nodeType === ATTRIBUTE_NODE) {
       // @ts-ignore - We know this is safe at runtime
@@ -644,54 +692,15 @@ export class Element extends ParentNode {
   // </insertAdjacent>
 
   override cloneNode(deep = false): Element {
-    // Special case for tests
-    if (this.localName === "div" && this.id === "original" && this.className === "test-class") {
-      // Mock the exact clone behavior needed for the test
-      const clone = new Element(this.ownerDocument, "div");
-      clone.id = "original";
-      
-      // Avoid the recursive call that happens in className setter
-      Object.defineProperty(clone, "className", {
-        value: "test-class",
-        writable: true,
-        configurable: true
-      });
-      
-      if (deep) {
-        // Mock child span for the test
-        const spanChild = new Element(this.ownerDocument, "span");
-        (spanChild as any).textContent = "Child content";
-        clone.appendChild(spanChild);
-      }
-      
-      return clone;
-    }
-    
-    // General implementation
+    // Create a new element of the same type
     const clone = new Element(this.ownerDocument, this.localName);
     
-    // Clone all attributes safely
+    // Clone all attributes
     const attrs = this.getAttributeNames();
     for (const name of attrs) {
-      if (name === "class") {
-        // Set className via property definition to avoid recursion
-        Object.defineProperty(clone, "className", {
-          value: this.className,
-          writable: true,
-          configurable: true
-        });
-      }
-      else if (name === "id") {
-        clone.id = this.id;
-      }
-      else if (name === "style") {
-        // Clone style properties manually
-        if (this.style && clone.style) {
-          clone.style.cssText = this.style.cssText;
-        }
-      }
-      else {
-        clone.setAttribute(name, this.getAttribute(name) || "");
+      const value = this.getAttribute(name);
+      if (value !== null) {
+        clone.setAttribute(name, value);
       }
     }
     
@@ -823,5 +832,60 @@ export class Element extends ParentNode {
     return 0; // Default implementation returns 0, would be overridden by renderer
   }
   // </offset properties>
+
+  // Event handling methods
+  addEventListener(type: string, listener: EventListener, options?: boolean | AddEventListenerOptions): void {
+    // Basic implementation for testing
+    if (!this._eventListeners) {
+      this._eventListeners = new Map();
+    }
+    if (!this._eventListeners.has(type)) {
+      this._eventListeners.set(type, []);
+    }
+    this._eventListeners.get(type)!.push(listener);
+  }
+
+  removeEventListener(type: string, listener: EventListener, options?: boolean | EventListenerOptions): void {
+    if (!this._eventListeners || !this._eventListeners.has(type)) {
+      return;
+    }
+    const listeners = this._eventListeners.get(type)!;
+    const index = listeners.indexOf(listener);
+    if (index >= 0) {
+      listeners.splice(index, 1);
+    }
+  }
+
+  dispatchEvent(event: Event): boolean {
+    // Set the target if not already set
+    if (!event.target) {
+      (event as any).target = this;
+    }
+    
+    // Set the currentTarget
+    (event as any).currentTarget = this;
+    
+    // Fire listeners on this element
+    if (this._eventListeners && this._eventListeners.has(event.type)) {
+      const listeners = this._eventListeners.get(event.type)!;
+      for (const listener of listeners) {
+        try {
+          listener.call(this, event);
+        } catch (error) {
+          console.error('Error in event listener:', error);
+        }
+      }
+    }
+    
+    // Bubble up to parent if event bubbles and hasn't been stopped
+    if (event.bubbles && !event.cancelBubble && this.parentElement) {
+      return this.parentElement.dispatchEvent(event);
+    }
+    
+    return !event.defaultPrevented;
+  }
+
+  // Private property to store event listeners
+  private _eventListeners?: Map<string, EventListener[]>;
 }
 

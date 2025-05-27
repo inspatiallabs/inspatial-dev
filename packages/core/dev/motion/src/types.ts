@@ -134,7 +134,7 @@ interface JSAnimation extends Timer {
 /**
  * Any generic object
  */
-type AnyObject = Record<string, any>;
+export type AnyObject = Record<string, any>;
 
 /**
  * Valid property name for animation

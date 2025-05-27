@@ -30,13 +30,24 @@ export const getInnerHtml = (node: NodeWithChildNodes): string =>
  * @param {String} html
  */
 export const setInnerHtml = (node: NodeWithChildNodes, html: string): void => {
-  const { ownerDocument } = node;
-  const { constructor } = ownerDocument;
-  const document = new constructor();
-  document[CUSTOM_ELEMENTS] = ownerDocument[CUSTOM_ELEMENTS];
-  const { childNodes } = parseFromString(document, ignoreCase(node), html);
+  // Prevent infinite recursion by checking if we're already setting innerHTML
+  if ((node as any)._settingInnerHTML) {
+    return;
+  }
+  
+  try {
+    (node as any)._settingInnerHTML = true;
+    
+    const { ownerDocument } = node;
+    const { constructor } = ownerDocument;
+    const document = new constructor();
+    document[CUSTOM_ELEMENTS] = ownerDocument[CUSTOM_ELEMENTS];
+    const { childNodes } = parseFromString(document, ignoreCase(node), html);
 
-  node.replaceChildren(...childNodes.map(setOwnerDocument, ownerDocument));
+    node.replaceChildren(...childNodes.map(setOwnerDocument, ownerDocument));
+  } finally {
+    (node as any)._settingInnerHTML = false;
+  }
 };
 
 function setOwnerDocument(this: any, node: any): any {

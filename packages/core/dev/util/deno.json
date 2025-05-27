@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/util",
   "license": "Apache-2.0",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "imports": {
     "@inspatial/theme": "jsr:@inspatial/theme@^0.1.7"
   },
@@ -59,7 +59,8 @@
     "./array": "./src/array.ts",
     "./splice": "./src/splice.ts",
     "./tolower": "./src/tolower.ts",
-    "./toupper": "./src/toupper.ts"
+    "./toupper": "./src/toupper.ts",
+    "./safe-lookup-map": "./src/safe-lookup-map.ts"
   },
 
   "publish": {

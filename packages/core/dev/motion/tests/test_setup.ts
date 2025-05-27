@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { createDOM as InDOM } from "../../dom/src/index.ts";
+import { createDOM } from "@in/dom";
 import {
   setupTestAnimations,
   waitForAnimations,
-} from "./animation-test-helper.ts";
+} from "./animation/animation-test-helper.ts";
 
 /**
  * # TestSetup
@@ -31,7 +31,7 @@ import {
       now: () => Date.now(),
     };
   }
-  const { window, document, Node, Element, HTMLElement, SVGElement } = InDOM(
+  const { window, document, Node, Element, HTMLElement, SVGElement } = createDOM(
     "<html><body></body></html>"
   );
 
@@ -43,6 +43,7 @@ import {
     Element,
     HTMLElement,
     SVGElement,
+    // getComputedStyle,
   });
 
   // Use our animation test helper to make animations complete immediately

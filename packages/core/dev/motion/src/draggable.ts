@@ -53,8 +53,8 @@ import type {
   Transforms as TransformsInterface,
   AnimatableParams,
   AnimatableObject,
-  AnyObject,
   TargetsParam,
+  AnyObject,
 } from "./types.ts";
 
 /**

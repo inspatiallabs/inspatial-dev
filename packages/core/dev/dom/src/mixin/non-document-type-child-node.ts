@@ -14,8 +14,8 @@ export const nextElementSibling = (node: Node) => {
 };
 
 export const previousElementSibling = (node: Node) => {
-  let prev = previousSibling({ prev: node } as any);
+  let prev = previousSibling(node as any);
   while (prev && prev.nodeType !== ELEMENT_NODE)
-    prev = previousSibling({ prev } as any);
+    prev = previousSibling(prev as any);
   return prev;
 };

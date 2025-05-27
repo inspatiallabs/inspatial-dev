@@ -29,7 +29,11 @@ export const ignoreCase = ({
   ownerDocument,
 }: {
   ownerDocument: Document;
-}): boolean => ownerDocument[MIME].ignoreCase;
+}): boolean => {
+  // Safety check for MIME property
+  const mime = ownerDocument[MIME];
+  return mime ? mime.ignoreCase : true; // Default to true for HTML documents
+};
 
 /**
  * Sets two nodes to be adjacent
@@ -100,7 +104,10 @@ export const localCase = ({
   localName: string;
   ownerDocument: Document;
 }): string => {
-  return ownerDocument[MIME].ignoreCase ? localName.toLowerCase() : localName;
+  // Safety check for MIME property
+  const mime = ownerDocument[MIME];
+  const shouldIgnoreCase = mime ? mime.ignoreCase : true; // Default to true for HTML documents
+  return shouldIgnoreCase ? localName.toLowerCase() : localName;
 };
 
 /**

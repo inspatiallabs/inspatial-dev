@@ -29,7 +29,7 @@ interface XMLParseOptions {
 
 /**
  * Manually extract namespaces from XML string before parsing
- * This is needed because linkedom's namespace handling is limited
+ * This is needed because InSpatial DOM's namespace handling is limited
  */
 function extractNamespaces(xml: string): Record<string, string> {
   const namespaces: Record<string, string> = {};

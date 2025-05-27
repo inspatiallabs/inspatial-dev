@@ -54,6 +54,7 @@ export * from "./splice.ts";
 export * from "./tolower.ts";
 export * from "./toupper.ts";
 export * from "./create-attribute-filter.ts";
+export * from "./safe-lookup-map.ts";
 
 // export * from "./getletterspacing.ts";
 // export * from "./server-action.ts"; moved to InSpatial Run as part of the Framework Runtime

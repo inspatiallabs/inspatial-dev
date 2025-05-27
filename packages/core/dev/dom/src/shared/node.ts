@@ -4,6 +4,7 @@ import {
   COMMENT_NODE,
   DOCUMENT_NODE,
   DOCUMENT_FRAGMENT_NODE,
+  ELEMENT_NODE,
   TEXT_NODE,
   NODE_END,
 } from "./constants.ts";
@@ -37,10 +38,12 @@ export const parentElement = ({ parentNode }: { parentNode?: Node }) => {
   return parentNode;
 };
 
-export const previousSibling = ({ prev }: { prev?: Node }) => {
+export const previousSibling = (node: any) => {
+  const prev = node[PREV];
   switch (prev ? prev.nodeType : 0) {
     case NODE_END:
       return (prev as any)?.[START];
+    case ELEMENT_NODE:
     case TEXT_NODE:
     case COMMENT_NODE:
     case CDATA_SECTION_NODE:
@@ -50,6 +53,13 @@ export const previousSibling = ({ prev }: { prev?: Node }) => {
 };
 
 export const nextSibling = (node: Node) => {
+  // For simple elements, use direct NEXT
+  const directNext = (node as any)[NEXT];
+  if (directNext && directNext.nodeType !== NODE_END) {
+    return directNext;
+  }
+  
+  // For complex elements, use getEnd approach
   const next = getEnd(node as any)[NEXT];
   return next && (next.nodeType === NODE_END ? null : next);
 };

@@ -1,3 +1,5 @@
+import { createIsolatedDOM } from "@in/dom/test-helpers";
+
 /**
  * # Test Runner
  * @summary #### Custom test runner that sets up DOM mocks before running tests
@@ -32,6 +34,7 @@ async function runTests() {
     beforeEach(async () => {
       // We need to ensure the beforeEachTest function completes before each test
       await beforeEachTest();
+      createIsolatedDOM();
     });
 
     // Determine test files to run

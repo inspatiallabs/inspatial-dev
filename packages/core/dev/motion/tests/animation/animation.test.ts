@@ -2,11 +2,11 @@
 // import "./test_setup.ts";
 
 import { it, describe, expect, beforeEach, afterEach } from "@inspatial/test";
-import { createMotion, createMotionAnimation } from "../src/animation.ts";
-import { tweenTypes, minValue } from "../src/consts.ts";
-import { createMotionTimer } from "../src/timer.ts";
-import { getChildAtIndex, getChildLength } from "../src/utils/index.ts";
-import { inMotion } from "../src/index.ts";
+import { createMotion, createMotionAnimation } from "../../src/animation.ts";
+import { tweenTypes, minValue } from "../../src/consts.ts";
+import { createMotionTimer } from "../../src/timer.ts";
+import { getChildAtIndex, getChildLength } from "../../src/utils/index.ts";
+import { inMotion } from "../../src/index.ts";
 // import { beforeEachTest } from "./test_setup.ts";
 
 describe("InMotion Animations", () => {
