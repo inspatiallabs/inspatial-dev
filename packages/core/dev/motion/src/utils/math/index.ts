@@ -346,7 +346,7 @@ export const mapRange = (
  * ```
  */
 export const clampInfinity = (value: number): number => 
-  value === Infinity ? Number.MAX_SAFE_INTEGER : value;
+  value === Infinity ? Number.MAX_SAFE_INTEGER : value === -Infinity ? -Number.MAX_SAFE_INTEGER : value;
 
 /**
  * # DegToRad

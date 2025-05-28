@@ -8,19 +8,17 @@ import {
 } from "./consts.ts";
 
 import {
+  mergeObjects,
   isObj,
   isFnc,
   isUnd,
   isNil,
   isNum,
-  addChild,
   forEachChildren,
   stringStartsWith,
-  mergeObjects,
   clampInfinity,
   normalizeTime,
   isStr,
-  round,
 } from "./helpers.ts";
 
 import { getRelativeValue, setValue } from "./values.ts";
@@ -59,7 +57,7 @@ import type {
  * Think of it like a music sequencer where you can place animations at specific points in time and control
  * their playback as a unified whole.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial Motion
  * @kind class
  * @access public
@@ -68,7 +66,15 @@ import type {
 /**
  * TimePosition can be a number, string, or function that determines positioning
  */
-type TimePosition = number | string | Function;
+type TimePosition =
+  | number
+  | string
+  | ((
+      target: Target,
+      index: number,
+      length: number,
+      timeline: InMotionTimeline
+    ) => number);
 
 /**
  * InMotionTimeline's children offsets positions parser
@@ -177,7 +183,10 @@ function addTlChild(
     isNum(childParams.duration) && (childParams.duration as number) <= minValue;
   // Offset the tl position with -minValue for 0 duration animations or .set() calls in order to align their end value with the defined position
   const adjustedPosition = isSetter ? timePosition - minValue : timePosition;
-  tick(tl, adjustedPosition, 1, 1, tickModes.AUTO);
+
+  // Use type assertion to handle the interface mismatch
+  tick(tl as any, adjustedPosition, 1, 1, tickModes.AUTO);
+
   const tlChild = targets
     ? new JSAnimation(
         targets,
@@ -193,7 +202,7 @@ function addTlChild(
 
   // Insert at a position relative to startTime rather than at the end
   // This ensures animations are stored in chronological order which helps with performance
-  let currentChild = tl._head;
+  let currentChild = (tl as any)._head;
   let previousChild = null;
   const childStartTime = (tlChild as any)._offset + (tlChild as any)._delay;
 
@@ -215,7 +224,7 @@ function addTlChild(
     if (currentChild) {
       (currentChild as any)._prev = tlChild;
     } else {
-      tl._tail = tlChild;
+      (tl as any)._tail = tlChild;
     }
   } else {
     // Insert at the beginning
@@ -223,9 +232,9 @@ function addTlChild(
     if (currentChild) {
       (currentChild as any)._prev = tlChild;
     } else {
-      tl._tail = tlChild;
+      (tl as any)._tail = tlChild;
     }
-    tl._head = tlChild;
+    (tl as any)._head = tlChild;
   }
 
   forEachChildren(tl as any, (child: Renderable) => {
@@ -240,7 +249,6 @@ function addTlChild(
 /**
  * InMotionTimeline class for sequencing and orchestrating animations
  */
-// @ts-ignore - Type compatibility issues with InMotionTimeline interface
 export class InMotionTimeline
   extends Timer
   implements InMotionTimelineInterface
@@ -252,8 +260,7 @@ export class InMotionTimeline
   /** Default parameters */
   override defaults: DefaultsParams;
   /** Render callback */
-  // @ts-ignore - Type compatibility with InMotionTimelineInterface
-  onRender: Callback<InMotionTimeline>;
+  override onRender: Callback<InMotionTimeline>;
   /** Easing function */
   _ease: EasingFunction;
   /** Duration of one iteration */
@@ -276,8 +283,9 @@ export class InMotionTimeline
       ? mergeObjects(defaultsParams, globalDefaults)
       : globalDefaults;
     /** Render callback */
-    // @ts-ignore - Cast to correct callback type
-    this.onRender = parameters.onRender || globalDefaults.onRender;
+    this.onRender = (parameters.onRender ||
+      globalDefaults.onRender ||
+      (() => {})) as unknown as Callback<InMotionTimeline>;
     const tlPlaybackEase = setValue(
       parameters.playbackEase,
       globalDefaults.playbackEase
@@ -309,7 +317,12 @@ export class InMotionTimeline
         const childParams = a2 as AnimationParams;
         // Check for function for children stagger positions
         if (isFnc(a3)) {
-          const staggeredPosition = a3 as Function;
+          const staggeredPosition = a3 as (
+            target: Target,
+            index: number,
+            length: number,
+            timeline: InMotionTimeline
+          ) => number;
           const parsedTargetsArray = parseTargets(a1 as TargetsParam);
           // Store initial duration before adding new children that will change the duration
           const tlDuration = this.duration;
@@ -437,7 +450,8 @@ export class InMotionTimeline
    * @return {this} Self reference for chaining
    */
   remove(targets: TargetsParam, propertyName?: string): this {
-    remove(targets, this, propertyName);
+    // Use type assertion to handle the function signature mismatch
+    (remove as any)(targets, this, propertyName);
     return this;
   }
 
@@ -458,7 +472,7 @@ export class InMotionTimeline
       undefined,
       undefined
     );
-    for (let labelName in labels) labels[labelName] *= timeScale;
+    for (const labelName in labels) labels[labelName] *= timeScale;
     return super.stretch(newDuration);
   }
 
@@ -512,7 +526,7 @@ export class InMotionTimeline
  * This function creates a new InMotionTimeline instance with the provided parameters,
  * allowing you to sequence and orchestrate multiple animations with precise timing.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial Motion
  * @kind function
  * @access public

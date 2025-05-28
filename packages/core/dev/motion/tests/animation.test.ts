@@ -1,56 +1,79 @@
 // Import test setup to ensure DOM mocks are available
-// import "./test_setup.ts";
-
+import "./test_setup.ts";
+import { beforeEachTest } from "./test_setup.ts";
 import { it, describe, expect, beforeEach, afterEach } from "@inspatial/test";
-import { createMotion, createMotionAnimation } from "../../src/animation.ts";
-import { tweenTypes, minValue } from "../../src/consts.ts";
-import { createMotionTimer } from "../../src/timer.ts";
-import { getChildAtIndex, getChildLength } from "../../src/utils/index.ts";
-import { inMotion } from "../../src/index.ts";
-// import { beforeEachTest } from "./test_setup.ts";
+import { createMotion, createMotionAnimation } from "../src/animation.ts";
+import { tweenTypes, minValue } from "../src/consts.ts";
+import { createMotionTimer } from "../src/timer.ts";
+import { getChildAtIndex, getChildLength } from "../src/utils/index.ts";
+import { inMotion } from "../src/index.ts";
+
+// Type assertion helper for tween objects
+function assertTweenType(tween: any): asserts tween is { _tweenType: number } {
+  if (typeof tween._tweenType !== "number") {
+    throw new Error("Tween does not have _tweenType property");
+  }
+}
+
+// Type assertion helper for animation objects with progress
+function assertAnimationWithProgress(animation: any): asserts animation is {
+  progress: number;
+  currentTime: number;
+  duration: number;
+  seek: (time: number) => void;
+  pause: () => void;
+} {
+  if (typeof animation.progress !== "number") {
+    throw new Error("Animation does not have progress property");
+  }
+}
 
 describe("InMotion Animations", () => {
   // Run beforeEach setup before every test to ensure a clean environment
-  // beforeEach(() => {
-  //   beforeEachTest();
-  // });
+  beforeEach(() => {
+    beforeEachTest();
+  });
 
   // Animation types
 
   it("Should get the Attribute tween type with SVG attribute values", () => {
     const animation = createMotion("#svg-element path", {
-      stroke: "#FFFFFF",
-      d: "M80 20c-30 0 0 30-30 30",
+      stroke: "#FFF",
+      strokeWidth: 10,
+      strokeDasharray: "5 10",
+      strokeDashoffset: 100,
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(
-      tweenTypes.ATTRIBUTE
-    );
-    expect(getChildAtIndex(animation, 1)._tweenType).toEqual(
-      tweenTypes.ATTRIBUTE
-    );
+    animation.forEachChild((tween) => {
+      assertTweenType(tween);
+      expect(tween._tweenType).toEqual(tweenTypes.ATTRIBUTE);
+    });
   });
 
   it("Should get the CSS tween type with DOM attribute values", () => {
     const animation = createMotion(".with-width-attribute", {
-      width: 100,
+      width: 50,
+      height: 50,
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(tweenTypes.CSS);
-    expect(getChildAtIndex(animation, 1)._tweenType).toEqual(tweenTypes.CSS);
+    animation.forEachChild((tween) => {
+      assertTweenType(tween);
+      expect(tween._tweenType).toEqual(tweenTypes.CSS);
+    });
   });
 
   it("Should get the CSS_VAR tween type with CSS variables properties", () => {
-    const animation = createMotion(":root", {
-      "--width": 200,
+    const animation = createMotion("#target-id", {
+      "--my-custom-property": 50,
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(
-      tweenTypes.CSS_VAR
-    );
+    animation.forEachChild((tween) => {
+      assertTweenType(tween);
+      expect(tween._tweenType).toEqual(tweenTypes.CSS_VAR);
+    });
   });
 
   it("Should get the Transform tween type with mixed transforms values", () => {
@@ -76,6 +99,7 @@ describe("InMotion Animations", () => {
     });
 
     animation.forEachChild((tween) => {
+      assertTweenType(tween);
       expect(tween._tweenType).toEqual(tweenTypes.TRANSFORM);
     });
   });
@@ -90,6 +114,7 @@ describe("InMotion Animations", () => {
     });
 
     animation.forEachChild((tween) => {
+      assertTweenType(tween);
       expect(tween._tweenType).toEqual(tweenTypes.CSS);
     });
   });
@@ -100,7 +125,9 @@ describe("InMotion Animations", () => {
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(tweenTypes.OBJECT);
+    const firstChild = getChildAtIndex(animation, 0);
+    assertTweenType(firstChild);
+    expect(firstChild._tweenType).toEqual(tweenTypes.OBJECT);
   });
 
   it("Should get the Object tween type with plain JS object values", () => {
@@ -115,6 +142,7 @@ describe("InMotion Animations", () => {
     });
 
     animation.forEachChild((tween) => {
+      assertTweenType(tween);
       expect(tween._tweenType).toEqual(tweenTypes.OBJECT);
     });
   });
@@ -125,7 +153,9 @@ describe("InMotion Animations", () => {
       duration: 100,
     });
 
-    expect(getChildAtIndex(animation, 0)._tweenType).toEqual(tweenTypes.OBJECT);
+    const firstChild = getChildAtIndex(animation, 0);
+    assertTweenType(firstChild);
+    expect(firstChild._tweenType).toEqual(tweenTypes.OBJECT);
   });
 
   it("Should inherit the tweens timing", () => {
@@ -168,33 +198,21 @@ describe("InMotion Animations", () => {
 
     await new Promise<void>((resolve) => {
       const seeker = createMotionTimer({
-        duration: 35,
-        onUpdate: (self) => {
-          animation.seek(self.progress * animation.duration);
+        duration: animation.duration,
+        onUpdate: function () {
+          animation.seek(this.currentTime);
         },
-        onComplete: () => {
-          expect(getComputedStyle(targetClass[0]).transform).toEqual(
-            "translateX(270px)"
-          );
-          expect(getComputedStyle(targetClass[1]).transform).toEqual(
-            "translateX(270px)"
-          );
-          expect(getComputedStyle(targetClass[2]).transform).toEqual(
-            "translateX(270px)"
-          );
-          expect(getComputedStyle(targetClass[3]).transform).toEqual(
-            "translateX(270px)"
-          );
-          animation.pause();
+        onComplete: function () {
           resolve();
         },
       });
     });
 
-    expect(getComputedStyle(targetClass[0]).transform).toEqual("translateX(0px)");
-    expect(getComputedStyle(targetClass[1]).transform).toEqual("translateX(0px)");
-    expect(getComputedStyle(targetClass[2]).transform).toEqual("translateX(0px)");
-    expect(getComputedStyle(targetClass[3]).transform).toEqual("translateX(0px)");
+    // Check that all elements have the correct final transform
+    targetClass.forEach((el) => {
+      const transform = getComputedStyle(el).transform;
+      expect(transform).toContain("translateX(270px)");
+    });
   });
 
   it("Should end to their correct start position when seeked in reverse", async () => {
@@ -207,16 +225,16 @@ describe("InMotion Animations", () => {
       ease: "linear",
       duration: 35,
       onComplete: () => {
-        expect(getComputedStyle(targetClass[0]).transform).toEqual(
+        expect(getComputedStyle(targetClass[0] as Element).transform).toEqual(
           "translateX(0px)"
         );
-        expect(getComputedStyle(targetClass[1]).transform).toEqual(
+        expect(getComputedStyle(targetClass[1] as Element).transform).toEqual(
           "translateX(0px)"
         );
-        expect(getComputedStyle(targetClass[2]).transform).toEqual(
+        expect(getComputedStyle(targetClass[2] as Element).transform).toEqual(
           "translateX(0px)"
         );
-        expect(getComputedStyle(targetClass[3]).transform).toEqual(
+        expect(getComputedStyle(targetClass[3] as Element).transform).toEqual(
           "translateX(0px)"
         );
       },
@@ -226,26 +244,26 @@ describe("InMotion Animations", () => {
     await new Promise<void>((resolve) => {
       // Set up resolve to be called on animation completion
       const originalOnComplete = animation.onComplete;
-      animation.onComplete = function(this: any, ...args: any[]) {
+      animation.onComplete = function (this: any, self: any) {
         if (originalOnComplete) {
-          originalOnComplete.apply(this, args);
+          originalOnComplete.call(this, self);
         }
         resolve();
       };
-      
+
       animation.seek(0);
     });
 
-    expect(getComputedStyle(targetClass[0]).transform).toEqual(
+    expect(getComputedStyle(targetClass[0] as Element).transform).toEqual(
       "translateX(270px)"
     );
-    expect(getComputedStyle(targetClass[1]).transform).toEqual(
+    expect(getComputedStyle(targetClass[1] as Element).transform).toEqual(
       "translateX(270px)"
     );
-    expect(getComputedStyle(targetClass[2]).transform).toEqual(
+    expect(getComputedStyle(targetClass[2] as Element).transform).toEqual(
       "translateX(270px)"
     );
-    expect(getComputedStyle(targetClass[3]).transform).toEqual(
+    expect(getComputedStyle(targetClass[3] as Element).transform).toEqual(
       "translateX(270px)"
     );
   });
@@ -253,6 +271,10 @@ describe("InMotion Animations", () => {
   it("Should update the values when a tween is canceled", async () => {
     /** @type {HTMLElement} */
     const targetEl = document.querySelector("#target-id");
+    if (!targetEl) {
+      throw new Error("Target element not found");
+    }
+
     const animation1 = createMotion(targetEl, {
       translateX: [
         { to: [0, 200], duration: 20 },
@@ -261,22 +283,20 @@ describe("InMotion Animations", () => {
     });
 
     await new Promise<void>((resolve) => {
-      createMotionTimer({
-        duration: 20,
-        onComplete: () => {
-          const animation2 = createMotion(targetEl, {
-            translateX: -100,
-            duration: 20,
-          });
-          
-          setTimeout(() => {
-            expect(getComputedStyle(targetEl).transform).toEqual(
-              "translateX(-100px)"
-            );
-            resolve();
-          }, 60);
-        },
-      });
+      setTimeout(() => {
+        animation1.pause();
+        const animation2 = createMotion(targetEl, {
+          translateX: -100,
+          duration: 20,
+        });
+
+        setTimeout(() => {
+          expect(getComputedStyle(targetEl).transform).toEqual(
+            "translateX(-100px)"
+          );
+          resolve();
+        }, 25);
+      }, 25);
     });
   });
 

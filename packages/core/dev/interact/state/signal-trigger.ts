@@ -6,7 +6,7 @@
  * and the trigger event system, allowing signals to react to triggers and triggers
  * to be activated based on signal changes.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind module

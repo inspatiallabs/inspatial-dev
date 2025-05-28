@@ -184,8 +184,8 @@ export const cleanInlineStyles = (renderable: Renderable): Renderable => {
 
 // Defines decomposed values target objects only once and mutate their properties later to avoid GC
 // Use the exported function from values.ts to create base objects
-const fromTargetObject = createDecomposedValueTargetObject();
-const toTargetObject = createDecomposedValueTargetObject();
+const fromTargetObject = createDecomposedValueTargetObject() as any;
+const toTargetObject = createDecomposedValueTargetObject() as any;
 const toFunctionStore: { func: FunctionValue | null } = { func: null };
 const keyframesTargetArray: any[] = [null];
 const fastSetValuesArray: any[] = [null, null];
@@ -325,7 +325,7 @@ const generateKeyframes = (
  * @since 0.1.0
  * @category InSpatial Motion
  */
-export class JSAnimation extends Timer implements IJSAnimation {
+export class JSAnimation extends Timer {
   /** The animated targets */
   targets: TargetsArray = [];
 
@@ -363,13 +363,7 @@ export class JSAnimation extends Timer implements IJSAnimation {
   percentages: number[] = [];
 
   /** Callback function to execute on each render */
-  onRender: Callback<JSAnimation> = () => {};
-
-  /** Callback function to execute on update */
-  override onUpdate: Callback<JSAnimation> = () => {};
-
-  /** Callback function to execute on completion */
-  override onComplete: Callback<JSAnimation> = () => {};
+  override onRender: Callback<JSAnimation> = () => {};
 
   /** Callback function to execute on cancel */
   onCancel?: () => void;
@@ -743,7 +737,7 @@ export class JSAnimation extends Timer implements IJSAnimation {
                 if (prevSibling) {
                   if (prevSibling._valueType === valueTypes.UNIT) {
                     fromTargetObject.t = valueTypes.UNIT;
-                    fromTargetObject.u = prevSibling._unit;
+                    fromTargetObject.u = prevSibling._unit || "";
                   }
                 } else {
                   decomposeRawValue(
@@ -850,9 +844,9 @@ export class JSAnimation extends Timer implements IJSAnimation {
                     ? toTargetObject
                     : fromTargetObject;
                 notComplexValue.t = valueTypes.COMPLEX;
-                notComplexValue.s = cloneArray(complexValue.s || []);
+                notComplexValue.s = cloneArray(complexValue.s || []) || [];
                 // Handle potentially null complex values
-                if (complexValue.d) {
+                if (complexValue.d && Array.isArray(complexValue.d)) {
                   notComplexValue.d = complexValue.d.map(
                     (val: number) => notComplexValue.n
                   );
@@ -955,7 +949,7 @@ export class JSAnimation extends Timer implements IJSAnimation {
 
             /** @type {Tween} */
             const tween: Tween = {
-              parent: this as unknown as JSAnimation,
+              parent: this as any,
               id: tweenId++,
               property: propName,
               target: target,
@@ -1032,22 +1026,24 @@ export class JSAnimation extends Timer implements IJSAnimation {
             lastTransformGroupLength = animationAnimationLength;
 
             // Set renderTransforms directly on the transform tween
-            prevTween._renderTransforms = 1;
+            if (prevTween) {
+              prevTween._renderTransforms = 1;
 
-            // Also mark any related additive tweens if using blend composition
-            if (
-              prevTween._composition === compositionTypes.blend &&
-              additive.animation
-            ) {
-              forEachChildren(
-                additive.animation as unknown as { _head: any; _tail: any },
-                (additiveTween: Tween) => {
-                  if (additiveTween.id === prevTween.id) {
-                    additiveTween._renderTransforms = 1;
-                  }
-                },
-                true
-              );
+              // Also mark any related additive tweens if using blend composition
+              if (
+                prevTween._composition === compositionTypes.blend &&
+                additive.animation
+              ) {
+                forEachChildren(
+                  additive.animation as unknown as { _head: any; _tail: any },
+                  (additiveTween: Tween) => {
+                    if (additiveTween.id === prevTween!.id) {
+                      additiveTween._renderTransforms = 1;
+                    }
+                  },
+                  true
+                );
+              }
             }
           }
         }
@@ -1120,9 +1116,9 @@ export class JSAnimation extends Timer implements IJSAnimation {
               this._loopDelay
           ) || minValue;
     /** @type {Callback<this>} */
-    this.onRender = onRender || animDefaults.onRender;
+    this.onRender = (onRender || animDefaults.onRender || (() => {})) as any;
     /** @type {EasingFunction} */
-    this._ease = animEase;
+    this._ease = animEase || ((t: number) => t);
     /** @type {Number} */
     this._delay = iterationDelay;
     // NOTE: I'm keeping delay values separated from offsets in timelines because delays can override previous tweens and it could be confusing to debug a timeline with overridden tweens and no associated visible delays.
@@ -1167,7 +1163,7 @@ export class JSAnimation extends Timer implements IJSAnimation {
   /**
    * @return {this}
    */
-  override refresh(): this {
+  refresh(): this {
     forEachChildren(
       this,
       (tween: Tween) => {
@@ -1278,7 +1274,7 @@ export class Animatable {
     if (globals.scope) {
       const scope = globals.scope as unknown as Scope;
       if (scope.revertibles) {
-        scope.revertibles.push(this);
+        scope.revertibles.push(this as any);
       }
     }
 
@@ -1399,4 +1395,5 @@ export class Animatable {
 export const createMotionAnimation = (
   targets: TargetsParam,
   parameters: AnimatableParams
-): AnimatableObject => new Animatable(targets, parameters) as AnimatableObject;
+): AnimatableObject =>
+  new Animatable(targets, parameters) as unknown as AnimatableObject;

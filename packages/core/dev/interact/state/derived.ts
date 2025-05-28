@@ -5,7 +5,7 @@
  * This module provides functionality to create state that derives its values
  * from other state instances, automatically updating when source states change.
  * 
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind module

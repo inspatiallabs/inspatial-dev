@@ -722,7 +722,7 @@ export function createTrigger<S = any, P extends any[] = any[]>(
  * that's already been programmed - you provide the button name (trigger) and it performs the specific
  * action associated with that button.
  * 
- * @since 1.0.0   
+ * @since 0.1.0   
  * @category InSpatial State
  * @module @inspatial/state/trigger
  * @kind function

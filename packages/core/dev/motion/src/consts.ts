@@ -101,7 +101,7 @@ export const transformsFragmentStrings = validTransforms.reduce((a, v) => ({...a
 export const noop = () => {};
 
 /** @return {Boolean} */
-export const isPath = (target) => target.tagName === 'path';
+export const isPath = (target: any) => target.tagName === 'path';
 
 // Regex
 

@@ -1,8 +1,8 @@
 import { defaults, globals, globalVersions } from "./globals.ts";
 
-import { tickModes, isBrowser, K, doc } from "./consts.ts";
+import { tickModes, isBrowser, K, doc, minValue } from "./consts.ts";
 
-import { now, forEachChildren, removeChild } from "./helpers.ts";
+import { now, forEachChildren, removeChild, round } from "./helpers.ts";
 
 import { InMotionClock } from "./clock.ts";
 
@@ -40,12 +40,12 @@ const browserCancelMethod = isBrowser
  */
 export class InMotionEngine extends InMotionClock {
   /**
-   * Whether to use the default main animation loop
+   * Whether to use the default main loop for animations
    */
   public useDefaultMainLoop: boolean = true;
 
   /**
-   * Whether to pause animations when document is hidden
+   * Whether to pause animations when the document is hidden
    */
   public pauseOnDocumentHidden: boolean = true;
 
@@ -55,34 +55,34 @@ export class InMotionEngine extends InMotionClock {
   public defaults: Record<string, any>;
 
   /**
-   * Whether the InMotion is currently paused
+   * Whether the engine is currently paused
    */
   public paused: boolean = false;
 
   /**
-   * Request ID for the animation frame
+   * Request animation frame ID
    */
   public reqId: number | null = null;
 
   /**
-   * Creates a new Engine instance
-   * @param initTime - Initial time for the InMotion
+   * Creates a new InMotionEngine instance
+   * @param initTime - Initial time value for the engine
    */
   constructor(initTime?: number) {
-    super();
-    this.defaults = defaults;
-    const time = initTime || now();
-    this._startTime = time;
-    this._lastTime = time;
-    this._elapsedTime = 0;
+    const time = initTime !== undefined ? initTime : now();
+    super(time); // Pass the time to parent constructor
+    this.defaults = { ...defaults }; // Create a copy of defaults
+    // Set default FPS to 60 instead of maxFps (120)
+    this._fps = 60;
+    this._frameDuration = round(K / 60, 0);
   }
 
   /**
    * Request an animation tick
-   * @param time - Current time
+   * @param _time - Current time (unused in base implementation)
    * @returns Tick mode value (number)
    */
-  override requestTick(time: number): number {
+  override requestTick(_time: number): number {
     return tickModes.AUTO; // Return a number instead of boolean
   }
 
@@ -91,9 +91,11 @@ export class InMotionEngine extends InMotionClock {
    * @param time - Current time
    */
   override computeDeltaTime(time: number): number {
-    this.deltaTime = (time - this._lastTime) * this._speed;
+    const delta = (time - this._lastTime) * this._speed;
+    this.deltaTime = delta;
     this._lastTime = time;
-    this._elapsedTime += this.deltaTime;
+    this._currentTime = time;
+    this._elapsedTime += Math.abs(delta); // Use absolute value to prevent negative accumulation
     return this.deltaTime;
   }
 
@@ -114,14 +116,14 @@ export class InMotionEngine extends InMotionClock {
         if (!activeTickable.paused) {
           // Ensure we only pass the expected number of arguments to tick
           tick(
-            activeTickable,
+            activeTickable as any, // Type assertion to handle interface mismatch
             activeTickable.deltaTime,
             this._elapsedTime,
             InMotionSpeed,
             InMotionFps
           );
         } else {
-          removeChild(this, activeTickable);
+          removeChild(this as any, activeTickable); // Type assertion for protected property access
           this._hasChildren = !!this._tail;
 
           if (typeof (activeTickable as any)._running !== "undefined") {
@@ -149,8 +151,8 @@ export class InMotionEngine extends InMotionClock {
    */
   wake(): this {
     if (this.reqId) return this;
-    if (typeof window !== "undefined") {
-      this.reqId = window.requestAnimationFrame(tickEngine);
+    if (typeof globalThis !== "undefined" && globalThis.requestAnimationFrame) {
+      this.reqId = globalThis.requestAnimationFrame(tickEngine);
     }
     return this;
   }
@@ -159,8 +161,12 @@ export class InMotionEngine extends InMotionClock {
    * Cancel animation frame request
    */
   sleep(): this {
-    if (typeof window !== "undefined" && this.reqId) {
-      window.cancelAnimationFrame(this.reqId);
+    if (
+      typeof globalThis !== "undefined" &&
+      globalThis.cancelAnimationFrame &&
+      this.reqId
+    ) {
+      globalThis.cancelAnimationFrame(this.reqId);
     }
     this.reqId = null;
     return this;
@@ -182,7 +188,7 @@ export class InMotionEngine extends InMotionClock {
     if (!this.paused) return this;
     this.paused = false;
     forEachChildren(
-      this,
+      this as any, // Type assertion for protected property access
       (child: Tickable) => {
         if (typeof (child as any).resetTime === "function") {
           (child as any).resetTime();
@@ -203,12 +209,19 @@ export class InMotionEngine extends InMotionClock {
   }
 
   /**
-   * Set the playback speed
+   * Set the playback speed with validation
    */
   override set speed(playbackRate: number) {
-    this._speed = playbackRate * globals.timeScale;
+    // Validate and clamp speed values
+    const pbr = +playbackRate;
+    if (isNaN(pbr) || pbr <= 0) {
+      this._speed = minValue; // Use minimum valid value instead of invalid input
+    } else {
+      this._speed = pbr;
+    }
+
     forEachChildren(
-      this,
+      this as any, // Type assertion for protected property access
       (child: Tickable) => {
         if (typeof (child as any)._speed !== "undefined") {
           (child as any).speed = (child as any)._speed;
@@ -218,6 +231,26 @@ export class InMotionEngine extends InMotionClock {
       undefined,
       undefined
     );
+  }
+
+  /**
+   * Get the current frames per second setting
+   */
+  override get fps(): number {
+    return this._fps;
+  }
+
+  /**
+   * Set the FPS with validation
+   */
+  override set fps(frameRate: number) {
+    // Validate and clamp fps values
+    const fr = +frameRate;
+    if (isNaN(fr) || fr <= 0) {
+      super.fps = minValue; // Use minimum valid value instead of invalid input
+    } else {
+      super.fps = fr;
+    }
   }
 
   /**
@@ -263,10 +296,10 @@ export class InMotionEngine extends InMotionClock {
   }
 
   /**
-   * Reset all animation properties
+   * Reset all animation defaults to empty state
    */
   reset(): this {
-    this.defaults = defaults;
+    this.defaults = {}; // Clear all defaults
     return this;
   }
 
@@ -279,7 +312,7 @@ export class InMotionEngine extends InMotionClock {
 
   /**
    * Checks if the engine has any active children
-   * 
+   *
    * @returns {boolean} True if the engine has active children
    */
   hasChildren(): boolean {
@@ -292,15 +325,15 @@ export class InMotionEngine extends InMotionClock {
 let localTickMethod: (callback: FrameRequestCallback) => number;
 let InMotion: InMotionEngine;
 
-if (typeof window !== "undefined") {
-  localTickMethod = window.requestAnimationFrame.bind(window);
+if (typeof globalThis !== "undefined" && globalThis.requestAnimationFrame) {
+  localTickMethod = globalThis.requestAnimationFrame.bind(globalThis);
   InMotion = new InMotionEngine(now());
   if (isBrowser) {
     globalVersions.inMotionEngine = InMotion as any;
-    if (doc && typeof doc.addEventListener === 'function') {
+    if (doc && typeof doc.addEventListener === "function") {
       doc.addEventListener("visibilitychange", () => {
         if (!InMotion.pauseOnDocumentHidden) return;
-        doc.hidden ? InMotion.pause() : InMotion.resume();
+        doc && doc.hidden ? InMotion.pause() : InMotion.resume(); // Add null check for doc
       });
     }
   }

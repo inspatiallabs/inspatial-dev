@@ -11,16 +11,19 @@ import {
 } from "./consts.ts";
 
 // Define helper functions directly rather than importing from utils/index.ts
-const stringStartsWith = (str: string, sub: string): boolean => str.indexOf(sub) === 0;
+const stringStartsWith = (str: string, sub: string): boolean =>
+  str.indexOf(sub) === 0;
 const isUnd = (value: any): boolean => typeof value === "undefined";
 const isFnc = (value: any): value is Function => typeof value === "function";
 const isCol = (value: string): boolean => {
   // Simple color detection - customize as needed for your use case
-  return value.startsWith('#') || 
-         value.startsWith('rgb') || 
-         value.startsWith('hsl') || 
-         value.startsWith('rgba') || 
-         value.startsWith('hsla');
+  return (
+    value.startsWith("#") ||
+    value.startsWith("rgb") ||
+    value.startsWith("hsl") ||
+    value.startsWith("rgba") ||
+    value.startsWith("hsla")
+  );
 };
 const cloneArray = <T>(arr: T[] | null): T[] | null => {
   return arr ? [...arr] : null;
@@ -34,19 +37,22 @@ import { convertColorStringValuesToRgbaArray } from "./colors.ts";
 
 /**
  * Sets a default value if the target value is undefined
- * 
+ *
  * @template T, D
  * @param {T|undefined} targetValue - The value to check
  * @param {D} defaultValue - The default value to use if targetValue is undefined
  * @return {T|D} - The target value or default value
  */
-export const setValue = <T, D>(targetValue: T | undefined, defaultValue: D): T | D => {
-  return isUnd(targetValue) ? defaultValue : targetValue;
+export const setValue = <T, D>(
+  targetValue: T | undefined,
+  defaultValue: D
+): T | D => {
+  return isUnd(targetValue) ? defaultValue : (targetValue as T);
 };
 
 /**
  * Gets a value from a function or returns the value directly
- * 
+ *
  * @template T
  * @param {T | ((target: any, index: number, total: number) => T)} value - Value or function returning a value
  * @param {any} target - Target element
@@ -79,7 +85,7 @@ export const getFunctionValue = <T>(
 
 /**
  * Determines the type of tween to use for a property
- * 
+ *
  * @param {any} target - The target object
  * @param {string} prop - The property name
  * @return {number} - The determined tween type constant
@@ -107,7 +113,7 @@ export const getTweenType = (target: any, prop: string): number => {
 
 /**
  * Gets the CSS value of a property
- * 
+ *
  * @param {any} target - Target element
  * @param {string} propName - Property name
  * @param {Record<string, any> | null} [animationInlineStyles] - Optional object to store inline styles
@@ -137,7 +143,7 @@ const getCSSValue = (
 
 /**
  * Gets the original value of a property before animation
- * 
+ *
  * @param {any} target - Target element
  * @param {string} propName - Property name
  * @param {number} [tweenType] - Type of tween from tweenTypes constants
@@ -159,36 +165,32 @@ export const getOriginalAnimatableValue = (
     ? parseInlineTransforms(
         target,
         propName,
-        animationInlineStyles
+        animationInlineStyles || undefined
       )
     : type === tweenTypes.CSS_VAR
-    ? getCSSValue(
-        target,
-        propName,
-        animationInlineStyles
-      ).trimStart()
-    : getCSSValue(
-        target,
-        propName,
-        animationInlineStyles
-      );
+    ? getCSSValue(target, propName, animationInlineStyles).trimStart()
+    : getCSSValue(target, propName, animationInlineStyles);
 };
 
 /**
  * Calculates a relative value based on an operator
- * 
+ *
  * @param {number} x - Base value
  * @param {number} y - Value to combine
  * @param {string} operator - Operator to use (+, -, *)
  * @return {number} - Calculated value
  */
-export const getRelativeValue = (x: number, y: number, operator: string): number => {
+export const getRelativeValue = (
+  x: number,
+  y: number,
+  operator: string
+): number => {
   return operator === "-" ? x - y : operator === "+" ? x + y : x * y;
 };
 
 /**
  * Creates a new target object for decomposed values
- * 
+ *
  * @return {any} - Empty target object with default values
  */
 export const createDecomposedValueTargetObject = () => {
@@ -204,26 +206,36 @@ export const createDecomposedValueTargetObject = () => {
 
 /**
  * Decomposes a raw value into its components
- * 
+ *
  * @param {string|number} rawValue - Value to decompose
  * @param {any} targetObject - Target object to store decomposed values
  * @return {any} - Target object with decomposed values
  */
-export const decomposeRawValue = (rawValue: string | number, targetObject: any): any => {
+export const decomposeRawValue = (
+  rawValue: string | number,
+  targetObject: any
+): any => {
   targetObject.t = valueTypes.NUMBER;
   targetObject.n = 0;
   targetObject.u = null;
   targetObject.o = null;
   targetObject.d = null;
   targetObject.s = null;
-  if (!rawValue) return targetObject;
+  if (!rawValue && rawValue !== 0) return targetObject;
+  
+  // Handle numeric values first
+  if (typeof rawValue === 'number') {
+    targetObject.n = rawValue;
+    return targetObject;
+  }
+  
   const num = +rawValue;
   if (!isNaN(num)) {
     // It's a number
     targetObject.n = num;
     return targetObject;
   } else {
-    let str = rawValue as string;
+    let str = String(rawValue); // Ensure we have a string
     // Parsing operators (+=, -=, *=) manually is much faster than using regex here
     if (str[1] === "=") {
       targetObject.o = str[0];
@@ -259,7 +271,7 @@ export const decomposeRawValue = (rawValue: string | number, targetObject: any):
 
 /**
  * Decomposes a tween value into a target object
- * 
+ *
  * @param {any} tween - Tween to decompose
  * @param {any} targetObject - Target object to store decomposed values
  * @return {any} - Target object with decomposed values

@@ -27,7 +27,7 @@
  * - Support for all motion components (draggable, scroll, spring)
  * - Consistent naming conventions
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial Motion
  */
 

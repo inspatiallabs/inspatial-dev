@@ -24,17 +24,21 @@ const addChild = (parent: any, child: any): void => {
 const removeChild = (parent: any, child: any): void => {
   const prev = child._prev;
   const next = child._next;
-  
+
   if (prev) prev._next = next;
   if (next) next._prev = prev;
-  
+
   if (parent._head === child) parent._head = next;
   if (parent._tail === child) parent._tail = prev;
-  
+
   child._next = child._prev = null;
 };
 
-const forEachChildren = (parent: any, callback: (child: any) => void, backwards = false): void => {
+const forEachChildren = (
+  parent: any,
+  callback: (child: any) => void,
+  backwards = false
+): void => {
   let child = backwards ? parent._tail : parent._head;
   while (child) {
     const next = backwards ? child._prev : child._next;
@@ -43,7 +47,8 @@ const forEachChildren = (parent: any, callback: (child: any) => void, backwards 
   }
 };
 
-const interpolate = (a: number, b: number, t: number): number => a + (b - a) * t;
+const interpolate = (a: number, b: number, t: number): number =>
+  a + (b - a) * t;
 
 const clamp = (value: number, min: number, max: number): number => {
   return Math.max(min, Math.min(max, value));
@@ -54,17 +59,19 @@ const round = (value: number, precision: number = 0): number => {
   return Math.round(value * factor) / factor;
 };
 
-const isFnc = (value: unknown): value is Function => typeof value === 'function';
+const isFnc = (value: unknown): value is (...args: any[]) => any =>
+  typeof value === "function";
 
-const isNum = (value: unknown): value is number => 
-  typeof value === 'number' && !isNaN(value) && isFinite(value);
+const isNum = (value: unknown): value is number =>
+  typeof value === "number" && !isNaN(value) && isFinite(value);
 
-const isObj = (value: unknown): value is object => 
-  typeof value === 'object' && value !== null;
+const isObj = (value: unknown): value is object =>
+  typeof value === "object" && value !== null;
 
-const isStr = (value: unknown): value is string => typeof value === 'string';
+const isStr = (value: unknown): value is string => typeof value === "string";
 
-const isUnd = (value: unknown): value is undefined => typeof value === 'undefined';
+const isUnd = (value: unknown): value is undefined =>
+  typeof value === "undefined";
 
 const lerp = (a: number, b: number, t: number, snap = false): number => {
   const v = a + (b - a) * t;
@@ -79,7 +86,7 @@ import { convertValueUnit } from "./units.ts";
 
 // Create stub functions until the animation and values modules are fixed
 const getTargetValue = (target: any, prop: string): any => {
-  if (typeof getComputedStyle === 'function') {
+  if (typeof getComputedStyle === "function") {
     return getComputedStyle(target)[prop as any];
   }
   return target[prop];
@@ -89,13 +96,13 @@ const setTargetValues = (target: any, values: Record<string, any>): any => {
   const revert = () => {
     // In a real implementation, this would revert changes
   };
-  
+
   for (const key in values) {
     if (Object.prototype.hasOwnProperty.call(values, key)) {
       target.style[key] = values[key];
     }
   }
-  
+
   return { revert };
 };
 
@@ -121,9 +128,11 @@ export interface ScrollThresholdParam {
   target?: ScrollThresholdValue;
 }
 
-export type ScrollObserverAxisCallback = (self: ScrollObserver) => 'x' | 'y';
+export type ScrollObserverAxisCallback = (self: ScrollObserver) => "x" | "y";
 
-export type ScrollThresholdCallback = (self: ScrollObserver) => ScrollThresholdValue | ScrollThresholdParam;
+export type ScrollThresholdCallback = (
+  self: ScrollObserver
+) => ScrollThresholdValue | ScrollThresholdParam;
 
 export interface DOMTarget extends HTMLElement {
   style: CSSStyleDeclaration;
@@ -149,6 +158,8 @@ export interface ScrollContainerInterface {
   velocity: number;
   backwardX: boolean;
   backwardY: boolean;
+  wakeTicker?: Timer; // Add wakeTicker as optional property
+  revert?: () => void; // Add revert as optional method
   _head: ScrollObserver | null;
   _tail: ScrollObserver | null;
 }
@@ -162,7 +173,14 @@ export interface ScrollObserverInterface {
   revert(): void;
 }
 
-export type TargetsParam = string | HTMLElement | NodeList | HTMLCollection | Array<HTMLElement> | null | undefined;
+export type TargetsParam =
+  | string
+  | HTMLElement
+  | NodeList
+  | HTMLCollection
+  | Array<HTMLElement>
+  | null
+  | undefined;
 
 export type EasingFunction = (x: number) => number;
 export type EasingParam = string | EasingFunction;
@@ -172,8 +190,8 @@ export type Callback<T> = (self: T) => void;
  * @return {Number}
  */
 const getMaxViewHeight = (): number => {
-  if (!doc || !doc.body) return window.innerHeight;
-  
+  if (!doc || !doc.body) return globalThis.innerHeight;
+
   const $el = document.createElement("div");
   doc.body.appendChild($el);
   $el.style.height = "100lvh";
@@ -192,7 +210,9 @@ const parseScrollObserverFunctionParameter = <T>(
   value: T | ((observer: ScrollObserver) => T),
   scroller: ScrollObserver
 ): T => {
-  return value && isFnc(value) ? (value as Function)(scroller) as T : value;
+  return value && isFnc(value)
+    ? ((value as (...args: any[]) => any)(scroller) as T)
+    : value;
 };
 
 /** Map of scroll containers to their DOM elements */
@@ -201,10 +221,10 @@ export const scrollContainers = new Map<HTMLElement, ScrollContainer>();
 /**
  * # ScrollContainer
  * #### Manages scroll position tracking and observer notification
- * 
+ *
  * This class handles tracking scroll position for a container element
  * and notifies registered scroll observers about changes.
- * 
+ *
  * @since 0.1.0
  * @implements {ScrollContainerInterface}
  */
@@ -296,7 +316,7 @@ class ScrollContainer implements ScrollContainerInterface {
       },
       onComplete: () => this.dataTimer.pause(),
     }).init();
-    
+
     this.dataTimer = new Timer({
       autoplay: false,
       frameRate: 30,
@@ -318,7 +338,7 @@ class ScrollContainer implements ScrollContainerInterface {
         );
       },
     }).init();
-    
+
     this.resizeTicker = new Timer({
       autoplay: false,
       duration: 250 * globals.timeScale,
@@ -328,7 +348,7 @@ class ScrollContainer implements ScrollContainerInterface {
         this.handleScroll();
       },
     }).init();
-    
+
     this.wakeTicker = new Timer({
       autoplay: false,
       duration: 500 * globals.timeScale,
@@ -339,20 +359,24 @@ class ScrollContainer implements ScrollContainerInterface {
         this.scrollTicker.pause();
       },
     }).init();
-    
+
     this._head = null;
     this._tail = null;
-    
+
     this.updateScrollCoords();
     this.updateWindowBounds();
     this.updateBounds();
     this.refreshScrollObservers();
     this.handleScroll();
-    
+
     this.resizeObserver = new ResizeObserver(() => this.resizeTicker.restart());
     this.resizeObserver.observe(this.element);
-    
-    (this.useWin ? (win || window) : this.element).addEventListener("scroll", this, false);
+
+    (this.useWin ? win || globalThis : this.element).addEventListener(
+      "scroll",
+      this,
+      false
+    );
   }
 
   /**
@@ -361,15 +385,21 @@ class ScrollContainer implements ScrollContainerInterface {
   updateScrollCoords(): void {
     const useWin = this.useWin;
     const $el = this.element;
-    this.scrollX = round(useWin ? (win?.scrollX || window.scrollX) : $el.scrollLeft, 0);
-    this.scrollY = round(useWin ? (win?.scrollY || window.scrollY) : $el.scrollTop, 0);
+    this.scrollX = round(
+      useWin ? win?.scrollX || globalThis.scrollX : $el.scrollLeft,
+      0
+    );
+    this.scrollY = round(
+      useWin ? win?.scrollY || globalThis.scrollY : $el.scrollTop,
+      0
+    );
   }
 
   /**
    * Updates window dimensions (width and height)
    */
   updateWindowBounds(): void {
-    this.winWidth = win?.innerWidth || window.innerWidth;
+    this.winWidth = win?.innerWidth || globalThis.innerWidth;
     this.winHeight = getMaxViewHeight();
   }
 
@@ -460,7 +490,10 @@ class ScrollContainer implements ScrollContainerInterface {
     this.resizeTicker.cancel();
     this.wakeTicker.cancel();
     this.resizeObserver.unobserve(this.element);
-    (this.useWin ? (win || window) : this.element).removeEventListener("scroll", this);
+    (this.useWin ? win || globalThis : this.element).removeEventListener(
+      "scroll",
+      this
+    );
     scrollContainers.delete(this.element);
   }
 }
@@ -468,17 +501,19 @@ class ScrollContainer implements ScrollContainerInterface {
 /**
  * # registerAndGetScrollContainer
  * #### Registers and retrieves a scroll container for a target element
- * 
+ *
  * This function gets or creates a ScrollContainer for the specified target.
- * 
+ *
  * @param {TargetsParam} target The target element or selector
  * @returns {ScrollContainer} The scroll container
  */
-const registerAndGetScrollContainer = (target: TargetsParam): ScrollContainer => {
+const registerAndGetScrollContainer = (
+  target: TargetsParam
+): ScrollContainer => {
   const $el = target
-    ? parseTargets(target)[0] || (doc?.body || document.body)
-    : (doc?.body || document.body);
-  
+    ? parseTargets(target)[0] || doc?.body || document.body
+    : doc?.body || document.body;
+
   let scrollContainer = scrollContainers.get($el);
   if (!scrollContainer) {
     scrollContainer = new ScrollContainer($el);
@@ -489,7 +524,7 @@ const registerAndGetScrollContainer = (target: TargetsParam): ScrollContainer =>
 
 /**
  * Convert a value to pixels based on a element, size, and offset limits
- * 
+ *
  * @param {HTMLElement} $el Element to convert for
  * @param {number|string} v Value to convert
  * @param {number} size Size context for percentage conversions
@@ -498,10 +533,10 @@ const registerAndGetScrollContainer = (target: TargetsParam): ScrollContainer =>
  * @return {number} Value in pixels
  */
 const convertValueToPx = (
-  $el: HTMLElement, 
-  v: number | string, 
-  size: number, 
-  under?: number, 
+  $el: HTMLElement,
+  v: number | string,
+  size: number,
+  under?: number,
   over?: number
 ): number => {
   const clampMin = v === "min";
@@ -528,7 +563,7 @@ const convertValueToPx = (
 
 /**
  * Parse a threshold value into pixels
- * 
+ *
  * @param {HTMLElement} $el Element to convert for
  * @param {ScrollThresholdValue} v Threshold value to convert
  * @param {number} size Size context for percentage conversions
@@ -537,10 +572,10 @@ const convertValueToPx = (
  * @return {number} Value in pixels
  */
 const parseBoundValue = (
-  $el: HTMLElement, 
-  v: ScrollThresholdValue, 
-  size: number, 
-  under?: number, 
+  $el: HTMLElement,
+  v: ScrollThresholdValue,
+  size: number,
+  under?: number,
   over?: number
 ): number => {
   let value: number;
@@ -582,7 +617,7 @@ const parseBoundValue = (
 
 /**
  * Get the DOM target from an animation
- * 
+ *
  * @param {any} linked The linked animation
  * @return {HTMLElement|null} The found DOM element or null
  */
@@ -626,9 +661,31 @@ export interface ScrollObserverParams {
   sync?: boolean | number | string | EasingParam;
   container?: TargetsParam;
   target?: TargetsParam;
-  axis?: 'x' | 'y' | ScrollObserverAxisCallback | ((observer: ScrollObserver) => 'x' | 'y' | ScrollObserverAxisCallback);
-  enter?: ScrollThresholdValue | ScrollThresholdParam | ScrollThresholdCallback | ((observer: ScrollObserver) => ScrollThresholdValue | ScrollThresholdParam | ScrollThresholdCallback);
-  leave?: ScrollThresholdValue | ScrollThresholdParam | ScrollThresholdCallback | ((observer: ScrollObserver) => ScrollThresholdValue | ScrollThresholdParam | ScrollThresholdCallback);
+  axis?:
+    | "x"
+    | "y"
+    | ScrollObserverAxisCallback
+    | ((observer: ScrollObserver) => "x" | "y" | ScrollObserverAxisCallback);
+  enter?:
+    | ScrollThresholdValue
+    | ScrollThresholdParam
+    | ScrollThresholdCallback
+    | ((
+        observer: ScrollObserver
+      ) =>
+        | ScrollThresholdValue
+        | ScrollThresholdParam
+        | ScrollThresholdCallback);
+  leave?:
+    | ScrollThresholdValue
+    | ScrollThresholdParam
+    | ScrollThresholdCallback
+    | ((
+        observer: ScrollObserver
+      ) =>
+        | ScrollThresholdValue
+        | ScrollThresholdParam
+        | ScrollThresholdCallback);
   repeat?: boolean | ((observer: ScrollObserver) => boolean);
   debug?: boolean;
   onEnter?: Callback<ScrollObserver>;
@@ -644,10 +701,10 @@ export interface ScrollObserverParams {
 /**
  * # ScrollObserver
  * #### Observes scroll position and triggers animations
- * 
+ *
  * ScrollObserver tracks elements as they enter and leave the viewport,
  * triggering animations or callbacks at specified thresholds.
- * 
+ *
  * @since 0.1.0
  * @implements {ScrollObserverInterface}
  */
@@ -667,9 +724,17 @@ export class ScrollObserver implements ScrollObserverInterface {
   /** Whether scrolling on horizontal axis */
   horizontal: boolean | null;
   /** Enter threshold configuration */
-  enter: ScrollThresholdParam | ScrollThresholdValue | ScrollThresholdCallback | null;
+  enter:
+    | ScrollThresholdParam
+    | ScrollThresholdValue
+    | ScrollThresholdCallback
+    | null;
   /** Leave threshold configuration */
-  leave: ScrollThresholdParam | ScrollThresholdValue | ScrollThresholdCallback | null;
+  leave:
+    | ScrollThresholdParam
+    | ScrollThresholdValue
+    | ScrollThresholdCallback
+    | null;
   /** Whether to sync with linked animation */
   sync: boolean;
   /** Easing function for sync */
@@ -744,12 +809,6 @@ export class ScrollObserver implements ScrollObserverInterface {
   _next: ScrollObserver | null;
   /** Previous observer in linked list */
   _prev: ScrollObserver | null;
-  
-  // Methods required to implement ScrollObserver interface
-  handleScroll(): void;
-  removeDebug(): ScrollObserver;
-  debug(): void;
-  refresh(): ScrollObserver;
 
   /**
    * Creates a new ScrollObserver
@@ -760,31 +819,29 @@ export class ScrollObserver implements ScrollObserverInterface {
       // Cast to allow adding this to revertibles
       (globals.scope as any).revertibles.push(this);
     }
-    
+
     const syncMode = setValue(parameters.sync, "play pause");
-    const ease = syncMode
-      ? parseEasings(syncMode as any)
-      : null;
+    const ease = syncMode ? parseEasings(syncMode as any) : null;
     const isLinear = syncMode && (syncMode === "linear" || syncMode === none);
     const isEase = syncMode && !(ease === none && !isLinear);
     const isSmooth =
       syncMode && (isNum(syncMode) || syncMode === true || isLinear);
     const isMethods = syncMode && isStr(syncMode) && !isEase && !isSmooth;
-    
+
     const syncMethods = isMethods
-      ? (syncMode as string)
-          .split(" ")
-          .map((m: string) => () => {
-            const linked = this.linked;
-            return linked && (linked as any)[m] ? (linked as any)[m]() : null;
-          })
+      ? (syncMode as string).split(" ").map((m: string) => () => {
+          const linked = this.linked;
+          return linked && (linked as any)[m] ? (linked as any)[m]() : null;
+        })
       : null;
-    
+
     const biDirSync = isMethods && syncMethods && syncMethods.length > 2;
-    
+
     this.index = scrollerIndex++;
     this.id = !isUnd(parameters.id) ? parameters.id! : this.index;
-    this.container = registerAndGetScrollContainer(parameters.container) as ScrollContainerInterface;
+    this.container = registerAndGetScrollContainer(
+      parameters.container
+    ) as ScrollContainerInterface;
     this.target = null;
     this.linked = null;
     this.repeat = null;
@@ -796,9 +853,9 @@ export class ScrollObserver implements ScrollObserverInterface {
     this.syncSmooth = isSmooth
       ? syncMode === true || isLinear
         ? 1
-        : syncMode as number
+        : (syncMode as number)
       : null;
-    
+
     this.onSyncEnter =
       syncMethods && !biDirSync && syncMethods[0] ? syncMethods[0] : noop;
     this.onSyncLeave =
@@ -811,7 +868,7 @@ export class ScrollObserver implements ScrollObserverInterface {
       syncMethods && biDirSync && syncMethods[2] ? syncMethods[2] : noop;
     this.onSyncLeaveBackward =
       syncMethods && biDirSync && syncMethods[3] ? syncMethods[3] : noop;
-    
+
     this.onEnter = parameters.onEnter || noop;
     this.onLeave = parameters.onLeave || noop;
     this.onEnterForward = parameters.onEnterForward || noop;
@@ -820,7 +877,7 @@ export class ScrollObserver implements ScrollObserverInterface {
     this.onLeaveBackward = parameters.onLeaveBackward || noop;
     this.onUpdate = parameters.onUpdate || noop;
     this.onSyncComplete = parameters.onSyncComplete || noop;
-    
+
     this.reverted = false;
     this.completed = false;
     this.began = false;
@@ -841,17 +898,15 @@ export class ScrollObserver implements ScrollObserverInterface {
     this._debug = setValue(parameters.debug, false);
     this._next = null;
     this._prev = null;
-    
+
     addChild(this.container, this);
-    
+
     // Wait for the next frame to add to the container in order to handle calls to link()
     sync(() => {
       if (this.reverted) return;
       if (!this.target) {
-        const target = parseTargets(
-          parameters.target
-        )[0] as HTMLElement;
-        this.target = target || (doc?.body || document.body);
+        const target = parseTargets(parameters.target)[0] as HTMLElement;
+        this.target = target || doc?.body || document.body;
         this.refresh();
       }
       if (this._debug) this.debug();
@@ -874,17 +929,14 @@ export class ScrollObserver implements ScrollObserverInterface {
         if (!isUnd((linked as any).targets)) {
           $linkedTarget = getAnimationDomTarget(linked);
         } else {
-          forEachChildren(
-            linked,
-            (child: any) => {
-              if (child.targets && !$linkedTarget) {
-                $linkedTarget = getAnimationDomTarget(child);
-              }
+          forEachChildren(linked, (child: any) => {
+            if (child.targets && !$linkedTarget) {
+              $linkedTarget = getAnimationDomTarget(child);
             }
-          );
+          });
         }
         // Fallback to body if no target found
-        this.target = $linkedTarget || (doc?.body || document.body);
+        this.target = $linkedTarget || doc?.body || document.body;
         this.refresh();
       }
     }
@@ -938,8 +990,10 @@ export class ScrollObserver implements ScrollObserverInterface {
       true
     );
     this.horizontal =
-      setValue(parseScrollObserverFunctionParameter<any>(params.axis as any, this), "y") ===
-      "x";
+      setValue(
+        parseScrollObserverFunctionParameter<any>(params.axis as any, this),
+        "y"
+      ) === "x";
     this.enter = setValue(
       parseScrollObserverFunctionParameter<any>(params.enter as any, this),
       "end start"
@@ -977,7 +1031,7 @@ export class ScrollObserver implements ScrollObserverInterface {
     if (this._debug) {
       this.removeDebug();
     }
-    
+
     let stickys: any[] | undefined;
     const $target = this.target;
     const container = this.container;
@@ -988,20 +1042,24 @@ export class ScrollObserver implements ScrollObserverInterface {
     let offsetX = 0;
     let offsetY = 0;
     let $offsetParent = $el;
-    
+
     if (!$target) return;
-    
+
     if (linked) {
       linkedTime = linked.currentTime;
       linked.seek(0, true);
     }
-    
+
     const isContainerStatic =
       getTargetValue(container.element, "position") === "static"
         ? setTargetValues(container.element, { position: "relative " })
         : false;
-    
-    while ($el && $el !== container.element && $el !== (doc?.body || document.body)) {
+
+    while (
+      $el &&
+      $el !== container.element &&
+      $el !== (doc?.body || document.body)
+    ) {
       const isSticky =
         getTargetValue($el, "position") === "sticky"
           ? setTargetValues($el, { position: "static" })
@@ -1017,9 +1075,9 @@ export class ScrollObserver implements ScrollObserverInterface {
         stickys.push(isSticky);
       }
     }
-    
+
     if (isContainerStatic) isContainerStatic.revert();
-    
+
     const offset = isHori ? offsetX : offsetY;
     const targetSize = isHori ? $target.offsetWidth : $target.offsetHeight;
     const containerSize = isHori ? container.width : container.height;
@@ -1036,7 +1094,7 @@ export class ScrollObserver implements ScrollObserverInterface {
     if (isStr(enter)) {
       const splitted = (enter as string).split(" ");
       enterContainer = splitted[0] as any;
-      enterTarget = splitted.length > 1 ? splitted[1] as any : enterTarget;
+      enterTarget = splitted.length > 1 ? (splitted[1] as any) : enterTarget;
     } else if (isObj(enter)) {
       const e = enter as ScrollThresholdParam;
       if (!isUnd(e.container)) enterContainer = e.container!;
@@ -1048,7 +1106,7 @@ export class ScrollObserver implements ScrollObserverInterface {
     if (isStr(leave)) {
       const splitted = (leave as string).split(" ");
       leaveContainer = splitted[0] as any;
-      leaveTarget = splitted.length > 1 ? splitted[1] as any : leaveTarget;
+      leaveTarget = splitted.length > 1 ? (splitted[1] as any) : leaveTarget;
     } else if (isObj(leave)) {
       const t = leave as ScrollThresholdParam;
       if (!isUnd(t.container)) leaveContainer = t.container!;
@@ -1075,11 +1133,11 @@ export class ScrollObserver implements ScrollObserverInterface {
       under,
       over
     );
-    
+
     const offsetStart = parsedEnterTarget + offset - parsedEnterContainer;
     const offsetEnd = parsedLeaveTarget + offset - parsedLeaveContainer;
     const scrollDelta = offsetEnd - offsetStart;
-    
+
     this.offsets[0] = offsetX;
     this.offsets[1] = offsetY;
     this.offset = offset;
@@ -1098,15 +1156,15 @@ export class ScrollObserver implements ScrollObserverInterface {
       parsedEnterContainer,
       parsedLeaveContainer,
     ];
-    
+
     if (stickys) {
       stickys.forEach((sticky) => sticky.revert());
     }
-    
+
     if (linked) {
       linked.seek(linkedTime, true);
     }
-    
+
     if (this._debug) {
       this.debug();
     }
@@ -1158,12 +1216,8 @@ export class ScrollObserver implements ScrollObserverInterface {
           const step = 0.0001;
           const snap = lp < p && p === 1 ? step : lp > p && !p ? -step : 0;
           p = round(
-            lerp(
-              lp,
-              p,
-              interpolate(0.01, 0.2, syncSmooth as number),
-              false
-            ) + snap,
+            lerp(lp, p, interpolate(0.01, 0.2, syncSmooth as number), false) +
+              snap,
             6
           );
         }
@@ -1172,7 +1226,13 @@ export class ScrollObserver implements ScrollObserverInterface {
       }
       hasUpdated = p !== this.prevProgress;
       syncCompleted = lp === 1;
-      if (hasUpdated && !syncCompleted && syncSmooth && lp) {
+      if (
+        hasUpdated &&
+        !syncCompleted &&
+        syncSmooth &&
+        lp &&
+        container.wakeTicker
+      ) {
         container.wakeTicker.restart();
       }
     }
@@ -1264,31 +1324,31 @@ export class ScrollObserver implements ScrollObserverInterface {
     if (this.reverted) return;
     const container = this.container;
     removeChild(container, this);
-    if (!container._head) {
+    if (!container._head && container.revert) {
       container.revert();
     }
     if (this._debug) {
       this.removeDebug();
     }
     this.reverted = true;
-    return this;
   }
 }
 
 /**
  * # createMotionScroll
  * #### Creates a scroll observer for animation
- * 
+ *
  * This function creates a new ScrollObserver that can trigger animations
  * based on scroll position.
- * 
+ *
  * @since 0.1.0
  * @category InSpatial Motion
  * @param {ScrollObserverParams} parameters The configuration parameters
  * @returns {ScrollObserver} The created scroll observer
  */
-export const createMotionScroll = (parameters: ScrollObserverParams = {}): ScrollObserver => 
-  new ScrollObserver(parameters);
+export const createMotionScroll = (
+  parameters: ScrollObserverParams = {}
+): ScrollObserver => new ScrollObserver(parameters);
 
 // Legacy export for backward compatibility
 export const onScroll = createMotionScroll;

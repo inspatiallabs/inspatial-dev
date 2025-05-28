@@ -1,4 +1,4 @@
-import { compositionTypes, minValue } from "./consts.ts";
+import { minValue, compositionTypes } from "./consts.ts";
 
 import {
   cloneArray,
@@ -7,22 +7,49 @@ import {
   forEachChildren,
 } from "./helpers.ts";
 
+import { SafeLookupMap } from "@inspatial/util/safe-lookup-map";
+
+import type {
+  Target,
+  Tween,
+  TweenPropertySiblings,
+  TweenLookups,
+  TweenReplaceLookups,
+  TweenAdditiveLookups,
+} from "./types.ts";
+
 // import { additive, addAdditiveAnimation } from "./additive.ts"; // Remove static import
 
-const lookups = {
-  /** @type {TweenReplaceLookups} */
-  _rep: new WeakMap(),
-  /** @type {TweenAdditiveLookups} */
-  _add: new Map(), // This Map might store lookups that additive.ts also uses.
+const lookups: {
+  _rep: SafeLookupMap<Target, TweenLookups>;
+  _add: SafeLookupMap<Target, TweenLookups>;
+} = {
+  /** @type {SafeLookupMap<Target, TweenLookups>} */
+  _rep: new SafeLookupMap(),
+  /** @type {SafeLookupMap<Target, TweenLookups>} */
+  _add: new SafeLookupMap(),
 };
 
 /**
- * @param  {Target} target
- * @param  {String} property
- * @param  {String} lookup
- * @return {TweenPropertySiblings}
+ * # Get Tween Siblings
+ * @summary Retrieves or creates a siblings collection for a target property
+ *
+ * This function manages collections of tweens that affect the same property
+ * on the same target, allowing for proper composition and override behavior.
+ *
+ * @since 0.1.0
+ * @category InSpatial Motion
+ *
+ * @param {Target} target - The animation target
+ * @param {string} property - The property name
+ * @param {keyof typeof lookups} lookup - The lookup type ("_rep" or "_add")
+ * @return {TweenPropertySiblings} The siblings collection
  */
-export const getTweenSiblings = (target, property, lookup = "_rep") => {
+export const getTweenSiblings = (
+  target: Target,
+  property: string,
+  lookup: keyof typeof lookups = "_rep"
+): TweenPropertySiblings => {
   const lookupMap = lookups[lookup];
   let targetLookup = lookupMap.get(target);
   if (!targetLookup) {
@@ -38,18 +65,24 @@ export const getTweenSiblings = (target, property, lookup = "_rep") => {
 };
 
 /**
- * @param  {Tween} p
- * @param  {Tween} c
- * @return {Number|Boolean}
+ * # Add Tween Sort Method
+ * @summary Determines sort order for tweens based on override status and start time
+ *
+ * @param {Tween} p - Previous tween
+ * @param {Tween} c - Current tween
+ * @return {boolean} Whether the previous tween should come after the current one
  */
-const addTweenSortMethod = (p, c) => {
-  return p._isOverridden || p._absoluteStartTime > c._absoluteStartTime;
+const addTweenSortMethod = (p: Tween, c: Tween): boolean => {
+  return !!p._isOverridden || p._absoluteStartTime > c._absoluteStartTime;
 };
 
 /**
- * @param {Tween} tween
+ * # Override Tween
+ * @summary Marks a tween as overridden and sets minimal duration
+ *
+ * @param {Tween} tween - The tween to override
  */
-export const overrideTween = (tween) => {
+export const overrideTween = (tween: Tween): void => {
   tween._isOverlapped = 1;
   tween._isOverridden = 1;
   tween._changeDuration = minValue;
@@ -57,11 +90,18 @@ export const overrideTween = (tween) => {
 };
 
 /**
- * @param  {Tween} tween
- * @param  {TweenPropertySiblings} siblings
- * @return {Tween}
+ * # Compose Tween
+ * @summary Handles tween composition logic for replace and blend modes
+ *
+ * @param {Tween} tween - The tween to compose
+ * @param {TweenPropertySiblings} siblings - The siblings collection
+ * @return {Promise<Tween>} The composed tween
  */
-export const composeTween = async (tween, siblings) => { // Made async for dynamic import
+export const composeTween = async (
+  tween: Tween,
+  siblings: TweenPropertySiblings
+): Promise<Tween> => {
+  // Made async for dynamic import
   const tweenCompositionType = tween._composition;
 
   // Handle replaced tweens
@@ -79,8 +119,9 @@ export const composeTween = async (tween, siblings) => { // Made async for dynam
 
       if (
         tween.parent.id !== prevParent.id &&
-        prevParent.iterationCount > 1 &&
-        prevAbsEndTime + (prevParent.duration - prevParent.iterationDuration) >
+        (prevParent as any).iterationCount > 1 &&
+        prevAbsEndTime +
+          (prevParent.duration - (prevParent as any).iterationDuration) >
           tweenAbsStartTime
       ) {
         overrideTween(prevSibling);
@@ -109,7 +150,7 @@ export const composeTween = async (tween, siblings) => { // Made async for dynam
       }
 
       let pausePrevParentAnimation = true;
-      forEachChildren(prevParent, (/** @type Tween */ t) => {
+      forEachChildren(prevParent, (t: Tween) => {
         if (!t._isOverlapped) pausePrevParentAnimation = false;
       });
 
@@ -117,18 +158,18 @@ export const composeTween = async (tween, siblings) => { // Made async for dynam
         const prevParentTL = prevParent.parent;
         if (prevParentTL) {
           let pausePrevParentTL = true;
-          forEachChildren(prevParentTL, (/** @type JSAnimation */ a) => {
+          forEachChildren(prevParentTL, (a: any) => {
             if (a !== prevParent) {
-              forEachChildren(a, (/** @type Tween */ t) => {
+              forEachChildren(a, (t: Tween) => {
                 if (!t._isOverlapped) pausePrevParentTL = false;
               });
             }
           });
           if (pausePrevParentTL) {
-            prevParentTL.cancel();
+            (prevParentTL as any).cancel();
           }
         } else {
-          prevParent.cancel();
+          (prevParent as any).cancel();
         }
       }
     }
@@ -139,7 +180,7 @@ export const composeTween = async (tween, siblings) => { // Made async for dynam
       tween.property,
       "_add"
     );
-    const additiveAnimation = addAdditiveAnimation(lookups._add); // lookups._add might need adjustment if additive.ts also defines/manages it
+    const additiveAnimation = addAdditiveAnimation(lookups._add as any); // lookups._add might need adjustment if additive.ts also defines/manages it
 
     let lookupTween = additiveTweenSiblings._head;
 
@@ -150,10 +191,11 @@ export const composeTween = async (tween, siblings) => { // Made async for dynam
       lookupTween._startTime = 0;
       lookupTween._numbers = cloneArray(tween._fromNumbers);
       lookupTween._number = 0;
-      lookupTween._next = null;
-      lookupTween._prev = null;
+      lookupTween._next = undefined as unknown as Tween;
+      lookupTween._prev = undefined as unknown as Tween;
       addChild(additiveTweenSiblings, lookupTween);
-      addChild(additiveAnimation, lookupTween);
+      // Use type assertion to handle the protected property access
+      addChild(additiveAnimation as any, lookupTween);
     }
 
     const toNumber = tween._toNumber;
@@ -174,48 +216,65 @@ export const composeTween = async (tween, siblings) => { // Made async for dynam
       lookupTween._fromNumbers = toNumbers;
     }
 
-    addChild(additiveTweenSiblings, tween, null, "_prevAdd", "_nextAdd");
+    addChild(additiveTweenSiblings, tween, undefined, "_prevAdd", "_nextAdd");
   }
 
   return tween;
 };
 
 /**
- * @param  {Tween} tween
- * @return {Tween}
+ * # Remove Tween Siblings
+ * @summary Removes a tween from its siblings collections and cleans up
+ *
+ * @param {Tween} tween - The tween to remove
+ * @return {Promise<Tween>} The removed tween
  */
-export const removeTweenSliblings = async (tween) => { // Made async if it might call composeTween or similar async logic due to dynamic imports elsewhere
+export const removeTweenSliblings = async (tween: Tween): Promise<Tween> => {
+  // Made async if it might call composeTween or similar async logic due to dynamic imports elsewhere
   const tweenComposition = tween._composition;
   if (tweenComposition !== compositionTypes.none) {
     const tweenTarget = tween.target;
     const tweenProperty = tween.property;
     const replaceTweensLookup = lookups._rep;
     const replaceTargetProps = replaceTweensLookup.get(tweenTarget);
-    const tweenReplaceSiblings = replaceTargetProps[tweenProperty];
-    removeChild(tweenReplaceSiblings, tween, "_prevRep", "_nextRep");
+    if (replaceTargetProps) {
+      const tweenReplaceSiblings = replaceTargetProps[tweenProperty];
+      if (tweenReplaceSiblings) {
+        removeChild(tweenReplaceSiblings, tween, "_prevRep", "_nextRep");
+      }
+    }
     if (tweenComposition === compositionTypes.blend) {
       const { additive } = await import("./additive.ts"); // Dynamically import `additive` for its `animation` property
       const addTweensLookup = lookups._add;
       const addTargetProps = addTweensLookup.get(tweenTarget);
       if (!addTargetProps) return tween; // Return tween if addTargetProps is undefined
       const additiveTweenSiblings = addTargetProps[tweenProperty];
-      const additiveAnimation = additive.animation;
-      removeChild(additiveTweenSiblings, tween, "_prevAdd", "_nextAdd");
-      const lookupTween = additiveTweenSiblings._head;
-      if (lookupTween && lookupTween === additiveTweenSiblings._tail) {
-        removeChild(additiveTweenSiblings, lookupTween, "_prevAdd", "_nextAdd");
-        if (additiveAnimation) { // Check if additiveAnimation is not null
-            removeChild(additiveAnimation, lookupTween);
-        }
-        let shouldClean = true;
-        for (let prop in addTargetProps) {
-          if (addTargetProps[prop]._head) {
-            shouldClean = false;
-            break;
+      if (additiveTweenSiblings) {
+        const additiveAnimation = additive.animation;
+        removeChild(additiveTweenSiblings, tween, "_prevAdd", "_nextAdd");
+        const lookupTween = additiveTweenSiblings._head;
+        if (lookupTween && lookupTween === additiveTweenSiblings._tail) {
+          removeChild(
+            additiveTweenSiblings,
+            lookupTween,
+            "_prevAdd",
+            "_nextAdd"
+          );
+          if (additiveAnimation) {
+            // Check if additiveAnimation is not null
+            // Use type assertion to handle the protected property access
+            removeChild(additiveAnimation as any, lookupTween);
           }
-        }
-        if (shouldClean) {
-          addTweensLookup.delete(tweenTarget);
+          let shouldClean = true;
+          for (const prop in addTargetProps) {
+            if (addTargetProps[prop]._head) {
+              shouldClean = false;
+              break;
+            }
+          }
+          if (shouldClean) {
+            addTweensLookup.delete(tweenTarget);
+          }
         }
       }
     }

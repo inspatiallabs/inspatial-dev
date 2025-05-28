@@ -5,7 +5,7 @@
  * The `StateManager` provides a central registry for all state instances in the application.
  * It tracks both global and local states, manages state dependencies, and handles batched updates.
  * 
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind class

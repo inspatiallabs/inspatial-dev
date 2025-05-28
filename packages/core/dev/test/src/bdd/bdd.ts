@@ -282,7 +282,7 @@ function itDefinition<T>(...args: ItArgs<T>): ItDefinition<T> {
  * This function defines a single test case (spec) in the BDD style. It represents
  * a specific behavior that your code should exhibit.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial Test
  * @kind function
  * @access public
@@ -875,7 +875,7 @@ export function after<T>(fn: (this: T) => void | Promise<void>) {
  * This hook lets you run setup code that should execute before each test case.
  * Use it to prepare a fresh testing environment for each individual test.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial Test
  * @kind function
  * @access public
@@ -1178,7 +1178,7 @@ export interface describe {
  * a common subject or feature. It helps organize your tests into a readable
  * hierarchy.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial Test
  * @kind function
  * @access public

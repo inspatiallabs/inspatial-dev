@@ -68,7 +68,7 @@ export const inSequence = (
     ? (val as [number | string, number | string])
     : [0, val];
   const p = params || {};
-  const from = p.from || 0;
+  const from = p.from || "last";
   const axis = p.axis || "y";
   const ease = p.ease ? parseEasings(p.ease) : null;
 
@@ -94,7 +94,7 @@ export const inSequence = (
           from === "first"
             ? col
             : from === "center"
-            ? (totalPerLine - 1) / 2 - col
+            ? Math.abs((totalPerLine - 1) / 2 - col)
             : from === "last"
             ? totalPerLine - 1 - col
             : isNum(from)
@@ -107,7 +107,7 @@ export const inSequence = (
           from === "first"
             ? row
             : from === "center"
-            ? (gridHeight - 1) / 2 - row
+            ? Math.abs((gridHeight - 1) / 2 - row)
             : from === "last"
             ? gridHeight - 1 - row
             : isNum(from)
@@ -117,9 +117,9 @@ export const inSequence = (
     } else {
       fromIndex =
         from === "first"
-          ? 0
+          ? i
           : from === "center"
-          ? (total - 1) / 2 - i
+          ? Math.abs((total - 1) / 2 - i)
           : from === "last"
           ? total - 1 - i
           : isNum(from)
@@ -153,9 +153,9 @@ export const inSequence = (
     }
 
     // Calculate the progression between the inSequence values
-    // Use explicit number conversion
-    const fromVal = Number(valArr[0]);
-    const toVal = Number(valArr[1]);
+    // Use parseFloat for string values with units, Number for pure numbers
+    const fromVal = isStr(valArr[0]) ? parseFloat(valArr[0] as string) : Number(valArr[0]);
+    const toVal = isStr(valArr[1]) ? parseFloat(valArr[1] as string) : Number(valArr[1]);
     const diff = !isNaN(toVal) && !isNaN(fromVal) ? toVal - fromVal : 0;
 
     // Apply inSequenceed value on the startVal
@@ -170,6 +170,11 @@ export const inSequence = (
       isStr(valArr[0]) &&
       !unitsExecRgx.test(valArr[0] as string)
     ) {
+      // Non-numeric strings - choose based on progression
+      if (valArr[1] && isStr(valArr[1]) && !unitsExecRgx.test(valArr[1] as string)) {
+        // Two non-numeric strings - interpolate based on progression
+        return easedProg < 0.5 ? valArr[0] as string : valArr[1] as string;
+      }
       return valArr[0] as string;
     } else if (
       valArr[1] &&
@@ -183,7 +188,7 @@ export const inSequence = (
         valArr[0] && isStr(valArr[0])
           ? (valArr[0] as string).match(unitsExecRgx)
           : null;
-      const unit = match ? match[1] : emptyString;
+      const unit = match ? match[2] : emptyString;
 
       return unit ? val + unit : val;
     }

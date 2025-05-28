@@ -5,7 +5,7 @@
  * This module provides functionality to persist state across sessions and devices
  * using various storage backends like localStorage, sessionStorage, or custom solutions.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind module

@@ -122,7 +122,7 @@ const userSettingsState = createDerivedState(
 const appSettingsState = createState({
   id: "appSettings",
   initialState: {
-    version: "1.0.0",
+    version: "0.1.0",
     lastUpdated: "2023-06-15",
     features: {
       darkMode: true,

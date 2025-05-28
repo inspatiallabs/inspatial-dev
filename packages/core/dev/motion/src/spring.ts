@@ -23,7 +23,7 @@ import type { SpringParams, EasingFunction } from "./types.ts";
  * The `InMotionSpring` class creates easing functions based on spring physics. Think of it like a physical spring that stretches and bounces back.
  * It provides a more natural and realistic animation feel compared to traditional easing functions.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial Motion
  * @kind class
  * @access public

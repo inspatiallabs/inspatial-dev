@@ -6,7 +6,7 @@
  * It unifies simple reactive state with trigger-based state flows, providing a clean developer
  * experience for both basic and complex use cases.
  * 
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind function

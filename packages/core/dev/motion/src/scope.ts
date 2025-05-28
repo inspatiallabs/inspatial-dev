@@ -165,7 +165,7 @@ export class InMotionScope implements ScopeInterface {
     const mediaQueries = parameters.mediaQueries;
 
     this.defaults = scopeDefaults
-      ? mergeObjects(scopeDefaults, globalDefault)
+      ? mergeObjects(globalDefault, scopeDefaults)
       : globalDefault;
     this.root = root;
     this.constructors = [];

@@ -4,7 +4,7 @@
  * @name capitalize
  * @description Transforms a string by capitalizing its first letter and converting the rest to lowercase
  * @category String Utilities
- * @version 1.0.0
+ * @version 0.1.0
  *
  * @param {string} string - The input string to be capitalized
  * @returns {string} The transformed string with first letter capitalized
@@ -17,7 +17,7 @@
  * ```
  *
  * @throws {TypeError} If the input is not a string
- * @since 1.0.0
+ * @since 0.1.0
  */
 export function capitalize(string: string): string {
   /** Extract and uppercase the first character of the input string */

@@ -6,7 +6,7 @@
  * trigger system and state management. It connects registered triggers to state
  * instances and generates actions automatically.
  * 
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind function

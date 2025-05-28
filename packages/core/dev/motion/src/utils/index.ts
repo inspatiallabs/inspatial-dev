@@ -68,6 +68,11 @@ export const getChildAtIndex = (parent: any, index: number) => {
 };
 
 export const getChildLength = (parent: any) => {
+  // If the parent is null/undefined or has no children, return 0
+  if (!parent || !parent._head) {
+    return 0;
+  }
+  
   let next = parent._head;
   let i = 0;
   while (next) {

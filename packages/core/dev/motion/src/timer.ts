@@ -20,15 +20,9 @@ import {
 
 import { globals } from "./globals.ts";
 
-import { setValue } from "./values.ts";
-
 import { tick } from "./render.ts";
 
-import {
-  composeTween,
-  getTweenSiblings,
-  removeTweenSliblings,
-} from "./compositions.ts";
+import { composeTween, getTweenSiblings } from "./compositions.ts";
 
 import { InMotion } from "./engine.ts";
 
@@ -39,11 +33,8 @@ import type {
   Callback,
   Timeline,
   Renderable,
-  EasingFunction,
-  Tickable,
   Tween,
   ScrollObserver,
-  Revertible,
   DefaultsParams,
 } from "./types.ts";
 
@@ -128,7 +119,7 @@ export class Timer extends InMotionClock {
   protected _currentIteration: number;
 
   /** Promise resolver function */
-  protected _resolve: Function;
+  protected _resolve: () => void;
 
   /** Whether the timer is currently running */
   protected _running: boolean;
@@ -188,22 +179,31 @@ export class Timer extends InMotionClock {
       onRender,
     } = parameters;
 
-    // @ts-ignore - Type compatibility issue between Timer and Revertible
-    if (globals.scope) globals.scope.revertibles.push(this);
+    // Use type assertion to handle the revertibles array
+    if (globals.scope) (globals.scope as any).revertibles.push(this);
 
     const timerInitTime = parent ? 0 : (InMotion as any)._elapsedTime;
-    const timerDefaults = (parent ? parent.defaults : globals.defaults) as DefaultsParams;
+    const timerDefaults = (
+      parent ? parent.defaults : globals.defaults
+    ) as DefaultsParams;
     const timerDelay =
       isFnc(delay) || isUnd(delay) ? timerDefaults.delay : +(delay || 0);
-    const timerDuration: number =
-      isFnc(duration) ? Infinity : (isUnd(duration) ? (timerDefaults.duration as number) : +duration!);
+    const timerDuration: number = isFnc(duration)
+      ? Infinity
+      : isUnd(duration)
+      ? (timerDefaults.duration as number)
+      : +duration!;
     const timerLoop = isUnd(loop) ? timerDefaults.loop : loop;
-    const timerLoopDelayValue = isUnd(loopDelay) ? timerDefaults.loopDelay : +loopDelay;
+    const timerLoopDelayValue = isUnd(loopDelay)
+      ? timerDefaults.loopDelay
+      : +loopDelay;
 
     const timerIterationCount =
-      timerLoop === true || timerLoop === Infinity || (typeof timerLoop === 'number' && timerLoop < 0)
+      timerLoop === true ||
+      timerLoop === Infinity ||
+      (typeof timerLoop === "number" && timerLoop < 0)
         ? Infinity
-        : (typeof timerLoop === 'number' ? timerLoop : 0) + 1;
+        : (typeof timerLoop === "number" ? timerLoop : 0) + 1;
 
     let offsetPosition = 0;
 
@@ -225,30 +225,42 @@ export class Timer extends InMotionClock {
     // Total duration of the timer
     this.duration =
       clampInfinity(
-        (timerDuration + (timerLoopDelayValue || 0)) * timerIterationCount - (timerLoopDelayValue || 0)
+        (timerDuration + (timerLoopDelayValue || 0)) * timerIterationCount -
+          (timerLoopDelayValue || 0)
       ) || minValue;
     this.backwards = false;
     this.paused = true;
     this.began = false;
     this.completed = false;
-    // @ts-ignore - Type compatibility between callbacks
-    this.onBegin = onBegin || timerDefaults.onBegin;
-    // @ts-ignore - Type compatibility between callbacks
-    this.onBeforeUpdate = onBeforeUpdate || timerDefaults.onBeforeUpdate;
-    // @ts-ignore - Type compatibility between callbacks
-    this.onUpdate = onUpdate || timerDefaults.onUpdate as Callback<this>;
-    this.onRender = onRender || timerDefaults.onRender as Callback<this>;
-    // @ts-ignore - Type compatibility between callbacks
-    this.onLoop = onLoop || timerDefaults.onLoop as Callback<this>;
-    // @ts-ignore - Type compatibility between callbacks
-    this.onPause = onPause || timerDefaults.onPause;
-    // @ts-ignore - Type compatibility between callbacks
-    this.onComplete = onComplete || timerDefaults.onComplete;
+    // Use type assertions to handle callback type mismatches
+    this.onBegin = (onBegin ||
+      timerDefaults.onBegin ||
+      noop) as unknown as Callback<this>;
+    this.onBeforeUpdate = (onBeforeUpdate ||
+      timerDefaults.onBeforeUpdate ||
+      noop) as unknown as Callback<this>;
+    this.onUpdate = (onUpdate ||
+      timerDefaults.onUpdate ||
+      noop) as unknown as Callback<this>;
+    this.onRender = (onRender ||
+      timerDefaults.onRender ||
+      noop) as unknown as Callback<this>;
+    this.onLoop = (onLoop ||
+      timerDefaults.onLoop ||
+      noop) as unknown as Callback<this>;
+    this.onPause = (onPause ||
+      timerDefaults.onPause ||
+      noop) as unknown as Callback<this>;
+    this.onComplete = (onComplete ||
+      timerDefaults.onComplete ||
+      noop) as unknown as Callback<this>;
     this.iterationDuration = timerDuration; // Duration of one loop
     this.iterationCount = timerIterationCount; // Number of loops
     this._autoplay = parent
       ? false
-      : (isUnd(autoplay) ? timerDefaults.autoplay : autoplay) as boolean | ScrollObserver;
+      : ((isUnd(autoplay) ? timerDefaults.autoplay : autoplay) as
+          | boolean
+          | ScrollObserver);
     this._offset = offsetPosition;
     this._delay = timerDelay as number;
     this._loopDelay = (timerLoopDelayValue || 0) as number;
@@ -256,10 +268,14 @@ export class Timer extends InMotionClock {
     this._currentIteration = 0; // Current loop index
     this._resolve = noop; // Used by .then()
     this._running = false;
-    this._reversed = +(isUnd(reversed) ? timerDefaults.reversed : reversed) as number;
+    this._reversed = +(isUnd(reversed)
+      ? timerDefaults.reversed || 0
+      : reversed) as number;
     this._reverse = this._reversed;
     this._cancelled = 0;
-    this._alternate = (isUnd(alternate) ? timerDefaults.alternate : alternate) as boolean;
+    this._alternate = (
+      isUnd(alternate) ? timerDefaults.alternate : alternate
+    ) as boolean;
     this._prev = null;
     this._next = null;
 
@@ -267,8 +283,12 @@ export class Timer extends InMotionClock {
     this._elapsedTime = timerInitTime;
     this._startTime = timerInitTime;
     this._lastTime = timerInitTime;
-    this._fps = (isUnd(frameRate) ? timerDefaults.frameRate : frameRate) as number;
-    this._speed = (isUnd(playbackRate) ? timerDefaults.playbackRate : playbackRate) as number;
+    this._fps = (
+      isUnd(frameRate) ? timerDefaults.frameRate : frameRate
+    ) as number;
+    this._speed = (
+      isUnd(playbackRate) ? timerDefaults.playbackRate : playbackRate
+    ) as number;
   }
 
   /**
@@ -410,12 +430,13 @@ export class Timer extends InMotionClock {
     // NOTE: This is only required for Timelines and might be better to move to the Timeline class?
     this._iterationTime = this.iterationDuration;
     // Set tickMode to tickModes.FORCE to force rendering
-    tick(this, 0, 1, internalRender, tickModes.FORCE);
+    // Use type assertion to handle interface mismatch
+    tick(this as any, 0, 1, internalRender, tickModes.FORCE);
     // Reset timer properties after revive / render to make sure the props are not updated again
     resetTimerProperties(this);
     // Also reset children properties
     if (this._hasChildren) {
-      // @ts-ignore - Using any type to bypass protected property access
+      // Use type assertion to bypass protected property access
       forEachChildren(
         this as any,
         resetTimerProperties,
@@ -439,7 +460,7 @@ export class Timer extends InMotionClock {
     // Manually calling .init() on timelines should render all children intial state
     // Forces all children to render once then render to 0 when reseted
     if (!internalRender && this._hasChildren) {
-      tick(this, this.duration, 1, internalRender, tickModes.FORCE);
+      tick(this as any, this.duration, 1, internalRender, tickModes.FORCE);
     }
     this.reset(internalRender);
     // Make sure to set autoplay to false to child timers so it doesn't attempt to autoplay / link
@@ -447,8 +468,8 @@ export class Timer extends InMotionClock {
     if (autoplay === true) {
       this.resume();
     } else if (autoplay && !isUnd((autoplay as ScrollObserver).linked)) {
-      // @ts-ignore - ScrollObserver will have a link method at runtime
-      (autoplay as ScrollObserver).link(this);
+      // Use type assertion for ScrollObserver link method
+      (autoplay as ScrollObserver as any).link(this);
     }
     return this;
   }
@@ -486,11 +507,11 @@ export class Timer extends InMotionClock {
     this.paused = false;
     // We can safely imediatly render a timer that has no duration and no children
     if (this.duration <= minValue && !this._hasChildren) {
-      tick(this, minValue, 0, 0, tickModes.FORCE);
+      tick(this as any, minValue, 0, 0, tickModes.FORCE);
     } else {
       if (!this._running) {
-        // @ts-ignore - Engine will have _head and _tail at runtime
-        addChild(InMotion as any, this, false, undefined, undefined);
+        // Use type assertion for Engine properties
+        addChild(InMotion as any, this, undefined, undefined, undefined);
         (InMotion as any)._hasChildren = true;
         this._running = true;
       }
@@ -527,8 +548,9 @@ export class Timer extends InMotionClock {
     const isPaused = this.paused;
     this.paused = true;
     // timer, time, muteCallbacks, internalRender, tickMode
+    // Use type assertion to handle interface mismatch
     tick(
-      this,
+      this as any,
       time + this._delay,
       ~~muteCallbacks,
       ~~internalRender,
@@ -623,10 +645,10 @@ export class Timer extends InMotionClock {
    * @returns This timer instance
    */
   revert(): this {
-    tick(this, 0, 1, 0, tickModes.AUTO);
+    tick(this as any, 0, 1, 0, tickModes.AUTO);
     const ap = this._autoplay as ScrollObserver;
-    // @ts-ignore - revert method will be available at runtime
-    if (ap && ap.linked && ap.linked === this) ap.revert();
+    // Use type assertion for revert method
+    if (ap && ap.linked && ap.linked === this) (ap as any).revert();
     return this.cancel();
   }
 
@@ -645,7 +667,6 @@ export class Timer extends InMotionClock {
    * @param callback - Function to call when the timer completes
    * @returns Promise resolved when the timer completes
    */
-  // @ts-ignore - this method doesn't override the InMotionClock method
   then(callback: Callback<this> = noop): Promise<unknown> {
     const then = this.then;
     const onResolve = () => {
@@ -703,14 +724,11 @@ const resetTimerProperties = (timer: Timer): Timer => {
  * @returns {Timer} The revived timer
  */
 const reviveTimer = (timer: Timer): Timer => {
-  // @ts-ignore - Using any type to bypass protected property access
+  // Use type assertion to bypass protected property access
   if (!(timer as any)._cancelled) return timer;
-  // @ts-ignore - Using any type to bypass protected property access
   if ((timer as any)._hasChildren) {
-    // @ts-ignore - Using any type to bypass protected property access
     forEachChildren(timer as any, reviveTimer, false, undefined, undefined);
   } else {
-    // @ts-ignore - Using any type to bypass protected property access
     forEachChildren(
       timer as any,
       (tween: Tween) => {
@@ -723,7 +741,6 @@ const reviveTimer = (timer: Timer): Timer => {
       undefined
     );
   }
-  // @ts-ignore - Using any type to bypass protected property access
   (timer as any)._cancelled = 0;
   return timer;
 };

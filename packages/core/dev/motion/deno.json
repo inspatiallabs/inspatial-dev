@@ -32,16 +32,89 @@
   ],
 
   "imports": {
-    "@inspatial/test": "../test/src/index.ts", 
-    "@in/dom": "../dom/src/index.ts"
+    "@inspatial/test": "../test/src/index.ts",
+    "@in/dom": "../dom/src/index.ts",
+    "@inspatial/util": "../util/src/index.ts"
   },
-  "exports": {},
+  "exports": {
+    ".": "./src/index.ts",
+    "./animation": "./src/animation.ts",
+    "./timer": "./src/timer.ts",
+    "./timeline": "./src/timeline.ts",
+    "./engine": "./src/engine.ts",
+    "./draggable": "./src/draggable.ts",
+    "./scroll": "./src/scroll.ts",
+    "./spring": "./src/spring.ts",
+    "./scope": "./src/scope.ts",
+    "./eases": "./src/eases.ts",
+    "./utils": "./src/utils/index.ts",
+    "./types": "./src/types.ts"
+  },
   "tasks": {
-    "test": "deno run --allow-all --no-check --unstable-sloppy-imports ./tests/test_runner.ts --",
-    "test:animation": "deno test --allow-all --no-check tests/animation/animation.test.ts --reporter=pretty"
+    "test": "deno test --allow-all --no-check --unstable-sloppy-imports tests/",
+    "test:clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/animation-clean.test.ts tests/callback-clean.test.ts tests/timer-clean.test.ts tests/timeline-clean.test.ts tests/eases-clean.test.ts tests/sequence-clean.test.ts tests/spring-clean.test.ts tests/keyframes-clean.test.ts tests/utils-clean.test.ts tests/values-clean.test.ts tests/scope-clean.test.ts tests/engine-clean.test.ts tests/draggable-clean.test.ts",
+
+    "test:animation": "deno test --allow-all --no-check --unstable-sloppy-imports tests/animation.test.ts",
+    "test:animation-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/animation-clean.test.ts",
+
+    "test:callback-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/callback-clean.test.ts",
+    "test:callback": "deno test --allow-all --no-check --unstable-sloppy-imports tests/callback.test.ts",
+
+    "test:draggable": "deno test --allow-all --no-check --unstable-sloppy-imports tests/draggable.test.ts",
+
+    "test:eases": "deno test --allow-all --no-check --unstable-sloppy-imports tests/eases.test.ts",
+    "test:eases-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/eases-clean.test.ts",
+
+    "test:engine": "deno test --allow-all --no-check --unstable-sloppy-imports tests/engine.test.ts",
+    "test:engine-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/engine-clean.test.ts",
+
+    "test:function-values": "deno test --allow-all --no-check --unstable-sloppy-imports tests/function-values.test.ts",
+
+    "test:import": "deno test --allow-all --no-check --unstable-sloppy-imports tests/import.test.ts",
+
+    "test:keyframes": "deno test --allow-all --no-check --unstable-sloppy-imports tests/keyframes.test.ts",
+    "test:keyframes-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/keyframes-clean.test.ts",
+
+    "test:leaks": "deno test --allow-all --no-check --unstable-sloppy-imports tests/leaks.test.ts",
+
+    "test:node": "deno test --allow-all --no-check --unstable-sloppy-imports tests/node.test.ts",
+
+    "test:parameters": "deno test --allow-all --no-check --unstable-sloppy-imports tests/parameters.test.ts",
+
+    "test:promises": "deno test --allow-all --no-check --unstable-sloppy-imports tests/promises.test.ts",
+
+    "test:scope": "deno test --allow-all --no-check --unstable-sloppy-imports tests/scope.test.ts",
+    "test:scope-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/scope-clean.test.ts",
+
+    "test:seconds": "deno test --allow-all --no-check --unstable-sloppy-imports tests/seconds.test.ts",
+
+    "test:sequence": "deno test --allow-all --no-check --unstable-sloppy-imports tests/sequence.test.ts",
+    "test:sequence-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/sequence-clean.test.ts",
+
+    "test:spring-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/spring-clean.test.ts",
+
+    "test:svg": "deno test --allow-all --no-check --unstable-sloppy-imports tests/svg.test.ts",
+
+    "test:targets": "deno test --allow-all --no-check --unstable-sloppy-imports tests/targets.test.ts",
+
+    "test:timeline": "deno test --allow-all --no-check --unstable-sloppy-imports tests/timeline.test.ts",
+    "test:timeline-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/timeline-clean.test.ts",
+
+    "test:timer-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/timer-clean.test.ts",
+    "test:timer": "deno test --allow-all --no-check --unstable-sloppy-imports tests/timer.test.ts",
+
+    "test:tweens": "deno test --allow-all --no-check --unstable-sloppy-imports tests/tweens.test.ts",
+
+    "test:units": "deno test --allow-all --no-check --unstable-sloppy-imports tests/units.test.ts",
+
+    "test:utils": "deno test --allow-all --no-check --unstable-sloppy-imports tests/utils.test.ts",
+    "test:utils-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/utils-clean.test.ts",
+
+    "test:values-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/values-clean.test.ts",
+    "test:values": "deno test --allow-all --no-check --unstable-sloppy-imports tests/values.test.ts"
   },
   "compilerOptions": {
-    "lib": ["deno.window", "deno.ns", "dom", "dom.iterable", "esnext", "deno.unstable"],
+    "lib": ["deno.ns", "esnext", "deno.unstable"],
     "strict": true
   },
   "lint": {

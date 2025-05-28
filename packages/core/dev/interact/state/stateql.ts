@@ -5,7 +5,7 @@
  * StateQL provides a powerful, expressive syntax for state updates using
  * template literals. This allows for more natural, code-like updates.
  * 
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind module

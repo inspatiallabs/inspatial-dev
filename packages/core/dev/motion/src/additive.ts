@@ -17,7 +17,7 @@ import type {
  * affecting the same property, adding their effects together rather than
  * replacing each other.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial Motion
  */
 

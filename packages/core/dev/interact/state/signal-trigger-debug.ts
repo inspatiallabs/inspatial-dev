@@ -5,7 +5,7 @@
  * This module provides debugging tools for the signal-trigger integration system,
  * helping developers identify issues and understand the internal state of the system.
  * 
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind module

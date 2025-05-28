@@ -5,7 +5,7 @@
  * This module provides utility functions for working with state instances,
  * including snapshot creation, type checking, and global state access.
  * 
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind module

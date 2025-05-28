@@ -27,7 +27,7 @@ import { type, TypeErrors } from "@inspatial/type";
  * The `UserSchema` validates and provides type safety for user records.
  * Think of it like a form validator for user information.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial KV
  * @module Schema
  * @kind type
@@ -49,7 +49,7 @@ const InUserSchema = type({
  * The `PostSchema` validates and provides type safety for post records.
  * Think of it like a document template for blog posts.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial KV
  * @module Schema
  * @kind type
@@ -71,7 +71,7 @@ const InPostSchema = type({
  * The `TagsSchema` validates and provides type safety for tag collections.
  * Think of it like a list organizer for content categories.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial KV
  * @module Schema
  * @kind type
@@ -89,7 +89,7 @@ const InTagsSchema = type({
  * The `CounterSchema` validates and provides type safety for numeric counters.
  * Think of it like a digital tally counter for tracking values.
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial KV
  * @module Schema
  * @kind type

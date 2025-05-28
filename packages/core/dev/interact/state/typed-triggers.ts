@@ -5,7 +5,7 @@
  * This module provides type-safe integration between InSpatial's state system
  * and the trigger system, with specialized support for different trigger categories.
  * 
- * @since 1.0.0
+ * @since 0.1.0
  * @category InSpatial State
  * @module @inspatial/state
  * @kind module
