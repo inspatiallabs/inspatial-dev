@@ -19,11 +19,11 @@ const denoImmediate = (callback: () => void): number =>
 const denoClearImmediate = (id: number): void => clearTimeout(id);
 
 // Use constants instead of exported variables to avoid conflicts
-const browserTickMethod = isBrowser
+const browserTickMethod: ((callback: () => void) => number) | undefined = isBrowser
   ? globalThis.requestAnimationFrame?.bind(globalThis)
   : denoImmediate;
 
-const browserCancelMethod = isBrowser
+const browserCancelMethod: ((id: number) => void) | undefined = isBrowser
   ? globalThis.cancelAnimationFrame?.bind(globalThis)
   : denoClearImmediate;
 

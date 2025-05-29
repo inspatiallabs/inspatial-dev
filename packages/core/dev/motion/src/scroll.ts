@@ -216,7 +216,7 @@ const parseScrollObserverFunctionParameter = <T>(
 };
 
 /** Map of scroll containers to their DOM elements */
-export const scrollContainers = new Map<HTMLElement, ScrollContainer>();
+export const scrollContainers: Map<HTMLElement, ScrollContainer> = new Map<HTMLElement, ScrollContainer>();
 
 /**
  * # ScrollContainer

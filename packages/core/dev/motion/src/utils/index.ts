@@ -50,7 +50,7 @@ export {
   normalizeTime,
 } from "./math/index.ts";
 
-export const getChildAtIndex = (parent: any, index: number) => {
+export const getChildAtIndex = (parent: any, index: number): any => {
   // If the parent has no children or is null/undefined, return null
   if (!parent || !parent._head) {
     return null;
@@ -67,7 +67,7 @@ export const getChildAtIndex = (parent: any, index: number) => {
   return next;
 };
 
-export const getChildLength = (parent: any) => {
+export const getChildLength = (parent: any): number => {
   // If the parent is null/undefined or has no children, return 0
   if (!parent || !parent._head) {
     return 0;

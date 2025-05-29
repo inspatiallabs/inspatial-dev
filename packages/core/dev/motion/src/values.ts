@@ -193,7 +193,7 @@ export const getRelativeValue = (
  *
  * @return {any} - Empty target object with default values
  */
-export const createDecomposedValueTargetObject = () => {
+export const createDecomposedValueTargetObject = (): { t: number; n: number; u: string | null; o: string | null; d: number[] | null; s: string[] | null } => {
   return {
     t: valueTypes.NUMBER,
     n: 0,
@@ -286,4 +286,4 @@ export const decomposeTweenValue = (tween: any, targetObject: any): any => {
   return targetObject;
 };
 
-export const decomposedOriginalValue = createDecomposedValueTargetObject();
+export const decomposedOriginalValue: { t: number; n: number; u: string | null; o: string | null; d: number[] | null; s: string[] | null } = createDecomposedValueTargetObject();

@@ -266,11 +266,12 @@ const getPathProgess = ($path: SVGGeometryElement, pathProperty: string): Functi
 };
 
 /**
- * # path (formerly createMotionPath)
- * @summary Creates a motion path with x, y, and rotation properties
+ * # path
+ * @summary Creates translation and rotation functions for SVG path following
  * 
- * Creates an object with properties that can animate elements along an SVG path.
- * This function is exported as `createMotionSVG.path` in the new API.
+ * Provides functions to animate elements along SVG paths with translateX, translateY and rotate properties.
+ * Think of it like a train following train tracks - the path defines the route and this function
+ * provides the movement coordinates for each point along that route.
  * 
  * @param {TargetsParam} path - SVG path to follow
  * @return {Object} Object with translateX, translateY and rotate properties
@@ -278,7 +279,7 @@ const getPathProgess = ($path: SVGGeometryElement, pathProperty: string): Functi
  * @since 0.1.0
  * @category InSpatial Motion SVG
  */
-const path = (path: TargetsParam) => {
+const path = (path: TargetsParam): { translateX: FunctionValue; translateY: FunctionValue; rotate: FunctionValue } | undefined => {
   const $path = getPath(path);
   if (!$path) return;
   return {

@@ -341,7 +341,7 @@ export type EasesFunctions = {
 
 /** Compiled list of all easing functions */
 // @ts-ignore - We know this is correct, but TypeScript's type system can't fully express the relationship
-export const eases = /*#__PURE__*/ (() => {
+export const eases: EasesFunctions = /*#__PURE__*/ (() => {
   // Create a dictionary to store all easing functions
   const list: Record<string, unknown> = { 
     linear, 

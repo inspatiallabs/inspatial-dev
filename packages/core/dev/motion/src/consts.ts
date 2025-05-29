@@ -49,13 +49,13 @@ export const compositionTypes = {
 
 // Cache symbols
 
-export const isRegisteredTargetSymbol = Symbol();
-export const isDomSymbol = Symbol();
-export const isSvgSymbol = Symbol();
-export const transformsSymbol = Symbol();
-export const morphPointsSymbol = Symbol();
-export const morphTargetsSymbol = Symbol();
-export const proxyTargetSymbol = Symbol();
+export const isRegisteredTargetSymbol: symbol = Symbol();
+export const isDomSymbol: symbol = Symbol();
+export const isSvgSymbol: symbol = Symbol();
+export const transformsSymbol: symbol = Symbol();
+export const morphPointsSymbol: symbol = Symbol();
+export const morphTargetsSymbol: symbol = Symbol();
+export const proxyTargetSymbol: symbol = Symbol();
 
 // Numbers
 
@@ -67,7 +67,7 @@ export const maxFps = 120;
 // Strings
 
 export const emptyString = '';
-export const shortTransforms = new Map();
+export const shortTransforms: Map<string, string> = new Map();
 
 shortTransforms.set('x', 'translateX');
 shortTransforms.set('y', 'translateY');
@@ -93,7 +93,7 @@ export const validTransforms = [
   'matrix3d',
 ];
 
-export const transformsFragmentStrings = validTransforms.reduce((a, v) => ({...a, [v]: v + '('}), {});
+export const transformsFragmentStrings: Record<string, string> = validTransforms.reduce((a, v) => ({...a, [v]: v + '('}), {});
 
 // Functions
 
