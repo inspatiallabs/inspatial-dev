@@ -1,8 +1,8 @@
 {
   "name": "@in/dom",
   "license": "Apache-2.0",
-  "version": "0.1.0",
-  "description": "A DOM implementation for InSpatial",
+  "version": "0.1.1",
+  "description": "Universal DOM Module",
   "imports": {
     "@inspatial/util": "jsr:@inspatial/util@^0.1.9",
     "@inspatial/test": "jsr:@inspatial/test@^0.1.1",
