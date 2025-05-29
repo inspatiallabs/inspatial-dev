@@ -6,11 +6,11 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/inspatiallabs/inspatial-core.git",
+    "url": "git+https://github.com/inspatiallabs/inspatial-dev.git",
     "directory": "packages/core/dev/motion"
   },
   "bugs": {
-    "url": "https://github.com/inspatiallabs/inspatial-core/issues"
+    "url": "https://github.com/inspatiallabs/inspatial-dev/issues"
   },
   "homepage": "https://inspatial.dev/motion",
   "files": ["src"],
@@ -40,9 +40,9 @@
   ],
 
   "imports": {
-    "@inspatial/test": "../test/src/index.ts",
-    "@in/dom": "../dom/src/index.ts",
-    "@inspatial/util": "../util/src/index.ts"
+    "@inspatial/test": "jsr:@inspatial/test@^0.1.1",
+    "@in/dom": "jsr:@in/dom@^0.1.1",
+    "@inspatial/util": "jsr:@inspatial/util@^0.2.0"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -56,7 +56,20 @@
     "./scope": "./src/scope.ts",
     "./eases": "./src/eases.ts",
     "./utils": "./src/utils/index.ts",
-    "./types": "./src/types.ts"
+    "./types": "./src/types.ts",
+    "./physics": "./src/physics/index.ts",
+    "./compositions": "./src/compositions.ts",
+    "./consts": "./src/consts.ts",
+    "./properties": "./src/properties.ts",
+    "./tweens": "./src/tweens.ts",
+    "./values": "./src/values.ts",
+    "./svg": "./src/svg.ts",
+    "./targets": "./src/targets.ts",
+    "./node": "./src/node.ts",
+    "./parameters": "./src/parameters.ts",
+    "./promises": "./src/promises.ts",
+    "./sequence": "./src/sequence.ts"
+    
   },
   "tasks": {
     "test": "deno test --allow-all --no-check --unstable-sloppy-imports tests/",
@@ -69,6 +82,7 @@
     "test:callback": "deno test --allow-all --no-check --unstable-sloppy-imports tests/callback.test.ts",
 
     "test:draggable": "deno test --allow-all --no-check --unstable-sloppy-imports tests/draggable.test.ts",
+    "test:draggable-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/draggable-clean.test.ts",
 
     "test:eases": "deno test --allow-all --no-check --unstable-sloppy-imports tests/eases.test.ts",
     "test:eases-clean": "deno test --allow-all --no-check --unstable-sloppy-imports tests/eases-clean.test.ts",
