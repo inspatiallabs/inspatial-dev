@@ -1,5 +1,5 @@
 // /**
-//  * @module @inspatial/motion/tests/draggable-clean
+//  * @module @in/motion/tests/draggable-clean
 //  *
 //  * Comprehensive test suite for InMotion's draggable functionality using DOM-less testing approach.
 //  * This module tests all draggable features without requiring actual DOM structures, making tests
@@ -7,7 +7,7 @@
 //  *
 //  * @example Basic Usage
 //  * ```typescript
-//  * import { createMotionDraggable } from "@inspatial/motion/draggable";
+//  * import { createMotionDraggable } from "@in/motion/draggable";
 //  * 
 //  * // Create a draggable with mock target
 //  * const target = createMockDraggableTarget();

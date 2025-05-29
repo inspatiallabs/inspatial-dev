@@ -1,13 +1,13 @@
 /**
  * # Target Value Utilities
- * @module @inspatial/motion/utils/dom/target-values
+ * @module @in/motion/utils/dom/target-values
  *
  * Utility functions for getting and setting values on DOM elements or JavaScript objects.
  * These functions provide a consistent interface for working with different target types.
  *
  * @example Basic Usage
  * ```typescript
- * import { getTargetValue, setTargetValues } from "@inspatial/motion/utils/dom/target-values";
+ * import { getTargetValue, setTargetValues } from "@in/motion/utils/dom/target-values";
  *
  * // Get a computed style property from an element
  * const opacity = getTargetValue(element, 'opacity');
@@ -58,7 +58,7 @@ type GenericObject = Record<string, any>;
  * @example
  * ### Get DOM Element Style
  * ```typescript
- * import { getTargetValue } from '@inspatial/motion/utils/dom/target-values';
+ * import { getTargetValue } from '@in/motion/utils/dom/target-values';
  *
  * // Get the computed opacity of an element
  * const element = document.querySelector('.fade-in');
@@ -69,7 +69,7 @@ type GenericObject = Record<string, any>;
  * @example
  * ### Get Object Property
  * ```typescript
- * import { getTargetValue } from '@inspatial/motion/utils/dom/target-values';
+ * import { getTargetValue } from '@in/motion/utils/dom/target-values';
  *
  * // Get a property from a JavaScript object
  * const position = { x: 100, y: 200 };
@@ -80,7 +80,7 @@ type GenericObject = Record<string, any>;
  * @example
  * ### With Default Value
  * ```typescript
- * import { getTargetValue } from '@inspatial/motion/utils/dom/target-values';
+ * import { getTargetValue } from '@in/motion/utils/dom/target-values';
  *
  * // Provide a default if property doesn't exist
  * const config = { timeout: 1000 };
@@ -140,7 +140,7 @@ export function getTargetValue(
  * @example
  * ### Set DOM Element Styles
  * ```typescript
- * import { setTargetValues } from '@inspatial/motion/utils/dom/target-values';
+ * import { setTargetValues } from '@in/motion/utils/dom/target-values';
  *
  * // Set multiple styles on an element
  * const element = document.querySelector('.animated-box');
@@ -154,7 +154,7 @@ export function getTargetValue(
  * @example
  * ### Set Object Properties
  * ```typescript
- * import { setTargetValues } from '@inspatial/motion/utils/dom/target-values';
+ * import { setTargetValues } from '@in/motion/utils/dom/target-values';
  *
  * // Set multiple properties on a JavaScript object
  * const position = { x: 0, y: 0 };

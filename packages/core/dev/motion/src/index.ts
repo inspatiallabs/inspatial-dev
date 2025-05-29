@@ -1,13 +1,13 @@
 /**
  * # InMotion
- * @module @inspatial/motion
+ * @module @in/motion
  *
  * InSpatial Motion is a universal animation system for creating smooth, performant animations.
  * It provides a lightweight, powerful alternative to CSS animations with precise timing control.
  *
  * @example Basic Usage
  * ```typescript
- * import { createMotion } from "@inspatial/motion";
+ * import { createMotion } from "@in/motion";
  *
  * // Simple animation
  * createMotion(".element", {

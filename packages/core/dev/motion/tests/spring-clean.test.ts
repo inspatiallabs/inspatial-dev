@@ -1,5 +1,5 @@
 /**
- * @module @inspatial/motion/tests/spring-clean
+ * @module @in/motion/tests/spring-clean
  *
  * Clean tests for the InMotion Spring system. These tests validate the physics-based
  * spring animation system without requiring DOM dependencies, focusing on mathematical
@@ -7,7 +7,7 @@
  *
  * @example Basic Usage
  * ```typescript
- * import { InMotionSpring, createMotionSpring } from "@inspatial/motion/spring";
+ * import { InMotionSpring, createMotionSpring } from "@in/motion/spring";
  * 
  * // Test spring creation and physics calculations
  * const spring = new InMotionSpring({ mass: 1, stiffness: 100, damping: 10 });

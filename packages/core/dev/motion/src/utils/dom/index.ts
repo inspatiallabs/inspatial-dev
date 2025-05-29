@@ -1,13 +1,13 @@
 /**
  * # DOM Utilities
- * @module @inspatial/motion/utils/dom
+ * @module @in/motion/utils/dom
  *
  * DOM manipulation and query utilities for the InMotion animation library.
  * These functions help with selecting, modifying, and managing DOM elements.
  *
  * @example Basic Usage
  * ```typescript
- * import { $, isNode } from "@inspatial/motion/utils/dom";
+ * import { $, isNode } from "@in/motion/utils/dom";
  * 
  * // Select elements with a CSS selector
  * const elements = $('.my-class');
@@ -51,7 +51,7 @@ import { doc } from "../../consts.ts";
  * @example
  * ### Basic Usage
  * ```typescript
- * import { isNode } from '@inspatial/motion/utils/dom';
+ * import { isNode } from '@in/motion/utils/dom';
  * 
  * const div = document.createElement('div');
  * console.log(isNode(div)); // true
@@ -85,7 +85,7 @@ export const isNode = (target: any): boolean =>
  * @example
  * ### Basic Selection
  * ```typescript
- * import { $ } from '@inspatial/motion/utils/dom';
+ * import { $ } from '@in/motion/utils/dom';
  * 
  * // Select all paragraphs
  * const paragraphs = $('p');
@@ -122,7 +122,7 @@ export const $ = (selector: string, context: Document | Element = doc): Element[
  * @example
  * ### Convert Selector to NodeList
  * ```typescript
- * import { getNodeList } from '@inspatial/motion/utils/dom';
+ * import { getNodeList } from '@in/motion/utils/dom';
  * 
  * const nodes = getNodeList('.my-class');
  * ```
@@ -156,7 +156,7 @@ export const getNodeList = (v: any): NodeList | null => {
  * @example
  * ### Clean Animation Styles
  * ```typescript
- * import { cleanInlineStyles } from '@inspatial/motion/utils/dom';
+ * import { cleanInlineStyles } from '@in/motion/utils/dom';
  * 
  * // Clean up styles after animation
  * const elements = document.querySelectorAll('.animated');

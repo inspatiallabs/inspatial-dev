@@ -1,13 +1,13 @@
 /**
  * # InMotion Types
- * @module @inspatial/motion/types
+ * @module @in/motion/types
  *
  * This module provides type definitions for the InMotion animation library.
  * Defining proper types enables better development experience with code completion and type checking.
  *
  * @example Basic Usage
  * ```typescript
- * import { animate, type AnimationParams } from "@inspatial/motion";
+ * import { animate, type AnimationParams } from "@in/motion";
  *
  * // Type-safe animation parameters
  * const params: AnimationParams = {

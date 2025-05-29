@@ -43,7 +43,7 @@ import type { SpringParams, EasingFunction } from "./types.ts";
  * @example
  * ### Example 1: Basic Spring Animation
  * ```typescript
- * import { createMotion, createMotionSpring } from "@inspatial/motion";
+ * import { createMotion, createMotionSpring } from "@in/motion";
  *
  * // Create a spring with custom physics parameters
  * const bouncy = createMotionSpring({
@@ -64,7 +64,7 @@ import type { SpringParams, EasingFunction } from "./types.ts";
  * @example
  * ### Example 2: Adjusting Spring Properties Dynamically
  * ```typescript
- * import { createMotion, createMotionSpring } from "@inspatial/motion";
+ * import { createMotion, createMotionSpring } from "@in/motion";
  *
  * // Create a spring with default values
  * const spring = createMotionSpring();
@@ -272,7 +272,7 @@ export class InMotionSpring {
  *
  * @example
  * ```typescript
- * import { createMotion, createMotionSpring } from "@inspatial/motion";
+ * import { createMotion, createMotionSpring } from "@in/motion";
  *
  * const spring = createMotionSpring({
  *   mass: 1,

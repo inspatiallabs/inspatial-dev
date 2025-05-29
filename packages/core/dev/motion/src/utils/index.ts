@@ -1,6 +1,6 @@
 /**
  * # InMotion Utilities
- * @module @inspatial/motion/utils
+ * @module @in/motion/utils
  *
  * Central export point for all utility functions in the InMotion animation library.
  * This module provides a convenient way to import utilities from various categories.
@@ -8,13 +8,13 @@
  * @example Basic Usage
  * ```typescript
  * // Import everything
- * import * as motionUtils from "@inspatial/motion/utils";
+ * import * as motionUtils from "@in/motion/utils";
  *
  * // Import specific utilities
- * import { delay, get, set } from "@inspatial/motion/utils";
+ * import { delay, get, set } from "@in/motion/utils";
  *
  * // Import from a specific category
- * import { clamp, interpolate } from "@inspatial/motion/utils/math";
+ * import { clamp, interpolate } from "@in/motion/utils/math";
  * ```
  *
  * @features

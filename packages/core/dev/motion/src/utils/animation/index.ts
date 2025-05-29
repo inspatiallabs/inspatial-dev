@@ -1,6 +1,6 @@
 /**
  * # Animation Utilities
- * @module @inspatial/motion/utils/animation
+ * @module @in/motion/utils/animation
  *
  * Utility functions for working with animations in the InMotion library.
  * These functions provide common helpers for controlling animations and
@@ -8,7 +8,7 @@
  *
  * @example Basic Usage
  * ```typescript
- * import { delay, stop, remove } from "@inspatial/motion/utils/animation";
+ * import { delay, stop, remove } from "@in/motion/utils/animation";
  * 
  * // Run code after a delay
  * delay(() => {
@@ -71,7 +71,7 @@ import type {
  * @example
  * ### Simple Delayed Execution
  * ```typescript
- * import { delay } from '@inspatial/motion/utils';
+ * import { delay } from '@in/motion/utils';
  * 
  * // Wait 2 seconds then run a function
  * delay(() => {
@@ -82,7 +82,7 @@ import type {
  * @example
  * ### Controlled Delay
  * ```typescript
- * import { delay } from '@inspatial/motion/utils';
+ * import { delay } from '@in/motion/utils';
  * 
  * // Create a delay timer
  * const timer = delay(() => {
@@ -134,7 +134,7 @@ export function delay<T extends CallbackArgument>(
  * @example
  * ### Remove All Animation Styles
  * ```typescript
- * import { remove } from '@inspatial/motion/utils/animation';
+ * import { remove } from '@in/motion/utils/animation';
  * 
  * // Remove all animation styles from an element
  * remove(document.querySelector('.animated-box'));
@@ -143,7 +143,7 @@ export function delay<T extends CallbackArgument>(
  * @example
  * ### Remove Specific Properties
  * ```typescript
- * import { remove } from '@inspatial/motion/utils/animation';
+ * import { remove } from '@in/motion/utils/animation';
  * 
  * // Only remove translateX and opacity styles
  * remove(document.querySelector('.animated-box'), ['translateX', 'opacity']);
@@ -199,7 +199,7 @@ export const remove = (
  * @example
  * ### Stop All Animations
  * ```typescript
- * import { stop } from '@inspatial/motion/utils/animation';
+ * import { stop } from '@in/motion/utils/animation';
  * 
  * // Stop all animations on a specific element
  * stop(document.querySelector('.moving-element'));
@@ -208,7 +208,7 @@ export const remove = (
  * @example
  * ### Stop Specific Property Animation
  * ```typescript
- * import { stop } from '@inspatial/motion/utils/animation';
+ * import { stop } from '@in/motion/utils/animation';
  * 
  * // Only stop the opacity animation
  * stop(document.querySelector('.fading-element'), 'opacity');
@@ -217,7 +217,7 @@ export const remove = (
  * @example
  * ### Complete Animation Before Stopping
  * ```typescript
- * import { stop } from '@inspatial/motion/utils/animation';
+ * import { stop } from '@in/motion/utils/animation';
  * 
  * // Complete the animation before stopping it
  * stop(document.querySelector('.animated-element'), null, true);
@@ -286,7 +286,7 @@ export const stop = (
  * @example
  * ### Get Element Position
  * ```typescript
- * import { get } from '@inspatial/motion/utils/animation';
+ * import { get } from '@in/motion/utils/animation';
  * 
  * // Get the current translateX value
  * const currentX = get(document.querySelector('.moving-box'), 'translateX');
@@ -296,7 +296,7 @@ export const stop = (
  * @example
  * ### Get With Unit Conversion
  * ```typescript
- * import { get } from '@inspatial/motion/utils/animation';
+ * import { get } from '@in/motion/utils/animation';
  * 
  * // Get rotation in degrees
  * const rotation = get(document.querySelector('.rotating-element'), 'rotate', 'deg');
@@ -337,7 +337,7 @@ export const get = (
  * @example
  * ### Basic Usage
  * ```typescript
- * import { set } from '@inspatial/motion/utils/animation';
+ * import { set } from '@in/motion/utils/animation';
  * 
  * // Set initial position before animating
  * set(document.querySelector('.box'), 'translateX', '0px');
@@ -346,7 +346,7 @@ export const get = (
  * @example
  * ### Set Multiple Properties
  * ```typescript
- * import { set } from '@inspatial/motion/utils/animation';
+ * import { set } from '@in/motion/utils/animation';
  * 
  * // Set initial state with multiple calls
  * const element = document.querySelector('.element');

@@ -312,7 +312,7 @@ const masterTimeline = createMotionTimeline({
 | `pause()` | Pause timeline execution |
 | `reverse()` | Play timeline in reverse direction |
 
-### 🧩 Physics (2D) Spring System
+### 🧩 Spring System
 
 Create natural, spring-based animations using mass, and damping, velocity etc... for realistic interactions.
 

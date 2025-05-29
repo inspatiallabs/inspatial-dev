@@ -1,13 +1,13 @@
 /**
  * # Math Utilities
- * @module @inspatial/motion/utils/math
+ * @module @in/motion/utils/math
  *
  * Mathematical utility functions for the InMotion animation library.
  * These functions provide various calculations and transformations.
  *
  * @example Basic Usage
  * ```typescript
- * import { clamp, round, interpolate } from "@inspatial/motion/utils/math";
+ * import { clamp, round, interpolate } from "@in/motion/utils/math";
  * 
  * // Limit a value between a min and max
  * const limitedValue = clamp(value, 0, 100);
@@ -63,7 +63,7 @@ export {
  * @example
  * ### Basic Usage
  * ```typescript
- * import { clamp } from '@inspatial/motion/utils/math';
+ * import { clamp } from '@in/motion/utils/math';
  * 
  * clamp(150, 0, 100); // 100 (value exceeds max)
  * clamp(-10, 0, 100); // 0 (value below min)
@@ -73,7 +73,7 @@ export {
  * @example
  * ### Normalizing User Input
  * ```typescript
- * import { clamp } from '@inspatial/motion/utils/math';
+ * import { clamp } from '@in/motion/utils/math';
  * 
  * function setVolume(level) {
  *   // Ensure volume level stays between 0 and 100
@@ -107,7 +107,7 @@ export const clamp = (value: number, min: number, max: number): number =>
  * @example
  * ### Basic Rounding
  * ```typescript
- * import { round } from '@inspatial/motion/utils/math';
+ * import { round } from '@in/motion/utils/math';
  * 
  * round(3.14159);     // 3 (default is 0 decimal places)
  * round(3.14159, 2);  // 3.14
@@ -117,7 +117,7 @@ export const clamp = (value: number, min: number, max: number): number =>
  * @example
  * ### Financial Calculations
  * ```typescript
- * import { round } from '@inspatial/motion/utils/math';
+ * import { round } from '@in/motion/utils/math';
  * 
  * // Calculate tax and round to 2 decimal places
  * const price = 19.99;
@@ -149,7 +149,7 @@ export const round = (value: number, decimalLength = 0): number => {
  * @example
  * ### Basic Usage
  * ```typescript
- * import { snap } from '@inspatial/motion/utils/math';
+ * import { snap } from '@in/motion/utils/math';
  * 
  * snap(17, 5);  // 15 (nearest multiple of 5)
  * snap(18, 5);  // 20 (nearest multiple of 5)
@@ -159,7 +159,7 @@ export const round = (value: number, decimalLength = 0): number => {
  * @example
  * ### Building a Grid System
  * ```typescript
- * import { snap } from '@inspatial/motion/utils/math';
+ * import { snap } from '@in/motion/utils/math';
  * 
  * // Snap an element's position to a 10px grid
  * function snapToGrid(position) {
@@ -198,7 +198,7 @@ export const snap = (value: number, increment: number): number =>
  * @example
  * ### Basic Usage
  * ```typescript
- * import { interpolate } from '@inspatial/motion/utils/math';
+ * import { interpolate } from '@in/motion/utils/math';
  * 
  * interpolate(0, 100, 0);    // 0 (start)
  * interpolate(0, 100, 0.5);  // 50 (halfway)
@@ -209,7 +209,7 @@ export const snap = (value: number, increment: number): number =>
  * @example
  * ### Color Transition
  * ```typescript
- * import { interpolate } from '@inspatial/motion/utils/math';
+ * import { interpolate } from '@in/motion/utils/math';
  * 
  * // Interpolate between two RGB colors
  * function interpolateColor(color1, color2, progress) {
@@ -251,7 +251,7 @@ export const interpolate = (start: number, end: number, progress: number): numbe
  * @example
  * ### Basic Usage
  * ```typescript
- * import { normalize } from '@inspatial/motion/utils/math';
+ * import { normalize } from '@in/motion/utils/math';
  * 
  * normalize(50, 0, 100);  // 0.5 (halfway between 0-100)
  * normalize(25, 0, 100);  // 0.25 (quarter way between 0-100)
@@ -283,7 +283,7 @@ export const normalize = (value: number, min: number, max: number): number =>
  * @example
  * ### Basic Usage
  * ```typescript
- * import { mapRange } from '@inspatial/motion/utils/math';
+ * import { mapRange } from '@in/motion/utils/math';
  * 
  * // Map a percentage (0-1) to a score (0-100)
  * mapRange(0.75, 0, 1, 0, 100); // 75
@@ -295,7 +295,7 @@ export const normalize = (value: number, min: number, max: number): number =>
  * @example
  * ### Input Handling
  * ```typescript
- * import { mapRange } from '@inspatial/motion/utils/math';
+ * import { mapRange } from '@in/motion/utils/math';
  * 
  * // Map scroll position to animation progress
  * function handleScroll(event) {
@@ -339,7 +339,7 @@ export const mapRange = (
  * @example
  * ### Preventing Overflow
  * ```typescript
- * import { clampInfinity } from '@inspatial/motion/utils/math';
+ * import { clampInfinity } from '@in/motion/utils/math';
  * 
  * // Avoid very large values from calculations that might reach infinity
  * const result = clampInfinity(1e20); // Returns a very large but finite number
@@ -365,7 +365,7 @@ export const clampInfinity = (value: number): number =>
  * @example
  * ### Basic Usage
  * ```typescript
- * import { degToRad } from '@inspatial/motion/utils/math';
+ * import { degToRad } from '@in/motion/utils/math';
  * 
  * degToRad(0);    // 0
  * degToRad(90);   // ~1.5708 (PI/2)
@@ -392,7 +392,7 @@ export const degToRad = (degrees: number): number => degrees * (PI / 180);
  * @example
  * ### Basic Usage
  * ```typescript
- * import { radToDeg } from '@inspatial/motion/utils/math';
+ * import { radToDeg } from '@in/motion/utils/math';
  * 
  * radToDeg(0);         // 0
  * radToDeg(Math.PI/2); // 90
@@ -420,7 +420,7 @@ export const radToDeg = (radians: number): number => radians * (180 / PI);
  * @example
  * ### Animation Progress
  * ```typescript
- * import { normalizeTime } from '@inspatial/motion/utils/math';
+ * import { normalizeTime } from '@in/motion/utils/math';
  * 
  * // Track animation progress
  * function updateAnimation(currentTime, duration) {

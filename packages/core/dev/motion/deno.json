@@ -22,13 +22,21 @@
     "timeline",
     "inspatial",
     "physics",
+    "3d-physics",
+    "2d-physics",
     "spring",
+    "spring-physics",
+    "bullet-physics",
     "easing",
     "animation-library",
     "animation-engine",
     "tweening",
     "transitions",
-    "keyframes"
+    "keyframes",
+    "inmotion",
+    "draggable",
+    "scrollable",
+    "svg-morphing"
   ],
 
   "imports": {
