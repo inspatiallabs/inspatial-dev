@@ -61,15 +61,10 @@
     "./compositions": "./src/compositions.ts",
     "./consts": "./src/consts.ts",
     "./properties": "./src/properties.ts",
-    "./tweens": "./src/tweens.ts",
     "./values": "./src/values.ts",
     "./svg": "./src/svg.ts",
     "./targets": "./src/targets.ts",
-    "./node": "./src/node.ts",
-    "./parameters": "./src/parameters.ts",
-    "./promises": "./src/promises.ts",
     "./sequence": "./src/sequence.ts"
-    
   },
   "tasks": {
     "test": "deno test --allow-all --no-check --unstable-sloppy-imports tests/",
