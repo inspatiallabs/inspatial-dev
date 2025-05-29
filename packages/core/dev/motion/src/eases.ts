@@ -1,7 +1,7 @@
 import { minValue, emptyString } from "./consts.ts";
 
-import {
-  isUnd,
+// Import math helpers 
+import { 
   isStr,
   isFnc,
   parseNumber,
@@ -15,14 +15,17 @@ import {
   asin,
   PI,
   pow,
+  isUnd,
 } from "./helpers.ts";
 
-import type { EasingFunction, EasingParam, Spring } from "./types.ts";
+import type { EasingFunction, EasingParam } from "./types.ts";
 
-/** 
- * Linear easing function (no easing)
- * @type {EasingFunction} 
- */
+export type { EasingFunction, EasingParam } from "./types.ts";
+
+const halfPI = PI / 2;
+const doublePI = PI * 2;
+
+/** Basic identity function */
 export const none = (t: number): number => t;
 
 // Cubic Bezier solver adapted from https://github.com/gre/bezier-ease © Gaëtan Renaudeau
@@ -181,9 +184,6 @@ export type EaseFactory = (paramA?: number, paramB?: number) => EasingFunction;
 
 /** All possible easing factories */
 export type EasesFactory = PowerEasing | BackEasing | ElasticEasing;
-
-const halfPI = PI / 2;
-const doublePI = PI * 2;
 
 /** Power easing factory */
 export const easeInPower: PowerEasing =
@@ -350,9 +350,9 @@ export const eases = /*#__PURE__*/ (() => {
     cubicBezier 
   };
   
-  for (let type in easeTypes) {
+  for (const type in easeTypes) {
     if (Object.prototype.hasOwnProperty.call(easeTypes, type)) {
-      for (let name in easeInFunctions) {
+      for (const name in easeInFunctions) {
         if (Object.prototype.hasOwnProperty.call(easeInFunctions, name)) {
           const easeIn = easeInFunctions[name];
           const easeType = easeTypes[type];

@@ -38,8 +38,8 @@ export const isObj = (a: any): a is Record<string, any> => a && a.constructor ==
 export const isNum = (a: any): a is number => typeof a === "number" && !isNaN(a);
 /**@param {any} a @return {a is String} */
 export const isStr = (a: any): a is string => typeof a === "string";
-/**@param {any} a @return {a is Function} */
-export const isFnc = (a: any): a is Function => typeof a === "function";
+/**@param {any} a @return {a is (...args: any[]) => any} */
+export const isFnc = (a: any): a is (...args: any[]) => any => typeof a === "function";
 /**@param {any} a @return {a is undefined} */
 export const isUnd = (a: any): a is undefined => typeof a === "undefined";
 /**@param {any} a @return {a is null | undefined} */
@@ -55,7 +55,7 @@ export const isHsl = (a: any): boolean => stringStartsWith(a, "hsl");
 /**@param {any} a @return {Boolean} */
 export const isCol = (a: any): boolean => isHex(a) || isRgb(a) || isHsl(a);
 /**@param {any} a @return {Boolean} */
-export const isKey = (a: any): boolean => !globals.defaults.hasOwnProperty(a);
+export const isKey = (a: any): boolean => !Object.prototype.hasOwnProperty.call(globals.defaults, a);
 /**@param {any} a @return {Boolean} */
 export const isDefined = (a: any): boolean => !isUnd(a) && a !== null;
 
@@ -166,7 +166,7 @@ export const cloneArray = <T>(a: T[] | T): T[] => (isArr(a) ? [...a] : [a] as un
  */
 export const mergeObjects = <T extends object, U extends object>(o1: T, o2: U): T & U => {
   const merged = /** @type {T & U} */ { ...o1 } as T & U;
-  for (let p in o2) {
+  for (const p in o2) {
     const o1p = /** @type {T & U} */ (o1 as any)[p];
     merged[p] = isUnd(o1p) ? /** @type {T & U} */ (o2 as any)[p] : o1p;
   }

@@ -2,10 +2,15 @@ import { doc, win } from "./consts.ts";
 import { globals } from "./globals.ts";
 import { parseTargets } from "./targets.ts";
 
-// Define helper functions instead of importing from helpers.ts
-const isFnc = (value: unknown): value is Function =>
+/**
+ * Helper function to check if a value is a function
+ */
+const isFnc = (value: unknown): value is (...args: any[]) => any =>
   typeof value === "function";
 
+/**
+ * Merges two objects, with source properties overriding target properties
+ */
 const mergeObjects = <
   T extends Record<string, any>,
   U extends Record<string, any>
@@ -14,24 +19,23 @@ const mergeObjects = <
   source?: U
 ): T & Partial<U> => {
   if (!source) return target as T & Partial<U>;
-
-  const result = { ...target };
+  const result = { ...target } as T & Partial<U>;
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key)) {
-      result[key] = source[key] as unknown as T[Extract<keyof U, string>];
+      (result as any)[key] = source[key];
     }
   }
-  return result as T & Partial<U>;
+  return result;
 };
 
-// Define interfaces
+/*###################################(Scope Interface)###################################*/
 export interface ScopeInterface {
   defaults: any;
   root: Document | DOMTarget;
   constructors: ScopeConstructor[];
-  revertConstructors: Function[];
+  revertConstructors: (() => void)[];
   revertibles: Revertible[];
-  methods: Record<string, Function>;
+  methods: Record<string, (...args: any[]) => any>;
   matches: Record<string, boolean>;
   mediaQueryLists: Record<string, MediaQueryList>;
   data: Record<string, any>;
@@ -56,7 +60,7 @@ export interface VueRef {
   value?: HTMLElement | SVGElement | null;
 }
 
-// TODO: Add more framework refs
+// TODO(@motion-team): Add more framework refs
 
 /*###################################(Scope Params)###################################*/
 export interface ScopeParams {
@@ -119,13 +123,13 @@ export class InMotionScope implements ScopeInterface {
   public constructors: ScopeConstructor[];
 
   /** Array of functions to revert constructor effects */
-  public revertConstructors: Function[];
+  public revertConstructors: (() => void)[];
 
   /** Array of objects that can be reverted */
   public revertibles: Revertible[];
 
   /** Object of methods attached to the scope */
-  public methods: Record<string, Function>;
+  public methods: Record<string, (...args: any[]) => any>;
 
   /** Object of media query matches */
   public matches: Record<string, boolean>;
@@ -177,7 +181,7 @@ export class InMotionScope implements ScopeInterface {
     this.data = {};
 
     if (mediaQueries && win) {
-      for (let mq in mediaQueries) {
+      for (const mq in mediaQueries) {
         const _mq = win.matchMedia(mediaQueries[mq]);
         if (_mq) {
           this.mediaQueryLists[mq] = _mq;
@@ -204,7 +208,7 @@ export class InMotionScope implements ScopeInterface {
     globals.defaults = this.defaults;
 
     const mqs = this.mediaQueryLists;
-    for (let mq in mqs) this.matches[mq] = mqs[mq].matches;
+    for (const mq in mqs) this.matches[mq] = mqs[mq].matches;
 
     const returned = cb(this);
 
@@ -232,7 +236,7 @@ export class InMotionScope implements ScopeInterface {
         }
       }
 
-      while (y--) this.revertConstructors[y](this);
+      while (y--) this.revertConstructors[y]();
 
       this.revertibles.length = 0;
       this.revertConstructors.length = 0;
@@ -305,9 +309,9 @@ export class InMotionScope implements ScopeInterface {
       }
     }
 
-    while (y--) revertConstructors[y](this);
+    while (y--) revertConstructors[y]();
 
-    for (let mq in mqs) mqs[mq].removeEventListener("change", this);
+    for (const mq in mqs) mqs[mq].removeEventListener("change", this);
 
     revertibles.length = 0;
     revertConstructors.length = 0;

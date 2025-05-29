@@ -14,7 +14,7 @@ import {
 const stringStartsWith = (str: string, sub: string): boolean =>
   str.indexOf(sub) === 0;
 const isUnd = (value: any): boolean => typeof value === "undefined";
-const isFnc = (value: any): value is Function => typeof value === "function";
+const isFnc = (value: any): value is (...args: any[]) => any => typeof value === "function";
 const isCol = (value: string): boolean => {
   // Simple color detection - customize as needed for your use case
   return (
@@ -70,7 +70,7 @@ export const getFunctionValue = <T>(
 ): T => {
   if (isFnc(value)) {
     const func = () => {
-      const computed = (value as Function)(target, index, total);
+      const computed = (value as (target: any, index: number, total: number) => T)(target, index, total);
       // Fallback to 0 if the function returns undefined / NaN / null / false / 0
       return !isNaN(+computed) ? +computed : computed || 0;
     };

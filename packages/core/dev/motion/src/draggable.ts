@@ -34,7 +34,7 @@ import { Timer } from "./timer.ts";
 
 import { setValue } from "./values.ts";
 
-import { parseEasings } from "./eases.ts";
+import { parseEasings as _parseEasings } from "./eases.ts";
 
 import { createMotionSpring } from "./spring.ts";
 

@@ -45,7 +45,7 @@ import {
   setValue,
 } from "./values.ts";
 
-import { sanitizePropertyName } from "./properties.ts";
+import { sanitizePropertyName as _sanitizePropertyName } from "./properties.ts";
 
 import { convertValueUnit } from "./units.ts";
 
@@ -64,14 +64,14 @@ import type {
   Renderable,
   DOMTarget,
   Tween,
-  TweenLookups,
+  TweenLookups as _TweenLookups,
   TweenKeyValue,
   TweenPropValue,
-  TweenReplaceLookups,
+  TweenReplaceLookups as _TweenReplaceLookups,
   TweenParamsOptions,
   TweenPropertySiblings,
   TweenValues,
-  TweenObjectValue,
+  TweenObjectValue as _TweenObjectValue,
   TweenParamValue,
   ArraySyntaxValue,
   Timeline,
@@ -91,8 +91,8 @@ import type {
   AnimatableParams,
   AnimatableObject,
   AnimatableProperty,
-  AnimatablePropertySetter,
-  AnimatablePropertyGetter,
+  AnimatablePropertySetter as _AnimatablePropertySetter,
+  AnimatablePropertyGetter as _AnimatablePropertyGetter,
   TweenModifier,
   Scope,
   Tickable,
@@ -148,7 +148,7 @@ export const cleanInlineStyles = (renderable: Renderable): Renderable => {
                 targetStyle.removeProperty("transform");
               } else {
                 let str = emptyString;
-                for (let key in cachedTransforms) {
+                for (const key in cachedTransforms) {
                   str +=
                     (transformsFragmentStrings as Record<string, string>)[key] +
                     cachedTransforms[key] +
@@ -223,7 +223,7 @@ const generateKeyframes = (
       const propArray = (keyframes as DurationKeyframes).map((key) => {
         /** @type {TweenKeyValue} */
         const newKey: TweenKeyValue = { to: undefined };
-        for (let p in key) {
+        for (const p in key) {
           const keyValue = key[p] as TweenPropValue;
           if (isKey(p)) {
             if (p === propName) {
@@ -255,10 +255,12 @@ const generateKeyframes = (
         return { o: parseFloat(key) / 100, p: (keyframes as any)[key] };
       })
       .sort((a, b) => a.o - b.o);
+    const _length = keys.length;
+    const _prevKey = keys[0];
     keys.forEach((key) => {
       const offset = key.o;
       const prop = key.p;
-      for (let name in prop) {
+      for (const name in prop) {
         if (isKey(name)) {
           let propArray = properties[
             name as keyof AnimationParams
@@ -266,8 +268,8 @@ const generateKeyframes = (
           if (!propArray)
             propArray = properties[name as keyof AnimationParams] = [] as any;
           const duration = offset * totalDuration;
-          let length = propArray.length;
-          let prevKey = propArray[length - 1];
+          const length = propArray.length;
+          const prevKey = propArray[length - 1];
           const keyObj = {
             to: prop[name],
             from: undefined as any,
@@ -291,7 +293,7 @@ const generateKeyframes = (
       return key;
     });
 
-    for (let name in properties) {
+    for (const name in properties) {
       const propArray = properties[name as keyof AnimationParams] as Array<any>;
       let prevEase;
       // let durProgress = 0
@@ -464,7 +466,7 @@ export class JSAnimation extends Timer {
         ? composition
         : animDefaults.composition;
     // Only create the inline styles object when we know it will be used
-    let animInlineStyles: Record<string, any> | null = null;
+    const animInlineStyles: Record<string, any> | null = null;
     // const absoluteOffsetTime = this._offset;
     const absoluteOffsetTime =
       this._offset + (parent ? (parent as any)._offset : 0);
@@ -474,21 +476,19 @@ export class JSAnimation extends Timer {
     let animationAnimationLength = 0;
     let shouldTriggerRender = 0;
 
+    // Track the last transform tween per target to optimize _renderTransforms setting
+    const lastTransformTweenPerTarget = new Map<Target, Tween>();
+
     for (let targetIndex = 0; targetIndex < targetsLength; targetIndex++) {
       const target = parsedTargets[targetIndex];
       const ti = index || targetIndex;
       const tl = length || targetsLength;
 
-      let lastTransformGroupIndex = NaN;
-      let lastTransformGroupLength = NaN;
+      for (const propName in params) {
+        if (isKey(propName)) {
+          const tweenType = getTweenType(target, propName);
 
-      for (let p in params) {
-        if (isKey(p)) {
-          const tweenType = getTweenType(target, p);
-
-          const propName = sanitizePropertyName(p, target, tweenType);
-
-          let propValue = params[p];
+          let propValue = params[propName];
 
           const isPropValueArray = isArr(propValue);
 
@@ -572,7 +572,7 @@ export class JSAnimation extends Timer {
           let lastTweenChangeEndTime = 0;
           let tweenIndex = 0;
 
-          for (let l = keyframes.length; tweenIndex < l; tweenIndex++) {
+          for (const l = keyframes.length; tweenIndex < l; tweenIndex++) {
             const keyframe = keyframes[tweenIndex];
 
             if (isObj(keyframe)) {
@@ -848,7 +848,7 @@ export class JSAnimation extends Timer {
                 // Handle potentially null complex values
                 if (complexValue.d && Array.isArray(complexValue.d)) {
                   notComplexValue.d = complexValue.d.map(
-                    (val: number) => notComplexValue.n
+                    (_val: number) => notComplexValue.n
                   );
                 } else {
                   notComplexValue.d = [notComplexValue.n];
@@ -933,12 +933,13 @@ export class JSAnimation extends Timer {
               // Make sure both arrays exist before mapping
               if (longestValue.d && shortestValue.d) {
                 // Create a properly typed map function with the correct parameter types
-                shortestValue.d = longestValue.d.map((val: number, i: number) =>
-                  shortestValue.d &&
-                  i < shortestValue.d.length &&
-                  !isUnd(shortestValue.d[i])
-                    ? shortestValue.d[i]
-                    : 0
+                shortestValue.d = longestValue.d.map(
+                  (_val: number, i: number) =>
+                    shortestValue.d &&
+                    i < shortestValue.d.length &&
+                    !isUnd(shortestValue.d[i])
+                      ? shortestValue.d[i]
+                      : 0
                 );
                 shortestValue.s = cloneArray(longestValue.s || []);
               }
@@ -1020,14 +1021,39 @@ export class JSAnimation extends Timer {
             iterationDuration = lastTweenChangeEndTime;
           }
 
-          // TODO: Find a way to inline tween._renderTransforms = 1 here
+          // Optimized transform rendering: Set _renderTransforms on the current transform tween
+          // and clear it from the previous one for the same target (inline approach)
           if (tweenType === tweenTypes.TRANSFORM) {
-            lastTransformGroupIndex = animationAnimationLength - tweenIndex;
-            lastTransformGroupLength = animationAnimationLength;
+            // Clear _renderTransforms from the previous transform tween for this target
+            const previousTransformTween =
+              lastTransformTweenPerTarget.get(target);
+            if (previousTransformTween) {
+              previousTransformTween._renderTransforms = 0;
 
-            // Set renderTransforms directly on the transform tween
-            if (prevTween) {
+              // Also clear from related additive tweens if using blend composition
+              if (
+                previousTransformTween._composition ===
+                  compositionTypes.blend &&
+                additive.animation
+              ) {
+                forEachChildren(
+                  additive.animation as unknown as { _head: any; _tail: any },
+                  (additiveTween: Tween) => {
+                    if (additiveTween.id === previousTransformTween.id) {
+                      additiveTween._renderTransforms = 0;
+                    }
+                  },
+                  true
+                );
+              }
+            }
+
+            // Set _renderTransforms on the current transform tween (this will be the "last" one until a new one is created)
+            if (prevTween && prevTween._tweenType === tweenTypes.TRANSFORM) {
               prevTween._renderTransforms = 1;
+
+              // Track this as the last transform tween for this target
+              lastTransformTweenPerTarget.set(target, prevTween);
 
               // Also mark any related additive tweens if using blend composition
               if (
@@ -1047,32 +1073,6 @@ export class JSAnimation extends Timer {
             }
           }
         }
-      }
-
-      // Set _renderTransforms to last transform property to correctly render the transforms list
-      if (!isNaN(lastTransformGroupIndex)) {
-        let i = 0;
-        forEachChildren(
-          this,
-          (tween: Tween) => {
-            if (i >= lastTransformGroupIndex && i < lastTransformGroupLength) {
-              tween._renderTransforms = 1;
-              if (tween._composition === compositionTypes.blend) {
-                forEachChildren(
-                  additive.animation as unknown as { _head: any; _tail: any },
-                  (additiveTween: Tween) => {
-                    if (additiveTween.id === tween.id) {
-                      additiveTween._renderTransforms = 1;
-                    }
-                  },
-                  true
-                );
-              }
-            }
-            i++;
-          },
-          true
-        );
       }
     }
 
@@ -1177,7 +1177,7 @@ export class JSAnimation extends Timer {
         tween._fromNumbers = cloneArray(decomposedOriginalValue.d || []);
         tween._fromNumber = decomposedOriginalValue.n;
         if (tween._func) {
-          decomposeRawValue(tween._func(), toTargetObject);
+          decomposeRawValue(tween._func(tween.target, 0), toTargetObject);
           tween._toNumbers = cloneArray(toTargetObject.d || []);
           tween._strings = cloneArray(toTargetObject.s || []);
           tween._toNumber = toTargetObject.n;
@@ -1286,7 +1286,7 @@ export class Animatable {
 
     if (isUnd(targets) || isUnd(parameters)) return;
 
-    for (let propName in parameters) {
+    for (const propName in parameters) {
       const paramValue = parameters[propName];
       if (isKey(propName)) {
         properties[propName] = paramValue;
@@ -1295,7 +1295,7 @@ export class Animatable {
       }
     }
 
-    for (let propName in properties) {
+    for (const propName in properties) {
       const propValue = properties[propName];
       const isObjValue = isObj(propValue);
 
@@ -1376,7 +1376,7 @@ export class Animatable {
    * @return {this} The current animatable instance
    */
   revert(): this {
-    for (let propName in this.animations) {
+    for (const propName in this.animations) {
       this[propName] = noop;
       this.animations[propName].revert();
     }

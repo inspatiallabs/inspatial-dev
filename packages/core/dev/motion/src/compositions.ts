@@ -14,8 +14,8 @@ import type {
   Tween,
   TweenPropertySiblings,
   TweenLookups,
-  TweenReplaceLookups,
-  TweenAdditiveLookups,
+  TweenReplaceLookups as _TweenReplaceLookups,
+  TweenAdditiveLookups as _TweenAdditiveLookups,
 } from "./types.ts";
 
 // import { additive, addAdditiveAnimation } from "./additive.ts"; // Remove static import

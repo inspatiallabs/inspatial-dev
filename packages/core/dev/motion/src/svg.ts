@@ -5,8 +5,8 @@ import {
   proxyTargetSymbol,
   emptyString,
   emptyArray,
-  isPath,
-  morphTargetsSymbol,
+  isPath as _isPath,
+  morphTargetsSymbol as _morphTargetsSymbol,
 } from "./consts.ts";
 
 import { round, isSvg, atan2, sqrt, PI, isFnc } from "./helpers.ts";
@@ -18,7 +18,7 @@ import type {
   TargetsParam,
   FunctionValue,
   DrawableSVGGeometry,
-  TweenObjectValue
+  TweenObjectValue as _TweenObjectValue
 } from "./types.ts";
 
 /**
@@ -523,7 +523,7 @@ const calculatePoints = (element: SVGGeometryElement): number[][] | null => {
     if (points) return points;
     const pathElement = path as any;
     return pathElement.pathSegList ? separatePoints(pathElement.pathSegList) : null;
-  } catch (err) {
+  } catch (_err) {
     return null;
   }
 };
@@ -532,7 +532,7 @@ const calculatePoints = (element: SVGGeometryElement): number[][] | null => {
  * Normalize path data
  */
 const normalizePath = (element: SVGGeometryElement): number[][] => {
-  let points = calculatePoints(element);
+  const points = calculatePoints(element);
   if (!points) return [];
   element.getBBox(); // Force layout calculation
   let size = 1;

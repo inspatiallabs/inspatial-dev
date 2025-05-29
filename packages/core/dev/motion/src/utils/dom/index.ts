@@ -29,8 +29,8 @@
  * @category InSpatial Motion
  */
 
-import { globals } from "../../globals.ts";
-import { isStr, isArr } from "../../helpers.ts";
+import { globals as _globals } from "../../globals.ts";
+import { isStr, isArr as _isArr } from "../../helpers.ts";
 import { doc } from "../../consts.ts";
 
 /**
@@ -79,7 +79,7 @@ export const isNode = (target: any): boolean =>
  * @access public
  * 
  * @param {string} selector - CSS selector to query
- * @param {Document|Element} [context=document] - Element to query within
+ * @param {Document|Element} [context] - Element to query within
  * @returns {Array<Element>} Array of matched elements
  * 
  * @example
@@ -98,9 +98,12 @@ export const isNode = (target: any): boolean =>
  * const childItems = $('li', container);
  * ```
  */
-export const $ = (selector: string, context: Document | Element = doc): Element[] => {
+export const $ = (selector: string, context?: Document | Element): Element[] => {
+  const queryContext = context || (doc as Document);
+  if (!queryContext) return [];
+  
   return Array.prototype.slice.call(
-    context.querySelectorAll(selector)
+    queryContext.querySelectorAll(selector)
   );
 };
 
@@ -128,10 +131,10 @@ export const $ = (selector: string, context: Document | Element = doc): Element[
  * ```
  */
 export const getNodeList = (v: any): NodeList | null => {
-  if (isStr(v)) {
+  if (isStr(v) && doc) {
     try {
-      return doc.querySelectorAll(v);
-    } catch(e) {
+      return (doc as Document).querySelectorAll(v);
+    } catch(_e) {
       return null;
     }
   }
@@ -167,7 +170,7 @@ export const cleanInlineStyles = (elements: Element[]): Element[] => {
   if (!elements.length) return elements;
   
   for (let i = 0; i < elements.length; i++) {
-    const el = elements[i];
+    const el = elements[i] as HTMLElement;
     if (isNode(el) && el.style) {
       el.style.cssText = '';
     }

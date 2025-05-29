@@ -62,7 +62,7 @@ class AdditiveAnimation extends Timer {
    */
   public processAdditiveTweens(): void {
     this._lookups.forEach((propertyAnimation: TweenLookups) => {
-      for (let propertyName in propertyAnimation) {
+      for (const propertyName in propertyAnimation) {
         const tweens = propertyAnimation[propertyName];
         const lookupTween = tweens._head;
 

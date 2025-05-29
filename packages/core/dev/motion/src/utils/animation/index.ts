@@ -49,7 +49,7 @@ import type {
   DOMTarget,
   Timer as TimerType,
   CallbackArgument,
-  Tickable
+  Tickable as _Tickable
 } from "../../types.ts";
 
 /**
@@ -65,7 +65,7 @@ import type {
  * @access public
  * 
  * @param {Function} callback - Function to run after the delay
- * @param {number} delay - Time to wait before running the callback (in ms)
+ * @param {number} _delay - Time to wait before running the callback (in ms)
  * @returns {Timer} Timer instance that can be controlled
  * 
  * @example
@@ -96,7 +96,7 @@ import type {
  */
 export function delay<T extends CallbackArgument>(
   callback?: (timer: T) => any,
-  delay?: number
+  _delay?: number
 ): TimerType {
   const timer = new Timer();
   
@@ -305,8 +305,8 @@ export const stop = (
  */
 export const get = (
   targets: TargetsParam,
-  property: string,
-  unit?: string
+  _property: string,
+  _unit?: string
 ): string | number | number[] => {
   const targetsArray = parseTargets(targets);
   if (!targetsArray.length) return 0;
@@ -358,8 +358,8 @@ export const get = (
  */
 export const set = (
   targets: TargetsParam,
-  property: string,
-  value: any
+  _property: string,
+  _value: any
 ): TargetsArray => {
   const targetsArray = parseTargets(targets);
   if (!targetsArray.length) return targetsArray;

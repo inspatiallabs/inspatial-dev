@@ -410,7 +410,7 @@ export const render = (
         // to reduce memory usage on string composition
         if (tweenTransformsNeedUpdate && tween._renderTransforms) {
           let str = emptyString;
-          for (let key in tweenTargetTransformsProperties) {
+          for (const key in tweenTargetTransformsProperties) {
             const transformFragmentString =
               transformsFragmentStrings[
                 key as keyof typeof transformsFragmentStrings

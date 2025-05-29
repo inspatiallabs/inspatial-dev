@@ -1,6 +1,6 @@
 // Environments
 
-// TODO: Do we need to check if we're running inside a worker ?
+// TODO(@benemma): Create/use a universal util that helps detect if we're running inside a worker Ideally this should be added on the user-agent features we have on InSpatial Cloud
 export const isBrowser = typeof window !== 'undefined';
 
 /** @type {Object|Null} */

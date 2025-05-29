@@ -81,7 +81,7 @@ export interface IRenderTickable {
   onUpdate: Callback<any>;
   onRender: Callback<any>; 
   onComplete: Callback<any>;
-  resolve: Function; 
+  resolve: () => void; 
 
   // Methods
   computeDeltaTime: (prevTime: number) => void;
@@ -139,7 +139,7 @@ export type AnyObject = Record<string, any>;
 /**
  * Valid property name for animation
  */
-type PropertyName = string & {};
+type PropertyName = string & Record<PropertyKey, never>;
 
 /**
  * JSAnimation parameters interface
@@ -534,7 +534,7 @@ type EaseStringParamNames =
  * Easing parameter that can be a string, function, or Spring object
  */
 type EasingParam =
-  | (string & {})
+  | (string & Record<PropertyKey, never>)
   | EaseStringParamNames
   | EasingFunction
   | Spring;
@@ -557,7 +557,7 @@ type TweenPropValue = TweenParamValue | [TweenParamValue, TweenParamValue];
  * Composition mode for tweens
  */
 type TweenComposition =
-  | (string & {})
+  | (string & Record<PropertyKey, never>)
   | "none"
   | "replace"
   | "blend"
@@ -762,7 +762,7 @@ type TimelineParams = TimerOptions &
 /**
  * Position in a timeline (number, string label, or function)
  */
-type TimePosition = number | string | Function;
+type TimePosition = number | string | (() => number | string);
 
 /**
  * Default parameters for animations
@@ -1163,7 +1163,7 @@ type Tween = {
   property: string;
   target: Target;
   _value: string | number;
-  _func: Function | null;
+  _func: ((target: Target, index: number) => any) | null;
   _ease: EasingFunction;
   _fromNumbers: Array<number>;
   _toNumbers: Array<number>;
@@ -1289,10 +1289,6 @@ declare function createMotionScroll(
   parameters?: ScrollObserverParams
 ): ScrollObserver;
 declare function createMotionSpring(parameters?: SpringParams): Spring;
-declare function inSequence(
-  val: number | string | [number | string, number | string],
-  params?: SequenceParameters
-): SequenceFunction;
 
 // --------------------------------------------------------------------------
 // CLASS DECLARATIONS
@@ -1406,7 +1402,7 @@ declare class Timeline extends Timer {
 declare class Animatable {
   constructor(targets: TargetsParam, parameters: AnimatableParams);
   targets: (HTMLElement | SVGElement | JSTarget)[];
-  animations: {};
+  animations: Record<string, JSAnimation>;
   revert(): this;
 }
 
@@ -1452,9 +1448,9 @@ declare class Scope {
   defaults: DefaultsParams;
   root: Document | DOMTarget;
   constructors: Array<ScopeConstructor>;
-  revertConstructors: Array<Function>;
+  revertConstructors: Array<() => void>;
   revertibles: Array<Revertible>;
-  methods: Record<string, Function>;
+  methods: Record<string, (...args: any[]) => any>;
   matches: Record<string, boolean>;
   mediaQueryLists: Record<string, MediaQueryList>;
   data: Record<string, any>;

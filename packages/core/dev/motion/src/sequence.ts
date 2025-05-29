@@ -4,14 +4,8 @@ import {
   isArr,
   isFnc,
   isNum,
-  isObj,
   isStr,
   isDefined,
-  toRgb,
-  round,
-  isUnd,
-  sqrt,
-  max,
 } from "./helpers.ts";
 
 import { parseEasings } from "./eases.ts";
@@ -72,15 +66,15 @@ export const inSequence = (
   const axis = p.axis || "y";
   const ease = p.ease ? parseEasings(p.ease) : null;
 
-  let start = isDefined(p.start) ? p.start : 0;
-  let direction = p.reversed ? 1 : -1;
+  const start = isDefined(p.start) ? p.start : 0;
+  const direction = p.reversed ? 1 : -1;
 
   const distributor = (
     t?: Target,
     i: number = 0,
     total: number = 1
   ): number | string => {
-    let val: number | string;
+    let val: number | string = 0;
     let fromIndex: number;
     const grid = p.grid;
 
@@ -149,7 +143,7 @@ export const inSequence = (
     } else if (isStr(start)) {
       startVal = parseFloat(start as string);
     } else if (isFnc(start) && t) {
-      startVal = (start as Function)(t, i, total);
+      startVal = (start as (target: Target, index: number, total: number) => number)(t, i, total);
     }
 
     // Calculate the progression between the inSequence values

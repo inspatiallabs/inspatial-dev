@@ -31,7 +31,7 @@
 
 import { isObj } from "../../helpers.ts";
 import { isNode } from "../dom/index.ts";
-import { doc, win } from "../../consts.ts";
+import { doc as _doc, win } from "../../consts.ts";
 import type { DOMTarget } from "../../types.ts";
 
 // Define a generic object type
@@ -106,7 +106,7 @@ export function getTargetValue(
       }
 
       return value !== undefined && value !== "" ? value : defaultValue;
-    } catch (e) {
+    } catch (_e) {
       // Fallback to default if any error occurs
       return defaultValue;
     }
@@ -189,7 +189,7 @@ export function setTargetValues(target: any, values: GenericObject): any {
           try {
             originalValues[property] = (element as any)[property];
             (element as any)[property] = value;
-          } catch (e) {
+          } catch (_e) {
             // Ignore errors for properties that can't be set
           }
         }
@@ -217,7 +217,7 @@ export function setTargetValues(target: any, values: GenericObject): any {
           } else {
             try {
               (element as any)[property] = originalValues[property];
-            } catch (e) {
+            } catch (_e) {
               // Ignore errors
             }
           }

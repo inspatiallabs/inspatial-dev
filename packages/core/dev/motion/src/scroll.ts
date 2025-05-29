@@ -636,7 +636,7 @@ const getAnimationDomTarget = (linked: any): HTMLElement | null => {
 
 let scrollerIndex = 0;
 
-const debugColors = [
+const _debugColors = [
   "#FF4B4B",
   "#FF971B",
   "#FFC730",
