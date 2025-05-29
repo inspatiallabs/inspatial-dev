@@ -1,38 +1,3 @@
-/**
- * # InMotion
- * @module @in/motion
- *
- * InSpatial Motion is a universal animation system for creating smooth, performant animations.
- * It provides a lightweight, powerful alternative to CSS animations with precise timing control.
- *
- * @example Basic Usage
- * ```typescript
- * import { createMotion } from "@in/motion";
- *
- * // Simple animation
- * createMotion(".element", {
- *   translateX: 250,
- *   opacity: 1,
- *   duration: 1000
- * });
- * ```
- *
- * @features
- * - High-performance animation engine
- * - SVG morphing, path animation, and drawing
- * - Touch-friendly draggable elements
- * - Timeline-based animation sequencing
- * - Spring physics for natural motion
- * - Fine-grained control over easing and timing
- * - Staggered animations with grid support
- * - Media query integration
- *
- * @since 0.1.0
- * @category InSpatial Motion
- */
-
-// Physics module
-// export * as InMotionPhysics from "./physics/index.ts";
 
 // Core animation engine and components
 export { InMotion } from "./engine.ts";
