@@ -15,7 +15,7 @@ import {
   createDerivedState,
   setupPersistence,
   StorageAdapters
-} from "../index";
+} from "../index.ts";
 
 // --- User profile state with persistence ---
 

@@ -7,26 +7,18 @@ import {
   type SignalOptionsType,
 } from "./core.ts";
 import type { ErrorHandlerType } from "./error.ts";
-import { getClock, globalQueue } from "./scheduler.ts";
+import { getClock, globalQueue, flushSync, QueueClass } from "./scheduler.ts";
 import { onCleanup } from "./owner.ts";
 
-// Ensure that test environments suppress warnings by default
-// This is critical for tests to run cleanly
-if (typeof globalThis !== "undefined") {
-  (globalThis as any).__silenceWarnings = true;
-  (globalThis as any).__TEST_ENV__ = true;
-}
-
 /**
- * Effects are the leaf nodes of reactive graph. When their sources change, they are
- * automatically added to the queue of effects to re-execute, which will cause them to fetch their
- * sources and recompute
+ * Fixed EffectClass that ensures initial execution for dependency tracking
  */
 export class EffectClass extends ComputationClass<any> {
   _fn: (prev?: any) => any;
   _effect: (value: any, prev?: any) => (() => void) | void;
   _queueType: number;
   _errorEffect: ErrorHandlerType | undefined;
+  _hasRun: boolean = false; // Track if effect has ever run
 
   // Track disposers for proper cleanup between runs
   _disposers: Array<() => void> = [];
@@ -43,50 +35,21 @@ export class EffectClass extends ComputationClass<any> {
     this._effect = effect;
     this._errorEffect = error;
     this._queueType = options?.type || (options?.render ? 1 : 2);
+    this._hasRun = false;
 
-    // Always ensure effects have a valid queue, even when created without a parent context
-    // This is critical for stability in all environments
+    // Always ensure effects have a valid queue
     if (!options?.render) {
       this._queue = options?.type
         ? globalQueue
         : this._parent?._queue || globalQueue;
-
-      // Suppress warnings in test environments
-      const SILENCE_WARNINGS =
-        // Static flag for tests
-        EffectClass.silenceWarnings ||
-        // Check for test environment markers
-        (typeof globalThis !== "undefined" &&
-          ((globalThis as any).__silenceWarnings === true ||
-            (globalThis as any).__TEST_ENV__ === true));
-
-      if (__DEV__ && !this._parent && !options?.type && !SILENCE_WARNINGS) {
-        console.warn(
-          "Effect created without a parent owner. This may lead to memory leaks as it won't be automatically cleaned up."
-        );
-      }
     }
 
     // Mark the effect as dirty immediately so it runs on the first render
     this._notify(STATE_DIRTY);
 
-    // Queue the effect to run, but conditionally flush based on environment
+    // Queue the effect to run
     globalQueue.enqueue(this._queueType, this);
-
-    // Only flush in non-test environments or if explicitly requested
-    // This gives tests control over when effects run
-    const isTestEnv = typeof globalThis !== "undefined" && 
-      ((globalThis as any).__TEST_ENV__ === true || (globalThis as any).__silenceWarnings === true);
-    
-    if (!isTestEnv) {
-      // In normal runtime environments, flush immediately for consistent behavior
-      globalQueue.flush();
-    }
-    // Tests should call flushSync() manually when they want effects to run
   }
-
-  // Static flag to silence effect warnings for tests
-  static silenceWarnings = true;
 
   /**
    * Clear all disposers registered since the last run
@@ -95,7 +58,6 @@ export class EffectClass extends ComputationClass<any> {
     super.emptyDisposal();
 
     // Also run any registered disposers in reverse order
-    // This ensures proper cleanup of resources
     if (this._disposers.length > 0) {
       const disposers = this._disposers;
       this._disposers = [];
@@ -119,33 +81,50 @@ export class EffectClass extends ComputationClass<any> {
   }
 
   override _notify(state: number, skipQueue?: boolean) {
-    // Track previous state to detect changes
-    const prevState = this._state;
+    // Add debugging to track notifications
+    if (false && __DEV__) {
+      console.log(`[EFFECT NOTIFY] Effect ${this._name || 'unnamed'} notified with state: ${state}, skipQueue: ${skipQueue}, current state: ${this._state}, hasRun: ${this._hasRun}`);
+    }
+    
+    // CRITICAL FIX: Always update the state to be at least as dirty as requested
+    // This ensures the effect state persists until it actually runs
+    this._state = Math.max(this._state, state);
 
-    super._notify(state);
-
-    // Only enqueue the effect if:
-    // 1. We're not skipping the queue AND
-    // 2. The state is dirty (needs recomputation) AND
-    // 3. Either this is a new notification or we're forcing it
-    if (
-      !skipQueue &&
-      this._state >= STATE_DIRTY &&
-      (this._state !== prevState || this._forceNotify)
-    ) {
-      // Enqueue the effect to run
-      this._queue.enqueue(this._queueType, this);
+    // Only enqueue if we're not skipping the queue AND the effect needs to run
+    if (!skipQueue && (this._state >= STATE_DIRTY || !this._hasRun)) {
+      if (false && __DEV__) {
+        console.log(`[EFFECT NOTIFY] Enqueueing effect ${this._name || 'unnamed'} in queue type ${this._queueType}, state after update: ${this._state}`);
+      }
+      // CRITICAL FIX: Use proper scheduler enqueue method
+      (this._queue as QueueClass).enqueue(this._queueType, this);
+    } else if (false && __DEV__) {
+      console.log(`[EFFECT NOTIFY] Not enqueueing effect: skipQueue=${skipQueue}, state=${this._state}, hasRun=${this._hasRun}`);
     }
   }
 
   override _updateIfNecessary(): void {
-    // Only update if the state is not clean
-    if (this._state !== STATE_CLEAN) super._updateIfNecessary();
+    // Only update if the state is not clean OR if it hasn't run yet
+    if (this._state !== STATE_CLEAN || !this._hasRun)
+      super._updateIfNecessary();
   }
 
   _runEffect(): void {
-    // Skip if already clean
-    if (this._state === STATE_CLEAN) return;
+    if (false && __DEV__) {
+      console.log(`[EFFECT RUN] Starting _runEffect, state: ${this._state}, hasRun: ${this._hasRun}, name: ${this._name || 'unnamed'}`);
+    }
+    
+    // CRITICAL FIX: Only skip if the effect is clean AND doesn't need to run for any reason
+    // Don't skip on the first run, and don't skip if state indicates we need to update
+    if (this._state === STATE_CLEAN && this._hasRun) {
+      if (false && __DEV__) {
+        console.log(`[EFFECT RUN] Skipping effect because state is clean and has run before`);
+      }
+      return;
+    }
+
+    if (false && __DEV__) {
+      console.log(`[EFFECT RUN] Proceeding with effect execution (state: ${this._state}, hasRun: ${this._hasRun})`);
+    }
 
     // Save the owner and previous value
     const owner = this._parent;
@@ -156,20 +135,30 @@ export class EffectClass extends ComputationClass<any> {
       // Compute the new result with proper dependency tracking
       const result = compute(owner, this._fn, this);
 
-      // Only rerun the effect if the result has changed or it's the initial run
-      // Adding explicit check for the first run (prevValue is undefined)
-      if (result !== UNCHANGED || prevValue === undefined) {
+      if (false && __DEV__) {
+        console.log(`[EFFECT RUN] Computed result, checking if changed or first run. Result: ${result}, UNCHANGED: ${result === UNCHANGED}, hasRun: ${this._hasRun}`);
+      }
+
+      // CRITICAL FIX: Always run the effect if state is dirty OR it's the first run
+      if (result !== UNCHANGED || !this._hasRun || this._state >= STATE_DIRTY) {
+        if (false && __DEV__) {
+          console.log(`[EFFECT RUN] Running effect function (state: ${this._state})`);
+        }
+        
         // Clean up any previous disposers
         this.emptyDisposal();
 
         // Run the effect with proper tracking
         try {
           // Make sure the effect runs in its own tracking scope
-          // This ensures proper dependency tracking for nested effects
-          const returnVal = compute(this, () => this._effect(result, prevValue), this);
+          const returnVal = compute(
+            this,
+            () => this._effect(result, prevValue),
+            this
+          );
 
           // Only treat the return value as a disposer if it's actually a function
-          if (typeof returnVal === 'function') {
+          if (typeof returnVal === "function") {
             disposer = returnVal;
           }
         } catch (effectError) {
@@ -186,6 +175,13 @@ export class EffectClass extends ComputationClass<any> {
 
         // Store the result for future comparisons
         this._value = result;
+        this._hasRun = true;
+        
+        if (false && __DEV__) {
+          console.log(`[EFFECT RUN] Effect function completed, hasRun set to true`);
+        }
+      } else if (false && __DEV__) {
+        console.log(`[EFFECT RUN] Skipping effect function - result unchanged and has run before`);
       }
     } catch (error: unknown) {
       // Handle errors in the compute function
@@ -198,6 +194,7 @@ export class EffectClass extends ComputationClass<any> {
       }
 
       this._value = undefined;
+      this._hasRun = true;
     }
 
     // Register the disposer if one was returned
@@ -208,6 +205,10 @@ export class EffectClass extends ComputationClass<any> {
 
     // Mark the effect as clean
     this._state = STATE_CLEAN;
+    
+    if (false && __DEV__) {
+      console.log(`[EFFECT RUN] Effect completed, state set to clean`);
+    }
   }
 
   /**

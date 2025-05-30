@@ -7,7 +7,7 @@
  * the trigger system and state management.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "../../../test/src/index.ts";
+import { describe, it, expect, beforeEach, afterEach } from "@inspatial/test";
 
 import { createState } from "../../state/state.ts";
 import { createTrigger } from "../../trigger/src/action.ts";

@@ -6,7 +6,7 @@
  * and state transaction management.
  */
 
-import { createState, StateManager } from "../index";
+import { createState, StateManager } from "../index.ts";
 
 // --- Shopping cart state ---
 

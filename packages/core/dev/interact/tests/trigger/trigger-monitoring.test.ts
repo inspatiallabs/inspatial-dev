@@ -7,7 +7,7 @@
  * which tracks performance and usage metrics for triggers.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "../../../test/src/index.ts";
+import { describe, it, expect, beforeEach, afterEach } from "@inspatial/test";
 
 import {
   createTrigger,

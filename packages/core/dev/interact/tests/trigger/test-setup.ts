@@ -14,7 +14,7 @@ globalThis.__DEV__ = true;
  * Export test utilities 
  */
 // @ts-ignore - Ignoring TS extension import error
-import { describe, it, expect, beforeEach, afterEach } from "../../../test/src/index.ts";
+import { describe, it, expect, beforeEach, afterEach } from "@inspatial/test";
 
 /**
  * Array to track test trigger names for cleanup

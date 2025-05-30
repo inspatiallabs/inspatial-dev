@@ -34,7 +34,7 @@ IMPORTANT: ALWAYS document every symbol in the package, library or project expor
 - @inspatial/router
 - @inspatial/server
 - @inspatial/type
-- @inspatial/state
+- @in/teract
 - @inspatial/util
 - @inspatial/iss
 - @inspatial/theme

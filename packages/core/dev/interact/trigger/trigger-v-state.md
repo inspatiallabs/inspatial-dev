@@ -1,6 +1,6 @@
 ```ascii
 +------------------------------------+    +------------------------------------+
-|        @inspatial/trigger          |    |         @inspatial/state           |
+|        @inspatial/trigger          |    |         @in/teract           |
 |                                    |    |                                    |
 | • Platform detection               |    | • Data validation                  |
 | • Event handling & mapping         |    | • Reactivity system                |

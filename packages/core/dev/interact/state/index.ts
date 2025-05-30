@@ -1,12 +1,12 @@
 /**
- * @module @inspatial/state
+ * @module @in/teract
  *
  * Universal state management for InSpatial applications with a unified interface
  * for both simple and complex state management needs, integrating signals and triggers.
  *
  * @example Basic Usage
  * ```typescript
- * import { createState } from "@inspatial/state";
+ * import { createState } from "@in/teract";
  *
  * // Create a simple state
  * const counterState = createState({
@@ -90,7 +90,6 @@ export {
   setupPersistence,
   registerStorageAdapter,
   StorageAdapters,
-  setupInSpatialDBPersistence,
 } from "./persistence.ts";
 
 // StateQL (Template Literal Updates)

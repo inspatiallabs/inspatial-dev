@@ -15,7 +15,7 @@ InNative only exposes the core primitive apis from Nativescript removing the str
 - UI Component (TBD): Universal rendering of components will be handled by InSpatial Kit. NativeScript just needs to expose the core platform/OS primitive APIs like it already does no 3rd layers. 
 - Routing (TBD): This will be handled by InSpatial Router a.k.a @in/route.
 - Plugins (TBD): This will be handled by a new InSpatial Dev Extension system.
-- Interaction/State Management (TBD): This will be handled by InSpatial State a.k.a @in/teract
+- Interaction/State Management (TBD): This will be handled by Interact - (InSpatial State x Trigger) a.k.a @in/teract
 
 Some popular use cases:
 

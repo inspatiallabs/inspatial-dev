@@ -1,89 +1,93 @@
 /**
  * # Signal-Trigger Debugging
  * @summary #### Debugging tools for signal-trigger integration
- * 
+ *
  * This module provides debugging tools for the signal-trigger integration system,
  * helping developers identify issues and understand the internal state of the system.
- * 
+ *
  * @since 0.1.0
- * @category InSpatial State
- * @module @inspatial/state
+ * @category Interact - (InSpatial State x Trigger)
+ * @module @in/teract
  * @kind module
  * @access public
  */
 
-import { 
-  RegisteredTriggerType,
-  TriggerInstanceType,
-  TriggerEventDeliveryStatusEnum 
-} from "../trigger/src/types.ts";
-
-import { AccessorType, SetterType } from "../signal/src/signals.ts";
-import { StateEventBus } from "./signal-trigger.ts";
+import type { AccessorType, SetterType } from "../signal/src/types.ts";
+import type { TriggerInstanceType } from "../trigger/src/types.ts";
 import { SignalTriggerProfiler } from "./signal-trigger-perf.ts";
+import type { StateLens } from "./signal-trigger.ts";
 
 /**
  * # SignalTriggerDebugger
  * @summary #### Debugging utility for signal-trigger integration
- * 
+ *
  * This class provides tools for debugging signal-trigger interactions,
  * including visualization, logging, and interactive inspection.
- * 
+ *
  * @example
  * ```typescript
  * // Create a debugger and trace a signal-trigger interaction
  * const debugger = new SignalTriggerDebugger();
- * 
+ *
  * // Monitor a signal
  * debugger.traceSignal(mySignal, "menuOpenState");
- * 
+ *
  * // Monitor a trigger
  * debugger.traceTrigger(myTrigger, "menuToggleTrigger");
- * 
+ *
  * // View signal-trigger interaction flow
  * debugger.showInteractions();
  * ```
  */
 export class SignalTriggerDebugger {
   // Track all signals being monitored
-  private monitoredSignals: Map<string, {
-    accessor: AccessorType<any>;
-    setter: SetterType<any> | null;
-    value: any;
-    updates: Array<{
-      prev: any;
-      next: any;
-      timestamp: number;
-      source: string | null;
-    }>;
-  }> = new Map();
+  private monitoredSignals: Map<
+    string,
+    {
+      accessor: AccessorType<any>;
+      setter: SetterType<any> | null;
+      value: any;
+      updates: Array<{
+        prev: any;
+        next: any;
+        timestamp: number;
+        source: string | null;
+      }>;
+    }
+  > = new Map();
 
   // Track all triggers being monitored
-  private monitoredTriggers: Map<string, {
-    trigger: TriggerInstanceType;
-    activations: Array<{
-      timestamp: number;
-      payload: any;
-      target: string | null;
-    }>;
-  }> = new Map();
+  private monitoredTriggers: Map<
+    string,
+    {
+      trigger: TriggerInstanceType;
+      activations: Array<{
+        timestamp: number;
+        payload: any;
+        target: string | null;
+      }>;
+    }
+  > = new Map();
 
-  // Track all event buses being monitored
-  private monitoredEventBuses: Map<string, {
-    bus: StateEventBus<any>;
-    events: Array<{
-      type: string;
-      data: any;
-      timestamp: number;
-      handled: boolean;
-    }>;
-  }> = new Map();
+  // Track all event lenses being monitored
+  private monitoredLenses: Map<
+    string,
+    {
+      lens: StateLens<any>;
+      events: Array<{
+        type: string;
+        data: any;
+        timestamp: number;
+        handled: boolean;
+      }>;
+    }
+  > = new Map();
 
   // Track interactions between signals and triggers
   private interactions: Array<{
-    sourceType: 'signal' | 'trigger' | 'eventBus';
+    sourceType: "signal" | "trigger" | "stateLens";
     sourceId: string;
-    targetType: 'signal' | 'trigger' | 'eventBus';
+    targetType: "signal" | "trigger" | "stateLens";
     targetId: string;
     timestamp: number;
     data: any;
@@ -100,7 +104,7 @@ export class SignalTriggerDebugger {
 
   /**
    * Create a new SignalTriggerDebugger
-   * 
+   *
    * @param options Optional configuration
    */
   constructor(options?: {
@@ -119,18 +123,17 @@ export class SignalTriggerDebugger {
         this.profiler = options.profiler;
       }
     }
-
     // Create a default profiler if none was provided
-    if (!this.profiler) {
-      this.profiler = new SignalTriggerProfiler({
-        enabled: this.active
+    this.profiler =
+      options?.profiler ??
+      new SignalTriggerProfiler({
+        enabled: this.active,
       });
-    }
   }
 
   /**
    * Trace changes to a signal
-   * 
+   *
    * @param signal The signal to trace [get, set] tuple
    * @param id A unique identifier for this signal
    * @returns A cleanup function to stop tracing
@@ -149,16 +152,16 @@ export class SignalTriggerDebugger {
       accessor,
       setter,
       value: originalValue,
-      updates: []
+      updates: [],
     });
 
     // Create a wrapped setter to track changes
     const wrappedSetter: SetterType<T> = ((value: any) => {
       const prevValue = accessor();
-      
+
       // Check if it's a function update or direct value
       let nextValue: T;
-      if (typeof value === 'function') {
+      if (typeof value === "function") {
         nextValue = (value as (prev: T) => T)(prevValue);
       } else {
         nextValue = value as T;
@@ -169,7 +172,7 @@ export class SignalTriggerDebugger {
         prev: prevValue,
         next: nextValue,
         timestamp: Date.now(),
-        source: this.getActiveCallSource()
+        source: this.getActiveCallSource(),
       };
 
       // Limit history size
@@ -183,7 +186,7 @@ export class SignalTriggerDebugger {
       signalInfo.value = nextValue;
 
       // Call the original setter
-      this.profiler.trackOperation('signal_update', () => {
+      this.profiler.trackOperation("signal_update", () => {
         return setter(nextValue as any);
       });
 
@@ -198,21 +201,18 @@ export class SignalTriggerDebugger {
 
   /**
    * Trace activations of a trigger
-   * 
+   *
    * @param trigger The trigger to trace
    * @param id A unique identifier for this trigger
    * @returns A cleanup function to stop tracing
    */
-  public traceTrigger(
-    trigger: TriggerInstanceType,
-    id: string
-  ): () => void {
+  public traceTrigger(trigger: TriggerInstanceType, id: string): () => void {
     if (!this.active) return () => {};
 
     // Create a monitored entry
     this.monitoredTriggers.set(id, {
       trigger,
-      activations: []
+      activations: [],
     });
 
     // Store the original fire method
@@ -224,7 +224,7 @@ export class SignalTriggerDebugger {
       const activation = {
         timestamp: Date.now(),
         payload,
-        target: null // Will be filled if we can determine it
+        target: null, // Will be filled if we can determine it
       };
 
       // Add to history
@@ -235,7 +235,7 @@ export class SignalTriggerDebugger {
       }
 
       // Call the original fire method
-      this.profiler.trackOperation('trigger_activation', () => {
+      this.profiler.trackOperation("trigger_activation", () => {
         return originalFire.call(trigger, payload);
       });
     };
@@ -250,29 +250,29 @@ export class SignalTriggerDebugger {
   }
 
   /**
-   * Trace events on an EventBus
-   * 
-   * @param eventBus The event bus to trace
-   * @param id A unique identifier for this event bus
+   * Trace events on an Lens
+   *
+   * @param stateLens The event lens to trace
+   * @param id A unique identifier for this event lens
    * @returns A cleanup function to stop tracing
    */
-  public traceEventBus<EventMap extends Record<string, any[]>>(
-    eventBus: StateEventBus<EventMap>,
+  public traceLens<EventMap extends Record<string, any[]>>(
+    stateLens: StateLens<EventMap>,
     id: string
   ): () => void {
     if (!this.active) return () => {};
 
     // Create a monitored entry
-    this.monitoredEventBuses.set(id, {
-      bus: eventBus,
-      events: []
+    this.monitoredLenses.set(id, {
+      lens: stateLens,
+      events: [],
     });
 
     // Store the original emit method
-    const originalEmit = eventBus.emit;
+    const originalEmit = stateLens.emit;
 
     // Replace with our wrapped version
-    eventBus.emit = <K extends keyof EventMap>(
+    stateLens.emit = <K extends keyof EventMap>(
       event: K,
       ...args: EventMap[K]
     ): void => {
@@ -281,19 +281,19 @@ export class SignalTriggerDebugger {
         type: String(event),
         data: args,
         timestamp: Date.now(),
-        handled: false
+        handled: false,
       };
 
       // Add to history
-      const busInfo = this.monitoredEventBuses.get(id)!;
-      busInfo.events.push(eventRecord);
-      if (busInfo.events.length > this.maxHistoryLength) {
-        busInfo.events.shift();
+      const lensInfo = this.monitoredLenses.get(id)!;
+      lensInfo.events.push(eventRecord);
+      if (lensInfo.events.length > this.maxHistoryLength) {
+        lensInfo.events.shift();
       }
 
       // Call the original emit method
-      this.profiler.trackOperation('eventbus_emit', () => {
-        return originalEmit.call(eventBus, event, ...args);
+      this.profiler.trackOperation("eventlens_emit", () => {
+        return originalEmit.call(stateLens, event, ...args);
       });
 
       // Mark as handled after emission
@@ -302,23 +302,23 @@ export class SignalTriggerDebugger {
 
     // Return a cleanup function
     return () => {
-      const bus = this.monitoredEventBuses.get(id)?.bus;
-      if (bus && lens.emit) {
+      const lens = this.monitoredLenses.get(id)?.lens;
+      if (lens && lens.emit) {
         lens.emit = originalEmit;
       }
-      this.monitoredEventBuses.delete(id);
+      this.monitoredLenses.delete(id);
     };
   }
 
   /**
-   * Record an interaction between signals, triggers, and event buses
-   * 
+   * Record an interaction between signals, triggers, and event lenses
+   *
    * @param interaction The interaction details
    */
   public recordInteraction(interaction: {
-    sourceType: 'signal' | 'trigger' | 'eventBus';
+    sourceType: "signal" | "trigger" | "stateLens";
     sourceId: string;
-    targetType: 'signal' | 'trigger' | 'eventBus';
+    targetType: "signal" | "trigger" | "stateLens";
     targetId: string;
     data?: any;
   }): void {
@@ -327,7 +327,7 @@ export class SignalTriggerDebugger {
     this.interactions.push({
       ...interaction,
       timestamp: Date.now(),
-      data: interaction.data || null
+      data: interaction.data || null,
     });
 
     // Limit history size
@@ -338,29 +338,30 @@ export class SignalTriggerDebugger {
 
   /**
    * Generate a visualization of the current state
-   * 
+   *
    * @returns Object containing the current debug state
    */
   public getState(): {
     signals: Record<string, any>;
     triggers: Record<string, any>;
-    eventBuses: Record<string, any>;
+    stateLenses: Record<string, any>;
     interactions: any[];
     performance: any;
   } {
     const signals: Record<string, any> = {};
     const triggers: Record<string, any> = {};
-    const eventBuses: Record<string, any> = {};
+    const stateLenses: Record<string, any> = {};
 
     // Compile signal state
     this.monitoredSignals.forEach((info, id) => {
       signals[id] = {
         currentValue: info.value,
         updateCount: info.updates.length,
-        lastUpdate: info.updates.length > 0 
-          ? info.updates[info.updates.length - 1] 
-          : null,
-        history: info.updates
+        lastUpdate:
+          info.updates.length > 0
+            ? info.updates[info.updates.length - 1]
+            : null,
+        history: info.updates,
       };
     });
 
@@ -370,30 +371,30 @@ export class SignalTriggerDebugger {
         type: info.trigger.type,
         enabled: info.trigger.enabled,
         activationCount: info.activations.length,
-        lastActivation: info.activations.length > 0
-          ? info.activations[info.activations.length - 1]
-          : null,
-        history: info.activations
+        lastActivation:
+          info.activations.length > 0
+            ? info.activations[info.activations.length - 1]
+            : null,
+        history: info.activations,
       };
     });
 
-    // Compile event bus state
-    this.monitoredEventBuses.forEach((info, id) => {
-      eventBuses[id] = {
+    // Compile event lens state
+    this.monitoredLenses.forEach((info, id) => {
+      stateLenses[id] = {
         eventCount: info.events.length,
-        lastEvent: info.events.length > 0
-          ? info.events[info.events.length - 1]
-          : null,
-        history: info.events
+        lastEvent:
+          info.events.length > 0 ? info.events[info.events.length - 1] : null,
+        history: info.events,
       };
     });
 
     return {
       signals,
       triggers,
-      eventBuses,
+      stateLenses,
       interactions: this.interactions,
-      performance: this.profiler.getReport()
+      performance: this.profiler.getReport(),
     };
   }
 
@@ -402,36 +403,36 @@ export class SignalTriggerDebugger {
    */
   public logState(): void {
     const state = this.getState();
-    console.group('Signal-Trigger Debugger State');
-    
-    console.group('Signals');
+    console.group("Signal-Trigger Debugger State");
+
+    console.group("Signals");
     Object.entries(state.signals).forEach(([id, info]) => {
       console.log(`Signal: ${id}`, info);
     });
     console.groupEnd();
-    
-    console.group('Triggers');
+
+    console.group("Triggers");
     Object.entries(state.triggers).forEach(([id, info]) => {
       console.log(`Trigger: ${id}`, info);
     });
     console.groupEnd();
-    
-    console.group('Event Buses');
-    Object.entries(state.eventBuses).forEach(([id, info]) => {
-      console.log(`EventBus: ${id}`, info);
+
+    console.group("State Lens");
+    Object.entries(state.stateLenses).forEach(([id, info]) => {
+      console.log(`Lens: ${id}`, info);
     });
     console.groupEnd();
-    
-    console.group('Interactions');
+
+    console.group("Interactions");
     state.interactions.forEach((interaction, index) => {
       console.log(`Interaction ${index}:`, interaction);
     });
     console.groupEnd();
-    
-    console.group('Performance');
-    console.log('Performance Report:', state.performance);
+
+    console.group("Performance");
+    console.log("Performance Report:", state.performance);
     console.groupEnd();
-    
+
     console.groupEnd();
   }
 
@@ -439,18 +440,18 @@ export class SignalTriggerDebugger {
    * Clear all history and reset the debugger
    */
   public reset(): void {
-    this.monitoredSignals.forEach(info => {
+    this.monitoredSignals.forEach((info) => {
       info.updates = [];
     });
-    
-    this.monitoredTriggers.forEach(info => {
+
+    this.monitoredTriggers.forEach((info) => {
       info.activations = [];
     });
-    
-    this.monitoredEventBuses.forEach(info => {
+
+    this.monitoredLenses.forEach((info) => {
       info.events = [];
     });
-    
+
     this.interactions = [];
     this.profiler.reset();
   }
@@ -465,33 +466,36 @@ export class SignalTriggerDebugger {
 
   /**
    * Get the calling source from the stack trace
-   * 
+   *
    * @returns Source file and line number, or null if unavailable
    */
   private getActiveCallSource(): string | null {
     try {
       // Create an error to get the stack trace
       const err = new Error();
-      const stack = err.stack || '';
-      
+      const stack = err.stack || "";
+
       // Parse the stack to find the caller
-      const lines = stack.split('\n');
-      
+      const lines = stack.split("\n");
+
       // Find the first line that's not from this file
-      const callerLine = lines.find(line => 
-        !line.includes('signal-trigger-debug.ts') &&
-        !line.includes('SignalTriggerDebugger')
+      const callerLine = lines.find(
+        (line) =>
+          !line.includes("signal-trigger-debug.ts") &&
+          !line.includes("SignalTriggerDebugger")
       );
-      
+
       if (callerLine) {
         // Extract file and line info
-        const match = callerLine.match(/at\s+([^\s]+)\s+\(([^:]+):(\d+):(\d+)\)/);
+        const match = callerLine.match(
+          /at\s+([^\s]+)\s+\(([^:]+):(\d+):(\d+)\)/
+        );
         if (match) {
           const [, fn, file, line] = match;
           return `${fn} (${file}:${line})`;
         }
       }
-      
+
       return null;
     } catch (e) {
       return null;
@@ -502,17 +506,17 @@ export class SignalTriggerDebugger {
 /**
  * # createGlobalDebugger
  * @summary #### Creates a global debugger for signal-trigger interactions
- * 
+ *
  * This function creates and returns a singleton instance of the SignalTriggerDebugger
  * for consistent debugging across the application.
- * 
+ *
  * @returns The global SignalTriggerDebugger instance
- * 
+ *
  * @example
  * ```typescript
  * // Get the global debugger
  * const debugger = createGlobalDebugger();
- * 
+ *
  * // Use it to trace a signal
  * debugger.traceSignal(mySignal, "playerPosition");
  * ```
@@ -520,14 +524,14 @@ export class SignalTriggerDebugger {
 export function createGlobalDebugger(): SignalTriggerDebugger {
   // Use a global variable to store the singleton instance
   const global = globalThis as any;
-  
+
   if (!global.__signalTriggerDebugger) {
     global.__signalTriggerDebugger = new SignalTriggerDebugger({
       // Only enable in development by default
-      active: typeof __DEV__ !== 'undefined' ? __DEV__ : false
+      active: typeof __DEV__ !== "undefined" ? __DEV__ : false,
     });
   }
-  
+
   return global.__signalTriggerDebugger;
 }
 
@@ -537,19 +541,19 @@ export const globalDebugger = createGlobalDebugger();
 /**
  * # SignalTriggerInspector
  * @summary #### Utility for inspecting and visualizing signal-trigger relations
- * 
+ *
  * This class provides tools for visualizing the signal-trigger dependency graph
  * and helps users understand the flow of data and events.
- * 
+ *
  * @example
  * ```typescript
  * // Create an inspector and generate a dependency graph
  * const inspector = new SignalTriggerInspector();
- * 
+ *
  * // Register your signals and triggers
  * inspector.registerSignal(mySignal, "playerHealth");
  * inspector.registerTrigger(myTrigger, "damageEvent");
- * 
+ *
  * // Define relationships
  * inspector.addRelation({
  *   sourceId: "damageEvent",
@@ -558,41 +562,50 @@ export const globalDebugger = createGlobalDebugger();
  *   targetType: "signal",
  *   description: "Updates player health when damage is taken"
  * });
- * 
+ *
  * // Generate visual dependency graph
  * const graphData = inspector.generateGraph();
  * ```
  */
 export class SignalTriggerInspector {
-  private signals: Map<string, {
-    accessor: AccessorType<any>;
-    setter?: SetterType<any>;
-    metadata?: Record<string, any>;
-  }> = new Map();
+  private signals: Map<
+    string,
+    {
+      accessor: AccessorType<any>;
+      setter?: SetterType<any>;
+      metadata?: Record<string, any>;
+    }
+  > = new Map();
 
-  private triggers: Map<string, {
-    instance: TriggerInstanceType;
-    metadata?: Record<string, any>;
-  }> = new Map();
+  private triggers: Map<
+    string,
+    {
+      instance: TriggerInstanceType;
+      metadata?: Record<string, any>;
+    }
+  > = new Map();
 
-  private eventBuses: Map<string, {
-    instance: StateEventBus<any>;
-    metadata?: Record<string, any>;
-  }> = new Map();
+  private stateLenses: Map<
+    string,
+    {
+      instance: StateLens<any>;
+      metadata?: Record<string, any>;
+    }
+  > = new Map();
 
   private relations: Array<{
     sourceId: string;
-    sourceType: 'signal' | 'trigger' | 'eventBus';
+    sourceType: "signal" | "trigger" | "stateLens";
     targetId: string;
-    targetType: 'signal' | 'trigger' | 'eventBus';
-    relationKind: 'updates' | 'activates' | 'emits' | 'consumes' | 'other';
+    targetType: "signal" | "trigger" | "stateLens";
+    relationKind: "updates" | "activates" | "emits" | "consumes" | "other";
     description?: string;
     metadata?: Record<string, any>;
   }> = [];
 
   /**
    * Register a signal for tracking
-   * 
+   *
    * @param signal The signal to track [get, set] tuple
    * @param id A unique identifier for this signal
    * @param metadata Optional metadata about the signal
@@ -606,13 +619,13 @@ export class SignalTriggerInspector {
     this.signals.set(id, {
       accessor,
       setter,
-      metadata
+      metadata,
     });
   }
 
   /**
    * Register a trigger for tracking
-   * 
+   *
    * @param trigger The trigger to track
    * @param id A unique identifier for this trigger
    * @param metadata Optional metadata about the trigger
@@ -624,67 +637,77 @@ export class SignalTriggerInspector {
   ): void {
     this.triggers.set(id, {
       instance: trigger,
-      metadata
+      metadata,
     });
   }
 
   /**
-   * Register an event bus for tracking
-   * 
-   * @param eventBus The event bus to track
-   * @param id A unique identifier for this event bus
-   * @param metadata Optional metadata about the event bus
+   * Register an event lens for tracking
+   *
+   * @param stateLens The event lens to track
+   * @param id A unique identifier for this event lens
+   * @param metadata Optional metadata about the event lens
    */
-  public registerEventBus<EventMap extends Record<string, any[]>>(
-    eventBus: StateEventBus<EventMap>,
+  public registerLens<EventMap extends Record<string, any[]>>(
+    stateLens: StateLens<EventMap>,
     id: string,
     metadata?: Record<string, any>
   ): void {
-    this.eventBuses.set(id, {
-      instance: eventBus,
-      metadata
+    this.stateLenses.set(id, {
+      instance: stateLens,
+      metadata,
     });
   }
 
   /**
    * Add a relation between elements
-   * 
+   *
    * @param relation The relation details
    */
   public addRelation(relation: {
     sourceId: string;
-    sourceType: 'signal' | 'trigger' | 'eventBus';
+    sourceType: "signal" | "trigger" | "stateLens";
     targetId: string;
-    targetType: 'signal' | 'trigger' | 'eventBus';
-    relationKind: 'updates' | 'activates' | 'emits' | 'consumes' | 'other';
+    targetType: "signal" | "trigger" | "stateLens";
+    relationKind: "updates" | "activates" | "emits" | "consumes" | "other";
     description?: string;
     metadata?: Record<string, any>;
   }): void {
     // Validate that source and target exist
-    const sourceExists = this.elementExists(relation.sourceId, relation.sourceType);
-    const targetExists = this.elementExists(relation.targetId, relation.targetType);
-    
+    const sourceExists = this.elementExists(
+      relation.sourceId,
+      relation.sourceType
+    );
+    const targetExists = this.elementExists(
+      relation.targetId,
+      relation.targetType
+    );
+
     if (!sourceExists) {
-      console.warn(`Source ${relation.sourceType} with ID ${relation.sourceId} does not exist`);
+      console.warn(
+        `Source ${relation.sourceType} with ID ${relation.sourceId} does not exist`
+      );
     }
-    
+
     if (!targetExists) {
-      console.warn(`Target ${relation.targetType} with ID ${relation.targetId} does not exist`);
+      console.warn(
+        `Target ${relation.targetType} with ID ${relation.targetId} does not exist`
+      );
     }
-    
+
     // Add the relation even if elements don't exist yet (they might be registered later)
     this.relations.push(relation);
   }
 
   /**
    * Generate a dependency graph
-   * 
+   *
    * @returns Graph data for visualization
    */
   public generateGraph(): {
     nodes: Array<{
       id: string;
-      type: 'signal' | 'trigger' | 'eventBus';
+      type: "signal" | "trigger" | "stateLens";
       data: any;
     }>;
     edges: Array<{
@@ -696,54 +719,54 @@ export class SignalTriggerInspector {
   } {
     const nodes: Array<{
       id: string;
-      type: 'signal' | 'trigger' | 'eventBus';
+      type: "signal" | "trigger" | "stateLens";
       data: any;
     }> = [];
-    
+
     // Add signals
     this.signals.forEach((info, id) => {
       nodes.push({
         id,
-        type: 'signal',
+        type: "signal",
         data: {
           value: info.accessor(),
-          metadata: info.metadata || {}
-        }
+          metadata: info.metadata || {},
+        },
       });
     });
-    
+
     // Add triggers
     this.triggers.forEach((info, id) => {
       nodes.push({
         id,
-        type: 'trigger',
+        type: "trigger",
         data: {
           type: info.instance.type,
           enabled: info.instance.enabled,
-          metadata: info.metadata || {}
-        }
+          metadata: info.metadata || {},
+        },
       });
     });
-    
-    // Add event buses
-    this.eventBuses.forEach((info, id) => {
+
+    // Add event lenses
+    this.stateLenses.forEach((info, id) => {
       nodes.push({
         id,
-        type: 'eventBus',
+        type: "stateLens",
         data: {
-          metadata: info.metadata || {}
-        }
+          metadata: info.metadata || {},
+        },
       });
     });
-    
+
     // Add relations as edges
-    const edges = this.relations.map(relation => ({
+    const edges = this.relations.map((relation) => ({
       source: relation.sourceId,
       target: relation.targetId,
       kind: relation.relationKind,
-      description: relation.description
+      description: relation.description,
     }));
-    
+
     return { nodes, edges };
   }
 
@@ -753,28 +776,28 @@ export class SignalTriggerInspector {
   public clear(): void {
     this.signals.clear();
     this.triggers.clear();
-    this.eventBuses.clear();
+    this.stateLenses.clear();
     this.relations = [];
   }
 
   /**
    * Check if an element exists
-   * 
+   *
    * @param id The element ID
    * @param type The element type
    * @returns True if the element exists
    */
   private elementExists(
     id: string,
-    type: 'signal' | 'trigger' | 'eventBus'
+    type: "signal" | "trigger" | "stateLens"
   ): boolean {
     switch (type) {
-      case 'signal':
+      case "signal":
         return this.signals.has(id);
-      case 'trigger':
+      case "trigger":
         return this.triggers.has(id);
-      case 'eventBus':
-        return this.eventBuses.has(id);
+      case "stateLens":
+        return this.stateLenses.has(id);
       default:
         return false;
     }
@@ -782,4 +805,4 @@ export class SignalTriggerInspector {
 }
 
 // Create a named export
-export const createInspector = () => new SignalTriggerInspector(); 
+export const createInspector = () => new SignalTriggerInspector();

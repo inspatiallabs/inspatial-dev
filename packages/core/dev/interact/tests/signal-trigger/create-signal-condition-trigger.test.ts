@@ -1,6 +1,6 @@
 /**
  * @file Comprehensive tests for createSignalConditionTrigger function
- * @module @inspatial/state/test/signal-trigger
+ * @module @in/teract/test/signal-trigger
  */
 
 import {
@@ -11,10 +11,10 @@ import {
   mockSession,
   mockFn,
 } from "@inspatial/test";
-import { createSignal } from "../../signal/src/signals.ts";
+import { createSignal } from "../../signal/src/create-signal.ts";
 import { createTriggerInstance } from "../../trigger/src/action.ts";
 import { createSignalConditionTrigger } from "../../state/signal-trigger.ts";
-import { initTriggerSystem } from "../test-helpers.ts";
+import { initTriggerSystem } from "../helpers/test-helpers.ts";
 
 // Initialize the trigger system
 initTriggerSystem();

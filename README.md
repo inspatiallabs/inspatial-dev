@@ -100,7 +100,7 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 | **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
 | **Run** | Dev Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
 | **Type** | Runtime Validation | `deno add jsr:@inspatial/type` | [inspatial.dev/type](https://www.inspatial.dev/type) | 🟡 Preview |
-| **State** | State Management | `deno add jsr:@inspatial/state` | [inspatial.dev/state](https://www.inspatial.dev/state) | 🔴 Unstable |
+| **State** | State Management | `deno add jsr:@in/teract` | [inspatial.dev/state](https://www.inspatial.dev/state) | 🔴 Unstable |
 | **ISS** | InSpatial Style Sheet | `deno add jsr:@inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) | 🔴 Unstable |
 | **TW** | Tailwind CSS Presets | `deno add jsr:@inspatial/tw` | [inspatial.dev/tw](https://www.inspatial.dev/tw) | 🟡 Preview |
 | **Theme** | Theme System | `deno add jsr:@inspatial/theme` | [inspatial.dev/kit/theme](https://www.inspatial.dev/kit/theme) | 🟡 Preview |

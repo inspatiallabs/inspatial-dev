@@ -3,12 +3,12 @@
  * @summary #### Shows how to compose complex workflows with triggers and state
  */
 
-import { createState } from "../index";
+import { createState } from "../index.ts";
 import { 
   createTrigger, 
   createTriggerSequence,
   triggerRegistry 
-} from "../../trigger/src/index";
+} from "../../trigger/src/index.ts";
 
 // Game entity type
 interface EnemyType {

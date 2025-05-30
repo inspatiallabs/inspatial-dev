@@ -1,26 +1,26 @@
 /**
  * # Typed Trigger Integration
  * @summary #### Strong typing for state and trigger integration
- * 
+ *
  * This module provides type-safe integration between InSpatial's state system
  * and the trigger system, with specialized support for different trigger categories.
- * 
+ *
  * @since 0.1.0
- * @category InSpatial State
- * @module @inspatial/state
+ * @category Interact - (InSpatial State x Trigger)
+ * @module @in/teract
  * @kind module
  * @access public
  */
 
-import { type, validateState, TypeErrors } from "../../type/src/index.ts";
-import { 
+import { type, TypeErrors } from "../../type/src/index.ts";
+import {
   TriggerCategoryEnum,
-  TriggerEventDataType,
-  RegisteredTriggerType
+  RegisteredTriggerType,
 } from "../trigger/src/types.ts";
 import { registerTrigger } from "../trigger/src/registry.ts";
 import type { StateInstanceType, StateConfigType } from "./types.ts";
 import { createState } from "./state.ts";
+import { validateState } from "./validation.ts";
 
 // ----------------------------------------------------------------------------
 // Category-specific state interfaces
@@ -69,7 +69,7 @@ export interface SensorTriggerState extends TriggerCompatibleState {
     /** Last update timestamp */
     lastUpdated: string;
     /** Sensor accuracy level */
-    accuracy?: 'low' | 'medium' | 'high';
+    accuracy?: "low" | "medium" | "high";
     /** Whether sensor is active */
     active: boolean;
   };
@@ -121,13 +121,13 @@ export interface GestureTriggerState extends TriggerCompatibleState {
   /** Gesture interaction data */
   gesture?: {
     /** Current gesture type */
-    type?: 'pinch' | 'rotate' | 'swipe' | 'tap' | 'pan';
+    type?: "pinch" | "rotate" | "swipe" | "tap" | "pan";
     /** Gesture scale factor (for pinch) */
     scale?: number;
     /** Gesture rotation angle (for rotate) */
     rotation?: number;
     /** Gesture direction (for swipe) */
-    direction?: 'left' | 'right' | 'up' | 'down';
+    direction?: "left" | "right" | "up" | "down";
     /** Gesture velocity */
     velocity?: { x: number; y: number };
     /** Whether gesture is active */
@@ -178,7 +178,7 @@ export interface TimeTriggerState extends TriggerCompatibleState {
     /** Whether timer is running */
     running: boolean;
     /** Timer direction (increment or decrement) */
-    direction: 'forward' | 'backward';
+    direction: "forward" | "backward";
   };
 }
 
@@ -223,7 +223,7 @@ export interface AreaTriggerState extends TriggerCompatibleState {
 /**
  * Union type of all category-specific states
  */
-export type CategoryState = 
+export type CategoryState =
   | TouchTriggerState
   | SensorTriggerState
   | MouseTriggerState
@@ -258,7 +258,7 @@ export interface CategoryStateMap {
 
 /**
  * Register a typed trigger with payload validation
- * 
+ *
  * @param name Trigger name (typically in format "category:action")
  * @param category Trigger category
  * @param action State transition function
@@ -281,31 +281,37 @@ export function registerTypedTrigger<
     if (payloadSchema) {
       const validationResult = validateState(payloadSchema, payload);
       if (validationResult instanceof TypeErrors) {
-        console.error(`Payload validation failed for trigger ${name}:`, validationResult);
+        console.error(
+          `Payload validation failed for trigger ${name}:`,
+          validationResult
+        );
         return;
       }
     }
-    
+
     // Call the original action
     const result = action(state, ...payload);
-    
+
     // Track trigger metadata if state has _triggers property
-    if (result && typeof result === 'object') {
+    if (result && typeof result === "object") {
       return {
         ...result,
         _triggers: {
           ...(state._triggers || {}),
           lastTrigger: name,
-          lastUpdate: Date.now()
-        }
+          lastUpdate: Date.now(),
+        },
       };
     }
-    
+
     return result;
   };
-  
+
   // Register the trigger
-  return registerTrigger(name, validatedAction as any) as RegisteredTriggerType<S, P>;
+  return registerTrigger(name, validatedAction as any) as RegisteredTriggerType<
+    S,
+    P
+  >;
 }
 
 // ----------------------------------------------------------------------------
@@ -315,7 +321,8 @@ export function registerTypedTrigger<
 /**
  * Options for creating a category-specific state
  */
-export interface CategoryStateOptions<T extends CategoryState> extends StateConfigType<T> {
+export interface CategoryStateOptions<T extends CategoryState>
+  extends StateConfigType<T> {
   /** Category-specific options */
   categoryOptions?: {
     /** Whether to automatically track category-specific data */
@@ -327,7 +334,7 @@ export interface CategoryStateOptions<T extends CategoryState> extends StateConf
 
 /**
  * Create a state optimized for a specific trigger category
- * 
+ *
  * @param category Trigger category
  * @param options Category-specific state options
  * @returns State instance specialized for the category
@@ -335,25 +342,22 @@ export interface CategoryStateOptions<T extends CategoryState> extends StateConf
 export function createCategoryState<
   C extends keyof CategoryStateMap,
   T extends CategoryStateMap[C]
->(
-  category: C,
-  options: CategoryStateOptions<T>
-): StateInstanceType<T> {
+>(category: C, options: CategoryStateOptions<T>): StateInstanceType<T> {
   // Generate ID if not provided
   const id = options.id || `${String(category).toLowerCase()}-${Date.now()}`;
-  
+
   // Create base state configuration
   const config: StateConfigType<T> = {
     id,
     initialState: options.initialState,
     type: options.type,
     persist: options.persist,
-    triggers: options.triggers
+    triggers: options.triggers,
   };
-  
+
   // Create the state
   const state = createState<T>(config);
-  
+
   // Create category-specific helpers depending on the category
   switch (category) {
     case TriggerCategoryEnum.TOUCH:
@@ -362,23 +366,23 @@ export function createCategoryState<
         // Implementation would connect to a tap trigger
       };
       break;
-      
+
     case TriggerCategoryEnum.MOUSE:
       // Add mouse-specific helpers
       (state as any).onHover = (handler: (isOver: boolean) => void) => {
         // Implementation would connect to a hover trigger
       };
       break;
-      
+
     // Add more category-specific enhancements here
   }
-  
+
   return state;
 }
 
 /**
  * Create a touch-optimized state with specialized methods
- * 
+ *
  * @param options State options
  * @returns Touch-optimized state instance
  */
@@ -386,85 +390,93 @@ export function createTouchState<T extends TouchTriggerState>(
   options: CategoryStateOptions<T>
 ): StateInstanceType<T> & {
   onTap: (handler: (x: number, y: number) => void) => () => void;
-  onSwipe: (handler: (direction: 'left' | 'right' | 'up' | 'down') => void) => () => void;
-  onPinch: (handler: (scale: number, center: { x: number, y: number }) => void) => () => void;
+  onSwipe: (
+    handler: (direction: "left" | "right" | "up" | "down") => void
+  ) => () => void;
+  onPinch: (
+    handler: (scale: number, center: { x: number; y: number }) => void
+  ) => () => void;
 } {
   // Create the base state
   const state = createCategoryState(TriggerCategoryEnum.TOUCH, options);
-  
+
   // Add touch-specific methods
   const enhancedState = state as StateInstanceType<T> & {
     onTap: (handler: (x: number, y: number) => void) => () => void;
-    onSwipe: (handler: (direction: 'left' | 'right' | 'up' | 'down') => void) => () => void;
-    onPinch: (handler: (scale: number, center: { x: number, y: number }) => void) => () => void;
+    onSwipe: (
+      handler: (direction: "left" | "right" | "up" | "down") => void
+    ) => () => void;
+    onPinch: (
+      handler: (scale: number, center: { x: number; y: number }) => void
+    ) => () => void;
   };
-  
+
   // Implement touch-specific methods
   enhancedState.onTap = (handler) => {
     // Implementation would connect to a tap trigger
     const tapTrigger = registerTrigger(
-      'touch:tap',
+      "touch:tap",
       (state: T, x: number, y: number) => {
         // Update state
         const updatedState: Partial<T> = {
           touch: {
             ...state.touch,
             position: { x, y },
-            active: true
-          }
+            active: true,
+          },
         } as any;
-        
+
         // Call handler
         handler(x, y);
-        
+
         return updatedState;
       }
     );
-    
+
     return enhancedState.connectTrigger(tapTrigger as any);
   };
-  
+
   enhancedState.onSwipe = (handler) => {
     // Implementation would connect to a swipe trigger
     const swipeTrigger = registerTrigger(
-      'touch:swipe',
-      (state: T, direction: 'left' | 'right' | 'up' | 'down') => {
+      "touch:swipe",
+      (state: T, direction: "left" | "right" | "up" | "down") => {
         // Call handler
         handler(direction);
-        
+
         return {
           touch: {
             ...state.touch,
-            active: true
-          }
+            active: true,
+          },
         } as any;
       }
     );
-    
+
     return enhancedState.connectTrigger(swipeTrigger as any);
   };
-  
+
   enhancedState.onPinch = (handler) => {
     // Implementation would connect to a pinch trigger
     const pinchTrigger = registerTrigger(
-      'touch:pinch',
-      (state: T, scale: number, center: { x: number, y: number }) => {
+      "touch:pinch",
+      (state: T, scale: number, center: { x: number; y: number }) => {
         // Call handler
         handler(scale, center);
-        
+
         return {
           touch: {
             ...state.touch,
             position: center,
-            active: true
-          }
+            active: true,
+          },
         } as any;
       }
     );
-    
+
     return enhancedState.connectTrigger(pinchTrigger as any);
   };
-  
+
   return enhancedState;
 }
 
@@ -498,12 +510,14 @@ export interface TriggerAwarePersistenceOptions {
 
 /**
  * Setup InSpatialDB persistence with trigger history tracking
- * 
+ *
  * @param state The state to persist
  * @param options Persistence options
  * @returns Cleanup function
  */
-export function setupTriggerAwareInSpatialDBPersistence<T extends TriggerCompatibleState>(
+export function setupTriggerAwareInSpatialDBPersistence<
+  T extends TriggerCompatibleState
+>(
   state: StateInstanceType<T>,
   options: TriggerAwarePersistenceOptions
 ): () => void {
@@ -513,55 +527,60 @@ export function setupTriggerAwareInSpatialDBPersistence<T extends TriggerCompati
     initialState: {
       stateId: state.meta.id,
       entries: [],
-      lastUpdated: null
-    }
+      lastUpdated: null,
+    },
   });
-  
+
   // Subscribe to state changes to record history
   let unsubscribe: (() => void) | null = null;
-  
+
   if (options.recordHistory) {
     unsubscribe = state.subscribe((currentState) => {
       // Get trigger info
       const triggerInfo = currentState._triggers;
-      
+
       if (triggerInfo?.lastTrigger) {
         // Record history entry
-        historyState.update(history => {
+        historyState.update((history) => {
           const entries = [...history.entries];
-          
+
           // Add new entry
           entries.push({
             timestamp: Date.now(),
             triggerId: triggerInfo.lastTrigger,
-            stateDelta: {/* Compute delta */},
-            stateSnapshot: currentState
+            stateDelta: {
+              /* Compute delta */
+            },
+            stateSnapshot: currentState,
           });
-          
+
           // Limit history size
-          if (options.maxHistoryEntries && entries.length > options.maxHistoryEntries) {
+          if (
+            options.maxHistoryEntries &&
+            entries.length > options.maxHistoryEntries
+          ) {
             entries.splice(0, entries.length - options.maxHistoryEntries);
           }
-          
+
           return {
             entries,
-            lastUpdated: new Date().toISOString()
+            lastUpdated: new Date().toISOString(),
           };
         });
       }
     });
   }
-  
+
   // Set up InSpatialDB persistence for both states
   // Just a placeholder - would use the actual implementation from persistence.ts
   const mainCleanup = () => {
     console.log(`[InSpatialDB] Would persist state: ${state.meta.id}`);
   };
-  
+
   const historyCleanup = () => {
     console.log(`[InSpatialDB] Would persist history: ${historyState.meta.id}`);
   };
-  
+
   // Return combined cleanup
   return () => {
     if (unsubscribe) unsubscribe();
@@ -576,32 +595,32 @@ export function setupTriggerAwareInSpatialDBPersistence<T extends TriggerCompati
 
 /**
  * Check if a state is compatible with a specific trigger category
- * 
+ *
  * @param state The state to check
  * @param category The trigger category
  * @returns Whether the state is compatible with the category
  */
 export function isCompatibleWithCategory<T extends object>(
-  state: StateInstanceType<T>, 
+  state: StateInstanceType<T>,
   category: TriggerCategoryEnum
 ): boolean {
   const currentState = state.get();
-  
+
   switch (category) {
     case TriggerCategoryEnum.TOUCH:
-      return 'touch' in currentState;
-      
+      return "touch" in currentState;
+
     case TriggerCategoryEnum.MOUSE:
-      return 'mouse' in currentState;
-      
+      return "mouse" in currentState;
+
     case TriggerCategoryEnum.KEYBOARD:
-      return 'keyboard' in currentState;
-      
+      return "keyboard" in currentState;
+
     case TriggerCategoryEnum.SENSOR:
-      return 'sensor' in currentState;
-      
+      return "sensor" in currentState;
+
     // Add more categories as needed
-      
+
     default:
       // Generic categories are always compatible
       return true;
@@ -610,7 +629,7 @@ export function isCompatibleWithCategory<T extends object>(
 
 /**
  * Get the required state interface for a trigger category
- * 
+ *
  * @param category The trigger category
  * @returns Type schema for the category
  */
@@ -620,21 +639,21 @@ export function getCategoryTypeSchema(category: TriggerCategoryEnum): any {
       return type({
         touch: {
           position: { x: "number", y: "number" },
-          active: "boolean"
-        }
+          active: "boolean",
+        },
       });
-      
+
     case TriggerCategoryEnum.MOUSE:
       return type({
         mouse: {
           position: { x: "number", y: "number" },
           buttons: "number[]",
-          isOver: "boolean"
-        }
+          isOver: "boolean",
+        },
       });
-      
+
     // Add more category schemas
-      
+
     default:
       return type({});
   }
@@ -642,7 +661,7 @@ export function getCategoryTypeSchema(category: TriggerCategoryEnum): any {
 
 /**
  * Create typed actions from trigger definitions
- * 
+ *
  * @param state The state instance
  * @param actionDefinitions Map of action names to action functions
  * @returns Object with typed action methods
@@ -655,25 +674,25 @@ export function createTypedActions<
   actionDefinitions: A
 ): { [K in keyof A]: (...args: Parameters<A[K]>) => void } {
   const actions = {} as { [K in keyof A]: (...args: Parameters<A[K]>) => void };
-  
+
   // Create a trigger for each action
   for (const actionName in actionDefinitions) {
     const actionFn = actionDefinitions[actionName];
-    
+
     // Register a trigger for this action
     const trigger = registerTrigger(
       `action:${String(actionName)}`,
       (state: T, ...args: any[]) => actionFn(state, ...args)
     );
-    
+
     // Connect the trigger to the state
     state.connectTrigger(trigger as any);
-    
+
     // Create an action method
     actions[actionName] = ((...args: any[]) => {
       trigger.action(state.get(), ...args);
     }) as any;
   }
-  
+
   return actions;
-} 
+}

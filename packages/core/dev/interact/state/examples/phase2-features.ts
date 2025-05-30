@@ -2,7 +2,7 @@
  * # Phase 2 Features Example
  * @summary #### Demonstrates advanced state management capabilities
  * 
- * This example shows how to use the Phase 2 features of the InSpatial state system:
+ * This example shows how to use the Phase 2 features of the Interact - (InSpatial State x Trigger) system:
  * - Computed values with automatic dependency tracking
  * - Derived state that updates when source state changes
  * - Persistence of state across sessions

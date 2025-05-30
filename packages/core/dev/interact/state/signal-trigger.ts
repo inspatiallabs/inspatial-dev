@@ -7,23 +7,16 @@
  * to be activated based on signal changes.
  *
  * @since 0.1.0
- * @category InSpatial State
- * @module @inspatial/state
+ * @category Interact - (InSpatial State x Trigger)
+ * @module @in/teract
  * @kind module
  * @access public
  */
 
-import {
-  createSignal,
-  createEffect,
-  AccessorType,
-} from "../signal/src/index.ts";
-
-import { onCleanup } from "../signal/src/core/owner.ts";
-
+import { createSignal, createEffect } from "../signal/src/index.ts";
+import type { AccessorType } from "../signal/src/types.ts";
 import { createTriggerInstance as defaultCreateTriggerInstance } from "../trigger/src/index.ts";
 import { getRegisteredTrigger as defaultGetRegisteredTrigger } from "../trigger/src/registry.ts";
-import { TriggerManagerClass } from "../trigger/src/action.ts";
 
 import type {
   TriggerConfigType,
@@ -84,7 +77,7 @@ interface TriggerSignalControls {
  * It's like setting up an automatic sensor that changes a value when it detects something.
  *
  * @since 0.0.1
- * @category InSpatial State
+ * @category Interact - (InSpatial State x Trigger)
  * @kind function
  * @access public
  *
@@ -389,7 +382,7 @@ export function createSignalConditionTrigger<T>(config: {
 
 /**
  * # StateLens
- * @summary #### Type-safe event bus for state-trigger communication
+ * @summary #### Type-safe state lens for state-trigger communication
  *
  * This class provides a centralized, type-safe communication channel between
  * the state system and trigger system, allowing for loosely coupled interactions.
@@ -408,7 +401,7 @@ export function createSignalConditionTrigger<T>(config: {
  *   "game:state": [{ status: 'idle' | 'playing' | 'paused' }];
  * }
  *
- * // Create the event bus
+ * // Create the state lens
  * const bus = createStateLens<GameEvents>();
  *
  * // Listen for events
@@ -688,7 +681,7 @@ export class StateLens<
  * # createStateLens
  * @summary #### Creates a lens for bidirectional state flow between signals and triggers
  *
- * This function creates a specialized event bus that acts as a lens, focusing on
+ * This function creates a specialized state lens that acts as a lens, focusing on
  * and transforming state between the signal system and trigger system, allowing
  * for type-safe, loosely coupled state interactions.
  *

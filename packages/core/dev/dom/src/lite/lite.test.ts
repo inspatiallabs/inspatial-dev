@@ -6,7 +6,7 @@ import {
   assertSpyCalls,
   describe,
   beforeEach,
-} from "../../../test/src/index.ts";
+} from "@inspatial/test";
 import { createDOMLite } from "./index.ts";
 
 describe("InDOM (lite)", () => {

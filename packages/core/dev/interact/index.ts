@@ -1,5 +1,5 @@
 /**
- * InSpatial State
+ * Interact - (InSpatial State x Trigger)
  * 
  * A universal state management system for cross-platform applications
  */

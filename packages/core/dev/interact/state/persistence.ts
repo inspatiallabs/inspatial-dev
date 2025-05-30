@@ -6,8 +6,8 @@
  * using various storage backends like localStorage, sessionStorage, or custom solutions.
  *
  * @since 0.1.0
- * @category InSpatial State
- * @module @inspatial/state
+ * @category Interact - (InSpatial State x Trigger)
+ * @module @in/teract
  * @kind module
  * @access public
  */
@@ -16,7 +16,7 @@ import type {
   StateInstanceType,
   StorageAdapterType,
   PersistOptionsType,
-} from "./types";
+} from "./types.ts";
 
 // Global registry of storage adapters
 const adapters: Record<string, StorageAdapterType> = {};

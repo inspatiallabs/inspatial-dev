@@ -7,8 +7,8 @@
  * instances and generates actions automatically.
  * 
  * @since 0.1.0
- * @category InSpatial State
- * @module @inspatial/state
+ * @category Interact - (InSpatial State x Trigger)
+ * @module @in/teract
  * @kind function
  * @access public
  */

@@ -45,14 +45,28 @@ export class QueueClass implements IQueueType {
     type: number,
     node: T
   ): void {
-    // Always ensure the node is in queue 0 (for pure computations)
-    if (!this._queues[0].includes(node as ComputationClass)) {
-      this._queues[0].push(node as any);
+    if (false && __DEV__) {
+      console.log(`[SCHEDULER ENQUEUE] Adding node to queue type ${type}, current queue sizes: [${this._queues[0].length}, ${this._queues[1].length}, ${this._queues[2].length}]`);
     }
-
-    // For effects, also add to the appropriate queue type
-    if (type && !this._queues[type].includes(node as EffectClass)) {
-      this._queues[type].push(node as any);
+    
+    // CRITICAL FIX: Only add effects to their specific queue, not to queue 0
+    // Queue 0 is for pure computations only
+    if (type === EFFECT_PURE || !type) {
+      // Add to queue 0 for pure computations
+      if (!this._queues[0].includes(node as ComputationClass)) {
+        this._queues[0].push(node as any);
+        if (false && __DEV__) {
+          console.log(`[SCHEDULER ENQUEUE] Added node to queue 0, new size: ${this._queues[0].length}`);
+        }
+      }
+    } else {
+      // For effects (type 1 or 2), only add to the appropriate effect queue
+      if (!this._queues[type].includes(node as EffectClass)) {
+        this._queues[type].push(node as any);
+        if (false && __DEV__) {
+          console.log(`[SCHEDULER ENQUEUE] Added effect to queue ${type}, new size: ${this._queues[type].length}`);
+        }
+      }
     }
 
     schedule();
@@ -212,43 +226,26 @@ function runPureQueue(queue: ComputationClass[]) {
 }
 
 function runEffectQueue(queue: EffectClass[]) {
-  // Process each effect node in sequence
+  if (false && __DEV__) {
+    console.log(`[SCHEDULER] Running effect queue with ${queue.length} effects`);
+  }
+  
   for (let i = 0; i < queue.length; i++) {
-    // Only run effects that haven't been disposed
-    if (queue[i]._state !== STATE_DISPOSED) {
-      queue[i]._runEffect();
+    const effect = queue[i];
+    
+    if (false && __DEV__) {
+      console.log(`[SCHEDULER] Processing effect ${i}: state=${effect._state}, disposed=${effect._state === STATE_DISPOSED}`);
+    }
+    
+    if (effect._state !== STATE_DISPOSED) {
+      if (false && __DEV__) {
+        console.log(`[SCHEDULER] Running effect ${i} (_runEffect)`);
+      }
+      effect._runEffect();
     }
   }
-}
-
-// -------------------- Batch Utility --------------------
-/**
- * `batch` allows changes made inside `fn` to be queued and flushed once, rather than
- * triggering intermediate reactive updates.  It simply increments an internal
- * depth counter; when depth returns to 0 we flush the global queue synchronously.
- * This mirrors SolidJS semantics sufficiently for our core tests.
- *
- * NOTE:  All internals already enqueue into `globalQueue`, so batching only needs
- * to defer the final `flush` until the outer‐most batch completes.
- */
-let _batchDepth = 0;
-export function batch<T>(fn: () => T): T {
-  _batchDepth++;
-  try {
-    return fn();
-  } finally {
-    _batchDepth--;
-    if (_batchDepth === 0) {
-      // ensure pending work is processed synchronously
-      flushSync();
-    }
+  
+  if (false && __DEV__) {
+    console.log(`[SCHEDULER] Finished running effect queue`);
   }
-}
-
-/**
- * Simple helper used by some higher-level utilities to know if they are
- * executing inside a batch scope.
- */
-export function isBatching(): boolean {
-  return _batchDepth > 0;
 }

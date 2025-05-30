@@ -1,7 +1,7 @@
 import { ComputationClass, compute, OwnerClass } from "./core/index.ts";
-import { runWithOwner } from "./signals.ts";
-import type { AccessorType } from "./signals.ts";
-import { $TRACK } from "./store/index.ts";
+import { runWithOwner } from "./run-with-owner.ts";
+import type { AccessorType } from "./types.ts";
+import { $TRACK } from "./create-store.ts";
 
 export type Maybe<T> = T | void | null | undefined | false;
 
@@ -59,20 +59,18 @@ function updateKeyedMap<Item, MappedItem>(
             );
           }
         : this._indexes
-          ? () => {
-              const item = newItems[j];
-              this._indexes![j] = new ComputationClass(j, null);
-              return this._map(
-                () => item,
-                ComputationClass.prototype.read.bind(this._indexes![j])
-              );
-            }
-          : () => {
-              const item = newItems[j];
-              return (this._map as (value: () => Item) => MappedItem)(
-                () => item
-              );
-            };
+        ? () => {
+            const item = newItems[j];
+            this._indexes![j] = new ComputationClass(j, null);
+            return this._map(
+              () => item,
+              ComputationClass.prototype.read.bind(this._indexes![j])
+            );
+          }
+        : () => {
+            const item = newItems[j];
+            return (this._map as (value: () => Item) => MappedItem)(() => item);
+          };
 
     // fast path for empty arrays
     if (newLen === 0) {

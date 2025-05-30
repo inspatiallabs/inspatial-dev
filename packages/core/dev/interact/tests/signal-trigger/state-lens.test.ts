@@ -1,6 +1,6 @@
 /**
  * @file Comprehensive tests for StateLens class and createStateLens function
- * @module @inspatial/state/test/signal-trigger
+ * @module @in/teract/test/signal-trigger
  */
 
 import {
@@ -11,9 +11,9 @@ import {
   mockSession,
 } from "@inspatial/test";
 import { StateLens, createStateLens } from "../../state/signal-trigger.ts";
-import { createSignal } from "../../signal/src/signals.ts";
+import { createSignal } from "../../signal/src/create-signal.ts";
 import type { TriggerConfigType } from "../../trigger/src/types.ts";
-import { initTriggerSystem } from "../test-helpers.ts";
+import { initTriggerSystem } from "../helpers/test-helpers.ts";
 
 // Initialize trigger system
 initTriggerSystem();

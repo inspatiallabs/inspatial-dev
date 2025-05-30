@@ -33,7 +33,7 @@ type Dep = Set<() => void>;
 const deps = new WeakMap<object, Map<string | symbol, Dep>>();
 
 /**
- * TODO: Move to @inspatial/state
+ * TODO: Move to @in/teract
  * Creates a reactive object for template data
  */
 export function reactive<T extends object>(obj: T): T {

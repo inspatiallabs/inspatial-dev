@@ -1,6 +1,6 @@
 /**
  * @file Basic tests for createTriggerSignal function
- * @module @inspatial/state/test/signal-trigger
+ * @module @in/teract/test/signal-trigger
  */
 
 import { test, expect } from "@inspatial/test";

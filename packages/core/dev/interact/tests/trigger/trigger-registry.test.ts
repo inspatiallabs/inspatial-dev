@@ -12,7 +12,7 @@ import {
   expect, 
   beforeEach, 
   afterEach 
-} from "../../../test/src/index.ts";
+} from "@inspatial/test";
 
 import {
   triggerRegistry,

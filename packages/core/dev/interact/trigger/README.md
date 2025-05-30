@@ -1,6 +1,6 @@
 # InSpatial Trigger Tests
 
-This directory contains comprehensive tests for the InSpatial Trigger System, which is a key component of the InSpatial state management system.
+This directory contains comprehensive tests for the InSpatial Trigger System, which is a key component of the Interact - (InSpatial State x Trigger) management system.
 
 ## Overview
 
@@ -75,7 +75,7 @@ To view detailed coverage information, run the coverage command and check the ge
 
 ## Integration with State
 
-The Trigger System is closely integrated with the InSpatial State management system. Several tests validate this integration to ensure they work together seamlessly.
+The Trigger System is closely integrated with the Interact - (InSpatial State x Trigger) management system. Several tests validate this integration to ensure they work together seamlessly.
 
 ## License
 

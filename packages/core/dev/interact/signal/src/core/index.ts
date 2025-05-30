@@ -74,7 +74,7 @@ export {
   // Values/Classes from suspense.ts
   SuspenseQueueClass,
   createSuspense,
-} from "./suspense.ts";
+} from "./create-suspense.ts";
 export {
   // Constants
   SUPPORTS_PROXY,

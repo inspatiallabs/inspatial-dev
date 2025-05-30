@@ -6,12 +6,11 @@
  * These tests verify the correct behavior of trigger creation and activation functions.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "../../../test/src/index.ts";
+import { describe, it, expect, beforeEach, afterEach } from "@inspatial/test";
 
 import {
   createTrigger,
   activateTrigger,
-  registerTrigger
 } from "../../trigger/src/action.ts";
 
 import {

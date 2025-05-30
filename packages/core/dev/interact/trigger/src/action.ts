@@ -723,8 +723,8 @@ export function createTrigger<S = any, P extends any[] = any[]>(
  * action associated with that button.
  * 
  * @since 0.1.0   
- * @category InSpatial State
- * @module @inspatial/state/trigger
+ * @category Interact - (InSpatial State x Trigger)
+ * @module @in/teract/trigger
  * @kind function
  * @access public
  * 
@@ -770,7 +770,7 @@ export function createTrigger<S = any, P extends any[] = any[]>(
  * ### Example 1: Basic Trigger Activation
  * ```typescript
  * // First, we need to register a trigger that defines a state transition
- * import { registerTrigger, activateTrigger } from "@inspatial/state/trigger";
+ * import { registerTrigger, activateTrigger } from "@in/teract/trigger";
  * 
  * // Let's create a simple trigger that increments a counter in our state
  * registerTrigger({

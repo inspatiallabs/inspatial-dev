@@ -478,6 +478,27 @@ function loadingState(node: ComputationClass): ComputationClass<boolean> {
  */
 function track(computation: SourceNodeType): void {
   if (currentObserver) {
+    // CRITICAL FIX: For store nodes (no _compute function), establish immediate bidirectional links
+    // because they don't go through the update() cycle that normally handles this
+    if (!(computation as any)._compute) {
+      // Immediately add this computation to the observer's sources
+      if (!currentObserver._sources) {
+        currentObserver._sources = [computation];
+      } else if (!currentObserver._sources.includes(computation)) {
+        currentObserver._sources.push(computation);
+      }
+      
+      // Immediately add the observer to this computation's observers  
+      if (!computation._observers) {
+        computation._observers = [currentObserver];
+      } else if (!computation._observers.includes(currentObserver)) {
+        computation._observers.push(currentObserver);
+      }
+      
+      return; // Skip the rest of the function for store nodes
+    }
+    
+    // Regular tracking logic for computed nodes (with _compute function)
     if (
       !newSources &&
       currentObserver._sources &&

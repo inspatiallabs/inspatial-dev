@@ -6,14 +6,14 @@
  * including snapshot creation, type checking, and global state access.
  * 
  * @since 0.1.0
- * @category InSpatial State
- * @module @inspatial/state
+ * @category Interact - (InSpatial State x Trigger)
+ * @module @in/teract
  * @kind module
  * @access public
  */
 
-import { StateManager } from "./manager";
-import type { StateInstanceType } from "./types";
+import { StateManager } from "./manager.ts";
+import type { StateInstanceType } from "./types.ts";
 
 /**
  * Check if a value is a state instance
@@ -49,7 +49,7 @@ export function getGlobalState<T extends object = any>(id: string): StateInstanc
  * @returns A record of all global state instances
  */
 export function getAllGlobalStates(): Record<string, StateInstanceType<any>> {
-  return StateManager.getAllGlobalStates();
+  return Object.fromEntries(StateManager.getAllGlobalStates());
 }
 
 /**
