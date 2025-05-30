@@ -1,5 +1,5 @@
-import { EffectClass } from "./core/effect.ts";
-import {
+import { EffectClass } from "./effect.ts";
+import type {
   ComputeFunctionType,
   EffectFunctionType,
   EffectOptionsType,

@@ -39,6 +39,7 @@
 
     "test:signal-trigger": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal-trigger/",
     "test:signal-trigger:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-trigger ./tests/signal-trigger/",
+    
     "test:signal-core": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal-core/",
     "test:signal-core:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-core ./tests/signal-core/",
 

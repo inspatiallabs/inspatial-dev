@@ -9,8 +9,8 @@ import {
   createEffect,
   createMemo,
   createRoot,
-} from "../../signal/src/index.ts";
-import { flushSync } from "../../signal/src/core/scheduler.ts";
+  flushSync,
+} from "../../signal-core/index.ts";
 import { mockCleanup } from "../helpers/test-helpers.ts";
 
 describe("Signal System Diagnostics", () => {

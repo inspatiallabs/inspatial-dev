@@ -1,5 +1,5 @@
 // import {bench, describe } from "@inspatial/test";
-// import { merge, omit } from "../../signal/src/index.ts";
+// import { merge, omit } from "../../signal-core/index.ts";
 
 // const staticDesc = {
 //   value: 1,

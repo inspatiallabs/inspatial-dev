@@ -1,4 +1,4 @@
-import { createMemo, createSignal, flushSync } from "../../signal/src/index.ts";
+import { createMemo, createSignal, flushSync } from "../../signal-core/index.ts";
 import { test, expect, mockFn } from "@inspatial/test";
 
 // Cleanup functions array for test cleanup

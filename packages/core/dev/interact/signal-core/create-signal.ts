@@ -1,6 +1,4 @@
-import type { SignalOptionsType } from "./core/index.ts";
-import { ComputationClass, untrack } from "./core/index.ts";
-
+import { ComputationClass, type SignalOptionsType, untrack } from "./core.ts";
 import type { ComputeFunctionType, SetterType, SignalType } from "./types.ts";
 import { createMemo } from "./create-memo.ts";
 

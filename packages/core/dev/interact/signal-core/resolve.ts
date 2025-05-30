@@ -1,5 +1,5 @@
-import { EagerComputationClass } from "./core/effect.ts";
-import { NotReadyErrorClass } from "./core/error.ts";
+import { EagerComputationClass } from "./effect.ts";
+import { NotReadyErrorClass } from "./error.ts";
 import { createRoot } from "./create-root.ts";
 
 /**

@@ -1,16 +1,10 @@
 import { createStore } from "./create-store.ts";
-import {
-  ComputationClass,
-  compute,
-  getOwner,
-  OwnerClass,
-  getObserver,
-  untrack,
-  flushSync,
-  EagerComputationClass,
-} from "./core/index.ts";
+import { ComputationClass, compute, getObserver, untrack } from "./core.ts";
 import type { StoreType, StoreSetterType } from "./create-store.ts";
 import { createEffect } from "./create-effect.ts";
+import { flushSync } from "./scheduler.ts";
+import { getOwner, OwnerClass } from "./owner.ts";
+import { EagerComputationClass } from "./effect.ts";
 
 // Define PathSegmentType locally as it's not exported from store.ts
 type PathSegmentType = string | number;

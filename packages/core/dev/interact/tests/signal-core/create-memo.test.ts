@@ -17,7 +17,7 @@ import {
   createErrorBoundary,
   flushSync,
   hasUpdated,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 
 // Setup cleanup for tests
 let cleanupFns: (() => void)[] = [];

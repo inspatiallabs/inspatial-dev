@@ -6,7 +6,7 @@ import {
   flushSync,
   merge,
   omit,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { test, expect, describe, it } from "@inspatial/test";
 
 type SimplePropTypes = {

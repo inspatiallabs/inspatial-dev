@@ -1,4 +1,4 @@
-import { ComputationClass, compute, OwnerClass } from "./core/index.ts";
+import { ComputationClass, compute, OwnerClass } from "./index.ts";
 import { runWithOwner } from "./run-with-owner.ts";
 import type { AccessorType } from "./types.ts";
 import { $TRACK } from "./create-store.ts";

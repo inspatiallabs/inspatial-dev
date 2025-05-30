@@ -10,10 +10,10 @@ if (typeof globalThis.__DEV__ === 'undefined') {
 }
 
 // Export core state management
-export * from './core/state.ts';
+export * from './state/index.ts';
 
 // Export signal management
-export * from './signal/src/index.ts';
+export * from './signal-core/index.ts';
 
 // Export trigger system
 export * from './trigger/src/index.ts'; 

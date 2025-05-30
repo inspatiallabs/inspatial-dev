@@ -1,7 +1,7 @@
-import { NotReadyErrorClass } from "./core/error.ts"
-import { createMemo } from "./create-memo.ts"
-import { createRenderEffect } from "./create-render-effect.ts"
-import { createSignal } from "./create-signal.ts"
+import { NotReadyErrorClass } from "./error.ts";
+import { createMemo } from "./create-memo.ts";
+import { createRenderEffect } from "./create-render-effect.ts";
+import { createSignal } from "./create-signal.ts";
 import type {
   ResourceOptionsType,
   ResourceReturnType,
@@ -137,7 +137,9 @@ export function createResource<T, S>(
     }));
     trigger(undefined);
 
-    const promise = Promise.resolve(currentFetcher(src as S & ResourceFetcherInfoType<T>, ref));
+    const promise = Promise.resolve(
+      currentFetcher(src as S & ResourceFetcherInfoType<T>, ref)
+    );
     currentPromise = promise;
 
     promise

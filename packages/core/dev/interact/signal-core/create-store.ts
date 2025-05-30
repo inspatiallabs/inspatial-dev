@@ -1,12 +1,7 @@
-import {
-  ComputationClass,
-  getObserver,
-  isEqual,
-  UNCHANGED,
-} from "./core/index.ts";
-import { $RAW } from "./core/constants.ts";
-import { flushSync as immediateFlushSync } from "./core/scheduler.ts";
-import { StoreNodeClass } from "./store-node.ts";
+import { $RAW } from "./constants.ts";
+import { ComputationClass, getObserver, isEqual } from "./core.ts";
+import { batch } from "./is-batching.ts";
+import { flushSync as immediateFlushSync } from "./scheduler.ts";
 
 export type StoreType<T> = Readonly<T>;
 
@@ -44,6 +39,9 @@ const $TRACK = Symbol("STORE_TRACK"),
   $TARGET = Symbol("STORE_TARGET"),
   $PROXY = Symbol("STORE_PROXY"),
   $TARGET_IS_ARRAY = Symbol("TARGET_IS_ARRAY");
+
+// Store reference to original Array.isArray for reliable detection
+const originalArrayIsArray = Array.isArray;
 
 export const STORE_VALUE = "v" as const;
 export const STORE_NODE = "n" as const;
@@ -114,17 +112,25 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
       } as InternalStoreNodeType<T>)
     : { [STORE_VALUE]: value };
 
-  // Mark the target as an array if needed with both techniques for backward compatibility
+  // **CRITICAL ARRAY FIX**: For arrays, set up proper prototype chain
   if (isArray) {
     // Use a regular property for compatibility with older code
     (target as any).isArray = true;
 
-    // Special Symbol.toStringTag to ensure [].toString.call() works
-    Object.defineProperty(target[STORE_VALUE], Symbol.toStringTag, {
-      value: "Array",
-      configurable: true,
+    // **KEY FIX**: Set the prototype of the target to Array.prototype
+    // This makes the proxy inherit Array methods and behavior
+    Object.setPrototypeOf(target, Array.prototype);
+
+    // Copy array-specific properties to the target
+    Object.defineProperty(target, "length", {
+      get() {
+        return this[STORE_VALUE].length;
+      },
+      set(value) {
+        this[STORE_VALUE].length = value;
+      },
       enumerable: false,
-      writable: true,
+      configurable: true,
     });
   }
 
@@ -193,8 +199,8 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
     (target as any).instanceMethods = instanceMethods;
   }
 
-  // Create proxy
-  p = new Proxy(target, proxyTraps);
+  // **CRITICAL ARRAY FIX**: Create proxy with enhanced traps for arrays
+  p = new Proxy(target, isArray ? arrayProxyTraps : proxyTraps);
 
   // Store reference back to proxy
   Object.defineProperty(value, $PROXY, {
@@ -281,28 +287,33 @@ function getNode(
 ): DataNodeType {
   if (nodes[property]) return nodes[property]!;
   // Use StoreNodeClass instead of ComputationClass for proper observer tracking
-  return (nodes[property] = new StoreNodeClass(value, equals));
+  return (nodes[property] = new ComputationClass(value, null, {
+    equals,
+    // Prevent node deletion when there are no observers
+    // Store nodes should persist for the lifetime of the store
+    unobserved: undefined,
+  }));
 }
 
 function proxyDescriptor(target: StoreNodeType, property: PropertyKey) {
   if (property === $PROXY)
     return { value: target[$PROXY], writable: true, configurable: true };
-  
+
   const storeValue = target[STORE_VALUE];
   const desc = Reflect.getOwnPropertyDescriptor(storeValue, property);
   if (!desc) return desc;
-  
+
   // For array length property, return the exact descriptor from the underlying array
-  if (property === 'length' && Array.isArray(storeValue)) {
+  if (property === "length" && Array.isArray(storeValue)) {
     return desc;
   }
-  
+
   // For non-configurable properties, return as-is
   if (!desc.configurable) return desc;
-  
+
   // For getters, return as-is
   if (desc.get) return desc;
-  
+
   // Only modify configurable data properties to use proxy getter
   const modifiedDesc = { ...desc };
   delete modifiedDesc.value;
@@ -379,6 +390,7 @@ function ownKeys(target: StoreNodeType) {
 }
 
 const Writing = new Set<Object>();
+
 const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
   get(target, property, receiver) {
     if (property === $TARGET) return target;
@@ -387,6 +399,16 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
     if (property === $TRACK) {
       trackSelf(target);
       return receiver;
+    }
+
+    // **ARRAY DETECTION FIX**: Expose array markers for patchedArrayIsArray
+    if (property === $TARGET_IS_ARRAY) {
+      return (target as any)[$TARGET_IS_ARRAY] === true;
+    }
+
+    // Legacy array marker support
+    if (property === "isArray") {
+      return (target as any).isArray === true;
     }
 
     // Special handling for array-related properties and symbols
@@ -725,6 +747,31 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
   },
 };
 
+const arrayProxyTraps: ProxyHandler<InternalStoreNodeType> = {
+  ...proxyTraps,
+
+  // Override getPrototypeOf to return Array.prototype for array detection
+  getPrototypeOf(target) {
+    return Array.prototype;
+  },
+
+  // Override get to handle array methods properly
+  get(target, property, receiver) {
+    // Delegate to standard proxy trap first
+    const result = proxyTraps.get!(target, property, receiver);
+
+    // For array methods, ensure they're bound to the proxy
+    if (
+      typeof result === "function" &&
+      Array.prototype.hasOwnProperty(property)
+    ) {
+      return result.bind(receiver);
+    }
+
+    return result;
+  },
+};
+
 function getAtPath(
   state: any,
   path: PathSegmentType[]
@@ -749,21 +796,6 @@ function getAtPath(
 // Add batch control variables at the top
 let batchDepth = 0;
 let pendingFlush = false;
-
-// Export batch function
-export function batch<T>(fn: () => T): T {
-  batchDepth++;
-  try {
-    const result = fn();
-    return result;
-  } finally {
-    batchDepth--;
-    if (batchDepth === 0 && pendingFlush) {
-      pendingFlush = false;
-      immediateFlushSync();
-    }
-  }
-}
 
 function setProperty(
   state: Record<PropertyKey, any>,
@@ -1002,16 +1034,44 @@ export function createStore<T extends object = {}>(
   return [wrappedStore, setStore];
 }
 
-// Store the original Array.isArray before patching
-const originalArrayIsArray = Array.isArray;
-
 export function patchedArrayIsArray(obj: any): obj is any[] {
-  return (
-    obj != null &&
-    (originalArrayIsArray(obj) ||
-      (typeof obj === "object" &&
-        ((obj as any).isArray === true ||
-          (obj as any)[$TARGET_IS_ARRAY] === true ||
-          (obj[$RAW] != null && originalArrayIsArray(obj[$RAW])))))
-  );
+  // Null/undefined check
+  if (obj == null) return false;
+
+  // First check: Native Array.isArray for unwrapped arrays
+  if (originalArrayIsArray(obj)) return true;
+
+  // Second check: For store proxies, check if the underlying value is an array
+  if (typeof obj === "object") {
+    // Check for store proxy symbols indicating this is a wrapped array
+    if (obj[$TARGET_IS_ARRAY] === true) return true;
+
+    // Check for legacy array marker
+    if ((obj as any).isArray === true) return true;
+
+    // Check if the underlying raw value is an array
+    if (obj[$RAW] != null && originalArrayIsArray(obj[$RAW])) return true;
+
+    // Check if the proxy target contains an array
+    if (
+      obj[$TARGET] &&
+      obj[$TARGET][STORE_VALUE] &&
+      originalArrayIsArray(obj[$TARGET][STORE_VALUE])
+    )
+      return true;
+  }
+
+  return false;
+}
+
+// **GLOBAL FIX**: Override Array.isArray to recognize store arrays
+// This is necessary because native Array.isArray does internal checks that proxies can't satisfy
+if (typeof globalThis !== "undefined") {
+  globalThis.Array.isArray = function isArray(obj: any): obj is any[] {
+    return patchedArrayIsArray(obj);
+  };
+} else if (typeof window !== "undefined") {
+  window.Array.isArray = function isArray(obj: any): obj is any[] {
+    return patchedArrayIsArray(obj);
+  };
 }

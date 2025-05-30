@@ -6,7 +6,7 @@
 
 ```typescript
 import { describe, it, expect, mockFn } from "@inspatial/test";
-import { createRoot, createEffect, flushSync } from "../../../signal/src/index.ts";
+import { createRoot, createEffect, flushSync } from "../../../signal-core/index.ts";
 import { createStore } from "../../../signal/src/create-store.ts";
 
 it("should track property changes", () => {
@@ -267,7 +267,7 @@ tests/core/
 ```typescript
 // Always use these exact imports
 import { describe, it, expect, mockFn } from "@inspatial/test";
-import { createRoot, createEffect, flushSync } from "../../../signal/src/index.ts";
+import { createRoot, createEffect, flushSync } from "../../../signal-core/index.ts";
 import { createStore } from "../../../signal/src/create-store.ts";
 ```
 

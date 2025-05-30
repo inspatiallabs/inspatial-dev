@@ -1,6 +1,6 @@
-import { ComputationClass, compute } from "./core/core.ts";
-import { EagerComputationClass } from "./core/effect.ts";
-import { onCleanup, OwnerClass } from "./core/owner.ts";
+import { ComputationClass, compute } from "./core.ts";
+import { EagerComputationClass } from "./effect.ts";
+import { onCleanup, OwnerClass } from "./owner.ts";
 import type { AccessorType } from "./types.ts";
 
 /**

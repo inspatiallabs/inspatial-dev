@@ -4,14 +4,15 @@
  * These functions help with testing the reactive system
  */
 
-import { flushSync } from "../../signal/src/index.ts";
-import { createEffect } from "../../signal/src/create-effect.ts";
-import { mockFn } from "../../../test/src/mock/mock.ts";
-import { expect as _expect, spy as _origSpy } from "@inspatial/test";
-import { spy } from "@inspatial/test";
+import { flushSync, createEffect, batch } from "../../signal-core/index.ts";
 import { TriggerBridgeClass } from "../../trigger/src/bridge.ts";
 import { initTriggerManager } from "../../trigger/src/action.ts";
-import { batch } from "../../signal/src/is-batching.ts";
+import {
+  expect as _expect,
+  spy as _origSpy,
+  spy,
+  mockFn,
+} from "@inspatial/test";
 
 /**
  * This is used to ensure that the cleanup function is called
@@ -101,7 +102,7 @@ export function applyTestPatches() {
     if (!(globalThis as any).ARRAY_PATCHED) {
       try {
         // Load from store.ts, or use local fallback
-        import("../../signal/src/create-store.ts")
+        import("../../signal-core/create-store.ts")
           .then(({ patchedArrayIsArray }) => {
             // Actually apply the patch
             Array.isArray = patchedArrayIsArray;

@@ -78,7 +78,12 @@ let currentObserver: ObserverNodeType | null = null,
   newSourcesIndex = 0,
   newFlags: FlagsType = 0,
   notStale = false,
-  updateCheck: null | { _value: boolean, _forHasUpdated?: boolean, _sources?: Set<any>, _latestSource?: any } = null,
+  updateCheck: null | {
+    _value: boolean;
+    _forHasUpdated?: boolean;
+    _sources?: Set<any>;
+    _latestSource?: any;
+  } = null,
   staleCheck: null | { _value: boolean } = null;
 
 /**
@@ -146,6 +151,16 @@ export class ComputationClass<T = any>
   }
 
   _read(): T {
+    if (false && __DEV__) {
+      console.log(
+        `[COMPUTATION READ] Starting _read for ${
+          (this as any)._name || "unnamed"
+        }, _compute: ${!!this._compute}, _state: ${this._state}, _value: ${
+          this._value
+        }`
+      );
+    }
+
     if (this._compute) {
       if (this._stateFlags & ERROR_BIT && this._time <= getClock())
         update(this);
@@ -172,6 +187,13 @@ export class ComputationClass<T = any>
     if (this._stateFlags & ERROR_BIT) {
       throw this._error as Error;
     } else {
+      if (false && __DEV__) {
+        console.log(
+          `[COMPUTATION READ] Returning _value for ${
+            (this as any)._name || "unnamed"
+          }: ${this._value}`
+        );
+      }
       return this._value!;
     }
   }
@@ -237,13 +259,13 @@ export class ComputationClass<T = any>
 
     // Determine if the value has changed based on the equals function
     let valueChanged = false;
-    
+
     // Only check for changes if we have a new value being passed
     if (newValue !== UNCHANGED) {
       // Always consider a change if the value was previously uninitialized
       if (this._stateFlags & UNINITIALIZED_BIT) {
         valueChanged = true;
-      } 
+      }
       // If _equals is false, always consider the value changed
       else if (this._equals === false) {
         valueChanged = true;
@@ -271,13 +293,25 @@ export class ComputationClass<T = any>
     // Our value has changed, so we need to notify all of our observers that the value has
     // changed and so they must rerun
     if (this._observers) {
+      if (false && __DEV__) {
+        console.log(
+          `[SIGNAL WRITE] Notifying ${this._observers?.length} observers of value change`
+        );
+      }
       for (let i = 0; i < this._observers.length; i++) {
         if (valueChanged) {
+          if (false && __DEV__) {
+            console.log(
+              `[SIGNAL WRITE] Calling _notify(STATE_DIRTY) on observer ${i}`
+            );
+          }
           this._observers[i]._notify(STATE_DIRTY);
         } else if (changedFlagsMask) {
           this._observers[i]._notifyFlags(changedFlagsMask, changedFlags);
         }
       }
+    } else if (false && __DEV__) {
+      console.log(`[SIGNAL WRITE] No observers to notify for signal write`);
     }
 
     // We return the value so that .write can be used in an expression
@@ -289,17 +323,53 @@ export class ComputationClass<T = any>
    * Set the current node's state, and recursively mark all of this node's observers as STATE_CHECK
    */
   _notify(state: number, skipQueue?: boolean): void {
+    if (false && __DEV__) {
+      console.log(
+        `[COMPUTATION NOTIFY] ${
+          (this as any)._name || "unnamed"
+        } notified with state: ${state}, current state: ${
+          this._state
+        }, skipQueue: ${skipQueue}`
+      );
+    }
+
     // If the state is already STATE_DIRTY and we are trying to set it to STATE_CHECK,
     // then we don't need to do anything. Similarly, if the state is already STATE_CHECK
     // and we are trying to set it to STATE_CHECK, then we don't need to do anything because
     // a previous _notify call has already set this state and all observers as STATE_CHECK
-    if (this._state >= state && !this._forceNotify) return;
+    if (this._state >= state && !this._forceNotify) {
+      if (false && __DEV__) {
+        console.log(
+          `[COMPUTATION NOTIFY] ${
+            (this as any)._name || "unnamed"
+          } - state already >= ${state}, returning early`
+        );
+      }
+      return;
+    }
 
     this._forceNotify = !!skipQueue;
     this._state = state;
 
+    if (false && __DEV__) {
+      console.log(
+        `[COMPUTATION NOTIFY] ${
+          (this as any)._name || "unnamed"
+        } - state set to ${state}, notifying ${
+          this._observers?.length || 0
+        } observers`
+      );
+    }
+
     if (this._observers) {
       for (let i = 0; i < this._observers.length; i++) {
+        if (false && __DEV__) {
+          console.log(
+            `[COMPUTATION NOTIFY] ${
+              (this as any)._name || "unnamed"
+            } - notifying observer ${i} with STATE_CHECK`
+          );
+        }
         this._observers[i]._notify(STATE_CHECK, skipQueue);
       }
     }
@@ -363,13 +433,21 @@ export class ComputationClass<T = any>
    * This function will ensure that the value and states we read from the computation are up to date
    */
   _updateIfNecessary(): void {
+    if (false && __DEV__) {
+      console.log(
+        `[UPDATE IF NECESSARY] ${(this as any)._name || "unnamed"} - state: ${
+          this._state
+        }, sources: ${this._sources?.length || 0}`
+      );
+    }
+
     // If the user tries to read a computation that has been disposed, we throw an error, because
     // they probably kept a reference to it as the parent reran, so there is likely a new computation
     // with the same _compute function that they should be reading instead.
     if (this._state === STATE_DISPOSED) {
       const errorMsg =
-        __DEV__ && this._name
-          ? `Tried to read disposed computation "${this._name}"`
+        __DEV__ && (this as any)._name
+          ? `Tried to read disposed computation "${(this as any)._name}"`
           : "Tried to read a disposed computation";
       throw new Error(errorMsg);
     }
@@ -377,6 +455,13 @@ export class ComputationClass<T = any>
     // If the computation is already clean, none of our sources have changed, so we know that
     // our value and stateFlags are up to date, and we can just return.
     if (this._state === STATE_CLEAN) {
+      if (false && __DEV__) {
+        console.log(
+          `[UPDATE IF NECESSARY] ${
+            (this as any)._name || "unnamed"
+          } - already clean, returning`
+        );
+      }
       return;
     }
 
@@ -478,27 +563,108 @@ function loadingState(node: ComputationClass): ComputationClass<boolean> {
  */
 function track(computation: SourceNodeType): void {
   if (currentObserver) {
-    // CRITICAL FIX: For store nodes (no _compute function), establish immediate bidirectional links
-    // because they don't go through the update() cycle that normally handles this
-    if (!(computation as any)._compute) {
-      // Immediately add this computation to the observer's sources
-      if (!currentObserver._sources) {
-        currentObserver._sources = [computation];
-      } else if (!currentObserver._sources.includes(computation)) {
-        currentObserver._sources.push(computation);
-      }
-      
-      // Immediately add the observer to this computation's observers  
-      if (!computation._observers) {
-        computation._observers = [currentObserver];
-      } else if (!computation._observers.includes(currentObserver)) {
-        computation._observers.push(currentObserver);
-      }
-      
-      return; // Skip the rest of the function for store nodes
+    if (false && __DEV__) {
+      console.log(
+        `[TRACK] Tracking computation, observer: ${
+          (currentObserver as any)._name || "unnamed"
+        }, computation has _compute: ${!!(computation as any)
+          ._compute}, computation _observers: ${
+          (computation as any)._observers?.length || 0
+        }`
+      );
     }
-    
-    // Regular tracking logic for computed nodes (with _compute function)
+
+    // For signals (no _compute function), add to newSources for normal dependency tracking
+    // but also establish immediate links for effects (which don't go through update)
+    if (!(computation as any)._compute) {
+      if (false && __DEV__) {
+        console.log(
+          `[TRACK] Signal tracking - isEffect: ${!!(currentObserver as any)
+            ._effect}`
+        );
+      }
+
+      // CRITICAL FIX: Use _effect property to detect effects vs memos
+      // EffectClass has _effect property, ComputationClass (memos) does not
+      const isEffect = !!(currentObserver as any)._effect;
+
+      if (isEffect) {
+        if (false && __DEV__) {
+          console.log(
+            `[TRACK] Using immediate bidirectional linking for effect`
+          );
+        }
+
+        // Immediately add this computation to the observer's sources
+        if (!currentObserver._sources) {
+          currentObserver._sources = [computation];
+        } else if (!currentObserver._sources.includes(computation)) {
+          currentObserver._sources.push(computation);
+        }
+
+        // Immediately add the observer to this computation's observers
+        if (!computation._observers) {
+          computation._observers = [currentObserver];
+        } else if (!computation._observers.includes(currentObserver)) {
+          computation._observers.push(currentObserver);
+        }
+
+        if (false && __DEV__) {
+          console.log(
+            `[TRACK] Linked signal to effect - signal observers: ${computation._observers?.length}, effect sources: ${currentObserver?._sources?.length}`
+          );
+        }
+
+        return; // Skip the rest of the function for effects
+      } else {
+        if (false && __DEV__) {
+          console.log(`[TRACK] Using regular newSources tracking for memo`);
+        }
+        // Fall through to regular tracking for memos
+      }
+    } else {
+      // For memos/computations, also check if the current observer is an effect
+      const isEffect = !!(currentObserver as any)._effect;
+      if (isEffect) {
+        if (false && __DEV__) {
+          console.log(
+            `[TRACK] Effect reading from memo - establishing bidirectional link`
+          );
+        }
+
+        // Immediately add this computation (memo) to the observer's (effect's) sources
+        if (!currentObserver._sources) {
+          currentObserver._sources = [computation];
+        } else if (!currentObserver._sources.includes(computation)) {
+          currentObserver._sources.push(computation);
+        }
+
+        // Immediately add the observer (effect) to this computation's (memo's) observers
+        if (!computation._observers) {
+          computation._observers = [currentObserver];
+        } else if (!computation._observers.includes(currentObserver)) {
+          computation._observers.push(currentObserver);
+        }
+
+        if (false && __DEV__) {
+          console.log(
+            `[TRACK] Linked memo to effect - memo observers: ${computation._observers?.length}, effect sources: ${currentObserver?._sources?.length}`
+          );
+        }
+
+        return; // Skip the rest of the function for effects reading memos
+      }
+    }
+
+    // Regular tracking logic for computed nodes (with _compute function) and memos reading signals
+    if (false && __DEV__) {
+      console.log(
+        `[TRACK] Using regular tracking - newSources: ${
+          newSources?.length || 0
+        }, newSourcesIndex: ${newSourcesIndex}`
+      );
+    }
+
     if (
       !newSources &&
       currentObserver._sources &&
@@ -510,33 +676,13 @@ function track(computation: SourceNodeType): void {
       // If the computation is the same as the last source we read, we don't need to add it to newSources
       newSources.push(computation);
     }
-    // Special handling for the updateCheck value which is used by hasUpdated
-    if (updateCheck) {
-      // For hasUpdated tracking, we need special logic to track individual signal updates
-      if (updateCheck._forHasUpdated && updateCheck._sources) {
-        // Record this signal as one we've seen during this hasUpdated call
-        updateCheck._sources.add(computation);
-        
-        // Check if this specific signal has been updated since last computation
-        // We're checking if this signal has a timestamp newer than the observer
-        const hasChanged = computation._time > currentObserver._time;
-        
-        // Set the updateCheck value to true if this signal has changed
-        if (hasChanged) {
-          updateCheck._value = true;
-          // Store which signal triggered the update - this is essential for the "should detect which signal triggered it" test
-          updateCheck._latestSource = computation;
-        }
-      } else {
-        // Standard update check logic for normal computations
-        // Mark as updated if this computation is newer than the observer
-        const hasChanged = computation._time > currentObserver._time;
-        if (hasChanged) {
-          updateCheck._value = true;
-          // Even in non-hasUpdated contexts, track the source for potential future hasUpdated checks
-          updateCheck._latestSource = computation;
-        }
-      }
+
+    if (false && __DEV__) {
+      console.log(
+        `[TRACK] After regular tracking - newSources: ${
+          newSources?.length || 0
+        }, newSourcesIndex: ${newSourcesIndex}`
+      );
     }
   }
 }
@@ -549,6 +695,16 @@ function track(computation: SourceNodeType): void {
  * if it reads any parents that are currently loading.
  */
 export function update<T>(node: ComputationClass<T>): void {
+  if (false && __DEV__) {
+    console.log(
+      `[UPDATE] Starting update for ${
+        (node as any)._name || "unnamed"
+      }, newSources: ${
+        newSources?.length || 0
+      }, newSourcesIndex: ${newSourcesIndex}`
+    );
+  }
+
   const prevSources = newSources,
     prevSourcesIndex = newSourcesIndex,
     prevFlags = newFlags;
@@ -568,35 +724,42 @@ export function update<T>(node: ComputationClass<T>): void {
 
     // Update the node's value
     node.write(result, newFlags, true);
-  } catch (error) {
-    if (error instanceof NotReadyErrorClass) {
-      node.write(
-        UNCHANGED,
-        newFlags | LOADING_BIT | (node._stateFlags & UNINITIALIZED_BIT)
-      );
-    } else {
-      node._setError(error);
-    }
+  } catch (error: unknown) {
+    node.emptyDisposal();
+    node._setError(error);
   } finally {
-    if (newSources) {
-      // If there are new sources, that means the end of the sources array has changed
-      // newSourcesIndex keeps track of the index of the first new source
-      // See track() above for more info
+    if (false && __DEV__) {
+      console.log(
+        `[UPDATE] Finally block for ${
+          (node as any)._name || "unnamed"
+        } - newSources: ${
+          newSources?.length || 0
+        }, newSourcesIndex: ${newSourcesIndex}`
+      );
+    }
 
-      // We need to remove any old sources after newSourcesIndex
-      if (node._sources) removeSourceObservers(node, newSourcesIndex);
+    if (newSources) {
+      if (false && __DEV__) {
+        console.log(
+          `[UPDATE] Processing newSources for ${
+            (node as any)._name || "unnamed"
+          } - newSources: ${
+            newSources.length
+          }, newSourcesIndex: ${newSourcesIndex}`
+        );
+      }
 
       // First we update our own sources array (uplinks)
-      if (node._sources && newSourcesIndex > 0) {
+      if (newSourcesIndex > 0) {
         // If we shared some sources with the previous execution, we need to copy those over to the
         // new sources array
 
         // First we need to make sure the sources array is long enough to hold all the new sources
-        node._sources.length = newSourcesIndex + newSources.length;
+        node._sources!.length = newSourcesIndex + newSources.length;
 
         // Then we copy the new sources over
         for (let i = 0; i < newSources.length; i++) {
-          node._sources[newSourcesIndex + i] = newSources[i];
+          node._sources![newSourcesIndex + i] = newSources[i];
         }
       } else {
         // If we didn't share any sources with the previous execution, set the sources array to newSources
@@ -605,19 +768,29 @@ export function update<T>(node: ComputationClass<T>): void {
 
       // For each new source, we need to add this `node` to the source's observers array (downlinks)
       let source: SourceNodeType;
-      for (let i = newSourcesIndex; i < node._sources.length; i++) {
-        source = node._sources[i];
+      for (let i = newSourcesIndex; i < node._sources!.length; i++) {
+        source = node._sources![i];
         if (!source._observers) source._observers = [node];
         else source._observers.push(node);
+
+        if (false && __DEV__) {
+          console.log(
+            `[UPDATE] Added ${
+              (node as any)._name || "unnamed"
+            } as observer to source, source now has ${
+              source._observers.length
+            } observers`
+          );
+        }
       }
-    } else if (node._sources && newSourcesIndex < node._sources.length) {
-      // If there are no new sources, but the sources array is longer than newSourcesIndex,
-      // that means the sources array has just shrunk so we remove the tail end
-      removeSourceObservers(node, newSourcesIndex);
-      node._sources.length = newSourcesIndex;
+    } else if (false && __DEV__) {
+      console.log(
+        `[UPDATE] No newSources to process for ${
+          (node as any)._name || "unnamed"
+        }`
+      );
     }
 
-    // Reset global context after computation
     newSources = prevSources;
     newSourcesIndex = prevSourcesIndex;
     newFlags = prevFlags;
@@ -666,35 +839,35 @@ export function untrack<T>(fn: () => T): T {
 /**
  * Returns true if the given function contains signals that have been updated since the last time
  * the parent computation was run.
- * 
+ *
  * @param fn The function to run to check for updates
  * @returns Boolean indicating if the signals in fn have been updated
  */
 export function hasUpdated(fn: () => any): boolean {
   // Store the previous update check context
   const prevCheck = updateCheck;
-  
+
   // Store a reference to the current observer to preserve parent-child relationships
   const prevObserver = currentObserver;
-  
+
   // We don't need the current computation for hasUpdated
 
   // Create a fresh update check object with additional metadata
-  updateCheck = { 
+  updateCheck = {
     _value: false, // Will be set to true if any signal has updated
     _forHasUpdated: true, // Mark that this is for a hasUpdated call (special handling)
     _sources: new Set(), // Track which signals have been accessed
-    _latestSource: null // Track the most recently updated source
+    _latestSource: null, // Track the most recently updated source
   };
-  
+
   try {
     // Create a clean execution environment to properly detect signal updates
     // We temporarily clear the current observer to avoid side effects
     currentObserver = null;
-    
+
     // Run the function which will access signals and track updates
     fn();
-    
+
     // Return true if any signal was updated
     return updateCheck._value;
   } finally {
@@ -707,7 +880,7 @@ export function hasUpdated(fn: () => any): boolean {
         prevCheck._latestSource = updateCheck._latestSource;
       }
     }
-    
+
     // Restore the previous context
     updateCheck = prevCheck;
     currentObserver = prevObserver;

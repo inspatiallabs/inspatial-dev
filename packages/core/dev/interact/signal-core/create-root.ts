@@ -1,5 +1,5 @@
-import { compute } from "./core/core.ts";
-import { OwnerClass } from "./core/owner.ts";
+import { compute } from "./core.ts";
+import { OwnerClass } from "./owner.ts";
 
 /**
  * Creates a new non-tracked reactive context with manual disposal

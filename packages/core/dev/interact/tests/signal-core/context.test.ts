@@ -7,7 +7,7 @@ import {
   NoOwnerErrorClass,
   setContext,
   flushSync,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { test, expect, describe, it } from "@inspatial/test";
 
 // Use test.each for setup/teardown

@@ -7,7 +7,7 @@ import {
   flushSync,
   untrack,
   unwrap,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { sharedClone } from "../helpers/shared-clone.ts";
 import { expect, describe, it } from "@inspatial/test";
 

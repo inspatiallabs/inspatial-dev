@@ -5,9 +5,9 @@ import {
   flushSync,
   getOwner,
   OwnerClass,
-} from "../../signal/src/index.ts";
+  runWithOwner,
+} from "../../signal-core/index.ts";
 import { test, expect, mockFn } from "@inspatial/test";
-import { runWithOwner } from "../../signal/src/run-with-owner.ts";
 
 // Setup cleanup for tests
 let cleanupFns: Array<() => void> = [];

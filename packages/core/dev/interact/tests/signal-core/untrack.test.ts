@@ -6,7 +6,7 @@ import {
   untrack,
   flushSync,
   getOwner,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { expect, describe, it, mockFn } from "@inspatial/test";
 
 // Setup cleanup for tests

@@ -46,61 +46,74 @@ export class QueueClass implements IQueueType {
     node: T
   ): void {
     if (false && __DEV__) {
-      console.log(`[SCHEDULER ENQUEUE] Adding node to queue type ${type}, current queue sizes: [${this._queues[0].length}, ${this._queues[1].length}, ${this._queues[2].length}]`);
+      console.log(
+        `[SCHEDULER ENQUEUE] Attempting to enqueue node with type: ${type}`
+      );
     }
-    
-    // CRITICAL FIX: Only add effects to their specific queue, not to queue 0
+
     // Queue 0 is for pure computations only
     if (type === EFFECT_PURE || !type) {
-      // Add to queue 0 for pure computations
+      // For pure computations, avoid duplicates to prevent cycles
       if (!this._queues[0].includes(node as ComputationClass)) {
         this._queues[0].push(node as any);
         if (false && __DEV__) {
-          console.log(`[SCHEDULER ENQUEUE] Added node to queue 0, new size: ${this._queues[0].length}`);
+          console.log(
+            `[SCHEDULER ENQUEUE] Added node to queue 0, new size: ${this._queues[0].length}`
+          );
         }
       }
     } else {
-      // For effects (type 1 or 2), only add to the appropriate effect queue
+      // CRITICAL FIX: For effects, prevent duplicates to enable proper batching
+      // Multiple signal changes should result in only one effect execution per flush
       if (!this._queues[type].includes(node as EffectClass)) {
         this._queues[type].push(node as any);
         if (false && __DEV__) {
-          console.log(`[SCHEDULER ENQUEUE] Added effect to queue ${type}, new size: ${this._queues[type].length}`);
+          console.log(
+            `[SCHEDULER ENQUEUE] Added effect to queue ${type}, new size: ${this._queues[type].length}`
+          );
         }
+      } else if (false && __DEV__) {
+        console.log(
+          `[SCHEDULER ENQUEUE] Effect already in queue ${type}, skipping duplicate for batching`
+        );
       }
     }
 
     schedule();
   }
 
-  run(type: number) {
-    if (this._queues[type].length) {
-      if (type === EFFECT_PURE) {
-        runPureQueue(this._queues[type] as ComputationClass[]);
-        this._queues[type] = [];
-      } else {
-        // Critical fix: Safe copy of effects array to prevent mutation issues during execution
-        const effects = [...this._queues[type]] as EffectClass[];
-        this._queues[type] = [];
-        runEffectQueue(effects);
+  run(type: number): boolean {
+    if (false && __DEV__) {
+      console.log(
+        `[SCHEDULER RUN] Running queue ${type} with ${this._queues[type].length} items`
+      );
+    }
+
+    const queue = this._queues[type];
+    if (queue.length === 0) return false;
+
+    // Process all items in the queue
+    const items = queue.splice(0);
+    for (const item of items) {
+      if (false && __DEV__) {
+        console.log(`[SCHEDULER RUN] Executing item in queue ${type}`);
       }
+      item._updateIfNecessary();
     }
 
-    let rerun = false;
-    for (let i = 0; i < this._children.length; i++) {
-      rerun = this._children[i].run(type) || rerun;
-    }
-
-    // Check if we need to run again (if more effects were enqueued during execution)
-    if (type === EFFECT_PURE && this._queues[type].length) {
-      return true;
-    }
-
-    return rerun;
+    // Return true if there are more items to process
+    return this._queues[type].length > 0;
   }
 
   flush() {
     if (this._running) return;
     this._running = true;
+
+    if (false && __DEV__) {
+      console.log(
+        `[SCHEDULER] Starting flush, queues: [${this._queues[0].length}, ${this._queues[1].length}, ${this._queues[2].length}]`
+      );
+    }
 
     try {
       // Run pure computations until all are processed
@@ -110,15 +123,23 @@ export class QueueClass implements IQueueType {
       }
 
       incrementClock();
-      scheduled = false;
 
       // Run render effects
       this.run(EFFECT_RENDER);
 
       // Run user effects
       this.run(EFFECT_USER);
+
+      // CRITICAL FIX: Reset scheduled flag AFTER all effects have run
+      // This prevents issues where effects enqueue new effects during execution
+      scheduled = false;
     } finally {
       this._running = false;
+      if (false && __DEV__) {
+        console.log(
+          `[SCHEDULER] Flush completed, queues: [${this._queues[0].length}, ${this._queues[1].length}, ${this._queues[2].length}]`
+        );
+      }
     }
   }
 
@@ -146,9 +167,11 @@ export function flushSync<T>(fn?: () => T): T | undefined {
   let result: T | undefined;
 
   // If we're in a test environment, make sure to set flags appropriately
-  const isTestEnv = typeof globalThis !== "undefined" && 
-    ((globalThis as any).__TEST_ENV__ === true || (globalThis as any).__silenceWarnings === true);
-  
+  const isTestEnv =
+    typeof globalThis !== "undefined" &&
+    ((globalThis as any).__TEST_ENV__ === true ||
+      (globalThis as any).__silenceWarnings === true);
+
   if (isTestEnv) {
     // Force scheduled to true to ensure we always flush in tests
     scheduled = true;
@@ -227,16 +250,22 @@ function runPureQueue(queue: ComputationClass[]) {
 
 function runEffectQueue(queue: EffectClass[]) {
   if (false && __DEV__) {
-    console.log(`[SCHEDULER] Running effect queue with ${queue.length} effects`);
+    console.log(
+      `[SCHEDULER] Running effect queue with ${queue.length} effects`
+    );
   }
-  
+
   for (let i = 0; i < queue.length; i++) {
     const effect = queue[i];
-    
+
     if (false && __DEV__) {
-      console.log(`[SCHEDULER] Processing effect ${i}: state=${effect._state}, disposed=${effect._state === STATE_DISPOSED}`);
+      console.log(
+        `[SCHEDULER] Processing effect ${i}: state=${effect._state}, disposed=${
+          effect._state === STATE_DISPOSED
+        }`
+      );
     }
-    
+
     if (effect._state !== STATE_DISPOSED) {
       if (false && __DEV__) {
         console.log(`[SCHEDULER] Running effect ${i} (_runEffect)`);
@@ -244,7 +273,7 @@ function runEffectQueue(queue: EffectClass[]) {
       effect._runEffect();
     }
   }
-  
+
   if (false && __DEV__) {
     console.log(`[SCHEDULER] Finished running effect queue`);
   }

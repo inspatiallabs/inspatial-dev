@@ -3,7 +3,7 @@ import {
   createEffect,
   createRoot,
   flushSync,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { test, expect, describe, it, mockFn } from "@inspatial/test";
 
 // Setup cleanup for tests
@@ -117,14 +117,19 @@ describe("CreateSignal Tests", () => {
       flushSync();
       expect(effect).toHaveBeenCalledTimes(1);
 
-      // Rapid updates should batch properly
+      // Rapid updates should batch properly - multiple synchronous updates
+      // should be batched into a single effect execution
       for (let i = 1; i <= 10; i++) {
         setCounter(i);
       }
 
+      // Before flush, effect should still only have been called once (initial)
+      expect(effect).toHaveBeenCalledTimes(1);
+
       flushSync();
-      expect(effect).toHaveBeenCalledTimes(11); // Initial + 10 updates
-      expect(effect).toHaveBeenLastCalledWith(10);
+      // After flush, effect should be called once more with the final value
+      expect(effect).toHaveBeenCalledTimes(2); // Initial + 1 batched update
+      expect(effect).toHaveBeenLastCalledWith(10); // Final value
     });
   });
 

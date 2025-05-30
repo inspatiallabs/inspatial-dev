@@ -5,7 +5,7 @@ import {
   createStore,
   flushSync,
   repeat,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { test, expect, mockFn } from "@inspatial/test";
 
 // Setup cleanup for tests

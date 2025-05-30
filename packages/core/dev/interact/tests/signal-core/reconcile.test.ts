@@ -1,4 +1,4 @@
-import { createStore, reconcile, unwrap } from "../../signal/src/index.ts";
+import { createStore, reconcile, unwrap } from "../../signal-core/index.ts";
 import { test, expect, describe } from "@inspatial/test";
 
 // Cleanup functions array for test cleanup

@@ -5,7 +5,7 @@
  */
 
 import { test, expect } from "@inspatial/test";
-import { createStore } from "../../signal/src/index.ts";
+import { createStore } from "../../signal-core/index.ts";
 
 test("Array detection in store arrays", () => {
   // Create a store with an array

@@ -7,9 +7,9 @@ import {
   flushSync,
   isPending,
   latest,
-} from "../../signal/src/index.ts";
+  resolve,
+} from "../../signal-core/index.ts";
 import { expect, describe, it, mockFn } from "@inspatial/test";
-import { resolve } from "../../signal/src/resolve.ts";
 
 // Setup cleanup for tests
 let cleanupFns: (() => void)[] = [];

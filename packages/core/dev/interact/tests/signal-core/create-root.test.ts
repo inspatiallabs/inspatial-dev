@@ -18,7 +18,7 @@ import {
   flushSync,
   getOwner,
   onCleanup,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import type { AccessorType, SignalType } from "../../signal/src/types.ts";
 
 // Setup cleanup for tests

@@ -25,11 +25,13 @@ function applyState(
   if (!target) return;
   const previous = target[STORE_VALUE];
   if (next === previous) return;
-  
+
   // Handle type transitions between objects and arrays
-  const prevIsArray = Array.isArray;(previous);
-  const nextIsArray = Array.isArray;(next);
-  
+  const prevIsArray = Array.isArray;
+  previous;
+  const nextIsArray = Array.isArray;
+  next;
+
   // If types are different (object <-> array), we need special handling
   if (prevIsArray !== nextIsArray) {
     // Create a full replacement by swapping the state with the new value
@@ -39,57 +41,59 @@ function applyState(
     });
     (previous as any)[$PROXY] = null;
     target[STORE_VALUE] = next;
-    
+
     // Update the array type flag if needed
     if (Array.isArray(next)) {
       (target as any).isArray = true;
       (target as any)[$TARGET_IS_ARRAY] = true;
-      
+
       // Ensure array prototype for proper array method access
       Object.setPrototypeOf(next, Array.prototype);
-      
+
       // Make sure length property is properly set and configurable
-      if (!('length' in next)) {
-        Object.defineProperty(next, 'length', { 
-          value: 0, 
-          writable: true, 
+      if (!("length" in next)) {
+        Object.defineProperty(next, "length", {
+          value: 0,
+          writable: true,
           configurable: true,
-          enumerable: false 
+          enumerable: false,
         });
       }
     } else {
       delete (target as any).isArray;
       delete (target as any)[$TARGET_IS_ARRAY];
-      
+
       // Reset prototype to Object prototype for non-arrays
       Object.setPrototypeOf(next, Object.prototype);
     }
-    
+
     // Notify all nodes of the complete change
     if (target[STORE_NODE]) {
       for (const key in target[STORE_NODE]) {
         if (key in next) {
           const value = next[key];
-          target[STORE_NODE][key]?.write(isWrappable(value) ? wrap(value) : value);
+          target[STORE_NODE][key]?.write(
+            isWrappable(value) ? wrap(value) : value
+          );
         } else {
           // If the key doesn't exist, write undefined
           target[STORE_NODE][key]?.write(undefined);
         }
       }
     }
-    
+
     // Update 'has' observers
     if (target[STORE_HAS]) {
       for (const key in target[STORE_HAS]) {
         target[STORE_HAS][key]?.write(key in next);
       }
     }
-    
+
     // Always trigger the main tracker
     if (target[STORE_NODE]?.[$TRACK]) {
       target[STORE_NODE][$TRACK].write(undefined);
     }
-    
+
     return;
   }
 
@@ -242,29 +246,45 @@ export function reconcile<T extends U, U>(
   return (state: U) => {
     const keyFn =
       typeof key === "string" ? (item: NonNullable<any>) => item[key] : key;
-    
+
     // Identity check for objects with keys
-    if (key && key !== '') {
+    if (key && key !== "") {
       // Check if the key is completely missing from the values
-      if (isWrappable(value) && typeof value === 'object' && value !== null && 
-          Object.keys(value as Record<string, any>).length === 0) {
-        throw new Error("Cannot reconcile with an empty object when identity key is required");
+      if (
+        isWrappable(value) &&
+        typeof value === "object" &&
+        value !== null &&
+        Object.keys(value as Record<string, any>).length === 0
+      ) {
+        throw new Error(
+          "Cannot reconcile with an empty object when identity key is required"
+        );
       }
-      
+
       // Check state has the key property
-      if (isWrappable(state) && keyFn(state) !== undefined && 
-          isWrappable(value) && keyFn(value) === undefined) {
-        throw new Error("Cannot reconcile when target state is missing the identity key");
+      if (
+        isWrappable(state) &&
+        keyFn(state) !== undefined &&
+        isWrappable(value) &&
+        keyFn(value) === undefined
+      ) {
+        throw new Error(
+          "Cannot reconcile when target state is missing the identity key"
+        );
       }
-      
+
       // Check if both have keys but they don't match
-      if (isWrappable(value) && isWrappable(state) && 
-          keyFn(value) !== undefined && keyFn(state) !== undefined && 
-          keyFn(value) !== keyFn(state)) {
+      if (
+        isWrappable(value) &&
+        isWrappable(state) &&
+        keyFn(value) !== undefined &&
+        keyFn(state) !== undefined &&
+        keyFn(value) !== keyFn(state)
+      ) {
         throw new Error("Cannot reconcile states with different identity");
       }
     }
-    
+
     applyState(value, state, keyFn);
     return state as T;
   };

@@ -4,7 +4,7 @@ import {
   getOwner,
   untrack,
   flushSync,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { test, expect } from "@inspatial/test";
 
 // Setup cleanup for tests

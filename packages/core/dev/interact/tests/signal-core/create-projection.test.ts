@@ -5,7 +5,7 @@ import {
   createRoot,
   createSignal,
   flushSync,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { describe, it, expect, mockFn } from "@inspatial/test";
 
 // Setup cleanup for tests

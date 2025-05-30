@@ -1,5 +1,5 @@
 // Ensure __DEV__ is defined
-if (typeof globalThis.__DEV__ === 'undefined') {
+if (typeof globalThis.__DEV__ === "undefined") {
   globalThis.__DEV__ = true;
 }
 

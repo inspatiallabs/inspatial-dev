@@ -5,7 +5,7 @@
 
 import { mockFn as originalMockFn } from "@inspatial/test";
 import { test, expect } from "@inspatial/test";
-import { createMemo, createSignal, flushSync } from "../../signal/src/index.ts";
+import { createMemo, createSignal, flushSync } from "../../signal-core/index.ts";
 
 /**
  * Type definition for compute function used by createMemo

@@ -5,7 +5,7 @@ import {
   createSignal,
   flushSync,
   getOwner,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 import { test, expect } from "@inspatial/test";
 let cleanupFns: Array<() => void> = [];
 

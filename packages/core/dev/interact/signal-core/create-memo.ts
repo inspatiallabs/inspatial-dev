@@ -1,6 +1,9 @@
-import { STATE_DIRTY } from "./core/constants.ts";
-import { ComputationClass } from "./core/core.ts";
+import { STATE_DIRTY } from "./constants.ts";
 import {
+  ComputationClass,
+  compute as executeComputation,
+} from "./core.ts";
+import type {
   AccessorType,
   ComputeFunctionType,
   MemoOptionsType,
@@ -41,43 +44,35 @@ export function createMemo<Next extends Prev, Init, Prev>(
   // Ensure options object exists to avoid null checks
   const memoOptions = options || {};
 
-  // Create the computation node with the compute function, initial value, and options
-  let node: ComputationClass<Next> | undefined = new ComputationClass<Next>(
+  // CRITICAL FIX: Create the computation node that will reactively recompute
+  const node = new ComputationClass<Next>(
     value as any,
-    compute as any,
-    memoOptions // Pass the options to the ComputationClass constructor
+    compute as any, // Pass the user's compute function directly
+    memoOptions
   );
+
+  if (false && __DEV__) {
+    console.log(
+      `[CREATE_MEMO] Created memo with _compute: ${!!node._compute}, name: ${
+        node._name
+      }`
+    );
+  }
 
   // Explicitly set the equals function to ensure proper change detection
   if (memoOptions.equals !== undefined) {
     node._equals = memoOptions.equals;
   }
 
-  let resolvedValue: Next;
+  // Return the memo accessor
   return () => {
-    if (node) {
-      try {
-        resolvedValue = node.wait();
-        // no sources so will never update so can be disposed.
-        // additionally didn't create nested reactivity so can be disposed.
-        if (!node._sources?.length && node._nextSibling?._parent !== node) {
-          node.dispose();
-          node = undefined;
-        }
-        // not owned and not listened to so can be garbage collected if reference lost.
-        else if (!node._parent && !node._observers?.length) {
-          node.dispose();
-          node._state = STATE_DIRTY;
-        }
-      } catch (error) {
-        // If an error occurs and we have a fallback value, use it
-        if (value !== undefined) {
-          resolvedValue = value as unknown as Next;
-        } else {
-          throw error;
-        }
-      }
+    // Use read() for proper reactive dependency tracking
+    const result = node.read();
+    if (false && __DEV__) {
+      console.log(
+        `[MEMO READ] Memo read returned: ${result}, node._value: ${node._value}, node._state: ${node._state}`
+      );
     }
-    return resolvedValue;
+    return result;
   };
 }

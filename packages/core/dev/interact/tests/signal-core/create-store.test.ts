@@ -19,7 +19,7 @@ import {
   createMemo,
   untrack,
   reconcile,
-} from "../../signal/src/index.ts";
+} from "../../signal-core/index.ts";
 
 /*###################################(Classes (Mock))###################################*/
 class CustomThing {

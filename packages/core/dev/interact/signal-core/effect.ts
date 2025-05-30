@@ -19,6 +19,7 @@ export class EffectClass extends ComputationClass<any> {
   _queueType: number;
   _errorEffect: ErrorHandlerType | undefined;
   _hasRun: boolean = false; // Track if effect has ever run
+  _pendingExecutions: number = 0; // Track how many times this effect should run
 
   // Track disposers for proper cleanup between runs
   _disposers: Array<() => void> = [];
@@ -30,7 +31,9 @@ export class EffectClass extends ComputationClass<any> {
     error?: ErrorHandlerType,
     options?: SignalOptionsType<any> & { render?: boolean; type?: number }
   ) {
-    super(initialValue, null, options);
+    // CRITICAL FIX: Pass fn as the compute function instead of null
+    // This ensures effects are treated as reactive computations, not signals
+    super(initialValue, fn, options);
     this._fn = fn;
     this._effect = effect;
     this._errorEffect = error;
@@ -46,9 +49,6 @@ export class EffectClass extends ComputationClass<any> {
 
     // Mark the effect as dirty immediately so it runs on the first render
     this._notify(STATE_DIRTY);
-
-    // Queue the effect to run
-    globalQueue.enqueue(this._queueType, this);
   }
 
   /**
@@ -83,22 +83,33 @@ export class EffectClass extends ComputationClass<any> {
   override _notify(state: number, skipQueue?: boolean) {
     // Add debugging to track notifications
     if (false && __DEV__) {
-      console.log(`[EFFECT NOTIFY] Effect ${this._name || 'unnamed'} notified with state: ${state}, skipQueue: ${skipQueue}, current state: ${this._state}, hasRun: ${this._hasRun}`);
+      console.log(
+        `[EFFECT NOTIFY] Effect ${
+          this._name || "unnamed"
+        } notified with state: ${state}, skipQueue: ${skipQueue}, current state: ${
+          this._state
+        }, hasRun: ${this._hasRun}`
+      );
     }
-    
-    // CRITICAL FIX: Always update the state to be at least as dirty as requested
-    // This ensures the effect state persists until it actually runs
+
+    // Update the state to the new state
     this._state = Math.max(this._state, state);
 
     // Only enqueue if we're not skipping the queue AND the effect needs to run
     if (!skipQueue && (this._state >= STATE_DIRTY || !this._hasRun)) {
       if (false && __DEV__) {
-        console.log(`[EFFECT NOTIFY] Enqueueing effect ${this._name || 'unnamed'} in queue type ${this._queueType}, state after update: ${this._state}`);
+        console.log(
+          `[EFFECT NOTIFY] Enqueueing effect ${
+            this._name || "unnamed"
+          } in queue type ${this._queueType}`
+        );
       }
       // CRITICAL FIX: Use proper scheduler enqueue method
       (this._queue as QueueClass).enqueue(this._queueType, this);
     } else if (false && __DEV__) {
-      console.log(`[EFFECT NOTIFY] Not enqueueing effect: skipQueue=${skipQueue}, state=${this._state}, hasRun=${this._hasRun}`);
+      console.log(
+        `[EFFECT NOTIFY] Not enqueueing effect: skipQueue=${skipQueue}, state=${this._state}, hasRun=${this._hasRun}`
+      );
     }
   }
 
@@ -110,20 +121,30 @@ export class EffectClass extends ComputationClass<any> {
 
   _runEffect(): void {
     if (false && __DEV__) {
-      console.log(`[EFFECT RUN] Starting _runEffect, state: ${this._state}, hasRun: ${this._hasRun}, name: ${this._name || 'unnamed'}`);
+      console.log(
+        `[EFFECT RUN] Starting _runEffect, state: ${this._state}, hasRun: ${
+          this._hasRun
+        }, name: ${this._name || "unnamed"}`
+      );
     }
-    
-    // CRITICAL FIX: Only skip if the effect is clean AND doesn't need to run for any reason
-    // Don't skip on the first run, and don't skip if state indicates we need to update
-    if (this._state === STATE_CLEAN && this._hasRun) {
+
+    // CRITICAL FIX: Check if we actually need to run based on current state
+    // Effects should only run if:
+    // 1. They haven't run before (!this._hasRun), OR
+    // 2. Their state indicates they need to run (this._state >= STATE_DIRTY)
+    if (this._hasRun && this._state < STATE_DIRTY) {
       if (false && __DEV__) {
-        console.log(`[EFFECT RUN] Skipping effect because state is clean and has run before`);
+        console.log(
+          `[EFFECT RUN] Skipping effect execution - already run and state is clean`
+        );
       }
       return;
     }
 
     if (false && __DEV__) {
-      console.log(`[EFFECT RUN] Proceeding with effect execution (state: ${this._state}, hasRun: ${this._hasRun})`);
+      console.log(
+        `[EFFECT RUN] Proceeding with effect execution (state: ${this._state}, hasRun: ${this._hasRun})`
+      );
     }
 
     // Save the owner and previous value
@@ -136,15 +157,21 @@ export class EffectClass extends ComputationClass<any> {
       const result = compute(owner, this._fn, this);
 
       if (false && __DEV__) {
-        console.log(`[EFFECT RUN] Computed result, checking if changed or first run. Result: ${result}, UNCHANGED: ${result === UNCHANGED}, hasRun: ${this._hasRun}`);
+        console.log(
+          `[EFFECT RUN] Computed result, checking if changed or first run. Result: ${result}, UNCHANGED: ${
+            result === UNCHANGED
+          }, hasRun: ${this._hasRun}`
+        );
       }
 
       // CRITICAL FIX: Always run the effect if state is dirty OR it's the first run
       if (result !== UNCHANGED || !this._hasRun || this._state >= STATE_DIRTY) {
         if (false && __DEV__) {
-          console.log(`[EFFECT RUN] Running effect function (state: ${this._state})`);
+          console.log(
+            `[EFFECT RUN] Running effect function (state: ${this._state})`
+          );
         }
-        
+
         // Clean up any previous disposers
         this.emptyDisposal();
 
@@ -176,12 +203,16 @@ export class EffectClass extends ComputationClass<any> {
         // Store the result for future comparisons
         this._value = result;
         this._hasRun = true;
-        
+
         if (false && __DEV__) {
-          console.log(`[EFFECT RUN] Effect function completed, hasRun set to true`);
+          console.log(
+            `[EFFECT RUN] Effect function completed, hasRun set to true`
+          );
         }
       } else if (false && __DEV__) {
-        console.log(`[EFFECT RUN] Skipping effect function - result unchanged and has run before`);
+        console.log(
+          `[EFFECT RUN] Skipping effect function - result unchanged and has run before`
+        );
       }
     } catch (error: unknown) {
       // Handle errors in the compute function
@@ -205,7 +236,7 @@ export class EffectClass extends ComputationClass<any> {
 
     // Mark the effect as clean
     this._state = STATE_CLEAN;
-    
+
     if (false && __DEV__) {
       console.log(`[EFFECT RUN] Effect completed, state set to clean`);
     }

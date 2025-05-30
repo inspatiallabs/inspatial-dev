@@ -1,10 +1,12 @@
-import { SUPPORTS_PROXY } from "./core/constants.ts";
+import { SUPPORTS_PROXY } from "./constants.ts";
 import { createMemo } from "./create-memo.ts";
 import { $PROXY } from "./create-store.ts";
 
-function trueFn() {
-  return true;
+export function isUndefined(value: any): value is undefined {
+  return typeof value === "undefined";
 }
+
+const trueFn = () => true;
 
 const propTraps: ProxyHandler<{
   get: (k: string | number | symbol) => any;
@@ -82,7 +84,7 @@ function resolveSource(s: any) {
   return !(s = typeof s === "function" ? s() : s) ? {} : s;
 }
 
-const $SOURCES = Symbol("MERGE_SOURCE");
+const $SOURCES = Symbol(__DEV__ ? "MERGE_SOURCE" : 0);
 export function merge<T extends unknown[]>(...sources: T): Merge<T> {
   if (sources.length === 1 && typeof sources[0] !== "function")
     return sources[0] as any;
@@ -91,7 +93,7 @@ export function merge<T extends unknown[]>(...sources: T): Merge<T> {
   for (let i = 0; i < sources.length; i++) {
     const s = sources[i];
     proxy = proxy || (!!s && $PROXY in (s as object));
-    const childSources = !!s && (s as { [key: symbol]: any })[$SOURCES];
+    const childSources = !!s && (s as object)[$SOURCES];
     if (childSources) flattened.push(...childSources);
     else
       flattened.push(
@@ -120,7 +122,7 @@ export function merge<T extends unknown[]>(...sources: T): Merge<T> {
           const keys: Array<string> = [];
           for (let i = 0; i < flattened.length; i++)
             keys.push(...Object.keys(resolveSource(flattened[i])));
-          return Array.from(new Set(keys));
+          return [...new Set(keys)];
         },
       },
       propTraps

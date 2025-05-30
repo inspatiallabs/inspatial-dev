@@ -1,5 +1,5 @@
-import { compute } from "./core/core.ts";
-import type { OwnerClass } from "./core/owner.ts";
+import { compute } from "./core.ts";
+import type { OwnerClass } from "./owner.ts";
 
 /**
  * Runs the given function in the given owner to move ownership of nested primitives and cleanups.

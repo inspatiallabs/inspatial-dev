@@ -8,7 +8,7 @@ declare global {
 globalThis.__DEV__ = true;
 
 // Define __TEST__ if it's not already defined
-if (typeof globalThis.__TEST__ === 'undefined') {
+if (typeof globalThis.__TEST__ === "undefined") {
   globalThis.__TEST__ = true;
 }
 

@@ -1,4 +1,4 @@
-import { flushSync } from "./core/scheduler.ts";
+import { flushSync } from "./scheduler.ts";
 
 let batchDepth = 0;
 
