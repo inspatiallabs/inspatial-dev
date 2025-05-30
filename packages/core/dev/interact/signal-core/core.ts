@@ -744,7 +744,7 @@ export function update<T>(node: ComputationClass<T>): void {
           `[UPDATE] Processing newSources for ${
             (node as any)._name || "unnamed"
           } - newSources: ${
-            newSources.length
+            newSources!.length
           }, newSourcesIndex: ${newSourcesIndex}`
         );
       }
@@ -778,7 +778,7 @@ export function update<T>(node: ComputationClass<T>): void {
             `[UPDATE] Added ${
               (node as any)._name || "unnamed"
             } as observer to source, source now has ${
-              source._observers.length
+              source._observers!.length
             } observers`
           );
         }

@@ -1,6 +1,6 @@
 import { $RAW } from "./constants.ts";
 import { ComputationClass, getObserver, isEqual } from "./core.ts";
-import { batch } from "./is-batching.ts";
+import { batch, isBatching } from "./is-batching.ts";
 import { flushSync as immediateFlushSync } from "./scheduler.ts";
 
 export type StoreType<T> = Readonly<T>;
@@ -303,9 +303,17 @@ function proxyDescriptor(target: StoreNodeType, property: PropertyKey) {
   const desc = Reflect.getOwnPropertyDescriptor(storeValue, property);
   if (!desc) return desc;
 
-  // For array length property, return the exact descriptor from the underlying array
-  if (property === "length" && Array.isArray(storeValue)) {
-    return desc;
+  // CRITICAL FIX: For array length property, we need special handling
+  // This handles the case where an object was converted to an array via reconcile
+  if (property === "length") {
+    if (Array.isArray(storeValue)) {
+      // For arrays, return the exact descriptor from the underlying array
+      return desc;
+    } else {
+      // For non-arrays that somehow have a length property, return undefined
+      // This prevents the proxy descriptor mismatch error
+      return undefined;
+    }
   }
 
   // For non-configurable properties, return as-is
@@ -672,13 +680,13 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       }
     }
 
-    // CRITICAL FIX: Ensure synchronous effect execution
+    // CRITICAL FIX: Respect batching mechanism
+    // Only flush immediately if we're not in a batch context
     try {
-      if (batchDepth > 0) {
-        pendingFlush = true;
-      } else {
+      if (!isBatching()) {
         immediateFlushSync();
       }
+      // If we're in a batch, the flush will happen when the batch completes
     } catch (e) {
       if (__DEV__) {
         console.error("Error during flushSync after store update:", e);
@@ -709,9 +717,7 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
 
     // Ensure synchronous effect execution
     try {
-      if (batchDepth > 0) {
-        pendingFlush = true;
-      } else {
+      if (!isBatching()) {
         immediateFlushSync();
       }
     } catch (e) {
@@ -770,6 +776,29 @@ const arrayProxyTraps: ProxyHandler<InternalStoreNodeType> = {
 
     return result;
   },
+
+  // CRITICAL FIX: Override getOwnPropertyDescriptor for arrays
+  getOwnPropertyDescriptor(target, property) {
+    // For array-specific properties, handle them directly
+    const storeValue = target[STORE_VALUE];
+
+    if (Array.isArray(storeValue)) {
+      // For arrays, delegate to the underlying array's descriptor
+      const desc = Reflect.getOwnPropertyDescriptor(storeValue, property);
+      if (desc) {
+        // For length property and array indices, return the exact descriptor
+        if (
+          property === "length" ||
+          (typeof property === "string" && /^\d+$/.test(property))
+        ) {
+          return desc;
+        }
+      }
+    }
+
+    // For all other properties, use the regular proxy descriptor logic
+    return proxyDescriptor(target, property);
+  },
 };
 
 function getAtPath(
@@ -792,10 +821,6 @@ function getAtPath(
     key: path[path.length - 1],
   };
 }
-
-// Add batch control variables at the top
-let batchDepth = 0;
-let pendingFlush = false;
 
 function setProperty(
   state: Record<PropertyKey, any>,
@@ -843,17 +868,16 @@ function setProperty(
     }
   }
 
-  // CRITICAL FIX: Check if we're in a batch
-  if (batchDepth > 0) {
-    pendingFlush = true;
-  } else {
-    // Ensure synchronous effect execution
-    try {
+  // CRITICAL FIX: Respect batching mechanism
+  // Only flush immediately if we're not in a batch context
+  try {
+    if (!isBatching()) {
       immediateFlushSync();
-    } catch (e) {
-      if (__DEV__) {
-        console.error("Error during flushSync after store update:", e);
-      }
+    }
+    // If we're in a batch, the flush will happen when the batch completes
+  } catch (e) {
+    if (__DEV__) {
+      console.error("Error during flushSync after store update:", e);
     }
   }
 }

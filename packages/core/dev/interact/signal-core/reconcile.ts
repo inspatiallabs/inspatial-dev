@@ -8,7 +8,7 @@ import {
   STORE_VALUE,
   unwrap,
   wrap,
-  StoreNodeType,
+  type StoreNodeType,
   $TARGET_IS_ARRAY,
 } from "./create-store.ts";
 
@@ -27,71 +27,48 @@ function applyState(
   if (next === previous) return;
 
   // Handle type transitions between objects and arrays
-  const prevIsArray = Array.isArray;
-  previous;
-  const nextIsArray = Array.isArray;
-  next;
+  const prevIsArray = Array.isArray(previous);
+  const nextIsArray = Array.isArray(next);
 
   // If types are different (object <-> array), we need special handling
   if (prevIsArray !== nextIsArray) {
-    // Create a full replacement by swapping the state with the new value
-    Object.defineProperty(next, $PROXY, {
-      value: (previous as any)[$PROXY],
-      writable: true,
-    });
-    (previous as any)[$PROXY] = null;
-    target[STORE_VALUE] = next;
+    // CRITICAL FIX: For type transitions, completely replace the value
+    // This is cleaner than trying to preserve the old proxy with mismatched traps
 
-    // Update the array type flag if needed
-    if (Array.isArray(next)) {
-      (target as any).isArray = true;
-      (target as any)[$TARGET_IS_ARRAY] = true;
-
-      // Ensure array prototype for proper array method access
-      Object.setPrototypeOf(next, Array.prototype);
-
-      // Make sure length property is properly set and configurable
-      if (!("length" in next)) {
-        Object.defineProperty(next, "length", {
-          value: 0,
-          writable: true,
-          configurable: true,
-          enumerable: false,
-        });
-      }
-    } else {
-      delete (target as any).isArray;
-      delete (target as any)[$TARGET_IS_ARRAY];
-
-      // Reset prototype to Object prototype for non-arrays
-      Object.setPrototypeOf(next, Object.prototype);
-    }
-
-    // Notify all nodes of the complete change
+    // First, notify all existing nodes that the value is changing
     if (target[STORE_NODE]) {
       for (const key in target[STORE_NODE]) {
-        if (key in next) {
+        const node = target[STORE_NODE][key];
+        if (node === target[STORE_NODE][$TRACK]) {
+          // Always notify the track node of the type change
+          node?.write(undefined);
+        } else if (key in next) {
           const value = next[key];
-          target[STORE_NODE][key]?.write(
-            isWrappable(value) ? wrap(value) : value
-          );
+          node?.write(isWrappable(value) ? wrap(value) : value);
         } else {
-          // If the key doesn't exist, write undefined
-          target[STORE_NODE][key]?.write(undefined);
+          // If the key doesn't exist in the new value, write undefined
+          node?.write(undefined);
         }
       }
     }
 
-    // Update 'has' observers
+    // Update HAS nodes
     if (target[STORE_HAS]) {
       for (const key in target[STORE_HAS]) {
         target[STORE_HAS][key]?.write(key in next);
       }
     }
 
-    // Always trigger the main tracker
-    if (target[STORE_NODE]?.[$TRACK]) {
-      target[STORE_NODE][$TRACK].write(undefined);
+    // Replace the entire store value and update the target structure
+    target[STORE_VALUE] = next;
+
+    // Update array-specific properties
+    if (nextIsArray) {
+      (target as any).isArray = true;
+      (target as any)[$TARGET_IS_ARRAY] = true;
+    } else {
+      delete (target as any).isArray;
+      delete (target as any)[$TARGET_IS_ARRAY];
     }
 
     return;

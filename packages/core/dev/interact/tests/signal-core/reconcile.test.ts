@@ -151,7 +151,7 @@ describe("setState with reconcile", () => {
       id: 0,
       value: "value",
     });
-    
+
     // Use a try-catch to verify the specific error is thrown
     let errorThrown = false;
     try {
@@ -162,14 +162,16 @@ describe("setState with reconcile", () => {
       expect(error instanceof Error).toBe(true);
       // Only access message if it's an Error object
       if (error instanceof Error) {
-        expect(error.message).toContain("Cannot reconcile with an empty object");
+        expect(error.message).toContain(
+          "Cannot reconcile with an empty object"
+        );
       }
       errorThrown = true;
     }
-    
+
     // Make sure an error was actually thrown
     expect(errorThrown).toBe(true);
-    
+
     // The store should not have changed
     expect(store.id).toBe(0);
     expect(store.value).toBe("value");
@@ -181,7 +183,7 @@ describe("setState with reconcile", () => {
     });
 
     setStore(reconcile({ value: { c: [1, 2, 3] } }, "id"));
-    expect(store.value).toEqual({ c: [1, 2, 3] });
+    expect(unwrap(store.value)).toEqual({ c: [1, 2, 3] });
   });
 
   test("Reconcile overwrite an array with an object", () => {
@@ -190,11 +192,11 @@ describe("setState with reconcile", () => {
     });
     setStore(reconcile({ value: { name: "John" } }, "id"));
     expect(Array.isArray(store.value)).toBeFalsy();
-    expect(store.value).toEqual({ name: "John" });
+    expect(unwrap(store.value)).toEqual({ name: "John" });
     setStore(reconcile({ value: [1, 2, 3] }, "id"));
-    expect(store.value).toEqual([1, 2, 3]);
+    expect(unwrap(store.value)).toEqual([1, 2, 3]);
     setStore(reconcile({ value: { q: "aa" } }, "id"));
-    expect(store.value).toEqual({ q: "aa" });
+    expect(unwrap(store.value)).toEqual({ q: "aa" });
   });
 });
 // type tests

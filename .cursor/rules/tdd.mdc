@@ -119,7 +119,7 @@ alwaysApply: true
       - **Yes:** If all tests pass, the implementation is considered complete.
       - **No:** If any tests fail, analyze the failure, adjust tests if specifications were misunderstood, if spec is not misunderstood then refine the implementation.
 
-**### Red-Green-Refactor Loop (Steps 7, 8, 9)**
+**### Red-Green-Refactor Loop (Steps 8, 9, 10, 11)**
 - **Continuous Improvement:**
   - Maintain the strict TDD cycle: Write failing test (red) → Make test pass with minimal code (green) → Refactor
   - Use small, incremental steps to build functionality
@@ -129,6 +129,11 @@ alwaysApply: true
   - Refine test expectation if the failure is due to written test in accordance with working test pattern
   - Update both tests and code until every test passes without exceptions
   - Use feedback from failing tests to drive improvements in both specs and implementation
+  
+  - In the instance of stubborn failing output run isolated debug tests
+  - If it's passing, then check and update the original failing tests expectations 
+  - Delete/Clean up the isolated debug tests afterwards
+
   - Always ensure tests are written with InSpatial Test module
   - Prioritize test creation before any implementation work begins
   - Focus on making tests pass with the simplest possible solution before optimizing
