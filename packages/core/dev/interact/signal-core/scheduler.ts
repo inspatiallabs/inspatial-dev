@@ -4,6 +4,8 @@ import {
   EFFECT_USER,
   STATE_CLEAN,
   STATE_DISPOSED,
+  STATE_CHECK,
+  STATE_DIRTY,
 } from "./constants.ts";
 import type { ComputationClass } from "./core.ts";
 import type { EffectClass } from "./effect.ts";
@@ -96,9 +98,23 @@ export class QueueClass implements IQueueType {
     const items = queue.splice(0);
     for (const item of items) {
       if (false && __DEV__) {
-        console.log(`[SCHEDULER RUN] Executing item in queue ${type}`);
+        console.log(
+          `[SCHEDULER RUN] Executing item in queue ${type}, is effect: ${!!(
+            item as any
+          )._effect}`
+        );
       }
-      item._updateIfNecessary();
+
+      // CRITICAL FIX: Effects need to call _runEffect(), computations call _updateIfNecessary()
+      if ((item as any)._effect) {
+        // This is an effect, call _runEffect directly
+        if (item._state !== STATE_DISPOSED) {
+          (item as any)._runEffect();
+        }
+      } else {
+        // This is a computation/memo, call _updateIfNecessary
+        item._updateIfNecessary();
+      }
     }
 
     // Return true if there are more items to process
@@ -127,8 +143,12 @@ export class QueueClass implements IQueueType {
       // Run render effects
       this.run(EFFECT_RENDER);
 
-      // Run user effects
-      this.run(EFFECT_USER);
+      // CRITICAL FIX: Run user effects in a loop like pure computations
+      // This ensures effects enqueued during effect execution get processed
+      runAgain = true;
+      while (runAgain) {
+        runAgain = !!this.run(EFFECT_USER);
+      }
 
       // CRITICAL FIX: Reset scheduled flag AFTER all effects have run
       // This prevents issues where effects enqueue new effects during execution

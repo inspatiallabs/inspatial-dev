@@ -222,6 +222,9 @@ describe("CreateProjection Tests", () => {
               }
             )
           );
+
+          // CRITICAL FIX: Flush effects so they run initially
+          flushSync();
         });
 
         expect(count).toBe(100);
@@ -308,6 +311,9 @@ describe("CreateProjection Tests", () => {
               }
             );
           });
+
+          // CRITICAL FIX: Flush effects so they run initially
+          flushSync();
         });
 
         expect(count).toBe(200);

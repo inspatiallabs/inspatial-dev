@@ -46,7 +46,7 @@ import {
   type FlagsType,
 } from "./flags.ts";
 import { getOwner, OwnerClass, setOwner } from "./owner.ts";
-import { getClock, type IQueueType } from "./scheduler.ts";
+import { getClock, globalQueue, type IQueueType } from "./scheduler.ts";
 
 export interface SignalOptionsType<T> {
   name?: string;
@@ -293,14 +293,14 @@ export class ComputationClass<T = any>
     // Our value has changed, so we need to notify all of our observers that the value has
     // changed and so they must rerun
     if (this._observers) {
-      if (false && __DEV__) {
+      if (__DEV__) {
         console.log(
           `[SIGNAL WRITE] Notifying ${this._observers?.length} observers of value change`
         );
       }
       for (let i = 0; i < this._observers.length; i++) {
         if (valueChanged) {
-          if (false && __DEV__) {
+          if (__DEV__) {
             console.log(
               `[SIGNAL WRITE] Calling _notify(STATE_DIRTY) on observer ${i}`
             );
@@ -310,7 +310,7 @@ export class ComputationClass<T = any>
           this._observers[i]._notifyFlags(changedFlagsMask, changedFlags);
         }
       }
-    } else if (false && __DEV__) {
+    } else if (__DEV__) {
       console.log(`[SIGNAL WRITE] No observers to notify for signal write`);
     }
 
@@ -323,7 +323,7 @@ export class ComputationClass<T = any>
    * Set the current node's state, and recursively mark all of this node's observers as STATE_CHECK
    */
   _notify(state: number, skipQueue?: boolean): void {
-    if (false && __DEV__) {
+    if (__DEV__) {
       console.log(
         `[COMPUTATION NOTIFY] ${
           (this as any)._name || "unnamed"
@@ -350,6 +350,19 @@ export class ComputationClass<T = any>
 
     this._forceNotify = !!skipQueue;
     this._state = state;
+
+    // CRITICAL FIX: Enqueue computations (memos) in the scheduler when they become dirty
+    // This ensures they get processed during flushSync, just like effects
+    if (state === STATE_DIRTY && !skipQueue && this._compute) {
+      if (__DEV__) {
+        console.log(
+          `[COMPUTATION NOTIFY] Enqueueing computation ${
+            (this as any)._name || "unnamed"
+          } in EFFECT_PURE queue`
+        );
+      }
+      globalQueue.enqueue(0, this); // 0 = EFFECT_PURE queue
+    }
 
     if (false && __DEV__) {
       console.log(
@@ -516,9 +529,26 @@ export class ComputationClass<T = any>
     // If we've already been disposed, don't try to dispose twice
     if (this._state === STATE_DISPOSED) return;
 
+    if (false && __DEV__) {
+      console.log(
+        `[COMPUTATION DISPOSE] Disposing computation ${
+          this._name || "unnamed"
+        }, sources: ${this._sources?.length || 0}`
+      );
+    }
+
     // Unlink ourselves from our sources' observers array so that we can be garbage collected
     // This removes us from the computation graph
-    if (this._sources) removeSourceObservers(this, 0);
+    if (this._sources) {
+      if (false && __DEV__) {
+        console.log(
+          `[COMPUTATION DISPOSE] Removing ${this._name || "unnamed"} from ${
+            this._sources!.length
+          } source observer lists`
+        );
+      }
+      removeSourceObservers(this, 0);
+    }
 
     // Remove ourselves from the ownership tree as well
     super._disposeNode();
@@ -574,35 +604,43 @@ function track(computation: SourceNodeType): void {
       );
     }
 
-    // For signals (no _compute function), add to newSources for normal dependency tracking
-    // but also establish immediate links for effects (which don't go through update)
+    // CRITICAL FIX: Properly detect effects vs memos
+    // EffectClass has _effect property, ComputationClass (memos) does not
+    const isEffect = !!(currentObserver as any)._effect;
+
+    if (false && __DEV__) {
+      console.log(
+        `[TRACK] Observer type detection - has _effect: ${!!(
+          currentObserver as any
+        )._effect}, has _fn: ${!!(currentObserver as any)
+          ._fn}, has _compute: ${!!(currentObserver as any)
+          ._compute}, isEffect: ${isEffect}`
+      );
+    }
+
+    // For signals (no _compute function), establish immediate links for effects
+    // but use deferred linking for memos
     if (!(computation as any)._compute) {
       if (false && __DEV__) {
-        console.log(
-          `[TRACK] Signal tracking - isEffect: ${!!(currentObserver as any)
-            ._effect}`
-        );
+        console.log(`[TRACK] Signal tracking - isEffect: ${isEffect}`);
       }
-
-      // CRITICAL FIX: Use _effect property to detect effects vs memos
-      // EffectClass has _effect property, ComputationClass (memos) does not
-      const isEffect = !!(currentObserver as any)._effect;
 
       if (isEffect) {
         if (false && __DEV__) {
           console.log(
-            `[TRACK] Using immediate bidirectional linking for effect`
+            `[TRACK] Using immediate bidirectional linking for effect reading signal`
           );
         }
 
-        // Immediately add this computation to the observer's sources
+        // IMMEDIATE bidirectional linking for effects reading signals
+        // Add signal to effect's sources
         if (!currentObserver._sources) {
           currentObserver._sources = [computation];
         } else if (!currentObserver._sources.includes(computation)) {
           currentObserver._sources.push(computation);
         }
 
-        // Immediately add the observer to this computation's observers
+        // Add effect to signal's observers
         if (!computation._observers) {
           computation._observers = [currentObserver];
         } else if (!computation._observers.includes(currentObserver)) {
@@ -615,31 +653,33 @@ function track(computation: SourceNodeType): void {
           );
         }
 
-        return; // Skip the rest of the function for effects
+        return; // Skip deferred tracking for effects
       } else {
         if (false && __DEV__) {
-          console.log(`[TRACK] Using regular newSources tracking for memo`);
+          console.log(
+            `[TRACK] Using deferred newSources tracking for memo reading signal`
+          );
         }
-        // Fall through to regular tracking for memos
+        // Fall through to deferred tracking for memos reading signals
       }
     } else {
-      // For memos/computations, also check if the current observer is an effect
-      const isEffect = !!(currentObserver as any)._effect;
+      // For computations/memos, check if current observer is an effect
       if (isEffect) {
         if (false && __DEV__) {
           console.log(
-            `[TRACK] Effect reading from memo - establishing bidirectional link`
+            `[TRACK] Effect reading from memo - establishing immediate bidirectional link`
           );
         }
 
-        // Immediately add this computation (memo) to the observer's (effect's) sources
+        // IMMEDIATE bidirectional linking for effects reading memos
+        // Add memo to effect's sources
         if (!currentObserver._sources) {
           currentObserver._sources = [computation];
         } else if (!currentObserver._sources.includes(computation)) {
           currentObserver._sources.push(computation);
         }
 
-        // Immediately add the observer (effect) to this computation's (memo's) observers
+        // Add effect to memo's observers
         if (!computation._observers) {
           computation._observers = [currentObserver];
         } else if (!computation._observers.includes(currentObserver)) {
@@ -652,14 +692,14 @@ function track(computation: SourceNodeType): void {
           );
         }
 
-        return; // Skip the rest of the function for effects reading memos
+        return; // Skip deferred tracking for effects
       }
     }
 
-    // Regular tracking logic for computed nodes (with _compute function) and memos reading signals
+    // DEFERRED tracking logic for memo-to-memo and memo-to-signal dependencies
     if (false && __DEV__) {
       console.log(
-        `[TRACK] Using regular tracking - newSources: ${
+        `[TRACK] Using deferred tracking - newSources: ${
           newSources?.length || 0
         }, newSourcesIndex: ${newSourcesIndex}`
       );
@@ -679,7 +719,7 @@ function track(computation: SourceNodeType): void {
 
     if (false && __DEV__) {
       console.log(
-        `[TRACK] After regular tracking - newSources: ${
+        `[TRACK] After deferred tracking - newSources: ${
           newSources?.length || 0
         }, newSourcesIndex: ${newSourcesIndex}`
       );

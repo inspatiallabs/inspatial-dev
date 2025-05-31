@@ -42,19 +42,19 @@ export function createEffect<Next, Init>(
   value?: Init,
   options?: EffectOptionsType
 ): void {
-  // Special handling for signal-like objects
+  // Special handling for signal-like objects (signal, effect) pattern
   if (
     typeof compute === "function" &&
-    !effect &&
+    typeof effect === "function" &&
     typeof (compute as any).read !== "function" &&
     arguments.length === 2
   ) {
-    // This is the case where compute is a signal and effect is the handler
+    // This is the case where compute is a signal/getter and effect is the handler
     const signalGetter = compute;
-    const handler = error as EffectFunctionType<Next, Next>;
+    const handler = effect;
 
     // Create an effect that reads the signal and calls the handler
-    const effectFn = () => {
+    const effectFn = (prev: any) => {
       // We need to track reads to signal to ensure reactivity works correctly
       // By reading the signal directly, we subscribe to changes
       const value = (signalGetter as Function)();

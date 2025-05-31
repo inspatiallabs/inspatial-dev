@@ -1,201 +1,229 @@
-import { ComputationClass, getObserver } from "./core.ts";
+import { ComputationClass, getObserver, untrack } from "./core.ts";
 import { NotReadyErrorClass } from "./error.ts";
+import { createEffect } from "./create-effect.ts";
+import { createRenderEffect } from "./create-render-effect.ts";
+import { createSignal } from "./create-signal.ts";
+import { createRoot } from "./create-root.ts";
 import { onCleanup } from "./owner.ts";
-import { flushSync } from "./scheduler.ts";
 import type { AccessorType, MemoOptionsType } from "./types.ts";
+import { createMemo } from "./create-memo.ts";
 
 /**
- * Creates a readonly derived async reactive memoized signal
+ * # CreateAsync
+ * @summary #### Creates a reactive async computation that tracks signal dependencies and handles promise resolution
+ * 
+ * Creates a derived async reactive computation that automatically re-runs when its dependencies change.
+ * Unlike regular memos, this handles promise resolution and provides loading/error states.
+ * 
+ * @since 0.2.0
+ * @category InSpatial Signal Core  
+ * @module create-async
+ * @kind function
+ * @access public
+ * 
+ * ### 💡 Core Concepts
+ * - Tracks reactive dependencies in the compute function
+ * - Automatically re-runs when dependencies change
+ * - Handles Promise resolution and rejection
+ * - Supports AsyncIterable streaming data
+ * - Provides loading states via NotReadyError
+ * 
+ * ### 🎯 Prerequisites
+ * Before you start:
+ * - Understanding of reactive signals and effects
+ * - Basic knowledge of Promises and async/await
+ * - Familiarity with error handling patterns
+ * 
+ * ### 📚 Terminology
+ * > **Async Computation**: A computation that returns a Promise or AsyncIterable
+ * > **Dependency Tracking**: Automatic detection of which signals the computation reads
+ * > **NotReadyError**: Thrown when async computation is still pending
+ * 
+ * @param compute - Function that returns a Promise, AsyncIterable, or sync value
+ * @param value - Optional initial value to use before first computation resolves
+ * @param options - Optional memo configuration options
+ * 
+ * @returns AccessorType<T> - Function that returns the resolved value or throws NotReadyError
+ * 
+ * @example
+ * ### Example 1: Basic Async Data Fetching
  * ```typescript
- * export function createAsync<T>(
- *   compute: (v: T) => Promise<T> | T,
- *   value?: T,
- *   options?: { name?: string, equals?: false | ((prev: T, next: T) => boolean) }
- * ): () => T;
+ * import { createAsync } from "@inspatial/signal-core/create-async.ts";
+ * import { createSignal } from "@inspatial/signal-core/create-signal.ts";
+ * 
+ * const [userId, setUserId] = createSignal(1);
+ * 
+ * // Automatically re-fetches when userId changes
+ * const user = createAsync(async () => {
+ *   const response = await fetch(`/api/users/${userId()}`);
+ *   return response.json();
+ * });
+ * 
+ * // Usage in effect
+ * createEffect(() => {
+ *   try {
+ *     console.log("User:", user()); // Will throw until Promise resolves
+ *   } catch (error) {
+ *     if (error instanceof NotReadyError) {
+ *       console.log("Loading user...");
+ *     }
+ *   }
+ * });
  * ```
- * @param compute a function that receives its previous or the initial value, if set, and returns a new value used to react on a computation
- * @param value an optional initial value for the computation; if set, fn will never receive undefined as first argument
- * @param options allows to set a name in dev mode for debugging purposes and use a custom comparison function in equals
- *
+ * 
+ * @example
+ * ### Example 2: Async with Initial Value
+ * ```typescript
+ * const data = createAsync(
+ *   async () => {
+ *     await new Promise(resolve => setTimeout(resolve, 1000));
+ *     return "loaded data";
+ *   },
+ *   "initial value" // Available immediately
+ * );
+ * 
+ * console.log(data()); // "initial value" (before Promise resolves)
+ * ```
+ * 
+ * @throws {NotReadyErrorClass} When async computation is still pending
+ * @throws {Error} Any error thrown by the compute function or Promise rejection
  */
 export function createAsync<T>(
   compute: (prev?: T) => Promise<T> | AsyncIterable<T> | T,
   value?: T,
   options?: MemoOptionsType<T>
 ): AccessorType<T> {
-  // Simple state management
-  let currentValue: T | undefined = value;
-  let isResolved = value !== undefined;
-  let currentError: unknown = undefined;
-  let isLoading = false;
-
-  // Create a simple signal to manage reactivity with compatible options
-  const signalOptions = options
-    ? {
-        name: options.name,
-        equals: options.equals
-          ? (prev: T | undefined, next: T | undefined) => {
-              if (prev === undefined || next === undefined) return false;
-              return (options.equals as (prev: T, next: T) => boolean)(
-                prev,
-                next
-              );
-            }
-          : options.equals,
-      }
-    : undefined;
-
-  const reactiveSignal = new ComputationClass<T | undefined>(
-    value,
-    null, // No compute function - we'll manually trigger updates
-    signalOptions
-  );
-
-  // Track the current computation for proper cleanup
-  let currentPromise: Promise<T> | undefined = undefined;
+  // Track whether we have an initial value
+  let hasInitialValue = value !== undefined;
   let isDisposed = false;
-
-  onCleanup(() => {
-    isDisposed = true;
-  });
-
-  // Function to execute the async computation
-  const executeAsync = (prevValue?: T) => {
+  let promiseCount = 0;
+  let lastDepsHash: string | undefined;
+  
+  // Create signals for managing async state
+  const [resolvedValue, setResolvedValue] = createSignal<T | undefined>(value as any);
+  const [errorValue, setErrorValue] = createSignal<unknown>(undefined);
+  const [isLoading, setIsLoading] = createSignal<boolean>(false);
+  
+  // Use an effect to run the compute function eagerly
+  createEffect(() => {
     if (isDisposed) return;
-
+    
+    promiseCount++;
+    const currentCount = promiseCount;
+    const prevValue = resolvedValue();
+    
     try {
+      // Run the compute function - this will automatically track dependencies
       const result = compute(prevValue);
-
-      // Handle Promise results
-      if (
-        result &&
-        typeof result === "object" &&
-        "then" in result &&
-        typeof result.then === "function"
-      ) {
+      
+      if (result && typeof result === 'object' && 'then' in result && typeof result.then === 'function') {
+        // Handle Promise
         const promise = result as Promise<T>;
-        currentPromise = promise;
-        isLoading = true;
-        currentError = undefined;
-
+        
+        // Set loading state
+        untrack(() => {
+          setIsLoading(true);
+          setErrorValue(undefined);
+        });
+        
+        // Handle promise resolution
         promise.then(
-          (resolvedValue) => {
-            // Only update if this is still the current promise and not disposed
-            if (currentPromise === promise && !isDisposed) {
-              currentValue = resolvedValue;
-              isResolved = true;
-              isLoading = false;
-              currentError = undefined;
-              currentPromise = undefined;
-
-              // Trigger reactive update
-              reactiveSignal.write(resolvedValue);
-
-              // Flush effects immediately
-              flushSync();
+          (resolved) => {
+            if (currentCount === promiseCount && !isDisposed) {
+              untrack(() => {
+                setResolvedValue(() => resolved);
+                setIsLoading(false);
+                setErrorValue(undefined);
+                hasInitialValue = true;
+              });
             }
           },
           (error) => {
-            // Only update if this is still the current promise and not disposed
-            if (currentPromise === promise && !isDisposed) {
-              currentError = error;
-              isResolved = false;
-              isLoading = false;
-              currentPromise = undefined;
-
-              // Trigger reactive update even on error
-              reactiveSignal.write(undefined);
-
-              // Flush effects immediately
-              flushSync();
+            if (currentCount === promiseCount && !isDisposed) {
+              untrack(() => {
+                setErrorValue(() => error);
+                setIsLoading(false);
+              });
             }
           }
         );
-      } else if (
-        result &&
-        typeof result === "object" &&
-        Symbol.asyncIterator in result
-      ) {
-        // Handle AsyncIterable results
+        
+      } else if (result && typeof result === 'object' && Symbol.asyncIterator in result) {
+        // Handle AsyncIterable
         const iterable = result as AsyncIterable<T>;
-        isLoading = true;
-        currentError = undefined;
-
+        
+        untrack(() => {
+          setIsLoading(true);
+          setErrorValue(undefined);
+        });
+        
         (async () => {
           try {
             for await (const iterValue of iterable) {
-              if (isDisposed) return;
-
-              currentValue = iterValue;
-              isResolved = true;
-              isLoading = false;
-              currentError = undefined;
-
-              // Trigger reactive update
-              reactiveSignal.write(iterValue);
-
-              // Flush effects immediately
-              flushSync();
+              if (currentCount === promiseCount && !isDisposed) {
+                untrack(() => {
+                  setResolvedValue(() => iterValue);
+                  setIsLoading(false);
+                  setErrorValue(undefined);
+                  hasInitialValue = true;
+                });
+              }
             }
-          } catch (error: unknown) {
-            if (!isDisposed) {
-              currentError = error;
-              isResolved = false;
-              isLoading = false;
-
-              // Trigger reactive update even on error
-              reactiveSignal.write(undefined);
-
-              // Flush effects immediately
-              flushSync();
+          } catch (error) {
+            if (currentCount === promiseCount && !isDisposed) {
+              untrack(() => {
+                setErrorValue(() => error);
+                setIsLoading(false);
+              });
             }
           }
         })();
+        
       } else {
-        // Handle synchronous results
-        currentValue = result as T;
-        isResolved = true;
-        isLoading = false;
-        currentError = undefined;
-        currentPromise = undefined;
-
-        // Trigger reactive update
-        reactiveSignal.write(result as T);
+        // Handle synchronous result
+        const syncResult = result as T;
+        untrack(() => {
+          setResolvedValue(() => syncResult);
+          setIsLoading(false);
+          setErrorValue(undefined);
+          hasInitialValue = true;
+        });
       }
-    } catch (syncError: unknown) {
-      currentError = syncError;
-      isResolved = false;
-      isLoading = false;
-      currentPromise = undefined;
-
-      // Don't throw here, just mark as error state
-      // The error will be thrown when accessed
+    } catch (syncError) {
+      // Handle synchronous errors
+      untrack(() => {
+        setErrorValue(() => syncError);
+        setIsLoading(false);
+      });
+      
+      throw syncError;
     }
-  };
-
-  // Execute the async computation initially
-  executeAsync();
-
+  });
+  
+  // Set up cleanup
+  onCleanup(() => {
+    isDisposed = true;
+  });
+  
   // Return the accessor function
   return () => {
-    // First, establish reactive dependency by reading from the signal
-    const observer = getObserver();
-    if (observer) {
-      // This establishes the reactive dependency
-      reactiveSignal.read();
+    // Check for errors first
+    const error = errorValue();
+    if (error !== undefined) {
+      throw error;
     }
-
-    // Check for errors
-    if (currentError) {
-      throw currentError;
-    }
-
-    // If we're being tracked and not resolved, throw NotReadyError
-    if (!isResolved && observer) {
+    
+    // Check if we're loading
+    if (isLoading()) {
       throw new NotReadyErrorClass();
     }
-
-    // Return the current resolved value
-    return currentValue as T;
+    
+    // Return resolved value
+    const resolved = resolvedValue();
+    if (resolved === undefined && !hasInitialValue) {
+      throw new NotReadyErrorClass();
+    }
+    
+    return resolved as T;
   };
 }

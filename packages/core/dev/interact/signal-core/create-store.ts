@@ -1,7 +1,15 @@
 import { $RAW } from "./constants.ts";
-import { ComputationClass, getObserver, isEqual } from "./core.ts";
+import {
+  ComputationClass,
+  getObserver,
+  isEqual,
+  UNCHANGED,
+  untrack,
+} from "./core.ts";
 import { batch, isBatching } from "./is-batching.ts";
-import { flushSync as immediateFlushSync } from "./scheduler.ts";
+import { flushSync } from "./scheduler.ts";
+import { createSignal } from "./create-signal.ts";
+import { getOwner } from "./owner.ts";
 
 export type StoreType<T> = Readonly<T>;
 
@@ -616,7 +624,7 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       return true;
 
     // Debug logging
-    if (__DEV__) {
+    if (false && __DEV__) {
       console.log(`[PROXY SET] property: ${String(property)}, value: ${value}`);
     }
 
@@ -645,22 +653,12 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
 
     // CRITICAL FIX: Manually trigger node updates for all tracked properties
     let nodes = target[STORE_NODE];
-    if (__DEV__) {
-      console.log(`[PROXY SET] nodes exists: ${!!nodes}`);
-      if (nodes) {
-        console.log(
-          `[PROXY SET] node for ${String(property)} exists: ${!!nodes[
-            property
-          ]}`
-        );
-      }
-    }
 
     if (nodes) {
       const node = nodes[property];
       if (node) {
         // Manually write the value and notify subscribers
-        if (__DEV__) {
+        if (false && __DEV__) {
           console.log(
             `[PROXY SET] Calling write on node for ${String(property)}`
           );
@@ -680,17 +678,9 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       }
     }
 
-    // CRITICAL FIX: Respect batching mechanism
-    // Only flush immediately if we're not in a batch context
-    try {
-      if (!isBatching()) {
-        immediateFlushSync();
-      }
-      // If we're in a batch, the flush will happen when the batch completes
-    } catch (e) {
-      if (__DEV__) {
-        console.error("Error during flushSync after store update:", e);
-      }
+    // CRITICAL FIX: Use correct flush function and handle batching properly
+    if (!isBatching()) {
+      flushSync();
     }
 
     return true;
@@ -715,15 +705,9 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       hasNodes[property].write(false);
     }
 
-    // Ensure synchronous effect execution
-    try {
-      if (!isBatching()) {
-        immediateFlushSync();
-      }
-    } catch (e) {
-      if (__DEV__) {
-        console.error("Error during flushSync after delete:", e);
-      }
+    // CRITICAL FIX: Use correct flush function
+    if (!isBatching()) {
+      flushSync();
     }
 
     return true;
@@ -868,17 +852,9 @@ function setProperty(
     }
   }
 
-  // CRITICAL FIX: Respect batching mechanism
-  // Only flush immediately if we're not in a batch context
-  try {
-    if (!isBatching()) {
-      immediateFlushSync();
-    }
-    // If we're in a batch, the flush will happen when the batch completes
-  } catch (e) {
-    if (__DEV__) {
-      console.error("Error during flushSync after store update:", e);
-    }
+  // CRITICAL FIX: Use correct flush function and handle batching properly
+  if (!isBatching()) {
+    flushSync();
   }
 }
 

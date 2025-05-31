@@ -56,6 +56,13 @@ export function getOwner(): OwnerClass | null {
 
 export function setOwner(owner: OwnerClass | null): OwnerClass | null {
   const out = currentOwner;
+  if (false && __DEV__ && currentOwner !== owner) {
+    console.log(
+      `[SET OWNER] Changing currentOwner from ${
+        currentOwner ? "exists" : "null"
+      } to ${owner ? "exists" : "null"}`
+    );
+  }
   currentOwner = owner;
   return out;
 }
@@ -76,6 +83,13 @@ export class OwnerClass {
   _queue: IQueueType = globalQueue;
 
   constructor(signal = false) {
+    if (false && __DEV__) {
+      console.log(
+        `[OWNER CONSTRUCTOR] Creating owner, currentOwner: ${
+          currentOwner ? "exists" : "null"
+        }, signal: ${signal}, will append: ${!!(currentOwner && !signal)}`
+      );
+    }
     if (currentOwner && !signal) currentOwner.append(this);
   }
 
@@ -103,11 +117,42 @@ export class OwnerClass {
   dispose(this: OwnerClass, self = true): void {
     if (this._state === STATE_DISPOSED) return;
 
+    if (false && __DEV__) {
+      console.log(
+        `[DISPOSE] 🗑️ Disposing owner ${
+          (this as any)._name || "unnamed"
+        }, self=${self}, children: ${
+          this._nextSibling ? "has children" : "no children"
+        }`
+      );
+    }
+
     let head = self ? this._prevSibling || this._parent : this,
       current = this._nextSibling,
       next: ComputationClass | null = null;
 
+    // Debug log the children found
+    if (false && __DEV__) {
+      let childCount = 0;
+      let childCurrent = this._nextSibling;
+      while (childCurrent && childCurrent._parent === this) {
+        console.log(
+          `[DISPOSE] 👶 Found child #${childCount}: ${
+            (childCurrent as any)._name || "unnamed"
+          }, state: ${childCurrent._state}`
+        );
+        childCount++;
+        childCurrent = childCurrent._nextSibling as ComputationClass | null;
+      }
+      console.log(`[DISPOSE] 📊 Total children to dispose: ${childCount}`);
+    }
+
     while (current && current._parent === this) {
+      if (false && __DEV__) {
+        console.log(
+          `[DISPOSE] 🗑️ Disposing child: ${(current as any)._name || "unnamed"}`
+        );
+      }
       current.dispose(true);
       current._disposeNode();
       next = current._nextSibling as ComputationClass | null;
@@ -121,6 +166,13 @@ export class OwnerClass {
   }
 
   _disposeNode(): void {
+    if (false && __DEV__) {
+      console.log(
+        `[DISPOSE NODE] 💀 Setting state to DISPOSED for ${
+          (this as any)._name || "unnamed"
+        }`
+      );
+    }
     if (this._prevSibling) this._prevSibling._nextSibling = null;
     this._parent = null;
     this._prevSibling = null;

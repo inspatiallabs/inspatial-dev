@@ -1,4 +1,9 @@
-import { EFFECT_PURE, STATE_CLEAN, STATE_DIRTY } from "./constants.ts";
+import {
+  EFFECT_PURE,
+  STATE_CLEAN,
+  STATE_DIRTY,
+  STATE_DISPOSED,
+} from "./constants.ts";
 import {
   ComputationClass,
   compute,
@@ -8,7 +13,13 @@ import {
 } from "./core.ts";
 import type { ErrorHandlerType } from "./error.ts";
 import { getClock, globalQueue, flushSync, QueueClass } from "./scheduler.ts";
-import { onCleanup } from "./owner.ts";
+import { onCleanup, OwnerClass, getOwner } from "./owner.ts";
+
+// Global flag to track if we're currently inside an effect execution
+let isInsideEffectExecution = false;
+
+// Track effects that were created during effect execution and need initial runs
+let deferredEffects: EffectClass[] = [];
 
 /**
  * Fixed EffectClass that ensures initial execution for dependency tracking
@@ -20,6 +31,9 @@ export class EffectClass extends ComputationClass<any> {
   _errorEffect: ErrorHandlerType | undefined;
   _hasRun: boolean = false; // Track if effect has ever run
   _pendingExecutions: number = 0; // Track how many times this effect should run
+  _wasDeferred: boolean = false; // Track if this effect was deferred
+  _skipEffectFunction: boolean = false; // Track if effect function should be skipped
+  _suppressSideEffects: boolean = false; // Track if side effects should be suppressed for this run
 
   // Track disposers for proper cleanup between runs
   _disposers: Array<() => void> = [];
@@ -47,8 +61,32 @@ export class EffectClass extends ComputationClass<any> {
         : this._parent?._queue || globalQueue;
     }
 
-    // Mark the effect as dirty immediately so it runs on the first render
-    this._notify(STATE_DIRTY);
+    // CRITICAL FIX: Check if we're currently inside another effect's execution
+    // If so, defer the initial execution to avoid nested immediate runs
+
+    if (true && __DEV__) {
+      console.log(
+        `[EFFECT CONSTRUCTOR] Creating effect ${
+          this._name || "unnamed"
+        }, isInsideEffectExecution: ${isInsideEffectExecution}`
+      );
+    }
+
+    if (isInsideEffectExecution) {
+      // Defer execution - add to deferred list to run after current effect completes
+      if (true && __DEV__) {
+        console.log(
+          `[EFFECT CONSTRUCTOR] Deferring initial execution for ${
+            this._name || "unnamed"
+          } - inside effect execution`
+        );
+      }
+      this._wasDeferred = true;
+      deferredEffects.push(this);
+    } else {
+      // Normal immediate execution for top-level effects
+      this._notify(STATE_DIRTY);
+    }
   }
 
   /**
@@ -88,7 +126,7 @@ export class EffectClass extends ComputationClass<any> {
           this._name || "unnamed"
         } notified with state: ${state}, skipQueue: ${skipQueue}, current state: ${
           this._state
-        }, hasRun: ${this._hasRun}`
+        }, hasRun: ${this._hasRun}, wasDeferred: ${this._wasDeferred}`
       );
     }
 
@@ -120,41 +158,99 @@ export class EffectClass extends ComputationClass<any> {
   }
 
   _runEffect(): void {
-    if (false && __DEV__) {
-      console.log(
-        `[EFFECT RUN] Starting _runEffect, state: ${this._state}, hasRun: ${
-          this._hasRun
-        }, name: ${this._name || "unnamed"}`
-      );
-    }
-
-    // CRITICAL FIX: Check if we actually need to run based on current state
-    // Effects should only run if:
-    // 1. They haven't run before (!this._hasRun), OR
-    // 2. Their state indicates they need to run (this._state >= STATE_DIRTY)
-    if (this._hasRun && this._state < STATE_DIRTY) {
+    // CRITICAL FIX: Prevent disposed effects from running
+    // This prevents double execution when effects are disposed but still in the scheduler queue
+    if (this._state === STATE_DISPOSED) {
       if (false && __DEV__) {
         console.log(
-          `[EFFECT RUN] Skipping effect execution - already run and state is clean`
+          `[EFFECT RUN] 🚫 Skipping disposed effect ${this._name || "unnamed"}`
         );
       }
       return;
     }
 
-    if (false && __DEV__) {
-      console.log(
-        `[EFFECT RUN] Proceeding with effect execution (state: ${this._state}, hasRun: ${this._hasRun})`
-      );
-    }
+    // Set the global flag to indicate we're inside an effect execution
+    const wasInsideEffectExecution = isInsideEffectExecution;
+    isInsideEffectExecution = true;
 
-    // Save the owner and previous value
+    // Declare variables outside try block for proper scope
     const owner = this._parent;
     const prevValue = this._value;
     let disposer: (() => void) | void = undefined;
+    let effectsToRunAfter: EffectClass[] = [];
+    const wasFirstRun = !this._hasRun; // Capture this before it's modified
 
     try {
-      // Compute the new result with proper dependency tracking
-      const result = compute(owner, this._fn, this);
+      if (false && __DEV__) {
+        console.log(
+          `[EFFECT RUN] ▶️ Starting _runEffect, state: ${
+            this._state
+          }, hasRun: ${this._hasRun}, name: ${this._name || "unnamed"}`
+        );
+      }
+
+      // CRITICAL FIX: Check if we actually need to run based on current state
+      // Effects should only run if:
+      // 1. They haven't run before (!this._hasRun), OR
+      // 2. Their state indicates they need to run (this._state >= STATE_DIRTY)
+      if (this._hasRun && this._state < STATE_DIRTY) {
+        if (false && __DEV__) {
+          console.log(
+            `[EFFECT RUN] Skipping effect execution - already run and state is clean`
+          );
+        }
+        return;
+      }
+
+      // CRITICAL FIX: Dispose child effects BEFORE running effect
+      // This must happen BEFORE any computation to prevent child effects
+      // from being enqueued due to signal changes during effect execution
+      if (this._hasRun) {
+        if (false && __DEV__) {
+          console.log(
+            `[EFFECT RUN] Disposing child effects for re-run of ${
+              this._name || "unnamed"
+            }`
+          );
+        }
+        this.dispose(false); // Dispose child owners (effects, memos, etc.)
+        this.emptyDisposal(); // Clean up any previous disposers
+      }
+
+      if (false && __DEV__) {
+        console.log(
+          `[EFFECT RUN] Effect will run, computing function result. hasRun: ${this._hasRun}, state: ${this._state}`
+        );
+      }
+
+      // CRITICAL FIX: Compute the new result with proper owner context for effect creation
+      // This ensures that any effects created during computation get this effect as parent
+      let result;
+      let skipThisEffectRun = false;
+      if (this._skipEffectFunction) {
+        if (true && __DEV__) {
+          console.log(
+            `[EFFECT RUN] Running computation function for dependency tracking only for ${
+              this._name || "unnamed"
+            }`
+          );
+        }
+        // CRITICAL: For dependency tracking only, we need to execute the computation function
+        // but in a way that tracks dependencies without executing the full side effects
+        // This is tricky - we need to let the computation run to establish dependencies
+        result = compute(this, this._fn, this);
+        skipThisEffectRun = true;
+        // Reset the flag for future runs
+        this._skipEffectFunction = false;
+      } else {
+        result = compute(this, this._fn, this);
+      }
+
+      // Capture any effects that were deferred during this effect's execution
+      if (deferredEffects.length > 0) {
+        effectsToRunAfter = [...deferredEffects];
+        deferredEffects = [];
+      }
 
       if (false && __DEV__) {
         console.log(
@@ -172,31 +268,47 @@ export class EffectClass extends ComputationClass<any> {
           );
         }
 
-        // Clean up any previous disposers
-        this.emptyDisposal();
-
-        // Run the effect with proper tracking
-        try {
-          // Make sure the effect runs in its own tracking scope
-          const returnVal = compute(
-            this,
-            () => this._effect(result, prevValue),
-            this
-          );
-
-          // Only treat the return value as a disposer if it's actually a function
-          if (typeof returnVal === "function") {
-            disposer = returnVal;
+        // Check if we should skip the effect function (for dependency tracking only)
+        if (skipThisEffectRun || this._suppressSideEffects) {
+          if (true && __DEV__) {
+            console.log(
+              `[EFFECT RUN] Skipping effect function for ${
+                this._name || "unnamed"
+              } - ${
+                skipThisEffectRun
+                  ? "dependency tracking only"
+                  : "suppressing side effects"
+              }`
+            );
           }
-        } catch (effectError) {
-          // Handle errors in effect execution
-          if (__DEV__) {
-            console.error("Error running effect handler:", effectError);
-          }
-          if (this._errorEffect) {
-            compute(owner, () => this._errorEffect!(effectError, this), null);
-          } else {
-            this.handleError(effectError);
+          // Reset the flags for future runs
+          this._skipEffectFunction = false;
+          this._suppressSideEffects = false;
+        } else {
+          // Run the effect with proper tracking
+          try {
+            // CRITICAL FIX: Make sure the effect runs with this effect as the owner context
+            // This ensures any nested effects created during the effect function get proper parent
+            const returnVal = compute(
+              this,
+              () => this._effect(result, prevValue),
+              this
+            );
+
+            // Only treat the return value as a disposer if it's actually a function
+            if (typeof returnVal === "function") {
+              disposer = returnVal;
+            }
+          } catch (effectError) {
+            // Handle errors in effect execution
+            if (__DEV__) {
+              console.error("Error running effect handler:", effectError);
+            }
+            if (this._errorEffect) {
+              compute(owner, () => this._errorEffect!(effectError, this), null);
+            } else {
+              this.handleError(effectError);
+            }
           }
         }
 
@@ -226,6 +338,46 @@ export class EffectClass extends ComputationClass<any> {
 
       this._value = undefined;
       this._hasRun = true;
+    } finally {
+      // Reset the global flag
+      isInsideEffectExecution = wasInsideEffectExecution;
+
+      // Run any deferred effects AFTER this effect completes
+      if (effectsToRunAfter.length > 0) {
+        if (true && __DEV__) {
+          console.log(
+            `[EFFECT RUN] Running ${effectsToRunAfter.length} deferred effects`
+          );
+        }
+        for (const deferredEffect of effectsToRunAfter) {
+          if (
+            deferredEffect._state !== STATE_DISPOSED &&
+            !deferredEffect._hasRun
+          ) {
+            if (wasFirstRun) {
+              if (true && __DEV__) {
+                console.log(
+                  `[EFFECT RUN] Running deferred effect ${
+                    deferredEffect._name || "unnamed"
+                  } - first run`
+                );
+              }
+              deferredEffect._notify(STATE_DIRTY);
+            } else {
+              if (true && __DEV__) {
+                console.log(
+                  `[EFFECT RUN] Running deferred effect ${
+                    deferredEffect._name || "unnamed"
+                  } for dependency tracking during parent re-run`
+                );
+              }
+              // Allow the effect to run once to establish dependencies
+              // This ensures it can respond to signal changes later
+              deferredEffect._notify(STATE_DIRTY);
+            }
+          }
+        }
+      }
     }
 
     // Register the disposer if one was returned
