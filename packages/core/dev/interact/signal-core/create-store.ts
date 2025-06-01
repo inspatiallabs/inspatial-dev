@@ -1,3 +1,111 @@
+/**
+ * @module @in/teract/signal-core/create-store
+ *
+ * InSpatial Store provides reactive state management for complex objects and arrays.
+ * Think of it like a smart object that can detect changes to any nested property
+ * and automatically notify components that depend on those specific parts.
+ *
+ * @example Basic Usage
+ * ```typescript
+ * import { createStore } from "@in/teract/signal-core/create-store.ts";
+ *
+ * // Create a reactive store for a user profile
+ * const [user, setUser] = createStore({
+ *   name: "Ben",
+ *   profile: { age: 25, location: "Berlin" },
+ *   preferences: { theme: "dark", notifications: true }
+ * });
+ * ```
+ *
+ * @features
+ * - **Fine-grained Reactivity**: Only updates when specific properties change
+ * - **Nested Object Support**: Track changes deep within object hierarchies
+ * - **Array Operations**: Built-in methods for push, splice, insert, remove
+ * - **Path-based Updates**: Update nested values using property paths
+ * - **Automatic Wrapping**: Converts plain objects into reactive proxies
+ * - **Performance Optimized**: Minimal re-renders through precise change detection
+ * - **TypeScript Support**: Full type safety for store operations
+ * - **Batch Updates**: Efficient batching of multiple changes
+ * - **Custom Equality**: Configure when changes should trigger updates
+ *
+ * @example Managing User Data
+ * ```typescript
+ * const [user, setUser] = createStore({
+ *   personal: { name: "Ben", age: 25 },
+ *   settings: { theme: "dark", language: "en" }
+ * });
+ *
+ * // Update nested properties
+ * setUser("personal", "age", 26);
+ * setUser("settings", s => ({ ...s, theme: "light" }));
+ * ```
+ *
+ * @example Todo List Management
+ * ```typescript
+ * const [todos, setTodos] = createStore({
+ *   items: [],
+ *   filter: "all",
+ *   stats: { completed: 0, total: 0 }
+ * });
+ *
+ * // Add a new todo
+ * setTodos.push(["items"], {
+ *   id: Date.now(),
+ *   text: "Learn InSpatial",
+ *   completed: false
+ * });
+ * ```
+ *
+ * @example E-commerce Cart
+ * ```typescript
+ * const [cart, setCart] = createStore({
+ *   items: [],
+ *   totals: { subtotal: 0, tax: 0, total: 0 },
+ *   shipping: { address: "", method: "standard" }
+ * });
+ *
+ * // Add product to cart
+ * setCart.push(["items"], {
+ *   productId: "abc123",
+ *   quantity: 2,
+ *   price: 29.99
+ * });
+ * ```
+ *
+ * @example Advanced Store Operations
+ * ```typescript
+ * // Complex nested updates
+ * setStore(
+ *   "user",
+ *   "preferences",
+ *   "notifications",
+ *   n => ({ ...n, email: false })
+ * );
+ *
+ * // Array operations
+ * setStore.splice(["items"], 0, 1); // Remove first item
+ * setStore.insert(["items"], 2, newItem); // Insert at index 2
+ * ```
+ *
+ * @apiOptions
+ * - **path**: Update values at specific property paths
+ * - **push**: Add items to the end of arrays
+ * - **splice**: Remove/insert items in arrays
+ * - **insert**: Insert items at specific array indices
+ * - **remove**: Remove items from arrays by value or matcher function
+ *
+ * @bestPractices
+ * 1. **Use stores for complex state** - objects, arrays, nested structures
+ * 2. **Prefer immutable updates** - always create new objects rather than mutating
+ * 3. **Use helper methods** - push, splice, insert for array operations
+ * 4. **Organize by feature** - group related state in the same store
+ * 5. **Keep stores flat when possible** - avoid unnecessary nesting levels
+ *
+ * @see {@link createSignal} - For primitive reactive values
+ * @see {@link createMemo} - For computed values from store data
+ * @see {@link createEffect} - For reacting to store changes
+ */
+
 import { $RAW } from "./constants.ts";
 import {
   ComputationClass,
@@ -6,20 +114,20 @@ import {
   UNCHANGED,
   untrack,
 } from "./core.ts";
-import { batch, isBatching } from "./is-batching.ts";
+import { batch, isBatching } from "./batch.ts";
 import { flushSync } from "./scheduler.ts";
 import { createSignal } from "./create-signal.ts";
 import { getOwner } from "./owner.ts";
 
 export type StoreType<T> = Readonly<T>;
 
-// Base Setter type
+/** Base Setter type */
 type BaseStoreSetterType<T> = (fn: (state: T) => void) => void;
 
-// Type for path segments
+/** Type for path segments */
 type PathSegmentType = string | number;
 
-// Extended Setter type with helpers
+/** Extended Setter type with helpers */
 export interface StoreSetterWithHelpersType<T> extends BaseStoreSetterType<T> {
   path(...args: [...PathSegmentType[], any]): void;
   push(path: PathSegmentType[], ...items: any[]): void;
@@ -36,39 +144,39 @@ export interface StoreSetterWithHelpersType<T> extends BaseStoreSetterType<T> {
   ): void;
 }
 
-// Use the extended type alias for external export if needed, or directly in createStore return type.
+/** Use the extended type alias for external export if needed, or directly in createStore return type. */
 export type StoreSetterType<T> = StoreSetterWithHelpersType<T>;
 
 type DataNodeType = ComputationClass<any>;
 type DataNodesType = Record<PropertyKey, DataNodeType>;
 
-// Add symbols for store operations
+/** Add symbols for store operations */
 const $TRACK = Symbol("STORE_TRACK"),
   $TARGET = Symbol("STORE_TARGET"),
   $PROXY = Symbol("STORE_PROXY"),
   $TARGET_IS_ARRAY = Symbol("TARGET_IS_ARRAY");
 
-// Store reference to original Array.isArray for reliable detection
+/** Store reference to original Array.isArray for reliable detection */
 const originalArrayIsArray = Array.isArray;
 
 export const STORE_VALUE = "v" as const;
 export const STORE_NODE = "n" as const;
 export const STORE_HAS = "h" as const;
 
-// Export all symbols
+/** Export all symbols */
 export { $PROXY, $TRACK, $RAW, $TARGET, $TARGET_IS_ARRAY };
 
-// Explicitly type the internal structure for proxied objects/arrays
+/** Explicitly type the internal structure for proxied objects/arrays */
 interface InternalStoreNodeType<T = Record<PropertyKey, any>> {
   [STORE_VALUE]: T;
   [STORE_NODE]?: DataNodesType;
   [STORE_HAS]?: DataNodesType;
   [$PROXY]?: any;
-  // Add the array flag property to the interface
+  /** Add the array flag property to the interface */
   [$TARGET_IS_ARRAY]?: boolean;
 }
 
-// Exported StoreNode type remains the same conceptually
+/** Exported StoreNode type remains the same conceptually */
 export type StoreNodeType = InternalStoreNodeType;
 
 export namespace InStateStore {
@@ -94,23 +202,23 @@ export type NotWrappable =
   | InStateStore.Unwrappable[keyof InStateStore.Unwrappable];
 
 export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
-  // If already wrapped, return the proxy
+  /** If already wrapped, return the proxy */
   let p = (value as any)[$PROXY];
   if (p) return p;
 
-  // Handle special cases
+  /** Handle special cases */
   if (!value || typeof value !== "object") {
     return value;
   }
 
-  // Handle custom classes by preserving their prototype chain
+  /** Handle custom classes by preserving their prototype chain */
   const isCustomClass =
     value &&
     value.constructor &&
     value.constructor !== Object &&
     value.constructor !== Array;
 
-  // Use standard detector for arrays
+  /** Use standard detector for arrays */
   const isArray = Array.isArray(value);
 
   const target: InternalStoreNodeType<T> = isArray
@@ -120,16 +228,16 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
       } as InternalStoreNodeType<T>)
     : { [STORE_VALUE]: value };
 
-  // **CRITICAL ARRAY FIX**: For arrays, set up proper prototype chain
+  /** **CRITICAL ARRAY FIX**: For arrays, set up proper prototype chain */
   if (isArray) {
-    // Use a regular property for compatibility with older code
+    /** Use a regular property for compatibility with older code */
     (target as any).isArray = true;
 
-    // **KEY FIX**: Set the prototype of the target to Array.prototype
-    // This makes the proxy inherit Array methods and behavior
+    /** **KEY FIX**: Set the prototype of the target to Array.prototype */
+    /** This makes the proxy inherit Array methods and behavior */
     Object.setPrototypeOf(target, Array.prototype);
 
-    // Copy array-specific properties to the target
+    /** Copy array-specific properties to the target */
     Object.defineProperty(target, "length", {
       get() {
         return this[STORE_VALUE].length;
@@ -142,34 +250,34 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
     });
   }
 
-  // Store the original prototype and constructor for custom classes
+  /** Store the original prototype and constructor for custom classes */
   if (isCustomClass) {
     const proto = Object.getPrototypeOf(value);
     (target as any).originalPrototype = proto;
     (target as any).originalConstructor = value.constructor;
 
-    // For custom classes, copy all properties including prototype inherited ones
-    // This ensures we have access to everything on the class instance
+    /** For custom classes, copy all properties including prototype inherited ones */
+    /** This ensures we have access to everything on the class instance */
     const instanceProperties: Record<string, any> = {};
     const instanceMethods: Record<string, Function> = {};
 
-    // Helper function to store property
+    /** Helper function to store property */
     const storeProperty = (obj: any, prop: string) => {
-      // Skip special properties and functions
+      /** Skip special properties and functions */
       if (prop === "$PROXY" || prop === "$RAW" || prop === "constructor")
         return;
 
       const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
       if (!descriptor) return;
 
-      // If it's a getter/setter, add a special accessor
+      /** If it's a getter/setter, add a special accessor */
       if (descriptor.get || descriptor.set) {
-        // Will be handled through prototype chain
+        /** Will be handled through prototype chain */
         return;
       }
 
       try {
-        // Store by type
+        /** Store by type */
         const propValue = obj[prop];
         if (typeof propValue === "function") {
           instanceMethods[prop] = propValue;
@@ -177,16 +285,16 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
           instanceProperties[prop] = propValue;
         }
       } catch (e) {
-        // Ignore errors accessing properties
+        /** Ignore errors accessing properties */
       }
     };
 
-    // First get all own properties from the instance
+    /** First get all own properties from the instance */
     Object.getOwnPropertyNames(value).forEach((prop) =>
       storeProperty(value, prop)
     );
 
-    // Then collect inherited properties
+    /** Then collect inherited properties */
     let currentProto = proto;
     while (
       currentProto &&
@@ -194,7 +302,7 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
       currentProto !== Array.prototype
     ) {
       Object.getOwnPropertyNames(currentProto).forEach((prop) => {
-        // Skip already stored properties
+        /** Skip already stored properties */
         if (prop in instanceMethods || prop in instanceProperties) return;
 
         storeProperty(currentProto, prop);
@@ -202,22 +310,22 @@ export function wrap<T extends Record<PropertyKey, any>>(value: T): T {
       currentProto = Object.getPrototypeOf(currentProto);
     }
 
-    // Store collected properties and methods
+    /** Store collected properties and methods */
     (target as any).instanceProperties = instanceProperties;
     (target as any).instanceMethods = instanceMethods;
   }
 
-  // **CRITICAL ARRAY FIX**: Create proxy with enhanced traps for arrays
+  /** **CRITICAL ARRAY FIX**: Create proxy with enhanced traps for arrays */
   p = new Proxy(target, isArray ? arrayProxyTraps : proxyTraps);
 
-  // Store reference back to proxy
+  /** Store reference back to proxy */
   Object.defineProperty(value, $PROXY, {
     value: p,
     writable: true,
     configurable: true,
   });
 
-  // Debugging for array handling
+  /** Debugging for array handling */
   if (__DEV__ && isArray) {
     if (!Array.isArray(p)) {
       console.debug(
@@ -858,7 +966,369 @@ function setProperty(
   }
 }
 
-// Export fixed createStore function that properly handles effects
+/** Export fixed createStore function that properly handles effects */
+
+/**
+ * # CreateStore
+ * @summary #### Creates a reactive store for managing complex objects and arrays
+ *
+ * Think of `createStore` like a smart filing cabinet that automatically notifies you when
+ * specific files change. Unlike regular objects, stores can track changes to deeply nested
+ * properties and only update the parts of your application that actually depend on those changes.
+ *
+ * @since 0.1.0
+ * @category Interact - (InSpatial Signal Core)
+ * @module CreateStore
+ * @kind function
+ * @access public
+ *
+ * ### 💡 Core Concepts
+ * - Stores provide fine-grained reactivity for complex data structures
+ * - Changes are tracked at the property level, not the entire object
+ * - Nested objects and arrays are automatically wrapped to become reactive
+ * - Path-based updates allow precise modification of deeply nested values
+ *
+ * ### 🎯 Prerequisites
+ * Before you start:
+ * - Understanding of reactive signals and basic reactivity concepts
+ * - Familiarity with JavaScript objects and arrays
+ * - Knowledge of immutable update patterns
+ *
+ * ### 📚 Terminology
+ * > **Store**: A reactive proxy wrapper around objects and arrays
+ * > **Path**: A sequence of property keys to access nested values
+ * > **Setter**: Function that updates store values with helper methods
+ * > **Fine-grained Reactivity**: Only updating components that depend on changed properties
+ *
+ * ### ⚠️ Important Notes
+ * <details>
+ * <summary>Click to learn more about edge cases</summary>
+ *
+ * > [!NOTE]
+ * > Store setters should always create new objects rather than mutating existing ones
+ *
+ * > [!NOTE]
+ * > Use helper methods (push, splice, insert) for array operations to maintain reactivity
+ *
+ * > [!NOTE]
+ * > Stores automatically wrap nested objects, but manual wrapping may be needed for dynamic content
+ * </details>
+ *
+ * @param store - Initial store value (object or array) to make reactive
+ * @param fn - Optional initialization function that receives the store for setup
+ *
+ * @returns A tuple containing [getter, setter] where:
+ * - **getter**: Reactive proxy that tracks property access
+ * - **setter**: Function with helper methods for updating store values
+ *
+ * ### 🎮 Usage
+ * #### Installation
+ * ```bash
+ * # Deno
+ * deno add jsr:@in/teract
+ * ```
+ *
+ * #### Examples
+ * Here's how you might use stores in real applications:
+ *
+ * @example
+ * ### Example 1: User Profile Store
+ * ```typescript
+ * import { createStore } from "@in/teract/signal-core/create-store.ts";
+ * import { createEffect } from "@in/teract/signal-core/create-effect.ts";
+ *
+ * // Create a store for user profile data
+ * const [user, setUser] = createStore({
+ *   personal: {
+ *     name: "Ben",
+ *     age: 25,
+ *     email: "ben@example.com"
+ *   },
+ *   preferences: {
+ *     theme: "dark",
+ *     notifications: true,
+ *     language: "en"
+ *   }
+ * });
+ *
+ * // React to specific changes - only runs when name changes
+ * createEffect(() => {
+ *   console.log(`Welcome, ${user.personal.name}!`);
+ * });
+ *
+ * // Update nested properties - triggers the effect above
+ * setUser("personal", "name", "Carolina");
+ *
+ * // Update preferences - does NOT trigger the name effect
+ * setUser("preferences", "theme", "light");
+ * ```
+ *
+ * @example
+ * ### Example 2: Shopping Cart with Array Operations
+ * ```typescript
+ * import { createStore } from "@in/teract/signal-core/create-store.ts";
+ *
+ * // Create a shopping cart store
+ * const [cart, setCart] = createStore({
+ *   items: [],
+ *   totals: {
+ *     subtotal: 0,
+ *     tax: 0,
+ *     total: 0
+ *   },
+ *   checkout: {
+ *     step: "cart",
+ *     payment: null
+ *   }
+ * });
+ *
+ * // Add items using the push helper
+ * setCart.push(["items"], {
+ *   id: "book-1",
+ *   name: "JavaScript Guide",
+ *   price: 29.99,
+ *   quantity: 1
+ * });
+ *
+ * setCart.push(["items"], {
+ *   id: "pen-1",
+ *   name: "Blue Pen",
+ *   price: 2.50,
+ *   quantity: 3
+ * });
+ *
+ * // Update quantity using path notation
+ * setCart("items", 0, "quantity", 2);
+ *
+ * // Remove an item using the remove helper
+ * setCart.remove(["items"], item => item.id === "pen-1");
+ *
+ * console.log(cart.items.length); // 1 (only the book remains)
+ * ```
+ *
+ * @example
+ * ### Example 3: Todo List with Advanced Operations
+ * ```typescript
+ * import { createStore } from "@in/teract/signal-core/create-store.ts";
+ * import { createMemo } from "@in/teract/signal-core/create-memo.ts";
+ *
+ * // Create a comprehensive todo list store
+ * const [todos, setTodos] = createStore({
+ *   items: [
+ *     { id: 1, text: "Learn InSpatial", completed: false, priority: "high" },
+ *     { id: 2, text: "Build an app", completed: false, priority: "medium" }
+ *   ],
+ *   filter: "all", // "all", "active", "completed"
+ *   stats: {
+ *     total: 0,
+ *     completed: 0,
+ *     remaining: 0
+ *   }
+ * });
+ *
+ * // Computed values based on store state
+ * const filteredTodos = createMemo(() => {
+ *   const filter = todos.filter;
+ *   const items = todos.items;
+ *
+ *   if (filter === "active") return items.filter(t => !t.completed);
+ *   if (filter === "completed") return items.filter(t => t.completed);
+ *   return items;
+ * });
+ *
+ * // Add a new todo
+ * setTodos.push(["items"], {
+ *   id: Date.now(),
+ *   text: "Write documentation",
+ *   completed: false,
+ *   priority: "high"
+ * });
+ *
+ * // Toggle completion status
+ * setTodos("items", 0, "completed", true);
+ *
+ * // Update filter
+ * setTodos("filter", "completed");
+ *
+ * console.log(filteredTodos()); // Only completed todos
+ * ```
+ *
+ * @example
+ * ### Example 4: Form Data with Validation
+ * ```typescript
+ * import { createStore } from "@in/teract/signal-core/create-store.ts";
+ * import { createMemo } from "@in/teract/signal-core/create-memo.ts";
+ *
+ * // Create a form store with validation
+ * const [form, setForm] = createStore({
+ *   data: {
+ *     email: "",
+ *     password: "",
+ *     confirmPassword: "",
+ *     terms: false
+ *   },
+ *   errors: {
+ *     email: null,
+ *     password: null,
+ *     confirmPassword: null,
+ *     terms: null
+ *   },
+ *   meta: {
+ *     isSubmitting: false,
+ *     isValid: false,
+ *     touchedFields: new Set()
+ *   }
+ * });
+ *
+ * // Validation computed values
+ * const isValidEmail = createMemo(() => {
+ *   const email = form.data.email;
+ *   return email.includes("@") && email.includes(".");
+ * });
+ *
+ * const isValidPassword = createMemo(() => {
+ *   return form.data.password.length >= 8;
+ * });
+ *
+ * const passwordsMatch = createMemo(() => {
+ *   return form.data.password === form.data.confirmPassword;
+ * });
+ *
+ * // Update form field
+ * function updateField(field: string, value: any) {
+ *   setForm("data", field, value);
+ *
+ *   // Mark field as touched
+ *   setForm("meta", "touchedFields", prev => new Set([...prev, field]));
+ *
+ *   // Update validation
+ *   if (field === "email") {
+ *     setForm("errors", "email", !isValidEmail() ? "Invalid email" : null);
+ *   }
+ * }
+ *
+ * // Example usage
+ * updateField("email", "user@example.com");
+ * updateField("password", "secretpassword123");
+ * ```
+ *
+ * @example
+ * ### Example 5: Game State with Nested Updates
+ * ```typescript
+ * import { createStore } from "@in/teract/signal-core/create-store.ts";
+ *
+ * // Create a game state store
+ * const [game, setGame] = createStore({
+ *   player: {
+ *     name: "Ben",
+ *     level: 1,
+ *     health: 100,
+ *     mana: 50,
+ *     inventory: {
+ *       items: [
+ *         { id: "sword", name: "Iron Sword", damage: 10 },
+ *         { id: "potion", name: "Health Potion", heal: 25 }
+ *       ],
+ *       gold: 100
+ *     },
+ *     stats: {
+ *       strength: 10,
+ *       magic: 8,
+ *       defense: 7
+ *     }
+ *   },
+ *   world: {
+ *     currentMap: "forest",
+ *     position: { x: 0, y: 0 },
+ *     weather: "sunny"
+ *   },
+ *   ui: {
+ *     activePanel: "inventory",
+ *     notifications: []
+ *   }
+ * });
+ *
+ * // Player takes damage
+ * function takeDamage(amount: number) {
+ *   setGame("player", "health", health => Math.max(0, health - amount));
+ * }
+ *
+ * // Player levels up
+ * function levelUp() {
+ *   setGame("player", player => ({
+ *     ...player,
+ *     level: player.level + 1,
+ *     health: 100, // Full heal on level up
+ *     mana: 50 + (player.level * 5) // Increase max mana
+ *   }));
+ * }
+ *
+ * // Add item to inventory
+ * function addItem(item: any) {
+ *   setGame.push(["player", "inventory", "items"], item);
+ * }
+ *
+ * // Move player
+ * function movePlayer(dx: number, dy: number) {
+ *   setGame("world", "position", pos => ({
+ *     x: pos.x + dx,
+ *     y: pos.y + dy
+ *   }));
+ * }
+ *
+ * // Example usage
+ * takeDamage(15); // Health: 85
+ * addItem({ id: "shield", name: "Wooden Shield", defense: 5 });
+ * movePlayer(1, 0); // Move right
+ * ```
+ *
+ * ### ⚡ Performance Tips
+ * <details>
+ * <summary>Click to learn about performance</summary>
+ *
+ * - Use path-based updates for deep nested changes to avoid unnecessary re-wrapping
+ * - Batch multiple store updates using the batch() function
+ * - Prefer helper methods (push, splice) over manual array manipulation
+ * - Keep store structure relatively flat when possible for better performance
+ * - Use memo functions to compute derived state rather than storing computed values
+ * </details>
+ *
+ * ### ❌ Common Mistakes
+ * <details>
+ * <summary>Click to see what to avoid</summary>
+ *
+ * - **Direct mutation**: Don't modify store values directly, always use setters
+ * - **Incorrect array methods**: Use store helpers instead of native array methods
+ * - **Deep nesting**: Avoid excessively deep object hierarchies in stores
+ * - **Storing computed values**: Use memos instead of storing derived state
+ * - **Missing immutability**: Always create new objects when updating nested values
+ * </details>
+ *
+ * ### 📝 Uncommon Knowledge
+ * `Stores use Proxy objects under the hood, which means they can intercept property
+ * access and modification. This is more powerful than simple observation because it
+ * can detect when properties are added or deleted, not just when they change values.
+ * The fine-grained nature means that accessing user.name only creates a dependency
+ * on the name property, not the entire user object.`
+ *
+ * ### 🔧 Runtime Support
+ * - ✅ Node.js
+ * - ✅ Deno
+ * - ✅ Bun
+ * - ✅ Modern Browsers (Proxy support required)
+ *
+ * ### 🔗 Related Resources
+ *
+ * #### Internal References
+ * - {@link createSignal} - For primitive reactive values
+ * - {@link createMemo} - For computed values derived from store data
+ * - {@link createEffect} - For reacting to store changes
+ * - {@link batch} - For batching multiple store updates
+ *
+ * @throws {Error} If trying to wrap non-object values or encountering circular references
+ *
+ * @returns {[StoreType<T>, StoreSetterType<T>]} A tuple containing the reactive store getter and setter with helper methods
+ */
 export function createStore<T extends object = {}>(
   store: T | StoreType<T>
 ): [get: StoreType<T>, set: StoreSetterType<T>];

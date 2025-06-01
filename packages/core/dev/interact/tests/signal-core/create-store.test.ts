@@ -1,10 +1,10 @@
 /**
- * # CreateStore Tests for InSpatial Interact
+ * # CreateStore Tests for Interact - (InSpatial Signal Core)
  *
  * Using proven working patterns from phase tests.
  * Tests core store functionality with reliable test patterns.
  *
- * @category InSpatial Interact Test
+ * @category Interact - (InSpatial Signal Core)
  * @since 0.1.0
  */
 

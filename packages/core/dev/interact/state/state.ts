@@ -2,7 +2,7 @@
  * # createState
  * @summary #### Universal state management API for InSpatial applications
  *
- * The `createState` function is the primary API for creating reactive state in InSpatial applications.
+ * The `createState` function is the primary API for creating interactivity Built on top of the InSpatial Signal-core primitives
  * It unifies simple reactive state with trigger-based state flows, providing a clean developer
  * experience for both basic and complex use cases.
  *
@@ -28,9 +28,9 @@ import {
   registerStateSchema,
   createTypeValidator,
 } from "./validation.ts";
-import { createSignal } from "../signal/src/create-signal.ts";
-import { createRoot } from "../signal/src/create-root.ts";
-import { createEffect } from "../signal/src/create-effect.ts";
+import { createSignal } from "../signal-core/create-signal.ts";
+import { createRoot } from "../signal-core/create-root.ts";
+import { createEffect } from "../signal-core/create-effect.ts";
 
 // Define __DEV__ if not defined (for development mode detection)
 declare const __DEV__: boolean;

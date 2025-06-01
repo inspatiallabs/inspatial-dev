@@ -12,7 +12,7 @@
  * @access public
  */
 
-import type { AccessorType, SetterType } from "../signal/src/types.ts";
+import type { AccessorType, SetterType } from "../signal-core/types.ts";
 import type { TriggerInstanceType } from "../trigger/src/types.ts";
 import { SignalTriggerProfiler } from "./signal-trigger-perf.ts";
 import type { StateLens } from "./signal-trigger.ts";

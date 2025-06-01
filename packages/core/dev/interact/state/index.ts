@@ -1,8 +1,8 @@
 /**
  * @module @in/teract
  *
- * Universal state management for InSpatial applications with a unified interface
- * for both simple and complex state management needs, integrating signals and triggers.
+ * Universal state management for cross-platform & spatial applications with a unified interface
+ * for both simple and complex state management needs built on top of the InSpatial Signal-core and trigger primitives
  *
  * @example Basic Usage
  * ```typescript

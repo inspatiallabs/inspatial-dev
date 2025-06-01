@@ -13,8 +13,8 @@
  * @access public
  */
 
-import { createMemo } from "../signal/src/create-memo.ts";
-import { createRoot } from "../signal/src/create-root.ts";
+import { createMemo } from "../signal-core/create-memo.ts";
+import { createRoot } from "../signal-core/create-root.ts";
 import type { StateInstanceType, ComputedOptionsType } from "./types.ts";
 
 /**

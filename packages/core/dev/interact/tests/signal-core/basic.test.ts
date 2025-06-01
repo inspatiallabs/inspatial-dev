@@ -1,7 +1,7 @@
 /**
  * The tests in this file ensure the fundamental store interactivity primitives work correctly. They are the baseline and the absolute minimum requirements that should be supported for signal core.
  *
- * @category Interact/InSpatial (State X Trigger)
+ * @category Interact - (InSpatial Signal Core)
  * @since 0.1.0
  */
 

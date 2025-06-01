@@ -13,8 +13,8 @@
  * @access public
  */
 
-import { createSignal, createEffect } from "../signal/src/index.ts";
-import type { AccessorType } from "../signal/src/types.ts";
+import { createSignal, createEffect } from "../signal-core/index.ts";
+import type { AccessorType } from "../signal-core/types.ts";
 import { createTriggerInstance as defaultCreateTriggerInstance } from "../trigger/src/index.ts";
 import { getRegisteredTrigger as defaultGetRegisteredTrigger } from "../trigger/src/registry.ts";
 

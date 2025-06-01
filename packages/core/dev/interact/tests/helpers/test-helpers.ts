@@ -1,5 +1,5 @@
 /**
- * Test Helpers for InSpatial Interact
+ * Test Helpers for Interact - (InSpatial Signal Core)
  *
  * These functions help with testing the reactive system
  */

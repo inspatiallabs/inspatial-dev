@@ -1,13 +1,10 @@
-import { ComputationClass, getObserver, untrack } from "./core.ts";
-import { NotReadyErrorClass } from "./error.ts";
+import { untrack } from "./core.ts";
 import { createEffect } from "./create-effect.ts";
-import { createRenderEffect } from "./create-render-effect.ts";
 import { createSignal } from "./create-signal.ts";
-import { createRoot } from "./create-root.ts";
-import { onCleanup } from "./owner.ts";
+import { onCleanup } from "./on-cleanup.ts";
 import type { AccessorType, MemoOptionsType } from "./types.ts";
-import { createMemo } from "./create-memo.ts";
-import { batch } from "./is-batching.ts";
+import { batch } from "./batch.ts";
+import { NotReadyErrorClass } from "./create-resource.ts";
 
 /**
  * # CreateAsync
@@ -16,8 +13,8 @@ import { batch } from "./is-batching.ts";
  * Creates a derived async reactive computation that automatically re-runs when its dependencies change.
  * Unlike regular memos, this handles promise resolution and provides loading/error states.
  *
- * @since 0.2.0
- * @category InSpatial Signal Core
+ * @since 0.1.0
+ * @category Interact - (InSpatial Signal Core)
  * @module create-async
  * @kind function
  * @access public
@@ -104,7 +101,7 @@ export function createAsync<T>(
   const [errorValue, setErrorValue] = createSignal<unknown>(undefined);
   const [isLoading, setIsLoading] = createSignal<boolean>(false);
 
-  createEffect(() => {
+  const effectExecutor = () => {
     if (isDisposed) return;
 
     promiseCount++;
@@ -194,6 +191,10 @@ export function createAsync<T>(
       });
       throw syncError;
     }
+  };
+
+  createEffect(() => {
+    effectExecutor();
   });
 
   onCleanup(() => {

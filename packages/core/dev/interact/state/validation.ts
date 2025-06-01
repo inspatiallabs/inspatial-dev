@@ -18,7 +18,7 @@ import {
   memoizeTypeValidation,
   toJsonSchema,
   SchemaRegistry,
-} from "../../type/src/index.ts";
+} from "@inspatial/type";
 
 // Type guard to check if a value is a Type Error
 export function isTypeError(value: any): value is TypeErrors {

@@ -11,8 +11,7 @@ import {
   mockSession,
   mockFn,
 } from "@inspatial/test";
-import { createSignal } from "../../signal/src/create-signal.ts";
-import { createTriggerInstance } from "../../trigger/src/action.ts";
+import { createSignal } from "../../signal-core/create-signal.ts";
 import { createSignalConditionTrigger } from "../../state/signal-trigger.ts";
 import { initTriggerSystem } from "../helpers/test-helpers.ts";
 

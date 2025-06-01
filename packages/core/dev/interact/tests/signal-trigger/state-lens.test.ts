@@ -11,7 +11,7 @@ import {
   mockSession,
 } from "@inspatial/test";
 import { StateLens, createStateLens } from "../../state/signal-trigger.ts";
-import { createSignal } from "../../signal/src/create-signal.ts";
+import { createSignal } from "../../signal-core/create-signal.ts";
 import type { TriggerConfigType } from "../../trigger/src/types.ts";
 import { initTriggerSystem } from "../helpers/test-helpers.ts";
 

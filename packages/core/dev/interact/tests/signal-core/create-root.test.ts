@@ -1,10 +1,10 @@
 /**
- * # CreateRoot Tests for InSpatial Interact
+ * # CreateRoot Tests for Interact - (InSpatial Signal Core)
  *
  * Comprehensive test suite for createRoot functionality using proven working patterns.
  * Tests root isolation, disposal, and tracking scope management.
  *
- * @category InSpatial Interact Test
+ * @category Interact - (InSpatial Signal Core)
  * @since 0.1.0
  */
 
@@ -19,7 +19,7 @@ import {
   getOwner,
   onCleanup,
 } from "../../signal-core/index.ts";
-import type { AccessorType, SignalType } from "../../signal/src/types.ts";
+import type { AccessorType, SignalType } from "../../signal-core/types.ts";
 
 // Setup cleanup for tests
 let cleanupFns: (() => void)[] = [];

@@ -17,7 +17,7 @@ type PathSegmentType = string | number;
  * into the projection store's state.
  *
  * @since 0.1.0
- * @category InSpatial Interact
+ * @category Interact - (InSpatial Signal Core)
  * @module CreateProjection
  * @kind function
  * @access public
@@ -178,7 +178,7 @@ export function createProjection<T extends object>(
  * ensuring the projection function runs whenever dependencies change or the store is modified.
  *
  * @since 0.1.0
- * @category InSpatial Interact
+ * @category Interact - (InSpatial Signal Core)
  * @module CreateProjection
  * @kind function
  * @access public

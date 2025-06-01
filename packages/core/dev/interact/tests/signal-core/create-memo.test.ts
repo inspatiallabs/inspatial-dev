@@ -1,10 +1,10 @@
 /**
- * # CreateMemo Tests for InSpatial Interact
+ * # CreateMemo Tests for Interact - (InSpatial Signal Core)
  *
  * Comprehensive test suite for createMemo functionality using proven working patterns.
  * Tests core memo functionality with reliable test patterns.
  *
- * @category InSpatial Interact Test
+ * @category Interact - (InSpatial Signal Core)
  * @since 0.1.0
  */
 
