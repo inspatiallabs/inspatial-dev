@@ -6,7 +6,7 @@
   "repository": "https://github.com/InSpatiallabs/inspatial-dev",
   "author": "InSpatial Labs",
   "bugs": "https://github.com/InSpatiallabs/inspatial-dev/issues",
-  "description": "InSpatial Interact is a universal state management system that allows you to manage your state in a way that is easy to understand and use.",
+  "description": "Universal interactivity and state management system for cross-platform and spatial applications.",
   "keywords": [
     "interact",
     "interaction",

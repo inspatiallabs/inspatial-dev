@@ -24,29 +24,29 @@ IMPORTANT: Use tags like @param, @returns, @throws and @typeParam to provide mor
 
 IMPORTANT: Provide good type information
 
+IMPORTANT: Always check for and maintain technical accuracy to ensure documentation is not different from logic
+
 IMPORTANT: ALWAYS document every symbol in the package, library or project exports, i.e class, constant, event, external, file, function, memeber, mixin, module, namespace, typedef etc.... For classes and interfaces for example, you should document the symbol itself, each method or property on it, including constructors
 
 **InSpatial Dev Packages**
-- @inspatial/ai
-- @inspatial/xr
 - @inspatial/kit
 - @inspatial/run
-- @inspatial/router
-- @inspatial/server
-- @inspatial/type
+- @in/spatial
+- @in/dom
+- @in/native
+- @in/render
+- @in/telligence
+- @in/motion
+- @in/route
+- @in/type
 - @in/teract
-- @inspatial/util
-- @inspatial/iss
-- @inspatial/theme
-- @inspatial/cli
-- @inspatial/test
-- @inspatial/icon
-- @inspatial/inmoji
-- @inspatial/dom
-- @inspatial/native
-- @inspatial/inreal
-- @inspatial/renderer
-
+- @in/util
+- @in/style
+- @in/cli
+- @in/test
+- @in/a11y
+- @in/i18n
+- @in/container
 
 
 **Heading Section**

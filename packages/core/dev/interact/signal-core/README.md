@@ -417,7 +417,7 @@ Tests cover all reactive primitives, edge cases, memory management, and performa
 
 ## 🤔 FAQ
 
-### "Can I use this with existing React/Vue/Svelte/Angular/Solid/React-Native/NativeScript applications?"
+### "Can I use this with existing React/Vue/Svelte/Angular/Solid/React-Native/NativeScript/Lynx applications?"
 
 Yes! Signal Core is designed to work seamlessly across any JavaScript or TypeScript runtime environment, making it fully compatible with any framework or platform.
 

@@ -742,7 +742,7 @@ Yes, absolutely! The type system integration is optional. If you don't provide a
 
 InSpatial State is optimized for performance with features like batched updates, memoization, and optimized subscriptions. The type validation has minimal runtime overhead as it's designed to be performant. You can also disable validation in production environments if needed.
 
-### "Can I use this with existing React/Vue/Svelte/Angular/Solid applications?"
+### "Can I use this with existing React/Vue/Svelte/Angular/Solid/React-Native/NativeScript/Lynx applications?"
 
 Yes! InSpatial State is designed to work seamlessly across any JavaScript or TypeScript runtime environment, making it fully compatible with any framework or platform including React, Vue, Svelte, Angular, Solid, React Native, and NativeScript.
 
