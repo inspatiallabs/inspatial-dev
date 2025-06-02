@@ -9,23 +9,20 @@ export * from "./state.ts";
 
 // Trigger registration and activation
 // @ts-ignore - Ignoring TS extension import error
-export {
-  createTriggerInstance,
-  activateTrigger
-} from "./action.ts";
+export { createTriggerInstance, activateTrigger } from "./action.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 export {
   registerTrigger,
   getRegisteredTrigger,
-  hasTrigger
+  hasTrigger,
 } from "./registry.ts";
 
 // Core types
 // @ts-ignore - Ignoring TS extension import error
 export type {
   RegisteredTriggerType,
-  TriggerDefinitionMetadataType
+  TriggerDefinitionMetadataType,
 } from "./types.ts";
 
 /**
@@ -62,7 +59,15 @@ export function initTriggerSystem(options: {
   nativeAdapter?: boolean;
   inrealEngine?: any;
   config?: any;
-}) {
+}): {
+  bridge: TriggerBridgeClass;
+  triggerRegistry: any;
+  createTrigger: any;
+  createTriggerSequence: any;
+  createTriggerGroup: any;
+  createConditionalTrigger: any;
+  triggerCategories: any;
+} {
   // Initialize bridge
   const bridge = initTriggerBridge(
     options.domAdapter,

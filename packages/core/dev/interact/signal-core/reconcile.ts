@@ -406,7 +406,7 @@ function applyState(
 export function reconcile<T extends U, U>(
   value: T,
   key: string | ((item: NonNullable<any>) => any)
-) {
+): (state: U) => T {
   return (state: U) => {
     const keyFn =
       typeof key === "string" ? (item: NonNullable<any>) => item[key] : key;

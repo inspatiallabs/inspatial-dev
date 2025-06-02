@@ -6,16 +6,21 @@
 // @ts-ignore - Ignoring TS extension import error
 import type { TriggerBridgeClass } from "./bridge.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { triggerRegistry, getRegisteredTrigger, getTriggerMetadata, registerTrigger } from "./registry.ts";
+import {
+  triggerRegistry,
+  getRegisteredTrigger,
+  getTriggerMetadata,
+  registerTrigger,
+} from "./registry.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { triggerMonitoringInstance } from "./monitoring.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { errorLogger, type TriggerErrorClass as _TriggerErrorClass } from "./errors.ts";
-// @ts-ignore - Ignoring TS extension import error
 import {
-  ErrorCodeEnum,
-  TriggerEventDeliveryStatusEnum,
-} from "./types.ts";
+  errorLogger,
+  type TriggerErrorClass as _TriggerErrorClass,
+} from "./errors.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { ErrorCodeEnum, TriggerEventDeliveryStatusEnum } from "./types.ts";
 // @ts-ignore - Ignoring TS extension import error
 import type {
   TriggerInstanceType,
@@ -24,7 +29,7 @@ import type {
   HierarchicalPlatformType,
   RegisteredTriggerType,
   TriggerDefinitionMetadataType,
-  TriggerCategoryEnum as _TriggerCategoryEnum
+  TriggerCategoryEnum as _TriggerCategoryEnum,
 } from "./types.ts";
 
 /**
@@ -155,7 +160,8 @@ export class TriggerManagerClass {
       disable: () => this.disableTrigger(triggerId),
       enable: () => this.enableTrigger(triggerId),
       destroy: () => this.destroyTrigger(triggerId),
-      update: (newParams: Record<string, any>) => this.updateTrigger(triggerId, newParams),
+      update: (newParams: Record<string, any>) =>
+        this.updateTrigger(triggerId, newParams),
       fire: (payload: any) => this.fireTrigger(triggerId, payload),
     };
 
@@ -494,7 +500,9 @@ export class TriggerManagerClass {
       } catch (error) {
         // Log error
         errorLogger.error(
-          `Error executing trigger action for ${config.type}: ${(error as Error).message}`,
+          `Error executing trigger action for ${config.type}: ${
+            (error as Error).message
+          }`,
           ErrorCodeEnum.EVENT_HANDLING_FAILED,
           { triggerId, type: config.type, nodeId }
         );
@@ -618,7 +626,9 @@ export class TriggerManagerClass {
     }
 
     // Generate node ID
-    const nodeId = `node-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const nodeId = `node-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 9)}`;
 
     // Register with appropriate adapter method
     switch (basePlatform) {
@@ -663,7 +673,14 @@ export const createTriggerSequence = (
   return TriggerManagerClass.getInstance().createTriggerSequence(configs);
 };
 
-export const createTriggerGroup = (configs: TriggerConfigType[]) => {
+export const createTriggerGroup = (
+  configs: TriggerConfigType[]
+): {
+  triggers: TriggerInstanceType[];
+  enableAll: () => void;
+  disableAll: () => void;
+  destroyAll: () => void;
+} => {
   return TriggerManagerClass.getInstance().createTriggerGroup(configs);
 };
 
@@ -675,7 +692,7 @@ export const createConditionalTrigger = (config: {
   return TriggerManagerClass.getInstance().createConditionalTrigger(config);
 };
 
-// --- Core Trigger Definition and Activation --- 
+// --- Core Trigger Definition and Activation ---
 
 /**
  * Defines a new trigger, returning an object containing its name and action.
@@ -687,16 +704,18 @@ export const createConditionalTrigger = (config: {
  * @returns A RegisteredTriggerType object.
  */
 export function createTrigger<S = any, P extends any[] = any[]>(
-  config: Pick<RegisteredTriggerType<S, P>, 'name' | 'action'>
+  config: Pick<RegisteredTriggerType<S, P>, "name" | "action">
 ): RegisteredTriggerType<S, P> {
   // Basic validation
-  if (!config || typeof config.name !== 'string' || !config.name) {
-     throw new Error('Invalid trigger config: name is required.');
+  if (!config || typeof config.name !== "string" || !config.name) {
+    throw new Error("Invalid trigger config: name is required.");
   }
-  if (typeof config.action !== 'function') {
-     throw new Error(`Invalid trigger config for "${config.name}": action must be a function.`);
+  if (typeof config.action !== "function") {
+    throw new Error(
+      `Invalid trigger config for "${config.name}": action must be a function.`
+    );
   }
-  
+
   // Build the definition object
   const definition: RegisteredTriggerType<S, P> = {
     name: config.name,
@@ -716,18 +735,18 @@ export function createTrigger<S = any, P extends any[] = any[]>(
 /**
  * # ActivateTrigger
  * @summary #### Executes a registered trigger and updates the application state
- * 
+ *
  * The `activateTrigger` function locates a trigger in the registry by name and executes its action
  * with the current state and provided payload. Think of it like pressing a button on a remote control
  * that's already been programmed - you provide the button name (trigger) and it performs the specific
  * action associated with that button.
- * 
- * @since 0.1.0   
+ *
+ * @since 0.1.0
  * @category Interact - (InSpatial State x Trigger)
  * @module @in/teract/trigger
  * @kind function
  * @access public
- * 
+ *
  * ### 💡 Core Concepts
  * - Triggers are state transition mechanisms that respond to events or manual activation
  * - Each trigger has a unique name and an action function that knows how to update the state
@@ -738,40 +757,40 @@ export function createTrigger<S = any, P extends any[] = any[]>(
  * Before you start:
  * - The trigger must already be registered in the system using `registerTrigger`
  * - You need to know the exact name of the trigger you want to activate
- * 
+ *
  * ### 📚 Terminology
  * > **Trigger**: A named function that can modify application state in response to an activation.
  * > **State Transition**: The process of transforming the current state to a new state based on specific logic.
- * 
+ *
  * ### ⚠️ Important Notes
  * <details>
  * <summary>Click to learn more about edge cases</summary>
- * 
+ *
  * > [!NOTE]
  * > This function is primarily called internally by the state management system when
  * > triggers are invoked via `state.action.triggerName()`. You rarely need to call this directly.
- * 
+ *
  * > [!NOTE]
  * > If the trigger's action returns `undefined`, the original state is returned unchanged.
  * </details>
- * 
+ *
  * @param {string} triggerName - Identifies which registered trigger to activate (e.g., "player:jump" or "ui:showMenu")
  *    Must match exactly with a name in the trigger registry.
- * 
+ *
  * @param {S} currentState - The current application state that will be passed to the trigger's action
  *    This state object will be the foundation for any modifications made by the trigger.
- * 
+ *
  * @param {...P} payload - Additional arguments to pass to the trigger's action function
  *    Can include any data needed for the trigger to perform its state transition correctly.
- * 
+ *
  * ### 🎮 Usage
- * 
+ *
  * @example
  * ### Example 1: Basic Trigger Activation
  * ```typescript
  * // First, we need to register a trigger that defines a state transition
  * import { registerTrigger, activateTrigger } from "@in/teract/trigger";
- * 
+ *
  * // Let's create a simple trigger that increments a counter in our state
  * registerTrigger({
  *   name: "counter:increment",
@@ -780,19 +799,19 @@ export function createTrigger<S = any, P extends any[] = any[]>(
  *     return { ...state, counter: (state.counter || 0) + amount };
  *   }
  * });
- * 
+ *
  * // Now we can activate this trigger with our current state
  * const initialState = { counter: 5 };
- * 
+ *
  * // Activate the trigger to increment by the default amount (1)
  * const newState = activateTrigger("counter:increment", initialState);
  * console.log(newState); // Output: { counter: 6 }
- * 
+ *
  * // We can also pass custom arguments to the trigger action
  * const newStateWithCustomIncrement = activateTrigger("counter:increment", initialState, 3);
  * console.log(newStateWithCustomIncrement); // Output: { counter: 8 }
  * ```
- * 
+ *
  * @example
  * ### Example 2: Handling Complex State Transitions
  * ```typescript
@@ -805,14 +824,14 @@ export function createTrigger<S = any, P extends any[] = any[]>(
  *       console.warn("Attempted to add invalid item to cart");
  *       return state; // Return unchanged state for invalid items
  *     }
- *     
+ *
  *     // Create a new items array with the new item added
  *     const existingItems = state.cart?.items || [];
  *     const newItems = [...existingItems, item];
- *     
+ *
  *     // Calculate the new total price
  *     const totalPrice = newItems.reduce((sum, item) => sum + (item.price || 0), 0);
- *     
+ *
  *     // Return the new state with updated cart
  *     return {
  *       ...state,
@@ -825,28 +844,28 @@ export function createTrigger<S = any, P extends any[] = any[]>(
  *     };
  *   }
  * });
- * 
+ *
  * // Initial state with an empty cart
  * const appState = {
  *   user: { id: "user123", name: "Alice" },
  *   cart: { items: [], totalPrice: 0, itemCount: 0 }
  * };
- * 
+ *
  * // Add a product to the cart
- * const newState = activateTrigger("cart:addItem", appState, { 
- *   id: "prod-101", 
- *   name: "Wireless Headphones", 
- *   price: 59.99 
+ * const newState = activateTrigger("cart:addItem", appState, {
+ *   id: "prod-101",
+ *   name: "Wireless Headphones",
+ *   price: 59.99
  * });
- * 
+ *
  * console.log(newState.cart);
- * // Output: { 
- * //   items: [{ id: "prod-101", name: "Wireless Headphones", price: 59.99 }], 
- * //   totalPrice: 59.99, 
- * //   itemCount: 1 
+ * // Output: {
+ * //   items: [{ id: "prod-101", name: "Wireless Headphones", price: 59.99 }],
+ * //   totalPrice: 59.99,
+ * //   itemCount: 1
  * // }
  * ```
- * 
+ *
  * @example
  * ### Example 3: Error Handling When Trigger Doesn't Exist
  * ```typescript
@@ -859,45 +878,45 @@ export function createTrigger<S = any, P extends any[] = any[]>(
  *   // Output: Expected error: Trigger named "nonexistent:trigger" not found in registry.
  * }
  * ```
- * 
+ *
  * ### ⚡ Performance Tips
  * <details>
  * <summary>Click to learn about performance</summary>
- * 
+ *
  * - Keep your trigger actions lightweight and focused on state transitions
  * - For expensive operations, consider using async actions with promises
  * - When handling large state objects, use immutable update patterns for better performance
  * </details>
- * 
+ *
  * ### ❌ Common Mistakes
  * <details>
  * <summary>Click to see what to avoid</summary>
- * 
+ *
  * - Activating triggers that haven't been registered yet
  * - Modifying the state object directly inside trigger actions instead of returning a new one
  * - Forgetting to handle potential errors when the trigger isn't found
  * </details>
- * 
+ *
  * @throws {Error}
  * Throws an error if the specified trigger name is not found in the registry.
  * This often happens when you try to activate a trigger before registering it.
- * 
+ *
  * @returns {S}
  * The new state after the trigger's action has been applied. If the action returns
  * undefined (no changes), the original state is returned instead.
- * 
+ *
  * ### 📝 Uncommon Knowledge
  * `When designing state transitions, think of your state as a directed graph where triggers
  * are the edges connecting different state nodes. This mental model helps build more predictable
  * and testable application behavior.`
- * 
+ *
  * ### 🔧 Runtime Support
  * - ✅ Node.js
  * - ✅ Deno
  * - ✅ Bun
- * 
+ *
  * ### 🔗 Related Resources
- * 
+ *
  * #### Internal References
  * - {@link createTrigger} - Function for creating trigger definitions
  * - {@link registerTrigger} - Function for registering triggers with the system
@@ -960,17 +979,19 @@ export function activateTrigger<S = any, P extends any[] = any[]>(
 
     // Return the new state if the action provided one, otherwise return the original state
     return newState === undefined ? currentState : newState;
-
   } catch (error) {
     // Use TriggerErrorClass and logger once refactored
-    console.error(`Error executing action for trigger "${triggerName}":`, error);
+    console.error(
+      `Error executing action for trigger "${triggerName}":`,
+      error
+    );
     // Re-throw or handle error based on strategy
-    throw new Error(`Execution failed for trigger "${triggerName}"`); 
+    throw new Error(`Execution failed for trigger "${triggerName}"`);
     // Potentially wrap original error: throw new TriggerErrorClass(..., error);
   }
 }
 
-// --- Existing Action Class (potentially deprecated or refactored later) --- 
+// --- Existing Action Class (potentially deprecated or refactored later) ---
 
 /**
  * Represents a configured trigger action instance.
@@ -987,19 +1008,24 @@ export class TriggerActionClass {
   private debouncedAction?: (...args: any[]) => any;
 
   constructor(config: TriggerConfigType) {
-    this.config = { ...config }; 
-    this.instanceId = config.id || `trigger_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    this.config = { ...config };
+    this.instanceId =
+      config.id ||
+      `trigger_${Date.now()}_${Math.random().toString(16).slice(2)}`;
     this.triggerDefinition = getTriggerMetadata(config.type); // Get metadata
 
     if (!this.triggerDefinition) {
-        // @ts-ignore __DEV__ expected
-        if (__DEV__) console.warn(`No metadata found for trigger type "${config.type}" used by instance ${this.instanceId}.`);
+      // @ts-ignore __DEV__ expected
+      if (__DEV__)
+        console.warn(
+          `No metadata found for trigger type "${config.type}" used by instance ${this.instanceId}.`
+        );
     }
 
     // Validate config against definition parameters (if definition exists)
     // this.validateConfigParameters();
 
-    this.actionHandler = this.config.action; 
+    this.actionHandler = this.config.action;
     this.conditionHandler = this.config.condition;
 
     // Apply throttling/debouncing if configured
@@ -1007,84 +1033,89 @@ export class TriggerActionClass {
 
     // Optional: Register instance with a lifecycle manager?
   }
-  
+
   public fire(...payload: any[]): void {
-     if (!this.isEnabled) return;
+    if (!this.isEnabled) return;
 
-     // Check condition if it exists
-     if (this.conditionHandler) {
-        // Need a way to get the relevant state here!
-        // This highlights the coupling needed with createState
-        // const currentState = getStateForTriggerInstance(this.instanceId); 
-        // if (!this.conditionHandler(currentState)) return;
-        console.warn("Trigger condition checking requires state access - not implemented in standalone action.");
-     }
+    // Check condition if it exists
+    if (this.conditionHandler) {
+      // Need a way to get the relevant state here!
+      // This highlights the coupling needed with createState
+      // const currentState = getStateForTriggerInstance(this.instanceId);
+      // if (!this.conditionHandler(currentState)) return;
+      console.warn(
+        "Trigger condition checking requires state access - not implemented in standalone action."
+      );
+    }
 
-     // Use throttled/debounced handler if available, otherwise direct handler
-     const handler = this.throttledAction || this.debouncedAction || this.actionHandler;
-     
-     try {
-         // This action signature is different from RegisteredTriggerType!
-         handler(...payload);
-     } catch (error) {
-        console.error(`Error firing action for trigger instance ${this.instanceId} (type: ${this.config.type}):`, error);
-        // Handle error based on strategy
-     }
-     
-     if (this.config.once) {
-         this.disable();
-         // Optional: Schedule for destruction?
-     }
-  }
-  
-  public disable(): void {
-     this.isEnabled = false;
-     // Optional: Update lifecycle manager
-  }
-  
-  public enable(): void {
-     this.isEnabled = true;
-     // Optional: Update lifecycle manager
-  }
-  
-  public update(newConfig: Partial<TriggerConfigType>): void {
-      // Merge new config, re-validate, update throttling/debouncing
-      this.config = { ...this.config, ...newConfig };
-      // Re-validate, re-setup throttling etc.
-      // this.validateConfigParameters();
-      // this.setupThrottlingDebouncing();
-      console.warn("TriggerAction update logic needs careful implementation.");
-  }
-  
-  public destroy(): void {
+    // Use throttled/debounced handler if available, otherwise direct handler
+    const handler =
+      this.throttledAction || this.debouncedAction || this.actionHandler;
+
+    try {
+      // This action signature is different from RegisteredTriggerType!
+      handler(...payload);
+    } catch (error) {
+      console.error(
+        `Error firing action for trigger instance ${this.instanceId} (type: ${this.config.type}):`,
+        error
+      );
+      // Handle error based on strategy
+    }
+
+    if (this.config.once) {
       this.disable();
-      // Remove listeners, cleanup resources
-      // Optional: Unregister from lifecycle manager
-      console.log(`Trigger instance ${this.instanceId} destroyed.`);
+      // Optional: Schedule for destruction?
+    }
   }
-  
-  // --- Private helper methods --- 
-  
+
+  public disable(): void {
+    this.isEnabled = false;
+    // Optional: Update lifecycle manager
+  }
+
+  public enable(): void {
+    this.isEnabled = true;
+    // Optional: Update lifecycle manager
+  }
+
+  public update(newConfig: Partial<TriggerConfigType>): void {
+    // Merge new config, re-validate, update throttling/debouncing
+    this.config = { ...this.config, ...newConfig };
+    // Re-validate, re-setup throttling etc.
+    // this.validateConfigParameters();
+    // this.setupThrottlingDebouncing();
+    console.warn("TriggerAction update logic needs careful implementation.");
+  }
+
+  public destroy(): void {
+    this.disable();
+    // Remove listeners, cleanup resources
+    // Optional: Unregister from lifecycle manager
+    console.log(`Trigger instance ${this.instanceId} destroyed.`);
+  }
+
+  // --- Private helper methods ---
+
   private validateConfigParameters(): void {
-      if (!this.triggerDefinition?.parameters) return;
-      // Implementation to validate this.config against triggerDefinition.parameters
-      // Throw TriggerErrorClass on validation failure
+    if (!this.triggerDefinition?.parameters) return;
+    // Implementation to validate this.config against triggerDefinition.parameters
+    // Throw TriggerErrorClass on validation failure
   }
 
   private setupThrottlingDebouncing(): void {
-      // Clear existing wrappers
-      this.throttledAction = undefined;
-      this.debouncedAction = undefined;
+    // Clear existing wrappers
+    this.throttledAction = undefined;
+    this.debouncedAction = undefined;
 
-      if (this.config.throttle && this.config.throttle > 0) {
-          // Apply throttle (requires a throttle utility function)
-          // this.throttledAction = throttleUtility(this.actionHandler, this.config.throttle);
-      } else if (this.config.debounce && this.config.debounce > 0) {
-          // Apply debounce (requires a debounce utility function)
-          // this.debouncedAction = debounceUtility(this.actionHandler, this.config.debounce);
-      }
+    if (this.config.throttle && this.config.throttle > 0) {
+      // Apply throttle (requires a throttle utility function)
+      // this.throttledAction = throttleUtility(this.actionHandler, this.config.throttle);
+    } else if (this.config.debounce && this.config.debounce > 0) {
+      // Apply debounce (requires a debounce utility function)
+      // this.debouncedAction = debounceUtility(this.actionHandler, this.config.debounce);
+    }
   }
-  
 }
 
 // Example (Conceptual - This class might be deprecated)

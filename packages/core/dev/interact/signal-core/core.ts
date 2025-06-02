@@ -42,16 +42,7 @@
  * > [!NOTE]
  * > Avoid direct mutation of computation states outside the core system
  * </details>
- */
-
-declare global {
-  var __DEV__: boolean | undefined;
-}
-
-/**
- * Nodes for constructing a graph of reactive values and reactive computations.
  *
- * - The graph is acyclic.
  * - The user inputs new values into the graph by calling .write() on one more computation nodes.
  * - The user retrieves computed results from the graph by calling .read() on one or more computation nodes.
  * - The library is responsible for running any necessary computations so that .read() is up to date
@@ -77,8 +68,11 @@ declare global {
  *     executed in root to leaf order)
  */
 
+declare global {
+  var __DEV__: boolean | undefined;
+}
+
 import {
-  EFFECT_PURE,
   EFFECT_RENDER,
   EFFECT_USER,
   STATE_CHECK,

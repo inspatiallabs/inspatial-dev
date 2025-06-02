@@ -494,8 +494,12 @@ export function stateQL<T extends object>(
       return templateUpdate(arg1 as TemplateStringsArray, ...rest);
     }
 
-    // Otherwise, use the original update method
-    return originalUpdate.call(this, arg1, ...rest);
+    // Otherwise, use the original update method - handle both function and object forms
+    if (typeof arg1 === "function") {
+      return originalUpdate.call(this, arg1);
+    } else {
+      return originalUpdate.call(this, arg1);
+    }
   };
 
   return stateQLInstance;
@@ -520,10 +524,11 @@ export function stateQL<T extends object>(
  * playerState.update`health -= ${damageAmount}`;
  * ```
  */
-export function createStateQL<T extends object>(
+export async function createStateQL<T extends object>(
   config: import("./types.ts").StateConfigType<T>,
   options?: import("./types.ts").StateOptionsType
-): StateQLInstanceType<T> {
+): Promise<StateQLInstanceType<T>> {
   // Use the regular createState function and enhance with StateQL
-  return stateQL(require("./state.ts").createState(config, options));
+  const { createState } = await import("./state.ts");
+  return stateQL(createState(config, options));
 }

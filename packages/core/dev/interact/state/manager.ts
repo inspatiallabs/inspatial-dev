@@ -227,4 +227,4 @@ export class StateManagerClass {
 }
 
 // Export singleton instance
-export const StateManager = StateManagerClass.getInstance();
+export const StateManager: StateManagerClass = StateManagerClass.getInstance();

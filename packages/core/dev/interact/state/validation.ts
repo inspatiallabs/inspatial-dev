@@ -31,7 +31,9 @@ export function isTypeError(value: any): value is TypeErrors {
  * @param typeDefinition The InSpatial Type definition to use for validation
  * @returns A validation function that returns true if valid, or TypeErrors if invalid
  */
-export function createTypeValidator(typeDefinition: any) {
+export function createTypeValidator(
+  typeDefinition: any
+): (value: any) => true | TypeErrors {
   return (value: any) => {
     // Use memoization for better performance
     const result = memoizeTypeValidation(typeDefinition, value);
@@ -66,7 +68,7 @@ export function registerStateSchema(
  * @param options Additional options for JSON Schema generation
  * @returns A JSON Schema object
  */
-export function getStateJsonSchema(stateType: any, options?: any) {
+export function getStateJsonSchema(stateType: any, options?: any): any {
   return toJsonSchema(stateType, options);
 }
 
@@ -77,14 +79,14 @@ export function getStateJsonSchema(stateType: any, options?: any) {
  * @param state The state object to validate
  * @returns The validated state object or TypeErrors if invalid
  */
-export function validateState(stateType: any, state: any) {
+export function validateState(stateType: any, state: any): any {
   return stateType(state);
 }
 
 /**
  * Create a standard set of type validators for common state patterns
  */
-export const StateTypes = {
+export const StateTypes: Record<string, any> = {
   /**
    * Create a type for a counter state
    */

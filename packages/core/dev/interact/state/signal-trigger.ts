@@ -24,14 +24,6 @@ import type {
   RegisteredTriggerType,
 } from "../trigger/src/types.ts";
 
-// Enhance TriggerInstanceType if we need to add properties
-// This is a safe way to extend existing types
-declare module "../trigger/src/types.ts" {
-  interface TriggerInstanceType {
-    getLatestPayload?: () => any;
-  }
-}
-
 // Add support for spy functions with mock.calls structure for tests
 interface SpyFunction extends Function {
   mock?: {

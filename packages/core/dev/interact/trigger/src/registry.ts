@@ -14,7 +14,11 @@ import {
   RegisteredTriggerType,
 } from "./types.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { TriggerValidatorClass, errorLogger, TriggerErrorClass } from "./errors.ts";
+import {
+  TriggerValidatorClass,
+  errorLogger,
+  TriggerErrorClass,
+} from "./errors.ts";
 import "./env.ts"; // Ensure global __DEV__ constant is initialized
 
 /**
@@ -24,13 +28,10 @@ export class TriggerRegistryClass {
   private static instance: TriggerRegistryClass;
   private triggerRegistry: Record<string, TriggerDefinitionMetadataType> = {};
   private triggersByCategory: Record<TriggerCategoryEnum, string[]> =
-    Object.values(TriggerCategoryEnum).reduce(
-      (acc, category) => {
-        acc[category as TriggerCategoryEnum] = [];
-        return acc;
-      },
-      {} as Record<TriggerCategoryEnum, string[]>
-    );
+    Object.values(TriggerCategoryEnum).reduce((acc, category) => {
+      acc[category as TriggerCategoryEnum] = [];
+      return acc;
+    }, {} as Record<TriggerCategoryEnum, string[]>);
 
   private constructor() {
     this.initializeBuiltInTriggers();
@@ -96,7 +97,9 @@ export class TriggerRegistryClass {
     category: TriggerCategoryEnum
   ): TriggerDefinitionMetadataType[] {
     const triggerIds = this.triggersByCategory[category] || [];
-    return triggerIds.map((id) => this.triggerRegistry[id]).filter(Boolean) as TriggerDefinitionMetadataType[];
+    return triggerIds
+      .map((id) => this.triggerRegistry[id])
+      .filter(Boolean) as TriggerDefinitionMetadataType[];
   }
 
   /**
@@ -158,7 +161,9 @@ export class TriggerRegistryClass {
     this.registerTimeTriggers();
 
     errorLogger.info(
-      `Initialized ${Object.keys(this.triggerRegistry).length} built-in triggers`
+      `Initialized ${
+        Object.keys(this.triggerRegistry).length
+      } built-in triggers`
     );
   }
 
@@ -485,12 +490,13 @@ export class TriggerRegistryClass {
 }
 
 // Export singleton instance
-export const triggerRegistry = TriggerRegistryClass.getInstance();
+export const triggerRegistry: TriggerRegistryClass =
+  TriggerRegistryClass.getInstance();
 
 // Simple in-memory store for registered triggers
 const triggerRegistryStore = new Map<string, RegisteredTriggerType<any, any>>();
 // Optional: Store for metadata (if needed for validation or discovery)
-const triggerMetadataStore = new Map<string, TriggerDefinitionMetadataType>(); 
+const triggerMetadataStore = new Map<string, TriggerDefinitionMetadataType>();
 
 /**
  * Registers a trigger definition with the central registry.
@@ -510,13 +516,15 @@ export function registerTrigger<S = any, P extends any[] = any[]>(
       // ErrorCodeEnum.TRIGGER_ALREADY_REGISTERED (use enum later)
     );
   }
-  
+
   // Basic validation
-  if (!trigger || typeof trigger.name !== 'string' || !trigger.name) {
-     throw new Error('Invalid trigger definition: name is required.');
+  if (!trigger || typeof trigger.name !== "string" || !trigger.name) {
+    throw new Error("Invalid trigger definition: name is required.");
   }
-  if (typeof trigger.action !== 'function') {
-     throw new Error(`Invalid trigger definition for "${trigger.name}": action must be a function.`);
+  if (typeof trigger.action !== "function") {
+    throw new Error(
+      `Invalid trigger definition for "${trigger.name}": action must be a function.`
+    );
   }
 
   triggerRegistryStore.set(trigger.name, trigger);
@@ -529,18 +537,24 @@ export function registerTrigger<S = any, P extends any[] = any[]>(
   globalStore[trigger.name] = trigger.action;
 
   if (metadata) {
-     if (metadata.name !== trigger.name) {
-       console.warn(`Metadata name "${metadata.name}" does not match trigger name "${trigger.name}". Storing metadata under trigger name.`);
-       metadata = { ...metadata, name: trigger.name };
-     }
-     if (triggerMetadataStore.has(trigger.name)) {
-        console.warn(`Metadata for trigger "${trigger.name}" already exists and will be overwritten.`);
-     }
-     triggerMetadataStore.set(trigger.name, metadata);
-     // Also push into central TriggerRegistry so helper methods work
-     try {
-       triggerRegistry.registerTriggerType(metadata);
-     } catch { /* ignore duplicates */ }
+    if (metadata.name !== trigger.name) {
+      console.warn(
+        `Metadata name "${metadata.name}" does not match trigger name "${trigger.name}". Storing metadata under trigger name.`
+      );
+      metadata = { ...metadata, name: trigger.name };
+    }
+    if (triggerMetadataStore.has(trigger.name)) {
+      console.warn(
+        `Metadata for trigger "${trigger.name}" already exists and will be overwritten.`
+      );
+    }
+    triggerMetadataStore.set(trigger.name, metadata);
+    // Also push into central TriggerRegistry so helper methods work
+    try {
+      triggerRegistry.registerTriggerType(metadata);
+    } catch {
+      /* ignore duplicates */
+    }
   }
 
   if (__DEV__) {
@@ -554,7 +568,9 @@ export function registerTrigger<S = any, P extends any[] = any[]>(
  * @param name The unique name of the trigger.
  * @returns The registered trigger definition, or undefined if not found.
  */
-export function getRegisteredTrigger(name: string): RegisteredTriggerType<any, any> | undefined {
+export function getRegisteredTrigger(
+  name: string
+): RegisteredTriggerType<any, any> | undefined {
   return triggerRegistryStore.get(name);
 }
 
@@ -564,7 +580,9 @@ export function getRegisteredTrigger(name: string): RegisteredTriggerType<any, a
  * @param name The unique name of the trigger.
  * @returns The trigger metadata, or undefined if not found or not provided during registration.
  */
-export function getTriggerMetadata(name: string): TriggerDefinitionMetadataType | undefined {
+export function getTriggerMetadata(
+  name: string
+): TriggerDefinitionMetadataType | undefined {
   return triggerMetadataStore.get(name);
 }
 
@@ -575,7 +593,9 @@ export function getTriggerMetadata(name: string): TriggerDefinitionMetadataType 
  * @returns True if the trigger is registered, false otherwise.
  */
 export function hasTrigger(name: string): boolean {
-  return triggerRegistryStore.has(name) || !!triggerRegistry.getTriggerType(name);
+  return (
+    triggerRegistryStore.has(name) || !!triggerRegistry.getTriggerType(name)
+  );
 }
 
 /**

@@ -467,13 +467,14 @@ export function optimizeUpdateTrigger<T extends Record<string, any>>(
   Object.entries(updates).forEach(([key, value]) => {
     if (key === "action" && typeof value === "function") {
       // Special handling for action functions
-      triggerInstance[key] = value;
+      (triggerInstance as any)[key] = value;
     } else if (key === "throttle") {
       // Update throttle without recreating
-      if (triggerInstance["_throttleData"]) {
-        triggerInstance["_throttleData"].throttleTime = value as number;
+      if ((triggerInstance as any)["_throttleData"]) {
+        (triggerInstance as any)["_throttleData"].throttleTime =
+          value as number;
       } else {
-        triggerInstance["_throttleData"] = {
+        (triggerInstance as any)["_throttleData"] = {
           lastFired: 0,
           throttleTime: value as number,
         };
@@ -482,18 +483,19 @@ export function optimizeUpdateTrigger<T extends Record<string, any>>(
       // Update debounce without recreating
       if (value === null || value === undefined) {
         // Remove debounce
-        delete triggerInstance["_debounceData"];
-      } else if (triggerInstance["_debounceData"]) {
-        triggerInstance["_debounceData"].debounceTime = value as number;
+        delete (triggerInstance as any)["_debounceData"];
+      } else if ((triggerInstance as any)["_debounceData"]) {
+        (triggerInstance as any)["_debounceData"].debounceTime =
+          value as number;
       } else {
-        triggerInstance["_debounceData"] = {
+        (triggerInstance as any)["_debounceData"] = {
           timerId: null,
           debounceTime: value as number,
         };
       }
     } else {
       // Apply other updates directly
-      triggerInstance[key] = value;
+      (triggerInstance as any)[key] = value;
     }
   });
 
@@ -536,4 +538,4 @@ export function createGlobalProfiler(): SignalTriggerProfiler {
 }
 
 // Initialize the global profiler
-export const globalProfiler = createGlobalProfiler();
+export const globalProfiler: SignalTriggerProfiler = createGlobalProfiler();

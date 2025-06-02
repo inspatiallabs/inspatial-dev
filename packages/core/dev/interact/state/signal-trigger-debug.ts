@@ -536,7 +536,7 @@ export function createGlobalDebugger(): SignalTriggerDebugger {
 }
 
 // Initialize the global debugger
-export const globalDebugger = createGlobalDebugger();
+export const globalDebugger: SignalTriggerDebugger = createGlobalDebugger();
 
 /**
  * # SignalTriggerInspector
@@ -805,4 +805,5 @@ export class SignalTriggerInspector {
 }
 
 // Create a named export
-export const createInspector = () => new SignalTriggerInspector();
+export const createInspector = (): SignalTriggerInspector =>
+  new SignalTriggerInspector();

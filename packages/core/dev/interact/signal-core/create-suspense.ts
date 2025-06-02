@@ -1,5 +1,11 @@
 import { STATE_DIRTY } from "./constants.ts";
-import { ComputationClass, createBoundary, flatten, EagerComputationClass, type EffectClass } from "./core.ts";
+import {
+  ComputationClass,
+  createBoundary,
+  flatten,
+  EagerComputationClass,
+  type EffectClass,
+} from "./core.ts";
 import { LOADING_BIT } from "./flags.ts";
 import { QueueClass } from "./scheduler.ts";
 
@@ -20,7 +26,7 @@ import { QueueClass } from "./scheduler.ts";
 export class SuspenseQueueClass extends QueueClass {
   _nodes: Set<EffectClass> = new Set();
   _fallback = false;
-  _signal = new ComputationClass(false, null);
+  _signal: ComputationClass<boolean> = new ComputationClass(false, null);
   override run(type: number): boolean {
     if (type && this._fallback) return false;
     return super.run(type);
@@ -263,7 +269,7 @@ class LiveComputationClass<T> extends EagerComputationClass<T> {
  * - {@link createErrorBoundary} - For handling actual errors, often used in conjunction with `createSuspense`.
  * - {@link ComputationClass} - The underlying reactive primitive used by `createSuspense`.
  */
-export function createSuspense(fn: () => any, fallback: () => any) {
+export function createSuspense(fn: () => any, fallback: () => any): () => any {
   const queue = new SuspenseQueueClass();
   const tree = createBoundary(() => {
     const child = new ComputationClass(null, fn);

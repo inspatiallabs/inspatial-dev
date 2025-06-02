@@ -1710,7 +1710,11 @@ function setupOnDisposeTest(): {
 function createShoppingCart(
   items: Signal<Array<{ name: string; price: number; quantity: number }>>,
   tax: Signal<number>
-) {
+): {
+  itemCount: Signal<number>;
+  subtotal: Signal<number>;
+  total: Signal<number>;
+} {
   // Count total items
   const itemCount = computed(() =>
     items.value.reduce((sum, item) => sum + item.quantity, 0)

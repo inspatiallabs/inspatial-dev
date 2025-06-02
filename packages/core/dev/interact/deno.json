@@ -34,6 +34,7 @@
     "event bridge"
   ],
   "tasks": {
+    "publish": "deno publish --no-check ",
     "test:trigger": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/trigger/",
     "test:trigger:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/trigger ./tests/trigger/",
 
@@ -42,7 +43,7 @@
 
     "test:signal-trigger": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal-trigger/",
     "test:signal-trigger:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-trigger ./tests/signal-trigger/",
-    
+
     "test:signal-core": "deno test --no-check --allow-env --allow-read --allow-write --allow-net ./tests/signal-core/",
     "test:signal-core:coverage": "deno test --no-check --allow-env --allow-read --allow-write --allow-net --coverage=./coverage/signal-core ./tests/signal-core/",
 
@@ -61,7 +62,6 @@
     "./state": "./state/index.ts",
     "./signal-core": "./signal-core/index.ts",
     "./signal-lite": "./signal-lite/signal-lite.ts",
-    "./signal-trigger": "./signal-trigger/index.ts",
     "./trigger": "./trigger/src/index.ts"
   },
   "compilerOptions": {

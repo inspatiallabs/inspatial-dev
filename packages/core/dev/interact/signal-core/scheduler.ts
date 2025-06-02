@@ -88,7 +88,7 @@ let clock = 0;
  * @kind function
  * @access package
  */
-export function getClock() {
+export function getClock(): number {
   return clock;
 }
 
