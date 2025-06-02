@@ -31,46 +31,30 @@
  *
  * ### ⚠️ Important Notes
  * <details>
- * <summary>Click to learn about edge cases</summary>
- *
+ * <summary>Click to learn about edge cases and core concepts</summary>
+ * 
  * > [!NOTE]
  * > The reactive graph is acyclic - circular dependencies will cause infinite loops
- *
+ * 
  * > [!NOTE]
  * > Always clean up computations to prevent memory leaks
- *
+ * 
  * > [!NOTE]
  * > Avoid direct mutation of computation states outside the core system
+ * 
+ * > [!NOTE]
+ * > **How the Reactive System Works**: Users input values by calling `.write()` on computation nodes and retrieve results by calling `.read()` on nodes. The library ensures `.read()` is up-to-date with all prior `.write()` calls.
+ * 
+ * > [!NOTE]
+ * > **Change Propagation**: Changes flow from roots (input nodes) to leaves (output nodes). Instead of immediately propagating all changes, the system defers most propagation until a leaf is accessed, allowing computation coalescing and skipping unused graph sections.
+ * 
+ * > [!NOTE]
+ * > **Three-Phase Update Process**: 1) `write()` marks direct children as dirty and descendants as check (no computations run), 2) `read()` requests parent `updateIfNecessary()` recursively to determine clean vs dirty state, 3) `updateIfNecessary()` evaluates dirty computations in root-to-leaf order.
+ * 
+ * > [!NOTE]
+ * > **Dependency Tracking**: Each node automatically tracks its sources and observers. Source/observer links update automatically as computations re-evaluate and access their dependencies.
  * </details>
- *
- * - The user inputs new values into the graph by calling .write() on one more computation nodes.
- * - The user retrieves computed results from the graph by calling .read() on one or more computation nodes.
- * - The library is responsible for running any necessary computations so that .read() is up to date
- *   with all prior .write() calls anywhere in the graph.
- * - We call the input nodes 'roots' and the output nodes 'leaves' of the graph here.
- * - Changes flow from roots to leaves. It would be effective but inefficient to immediately
- *   propagate all changes from a root through the graph to descendant leaves. Instead, we defer
- *   change most change propagation computation until a leaf is accessed. This allows us to
- *   coalesce computations and skip altogether recalculating unused sections of the graph.
- * - Each computation node tracks its sources and its observers (observers are other
- *   elements that have this node as a source). Source and observer links are updated automatically
- *   as observer computations re-evaluate and call get() on their sources.
- * - Each node stores a cache state (clean/check/dirty) to support the change propagation algorithm:
- *
- * In general, execution proceeds in three passes:
- *
- *  1. write() propagates changes down the graph to the leaves
- *     direct children are marked as dirty and their deeper descendants marked as check
- *     (no computations are evaluated)
- *  2. read() requests that parent nodes updateIfNecessary(), which proceeds recursively up the tree
- *     to decide whether the node is clean (parents unchanged) or dirty (parents changed)
- *  3. updateIfNecessary() evaluates the computation if the node is dirty (the computations are
- *     executed in root to leaf order)
  */
-
-declare global {
-  var __DEV__: boolean | undefined;
-}
 
 import {
   EFFECT_RENDER,
@@ -90,8 +74,10 @@ import {
 } from "./flags.ts";
 import { getOwner, OwnerClass, setOwner } from "./owner.ts";
 import { getClock, globalQueue, type IQueueType } from "./scheduler.ts";
-import { onCleanup } from "./on-cleanup.ts";
-import { ErrorHandlerType } from "./types.ts";
+import type { ErrorHandlerType } from "./types.ts";
+
+type DevModeType = boolean | undefined;
+declare const __DEV__: DevModeType;
 
 export interface SignalOptionsType<T> {
   name?: string;
@@ -1319,7 +1305,7 @@ export function flatten<T>(
 export function createBoundary<T>(
   fn: () => T,
   queue: IQueueType,
-  owner = getOwner()
+  owner: OwnerClass | null = getOwner()
 ): ComputationClass<T> {
   const node = new ComputationClass<T>(undefined, fn);
   node._queue = queue;
@@ -1847,21 +1833,21 @@ export class EagerComputationClass<T> extends EffectClass {
     }
   }
 
-  override read() {
+  override read(): T {
     if (this._prevSource) {
       track(this._prevSource);
     }
     return this._value!;
   }
 
-  override wait() {
+  override wait(): T {
     if (this._prevSource) {
       this._prevSource.wait();
     }
     return this.read();
   }
 
-  override loading() {
+  override loading(): boolean {
     if (this._prevSource) {
       return this._prevSource.loading();
     }

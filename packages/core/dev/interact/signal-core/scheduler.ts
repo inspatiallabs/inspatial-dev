@@ -357,7 +357,7 @@ export class QueueClass implements IQueueType {
  * @kind const
  * @type {QueueClass}
  */
-export const globalQueue = new QueueClass();
+export const globalQueue: QueueClass = new QueueClass();
 
 /**
  * # flushSync
