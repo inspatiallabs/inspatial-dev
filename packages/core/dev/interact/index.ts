@@ -1,8 +1,6 @@
-import "./signal-core/globals.ts";
-
-// Set development mode
-if (typeof globalThis.__DEV__ === "undefined") {
-  globalThis.__DEV__ = true;
+// Set development mode first
+if (typeof (globalThis as any).__DEV__ === "undefined") {
+  (globalThis as any).__DEV__ = true;
 }
 
 // Export core state
