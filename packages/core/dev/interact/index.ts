@@ -1,19 +1,18 @@
-/**
- * Interact - (InSpatial State x Trigger)
- * 
- * A universal state management system for cross-platform applications
- */
+import "./signal-core/globals.ts";
 
 // Set development mode
-if (typeof globalThis.__DEV__ === 'undefined') {
+if (typeof globalThis.__DEV__ === "undefined") {
   globalThis.__DEV__ = true;
 }
 
-// Export core state management
-export * from './state/index.ts';
+// Export core state
+export * from "./state/index.ts";
 
-// Export signal management
-export * from './signal-core/index.ts';
+// Export signal core
+export * from "./signal-core/index.ts";
+
+// Export signal (lite)
+export * from "./signal-lite/index.ts";
 
 // Export trigger system
-export * from './trigger/src/index.ts'; 
+export * from "./trigger/src/index.ts";

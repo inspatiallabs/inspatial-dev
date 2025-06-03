@@ -57,7 +57,7 @@ _Reality is your canvas_
 
 Universal interactivity and state management system for cross-platform and spatial applications.
 
-InSpatial Interact combines **Signal Core** (fine-grained reactivity primitives) with **State** (high-level state management) to create a complete interactivity solution. Think of Signal Core as the reactive engine and State as the application-level state manager built on top of it.
+InSpatial Interact combines **Signal Core** (fine-grained reactive primitives) with **State** (high-level state management) to create a complete interactivity. Think of Signal Core as the reactive engine and State as the application-level state manager built on top of it.
 
 ### 👨‍💻 What Can I Do With InSpatial Interact?
 

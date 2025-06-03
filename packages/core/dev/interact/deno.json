@@ -61,7 +61,7 @@
     ".": "./index.ts",
     "./state": "./state/index.ts",
     "./signal-core": "./signal-core/index.ts",
-    "./signal-lite": "./signal-lite/signal-lite.ts",
+    "./signal-lite": "./signal-lite/index.ts",
     "./trigger": "./trigger/src/index.ts"
   },
   "compilerOptions": {
