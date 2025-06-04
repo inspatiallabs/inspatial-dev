@@ -3,7 +3,7 @@ import { setPrototypeOf } from "../shared/object.ts";
 // @ts-ignore - Ignoring TS extension import error
 import hyphenize from "@inspatial/util/hyphenize";
 // @ts-ignore - Ignoring TS extension import error
-import { Element } from "../interface/element.ts";
+import type { Element } from "../interface/element.ts";
 
 const refs = new WeakMap<DOMStringMap, Element>();
 

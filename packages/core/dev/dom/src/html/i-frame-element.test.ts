@@ -10,7 +10,7 @@ describe("IFrameElement", () => {
     const { firstElementChild: iframe } = document.documentElement;
 
     // THEN the src attribute should be set correctly
-    assert(iframe.src, "./test.html", "Issue #82 - <iframe>.src");
+    assert(iframe.src, "./test.html", "<iframe>.src");
   });
 
   it("should handle srcdoc attribute correctly", () => {

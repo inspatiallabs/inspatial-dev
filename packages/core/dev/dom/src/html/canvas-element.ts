@@ -16,11 +16,11 @@ class Canvas {
     this.height = height;
   }
 
-  getContext(type?: string): any {
+  getContext(_type?: string): any {
     return null;
   }
 
-  toDataURL(type?: string, quality?: number): string {
+  toDataURL(_type?: string, _quality?: number): string {
     return "";
   }
 
@@ -46,23 +46,23 @@ export class HTMLCanvasElement extends HTMLElement {
     this[IMAGE] = createCanvas(300, 150);
   }
 
-  get width(): number {
+  override get width(): number {
     // @ts-ignore - Symbol indexing
     return this[IMAGE].width;
   }
 
-  set width(value: number) {
+  override set width(value: number) {
     numericAttribute.set(this as any, "width", value);
     // @ts-ignore - Symbol indexing
     this[IMAGE].width = value;
   }
 
-  get height(): number {
+  override get height(): number {
     // @ts-ignore - Symbol indexing
     return this[IMAGE].height;
   }
 
-  set height(value: number) {
+  override set height(value: number) {
     numericAttribute.set(this as any, "height", value);
     // @ts-ignore - Symbol indexing
     this[IMAGE].height = value;

@@ -26,7 +26,7 @@ export class HTMLSelectElement extends HTMLElement {
   }
 
   get options(): NodeList {
-    let children = new NodeList();
+    const children = new NodeList();
     let {firstElementChild} = this;
     while (firstElementChild) {
       if ((firstElementChild as HTMLElement).tagName === 'OPTGROUP') {

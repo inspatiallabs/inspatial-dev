@@ -9,7 +9,7 @@ import { attributeChangedCallback as ceAttributes } from "../interface/custom-el
 // @ts-ignore - Ignoring TS extension import error
 import { attributeChangedCallback as moAttributes } from "../interface/mutation-observer.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { Node } from "../interface/node.ts";
+import type { Node } from "../interface/node.ts";
 
 /**
  * Base properties expected on DOM Attribute nodes

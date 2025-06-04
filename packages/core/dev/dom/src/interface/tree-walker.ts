@@ -16,7 +16,7 @@ import {
 import { PRIVATE, END, NEXT } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
-import { Node } from "./node.ts";
+import type { Node } from "./node.ts";
 
 interface NodeWithType {
   nodeType: number;

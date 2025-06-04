@@ -95,7 +95,7 @@ export class HTMLElement extends Element {
    */
   override get offsetParent(): Element | null {
     // Start with the parent element
-    let parent = this.parentElement;
+    const parent = this.parentElement;
 
     // In a real browser implementation, we would find the nearest positioned ancestor
     // Here we just return the immediate parent or null

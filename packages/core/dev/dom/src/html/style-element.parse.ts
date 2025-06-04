@@ -1,4 +1,4 @@
-import { ISSProps } from "@inspatial/theme/iss";
+import type { ISSProps } from "@inspatial/theme/iss";
 /**
  * CSS rule types
  */
@@ -41,11 +41,12 @@ export class CSSStyleDeclaration {
     | string
     | undefined
     | number
-    | Function
+    | ((name: string, value: string, priority: string) => void)
     | Map<string, { value: string; priority: string }>
     | CSSRule
     | null
-    | boolean;
+    | boolean
+    | ((...args: any[]) => any);
 
   /**
    * Create a new CSSStyleDeclaration instance with property access
@@ -342,7 +343,7 @@ function camelToKebabCase(str: string): string {
 /**
  * Convert kebab-case to camelCase (e.g., font-size -> fontSize)
  */
-function kebabToCamelCase(str: string): string {
+function _kebabToCamelCase(str: string): string {
   if (!str || typeof str !== "string") return "";
   return str.replace(/-([a-z])/g, (_, group) => group.toUpperCase());
 }

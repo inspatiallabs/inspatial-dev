@@ -2,7 +2,7 @@
 import {MUTATION_OBSERVER} from '../shared/symbols.ts';
 
 // @ts-ignore - Ignoring TS extension import error
-import {Node} from './node.ts';
+import type {Node} from './node.ts';
 
 /**
  * Interface for MutationRecord objects
@@ -256,7 +256,7 @@ export class MutationObserverClass {
         attributeFilter: null,
         attributeOldValue: false,
         characterData: false,
-        // TODO: not implemented yet
+        // TODO(@benemma): not implemented yet
         // characterDataOldValue: false
       }): void {
         if (('attributeOldValue' in options) || ('attributeFilter' in options))

@@ -5,7 +5,7 @@ import { Parser, type Handler, type ParserOptions } from "./parser.ts";
  */
 import { Writable } from "node:stream";
 import { StringDecoder } from "node:string_decoder";
-import { Buffer } from "node:buffer";
+import type { Buffer } from "node:buffer";
 
 // Following the example in https://nodejs.org/api/stream.html#stream_decoding_buffers_in_a_writable_stream
 function isBuffer(_chunk: string | Buffer, encoding: string): _chunk is Buffer {

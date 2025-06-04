@@ -70,7 +70,7 @@ function dispatch(event: CustomEvent, listener: EventListenerOrEventListenerObje
  * @param param0 - Object containing currentTarget and target
  * @returns Whether event bubbling should be canceled
  */
-function invokeListeners(this: CustomEvent, {currentTarget, target}: {currentTarget: DOMEventTarget, target: EventTarget}): boolean {
+function _invokeListeners(this: CustomEvent, {currentTarget, target}: {currentTarget: DOMEventTarget, target: EventTarget}): boolean {
   const map = wm.get(currentTarget);
   if (map && map.has(this.type)) {
     const listeners = map.get(this.type)!;

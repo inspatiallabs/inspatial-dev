@@ -113,7 +113,7 @@ export class DOMTokenList extends Set {
   /**
    * @param {string} token
    */
-  supports(token: string): boolean { return true; }
+  supports(_token: string): boolean { return true; }
 }
 
 // Extend the DOMTokenList interface to support symbol indexing

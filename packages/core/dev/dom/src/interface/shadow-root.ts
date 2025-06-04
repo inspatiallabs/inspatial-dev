@@ -1,11 +1,9 @@
 // @ts-ignore - Ignoring TS extension import error
-import { DOCUMENT_FRAGMENT_NODE } from "../shared/constants.ts";
-// @ts-ignore - Ignoring TS extension import error
 import { getInnerHtml, setInnerHtml } from "../mixin/inner-html.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { DocumentFragment } from "./document-fragment.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { Element } from "./element.ts";
+import type { Element } from "./element.ts";
 
 /**
  * Implements a specialized Shadow DOM root that extends DocumentFragment

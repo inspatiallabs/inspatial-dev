@@ -3,7 +3,7 @@ import {DOCUMENT_FRAGMENT_NODE} from '../shared/constants.ts';
 // @ts-ignore - Ignoring TS extension import error
 import {NonElementParentNode} from '../mixin/non-element-parent-node.ts';
 // @ts-ignore - Ignoring TS extension import error
-import {Document} from './document.ts';
+import type {Document} from './document.ts';
 // @ts-ignore - Ignoring TS extension import error
 import {NodeList} from './node-list.ts';
 // @ts-ignore - Ignoring TS extension import error

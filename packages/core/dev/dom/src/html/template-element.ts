@@ -7,7 +7,7 @@ import {registerHTMLClass} from '../shared/register-html-class.ts';
 // @ts-ignore - Ignoring TS extension import error
 import {HTMLElement} from './element.ts';
 // @ts-ignore - Ignoring TS extension import error
-import {DocumentFragment} from '../interface/document-fragment.ts';
+import type {DocumentFragment} from '../interface/document-fragment.ts';
 
 const tagName = 'template';
 

@@ -23,8 +23,8 @@ export interface HoudiniElement {
  * @returns Enhanced Element class with Houdini styling
  */
 export function enhanceElementWithHoudini(ElementClass: any): any {
-  // Store the original style getter
-  const originalStyleGetter = Object.getOwnPropertyDescriptor(
+  // Store the original style getter (for future potential use)
+  const _originalStyleGetter = Object.getOwnPropertyDescriptor(
     ElementClass.prototype,
     "style"
   )?.get;

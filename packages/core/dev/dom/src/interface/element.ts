@@ -7,7 +7,7 @@ import {
   CDATA_SECTION_NODE,
   COMMENT_NODE,
   ELEMENT_NODE,
-  NODE_END,
+  type NODE_END as _NODE_END,
   TEXT_NODE,
   SVG_NAMESPACE,
 } from "../shared/constants.ts";
@@ -30,16 +30,16 @@ import {
   END,
   NEXT,
   PREV,
-  START,
+  type START as _START,
   MIME,
 } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import {
   ignoreCase,
-  knownAdjacent,
-  localCase,
-  String,
+  type knownAdjacent as _knownAdjacent,
+  type localCase as _localCase,
+  type String as _String,
 } from "../shared/util/utils.ts";
 
 // @ts-ignore - Ignoring TS extension import error
@@ -75,15 +75,15 @@ import { DOMStringMap } from "../document/string-map.ts";
 import { DOMTokenList } from "../document/token-list.ts";
 
 // @ts-ignore - Ignoring TS extension import error
-import { CSSStyleDeclaration } from "./css-style-declaration.ts";
+import type { CSSStyleDeclaration } from "./css-style-declaration.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { Event } from "./event.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { NamedNodeMap } from "./named-node-map.ts";
+import type { NamedNodeMap } from "./named-node-map.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { ShadowRoot } from "./shadow-root.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { NodeList } from "./node-list.ts";
+import type { NodeList } from "./node-list.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { Attr } from "./attr.ts";
 // @ts-ignore - Ignoring TS extension import error
@@ -120,7 +120,7 @@ const attributesHandler = {
   },
 };
 
-const create = (ownerDocument: any, element: any, localName: string) => {
+const _create = (ownerDocument: any, element: any, localName: string) => {
   if ("ownerSVGElement" in element) {
     const svg = ownerDocument.createElementNS(SVG_NAMESPACE, localName);
     svg.ownerSVGElement = element.ownerSVGElement;
@@ -129,7 +129,7 @@ const create = (ownerDocument: any, element: any, localName: string) => {
   return ownerDocument.createElement(localName);
 };
 
-const isVoid = ({
+const _isVoid = ({
   localName,
   ownerDocument,
 }: {
@@ -303,7 +303,7 @@ export class Element extends ParentNode {
                       {CSSStyleDeclaration: require("../html/style-element.parse.ts").CSSStyleDeclaration};
         
         styleDecl = new module.CSSStyleDeclaration();
-      } catch (e) {
+      } catch (_e) {
         // Fallback to a simple object if module loading fails
         styleDecl = {
           _properties: new Map(),
@@ -639,7 +639,12 @@ export class Element extends ParentNode {
   }
   closest(selectors: string): Element | null {
     selectors = prepareMatch(selectors);
-    let target: Element | null = this;
+    let target: Element | null = this.parentElement;
+    
+    // Check if the current element matches first
+    if (matches(this, selectors)) {
+      return this;
+    }
     
     while (target) {
       if (matches(target, selectors)) {
@@ -738,7 +743,7 @@ export class Element extends ParentNode {
           html += ` ${attrName}="${escape(attrValue)}"`;
         }
       }
-    } catch (e) {
+    } catch (_e) {
       // Skip attributes if there's an error
     }
     
@@ -751,7 +756,7 @@ export class Element extends ParentNode {
       if (textContent) {
         html += escape(textContent);
       }
-    } catch (error) {
+    } catch (_error) {
       // Fallback - no content
     }
     
@@ -834,7 +839,7 @@ export class Element extends ParentNode {
   // </offset properties>
 
   // Event handling methods
-  addEventListener(type: string, listener: EventListener, options?: boolean | AddEventListenerOptions): void {
+  addEventListener(type: string, listener: EventListener, _options?: boolean | AddEventListenerOptions): void {
     // Basic implementation for testing
     if (!this._eventListeners) {
       this._eventListeners = new Map();
@@ -845,7 +850,7 @@ export class Element extends ParentNode {
     this._eventListeners.get(type)!.push(listener);
   }
 
-  removeEventListener(type: string, listener: EventListener, options?: boolean | EventListenerOptions): void {
+  removeEventListener(type: string, listener: EventListener, _options?: boolean | EventListenerOptions): void {
     if (!this._eventListeners || !this._eventListeners.has(type)) {
       return;
     }

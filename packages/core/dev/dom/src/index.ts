@@ -4,21 +4,11 @@ import { DOMParser } from "./document/parser.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { Document as DOMDocument } from "./interface/document.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { Element as DOMElement } from "./interface/element.ts";
-// @ts-ignore - Ignoring TS extension import error
 import { Node as DOMNode } from "./interface/node.ts";
-// @ts-ignore - Ignoring TS extension import error
-import { NodeList as DOMNodeList } from "./interface/node-list.ts";
-// @ts-ignore - Ignoring TS extension import error
-import { DocumentFragment as DOMDocumentFragment } from "./interface/document-fragment.ts";
-// @ts-ignore - Ignoring TS extension import error
-import { Event as DOMEvent, CustomEvent as DOMCustomEvent } from "./cached.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { Element } from "./interface/element.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { applyHoudiniToElement } from "./interface/element-css-houdini.ts";
-// @ts-ignore - Ignoring TS extension import error
-import { EventTarget as DOMEventTarget } from "./interface/event-target.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { illegalConstructor } from "./shared/facades.ts";
 // @ts-ignore - Ignoring TS extension import error

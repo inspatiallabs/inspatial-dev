@@ -1,8 +1,6 @@
 // @ts-ignore - Ignoring TS extension import error
 import { DocumentType } from "./document-type.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { Document } from "./document.ts";
-// @ts-ignore - Ignoring TS extension import error
 import { HTMLDocument } from "../html/document.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { XMLDocument } from "../xml/document.ts";

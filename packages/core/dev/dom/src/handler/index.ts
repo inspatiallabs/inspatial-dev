@@ -1,14 +1,14 @@
 import { ElementType } from "./element-type.ts";
 import {
-    ChildNode,
+    type ChildNode,
     Element,
-    DataNode,
+    type DataNode,
     Text,
     Comment,
     CDATA,
     Document,
     ProcessingInstruction,
-    ParentNode,
+    type ParentNode,
 } from "./node.ts";
 
 export * from "./node.ts";

@@ -10,7 +10,7 @@ import {SVGElement} from '../svg/element.ts';
 import {getEnd, setAdjacent} from '../shared/util/utils.ts';
 
 // @ts-ignore - Ignoring TS extension import error
-import {Node} from './node.ts';
+import type {Node} from './node.ts';
 
 // @ts-ignore - Ignoring TS extension import error
 import {DocumentFragment} from './document-fragment.ts';

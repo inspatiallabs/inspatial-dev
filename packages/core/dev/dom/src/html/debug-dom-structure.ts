@@ -1,5 +1,5 @@
 import { createIsolatedDOM } from "../test-helpers.ts";
-import { NEXT, END, VALUE } from "../shared/symbols.ts";
+import { NEXT, END } from "../shared/symbols.ts";
 
 console.log("=== DOM Structure Debug ===");
 

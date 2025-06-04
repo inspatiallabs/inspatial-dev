@@ -22,10 +22,10 @@ import { CDATASection } from "../interface/cdata-section.ts";
 import { Comment } from "../interface/comment.ts";
 import { DocumentType } from "../interface/document-type.ts";
 import { Text } from "../interface/text.ts";
-import { Node } from "../interface/node.ts";
-import { Element } from "../interface/element.ts";
-import { Document } from "../interface/document.ts";
-import { DocumentFragment } from "../interface/document-fragment.ts";
+import type { Node } from "../interface/node.ts";
+import type { Element } from "../interface/element.ts";
+import type { Document } from "../interface/document.ts";
+import type { DocumentFragment } from "../interface/document-fragment.ts";
 
 import { HTMLDocument } from "../html/document.ts";
 import { HTMLElement } from "../html/element.ts";

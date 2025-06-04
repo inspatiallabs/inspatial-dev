@@ -1,14 +1,19 @@
 // @ts-nocheck - This file uses custom DOM implementation with symbol properties and complex object manipulation that TypeScript cannot model correctly
 
-import { Document } from "../../interface/document.ts";
-import { Node } from "../../interface/node.ts";
-import { ELEMENT_NODE, ATTRIBUTE_NODE } from "../constants.ts";
-import { END, MIME, NEXT, PREV, START } from "../symbols.ts";
+import type { Document } from "../../interface/document.ts";
+import type { Node } from "../../interface/node.ts";
+// @ts-ignore - Ignoring TS extension import error
 import {
-  nextSibling,
-  previousSibling,
-} from "../../mixin/non-element-parent-node.ts";
-import { Attribute } from "../../lite/types.ts";
+  ELEMENT_NODE,
+  type TEXT_NODE as _TEXT_NODE,
+} from "../constants.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { END, MIME, NEXT, PREV } from "../symbols.ts";
+// @ts-ignore - Ignoring TS extension import error
+import type {
+  previousElementSibling as _previousElementSibling,
+} from "../node.ts";
+import type { Attribute } from "../../lite/types.ts";
 
 export const String: StringConstructor = globalThis.String;
 

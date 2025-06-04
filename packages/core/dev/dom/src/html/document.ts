@@ -161,7 +161,7 @@ export class HTMLDocument extends Document {
   set title(textContent: string) {
     const { head } = this;
     // @ts-ignore - Type assertion for getElementsByTagName
-    let title = head.getElementsByTagName("title").at(0);
+    const title = head.getElementsByTagName("title").at(0);
     if (title) title.textContent = textContent;
     else {
       // @ts-ignore - Type assertion for insertBefore

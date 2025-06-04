@@ -5,7 +5,7 @@ import hyphenize from "@inspatial/util/hyphenize";
 import { CHANGED, PRIVATE, VALUE } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
-import { CSSProperties } from "../html/style-element.parse.ts";
+import type { CSSProperties } from "../html/style-element.parse.ts";
 
 // Type definitions
 interface AttributeWithValue {

@@ -3,32 +3,40 @@
 
 // @ts-ignore - Ignoring TS extension import error
 import {
-  ATTRIBUTE_NODE,
-  DOCUMENT_FRAGMENT_NODE,
   ELEMENT_NODE,
   TEXT_NODE,
+} from "../shared/constants.ts";
+// @ts-ignore - Ignoring TS extension import error
+import {
+  NEXT,
+  PREV,
+  END,
+  PRIVATE,
+  START,
+  VALUE,
+  MUTATION_OBSERVER,
+} from "../shared/symbols.ts";
+// @ts-ignore - Ignoring TS extension import error
+import { nextSibling } from "../shared/node.ts";
+
+// @ts-ignore - Ignoring TS extension import error
+import {
+  ATTRIBUTE_NODE,
+  DOCUMENT_FRAGMENT_NODE,
   NODE_END,
   CDATA_SECTION_NODE,
   COMMENT_NODE,
   DOCUMENT_NODE,
-  DOCUMENT_TYPE_NODE,
 } from "../shared/constants.ts";
-
-// @ts-ignore - Ignoring TS extension import error
-import { PRIVATE, END, NEXT, PREV, START, VALUE, MUTATION_OBSERVER } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import { prepareMatch } from "../shared/matches.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { previousSibling, nextSibling } from "../shared/node.ts";
-// @ts-ignore - Ignoring TS extension import error
 import {
   getEnd,
   knownAdjacent,
-  knownBoundaries,
   knownSegment,
   knownSiblings,
-  localCase,
 } from "../shared/util/utils.ts";
 
 // @ts-ignore - Ignoring TS extension import error
@@ -44,7 +52,7 @@ import { moCallback } from "../interface/mutation-observer.ts";
 import { connectedCallback, disconnectedCallback } from "../interface/custom-element-registry.ts";
 
 // @ts-ignore - Ignoring TS extension import error
-import { nextElementSibling } from "./non-document-type-child-node.ts";
+import type { nextElementSibling as _nextElementSibling } from "./non-document-type-child-node.ts";
 
 const isNode = (node: any): boolean => node instanceof Node;
 
@@ -442,31 +450,30 @@ export class ParentNode extends Node {
         break;
         
       case DOCUMENT_FRAGMENT_NODE: {
-        let parentNode = node[PRIVATE];
-        let firstChild = node.firstChild;
-        let lastChild = node.lastChild;
-        if (firstChild) {
-          knownSegment(next[PREV], firstChild, lastChild, next);
+        const parentNode = node[PRIVATE];
+        if (parentNode) {
+          const lastChild = node.lastChild;
+          knownSegment(next[PREV], node, lastChild, next);
           knownAdjacent(node, node[END]);
           if (parentNode) parentNode.replaceChildren();
           do {
-            firstChild.parentNode = this;
+            node.parentNode = this;
             
             // Safely call mutation observer callback
             try {
               const ownerDocument = this.ownerDocument || (this.nodeType === DOCUMENT_NODE ? this : null);
               if (ownerDocument && ownerDocument[MUTATION_OBSERVER] && typeof moCallback === 'function') {
-                moCallback(firstChild, null);
+                moCallback(node, null);
               }
             } catch (error) {
               console.warn('Error in mutation observer callback:', error);
             }
             
-            if (firstChild.nodeType === ELEMENT_NODE)
-              connectedCallback(firstChild);
+            if (node.nodeType === ELEMENT_NODE)
+              connectedCallback(node);
           } while (
-            firstChild !== lastChild &&
-            (firstChild = nextSibling(firstChild as any))
+            node !== lastChild &&
+            (node = nextSibling(node as any))
           );
         }
         break;

@@ -1,7 +1,7 @@
 // https://dom.spec.whatwg.org/#interface-htmlcollection
 
 // @ts-ignore - Ignoring TS extension import error
-import {Element} from './element.ts';
+import type {Element} from './element.ts';
 
 /**
  * HTMLCollection implementation that provides both array-like numeric indexing and named access

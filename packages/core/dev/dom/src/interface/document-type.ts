@@ -33,10 +33,10 @@ export class DocumentType extends Node {
 
   /**
    * Create a clone of this node
-   * @param deep - Whether to clone children (not used for DocumentType)
+   * @param _deep - Whether to clone children (not used for DocumentType)
    * @returns A copy of this DocumentType node
    */
-  override cloneNode(deep?: boolean): DocumentType {
+  override cloneNode(_deep?: boolean): DocumentType {
     const {ownerDocument, name, publicId, systemId} = this;
     return new DocumentType(ownerDocument, name, publicId, systemId);
   }

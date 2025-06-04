@@ -19,7 +19,7 @@ import {
 } from "../shared/constants.ts";
 
 // @ts-ignore - Ignoring TS extension import error
-import { END, NEXT, PREV } from "../shared/symbols.ts";
+import { type END, NEXT, PREV } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import { EventTarget } from "./event-target.ts";
@@ -174,7 +174,7 @@ export class Node extends EventTarget {
   cloneNode(): Node | null {
     return null;
   }
-  contains(node?: Node): boolean {
+  contains(_node?: Node): boolean {
     return false;
   }
   /**
@@ -183,8 +183,7 @@ export class Node extends EventTarget {
    * @param {Node} referenceNode The node before which newNode is inserted. If this is null, then newNode is inserted at the end of node's child nodes.
    * @returns The added child
    */
-  // eslint-disable-next-line no-unused-vars
-  insertBefore(newNode: Node, referenceNode: Node | null): Node {
+  insertBefore(newNode: Node, _referenceNode: Node | null): Node {
     return newNode;
   }
   /**
@@ -201,7 +200,7 @@ export class Node extends EventTarget {
    * @param {Node} oldChild The child to be replaced.
    * @returns The replaced Node. This is the same node as oldChild.
    */
-  replaceChild(newChild: Node, oldChild: Node): Node {
+  replaceChild(_newChild: Node, oldChild: Node): Node {
     return oldChild;
   }
   /**
@@ -229,8 +228,8 @@ export class Node extends EventTarget {
   compareDocumentPosition(target: Node): number {
     let result = 0;
     if (this !== target) {
-      let self = getParentNodeCount(this);
-      let other = getParentNodeCount(target);
+      const self = getParentNodeCount(this);
+      const other = getParentNodeCount(target);
       if (self < other) {
         result += DOCUMENT_POSITION_FOLLOWING;
         // @ts-ignore - Method signature is handled
@@ -287,13 +286,18 @@ export class Node extends EventTarget {
    * @return {ShadowRoot | HTMLDocument}
    */
   getRootNode(): Node {
-    // @ts-ignore - This is a valid operation, the types are constrained correctly at runtime
-    let root: Node = this;
-    while (root.parentNode) {
-      // @ts-ignore - This is a valid operation, the types are constrained correctly at runtime
-      root = root.parentNode;
+    // Traverse up the parent chain without aliasing this
+    let current = this.parentNode;
+    
+    if (!current) {
+      return this;
     }
-    return root;
+    
+    while (current.parentNode) {
+      current = current.parentNode;
+    }
+    
+    return current;
   }
 
   get lastChild(): Node | null {

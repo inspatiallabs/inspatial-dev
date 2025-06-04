@@ -1,9 +1,7 @@
 // @ts-ignore - Ignoring TS extension import error
-import {Node} from './node.ts';
+import type {Node} from './node.ts';
 // @ts-ignore - Ignoring TS extension import error
-import {Element} from './element.ts';
-// @ts-ignore - Ignoring TS extension import error
-import {Attr} from './attr.ts';
+import type {Element} from './element.ts';
 
 /**
  * Interface for attribute nodes

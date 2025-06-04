@@ -108,7 +108,7 @@ export const parseFromString = (document, isHTML, markupLanguage) => {
       if (create)
         node = append(node, document.createElement(name), false);
 
-      let end = node[END];
+      const end = node[END];
       for (const name of keys(attributes))
         attribute(node, end, document.createAttribute(name), attributes[name], active);
     },

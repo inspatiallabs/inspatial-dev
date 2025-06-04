@@ -83,8 +83,8 @@ import { Text } from "./text.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { TreeWalker } from "./tree-walker.ts";
 
-const query = (method: Function, ownerDocument: any, selectors: string) => {
-  let { [NEXT]: next, [END]: end } = ownerDocument;
+const query = (method: (selectors: string) => any, ownerDocument: any, selectors: string) => {
+  const { [NEXT]: next, [END]: end } = ownerDocument;
   return method.call({ ownerDocument, [NEXT]: next, [END]: end }, selectors);
 };
 
@@ -494,7 +494,7 @@ export class Document extends NonElementParentNode {
   createElementNS(
     nsp: string | null,
     localName: string,
-    options?: any
+    _options?: any
   ): Element | SVGElement {
     if (nsp === SVG_NAMESPACE) return new SVGElement(this, localName);
     return this.createElement(localName);

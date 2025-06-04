@@ -3,9 +3,9 @@ import {HTMLElement} from './element.ts';
 // @ts-ignore - Ignoring TS extension import error
 import {registerHTMLClass} from '../shared/register-html-class.ts';
 // @ts-ignore - Ignoring TS extension import error
-import {Node} from '../interface/node.ts';
+import type {Node} from '../interface/node.ts';
 // @ts-ignore - Ignoring TS extension import error
-import {Element} from '../interface/element.ts';
+import type {Element} from '../interface/element.ts';
 
 const tagName = 'slot';
 
@@ -57,7 +57,7 @@ export class HTMLSlotElement extends HTMLElement {
       const result: Node[] = [];
 
       // Element and Text nodes are slottables. A slot can be a slottable.
-      for (let slottable of slottables) {
+      for (const slottable of slottables) {
         if ((slottable as any).localName === 'slot') {
           result.push(...((slottable as unknown) as HTMLSlotElement).assignedNodes({ flatten: true }));
         } else {

@@ -9,7 +9,7 @@ import { Event } from "./interface/event.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { NodeList } from "./interface/node-list.ts";
 // @ts-ignore - Ignoring TS extension import error
-import { CustomEvent, CustomEventInit } from "./interface/custom-event.ts";
+import { CustomEvent, type CustomEventInit } from "./interface/custom-event.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { HTMLCollection } from "./interface/html-collection.ts";
 // @ts-ignore - Ignoring TS extension import error
@@ -99,14 +99,14 @@ export type { CustomEventInit };
 // Export cache utilities with type information
 export const cache = {
   // Create a new WeakMap for caching (implemented here since it's not in the original cache.ts)
-  create: <K extends keyof CacheTypes>(type: K): CacheTypes[K] =>
+  create: <K extends keyof CacheTypes>(_type: K): CacheTypes[K] =>
     new WeakMap() as CacheTypes[K],
 
   // Create a wrapper function that adapts the original get function to match the expected signature
   get: <K extends keyof CacheTypes, V>(
     map: CacheTypes[K],
     obj: any,
-    key: string,
+    _key: string,
     callback: () => V
   ): V => {
     return get(map as WeakMap<object, V>, obj, callback as any) as V;

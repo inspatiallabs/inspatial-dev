@@ -10,10 +10,10 @@ export type Options = {
   strict?: boolean;
 };
 
-export function compile(selector: string, options?: Options): (elem: any) => boolean {
+export function compile(_selector: string, _options?: Options): (elem: any) => boolean {
   return () => false;
 }
 
-export function is(element: any, selector: string, options?: Options): boolean {
+export function is(_element: any, _selector: string, _options?: Options): boolean {
   return false;
 } 

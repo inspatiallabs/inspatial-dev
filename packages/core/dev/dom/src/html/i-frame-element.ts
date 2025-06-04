@@ -2,8 +2,6 @@
 import { registerHTMLClass } from "../shared/register-html-class.ts";
 // @ts-ignore - Ignoring TS extension import error
 import { booleanAttribute, stringAttribute } from "../shared/attributes.ts";
-// @ts-ignore - Ignoring TS extension import error
-import { CLASS_LIST } from "../shared/symbols.ts";
 
 // @ts-ignore - Ignoring TS extension import error
 import { HTMLElement } from "./element.ts";
