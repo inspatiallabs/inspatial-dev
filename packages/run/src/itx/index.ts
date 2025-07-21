@@ -1,1 +1,0 @@
-export { defineComponent, itx } from "./itx.ts";

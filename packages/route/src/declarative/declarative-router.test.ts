@@ -3,7 +3,12 @@ import { Router } from "./declarative-router.ts";
 
 // We need to access the private _match method for testing
 // Add this utility to expose the method for testing purposes
-function testMatch(router: Router, path: string, search = {}, hash = "") {
+function testMatch(
+  router: Router<any, any>,
+  path: string,
+  search = {},
+  hash = ""
+) {
   return (router as any)._match(path, search, hash);
 }
 

@@ -66,7 +66,7 @@ export class Router<T extends BaseRouteConfig, C = null> {
     this.delegateUnknown = options.delegateUnknown ?? false;
     this.routerName = options.routerName || null;
     this.routes = {};
-    
+
     // Convert array format to object format if needed
     const routesObject = this._normalizeRoutes(routes);
     this._compile(routesObject);
@@ -109,7 +109,7 @@ export class Router<T extends BaseRouteConfig, C = null> {
       return `route_${name}`;
     }
     // If name contains invalid characters, replace them with underscores
-    return name.replace(/[^a-zA-Z0-9_$]/g, '_');
+    return name.replace(/[^a-zA-Z0-9_$]/g, "_");
   }
 
   /**
@@ -125,11 +125,11 @@ export class Router<T extends BaseRouteConfig, C = null> {
       if (name) {
         const compiledRoute = this._process(routeConfig, name);
         compiledRoutes[name] = compiledRoute;
-        
+
         // Create valid capture group name (must start with letter or underscore)
         const captureGroupName = this._createValidCaptureGroupName(name);
         captureGroupToRouteName[captureGroupName] = name;
-        
+
         mappings.push(`(?<${captureGroupName}>${compiledRoute.mapping})`);
       }
     }

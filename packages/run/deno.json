@@ -1,18 +1,17 @@
 {
   "name": "@inspatial/run",
-  "license": "Apache-2.0",
+  "license": "Intentional-License-1.0",
   "version": "0.0.1",
   "imports": {
     "@inspatial/run": "./src/index.ts",
     "@inspatial/run/jsx": "./src/jsx/index.ts",
-    "@inspatial/run/itx": "./src/itx/index.ts",
-    "@inspatial/run/xml": "./src/xml/index.ts"
+    "@inspatial/run/hmr": "./src/hmr/index.ts",
+    "@rollup/pluginutils": "npm:@rollup/pluginutils@^5.2.0"
   },
   "exports": {
     ".": "./src/index.ts",
-    "./jsx": "./src/jsx/index.ts",
-    "./itx": "./src/itx/index.ts",
-    "./xml": "./src/xml/index.ts"
+    "./jsx": "./src/runtime/jsx/index.ts",
+    "./hmr": "./src/hmr/index.ts"
   },
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"

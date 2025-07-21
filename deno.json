@@ -10,11 +10,11 @@
     "./apps/templates/*",
     "./apps/extensions/*",
     "./packages/*",
-    "./packages/*",
+
     "./packages/dev/*",
     "./packages/dev/cli/*",
     "./packages/dev/kit/*",
-    "./packages/dev/xr/*",
+    "./packages/interact/*",
     "./packages/dev/run/*",
     "./packages/dev/renderer/*",
     "./packages/dev/spatial/*",
