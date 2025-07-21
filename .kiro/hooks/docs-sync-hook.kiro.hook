@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Documentation Sync",
+  "description": "Listens to TypeScript source files and configuration changes to automatically update project documentation",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "packages/**/*.ts",
+      "*.ts",
+      "deno.json",
+      "package.json",
+      "tsconfig.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Source code or configuration files have been modified. Please review the changes and update the README.md file and any documentation in the /docs folder (if it exists) to reflect these changes. Focus on updating API documentation, usage examples, configuration options, and any other relevant documentation that may be affected by the code changes."
+  }
+}

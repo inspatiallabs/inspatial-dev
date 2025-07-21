@@ -419,7 +419,7 @@ function proxyDescriptor(target: StoreNodeType, property: PropertyKey) {
   const desc = Reflect.getOwnPropertyDescriptor(storeValue, property);
   if (!desc) return desc;
 
-  // CRITICAL FIX: For array length property, we need special handling
+  // For array length property, we need special handling
   // This handles the case where an object was converted to an array via reconcile
   if (property === "length") {
     if (Array.isArray(storeValue)) {
@@ -546,7 +546,7 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
     // Get the underlying store value
     const storeValue = target[STORE_VALUE];
 
-    // CRITICAL FIX: Track property access BEFORE custom class handling
+    // Track property access BEFORE custom class handling
     const observer = getObserver();
     const nodes = getNodes(target, STORE_NODE);
 
@@ -668,7 +668,7 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
 
     // Handle property access during a write operation
     if (Writing.has(storeValue)) {
-      // CRITICAL FIX: Even during writes, we need to ensure nodes exist for tracking
+      // Even during writes, we need to ensure nodes exist for tracking
       if (!tracked && observer) {
         tracked = getNode(nodes, property, storeValue[property]);
       }
@@ -678,7 +678,7 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
         : value;
     }
 
-    // CRITICAL FIX: Always ensure we call read() on the node when there's an observer
+    // Always ensure we call read() on the node when there's an observer
     if (observer) {
       // Get or create the node and read from it
       const node = getNode(nodes, property, storeValue[property]);
@@ -759,7 +759,7 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       storeValue[property] = unwrappedValue;
     }
 
-    // CRITICAL FIX: Manually trigger node updates for all tracked properties
+    // Manually trigger node updates for all tracked properties
     let nodes = target[STORE_NODE];
 
     if (nodes) {
@@ -786,7 +786,7 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       }
     }
 
-    // CRITICAL FIX: Use correct flush function and handle batching properly
+    // Use correct flush function and handle batching properly
     if (!isBatching()) {
       flushSync();
     }
@@ -813,7 +813,7 @@ const proxyTraps: ProxyHandler<InternalStoreNodeType> = {
       hasNodes[property].write(false);
     }
 
-    // CRITICAL FIX: Use correct flush function
+    // Use correct flush function
     if (!isBatching()) {
       flushSync();
     }
@@ -869,7 +869,7 @@ const arrayProxyTraps: ProxyHandler<InternalStoreNodeType> = {
     return result;
   },
 
-  // CRITICAL FIX: Override getOwnPropertyDescriptor for arrays
+  // Override getOwnPropertyDescriptor for arrays
   getOwnPropertyDescriptor(target, property) {
     // For array-specific properties, handle them directly
     const storeValue = target[STORE_VALUE];
@@ -960,7 +960,7 @@ function setProperty(
     }
   }
 
-  // CRITICAL FIX: Use correct flush function and handle batching properly
+  // Use correct flush function and handle batching properly
   if (!isBatching()) {
     flushSync();
   }
@@ -1355,7 +1355,7 @@ export function createStore<T extends object = {}>(
   // Wrap the store to create a proxy
   const wrappedStore = wrap(unwrappedStore) as StoreType<T>;
 
-  // CRITICAL FIX: Recursively wrap all nested objects
+  // Recursively wrap all nested objects
   function deepWrapStore(obj: any, visited = new WeakSet()): void {
     if (!obj || typeof obj !== "object" || visited.has(obj)) return;
     visited.add(obj);

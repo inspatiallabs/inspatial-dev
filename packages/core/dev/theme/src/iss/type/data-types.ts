@@ -93,3 +93,6 @@ export interface ISSProps
    */
   [iss: `--${string}`]: string | number | undefined;
 }
+
+
+export * as ISSType from "./index.ts";

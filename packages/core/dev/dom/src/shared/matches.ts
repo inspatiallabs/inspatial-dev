@@ -1,4 +1,4 @@
-import { ISSSelector } from "@inspatial/theme/iss";
+import { ISSType } from "@inspatial/theme/iss";
 // @ts-ignore - Ignoring TS extension import error
 import { ELEMENT_NODE, TEXT_NODE } from "./constants.ts";
 // @ts-ignore - Ignoring TS extension import error
@@ -100,14 +100,14 @@ const adapter = {
 };
 
 export const prepareMatch = (element: any, selectors: string) =>
-  ISSSelector.compile(selectors, {
+  ISSType.compile(selectors, {
     context: selectors.includes(":scope") ? element : void 0,
     xmlMode: !ignoreCase(element),
     adapter,
   });
 
 export const matches = (element: any, selectors: string) =>
-  ISSSelector.is(element, selectors, {
+  ISSType.is(element, selectors, {
     context: selectors.includes(":scope") ? element : void 0,
     xmlMode: !ignoreCase(element),
     adapter,

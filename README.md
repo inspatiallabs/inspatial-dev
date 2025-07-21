@@ -107,6 +107,7 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 | **CLI** | Command Line Interface | `deno add jsr:@inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) | 🔴 Unstable |
 | **Util** | Utility Functions | `deno add jsr:@inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) | 🟢 Stable |
 | **Test** | Test Framework | `deno add jsr:@inspatial/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🟡 Preview |
+| **Route** | Declarative Routing | `deno add jsr:@inspatial/route` | [inspatial.dev/route](https://www.inspatial.dev/route) | 🟡 Preview |
 | **VFX** | Visual Effects | `deno add jsr:@inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) | 🔴 Unstable |
 | **Icon** | Iconography | `deno add jsr:@inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) | 🔴 Unstable |
 | **InMoji** | InMoji | `deno add jsr:@inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) | 🔴 Unstable |

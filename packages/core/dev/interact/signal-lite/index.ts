@@ -330,6 +330,35 @@ const useEffect = (effect: () => DisposerFunctionType): void => {
   onDispose(effect());
 };
 
+function _frozen(capturedDisposers, capturedEffects, ...args) {
+	const prevDisposers = currentDisposers
+	const prevEffect = currentEffect
+
+	currentDisposers = capturedDisposers
+	currentEffect = capturedEffects
+
+	try {
+		return this(...args)
+	} finally {
+		currentDisposers = prevDisposers
+		currentEffect = prevEffect
+	}
+}
+
+/**
+ * 
+ * @param fn #### `freeze(fn)`
+Freezes the current effect context for a function.
+
+```typescript
+const frozenFn = freeze(myFunction)
+```
+ * @returns 
+ */
+function freeze(fn) {
+ return _frozen.bind(fn, currentDisposers, currentEffect)
+}
+
 /**
  * # untrackLite
  * @summary #### Prevents tracking dependencies inside a function
@@ -543,6 +572,53 @@ class Signal<T = any> {
     }
   }
 
+  /**
+   * 
+   * @param val #### `signalLite.ensure(value)` / `signalLite.ensure(value)`
+Ensures a value is a signal. If the value is already a signal, it returns the signal unchanged. If not, it creates a new signal with that value.
+
+- `value`: Value to ensure as a signal
+- Returns: Signal
+
+```typescript
+const existingSignal = signalLite(42)
+const newSignal = signalLite(100)
+
+const ensured1 = signalLite.ensure(existingSignal) // Returns the same signal
+const ensured2 = signalLite.ensure(50) // Creates a new signal(50)
+const ensured3 = signalLite.ensure('hello') // Creates a new signal('hello')
+
+console.log(ensured1 === existingSignal) // true
+console.log(isSignalLite(ensured2)) // true
+```
+   * @returns 
+   */
+  static ensure(val: any) {
+    if (isSignal(val)) {
+      return val;
+    }
+    return signal(val);
+  }
+
+  /**
+   * 
+   * @param vals #### `signalLite.ensureAll(...values)` / `signalLite.ensureAll(...values)`
+Applies `signalLite.ensure()` to multiple values, returning an array of signals.
+
+- `...values`: Values to ensure as signals
+- Returns: Array of signals
+
+```typescript
+const mixed = [signalLite(1), 2, signalLite(3), 4]
+const allSignals = signalLite.ensureAll(...mixed)
+// Returns: [signalLite(1), signalLite(2), signalLite(3), signalLite(4)]
+```
+   * @returns 
+   */
+  static ensureAll(...vals: any) {
+    return vals.map(this.ensure);
+  }
+
   get value(): T {
     return this.get();
   }
@@ -611,7 +687,7 @@ class Signal<T = any> {
     }
   }
 
-  connect(effect: EffectFunctionType | null): void {
+  connect(effect: EffectFunctionType | null, runImmediate = true): void {
     if (!effect) return;
     const { userEffects, signalEffects, disposeCtx } = this._;
     const effects = isPure(effect) ? signalEffects : userEffects;
@@ -624,7 +700,155 @@ class Signal<T = any> {
         });
       }
     }
-    if (currentEffect !== effect) effect();
+    if (runImmediate && currentEffect !== effect) effect();
+  }
+  /**
+ * 
+ * @returns 
+ * #### `.hasValue()`
+Checks if the signal has a non-nullish value (not `undefined` or `null`).
+
+```typescript
+const name = createSignalLite('Ben')
+const empty = createSignalLite(null)
+
+console.log(name.hasValue()) // Should return true
+console.log(empty.hasValue()) // Should return false
+```
+ */
+
+  hasValue() {
+    const val = this.get();
+    return val !== undefined && val !== null;
+  }
+
+  /**
+   * 
+   * @returns #### `.inverse()`
+Returns a signal that negates the current signal's value.
+
+```javascript
+const isEnabled = createSignalLite(true)
+const isDisabled = isEnabled.inverse() // !isEnabled.value
+```
+   */
+  inverse() {
+    return signal(this, function (i) {
+      return !i;
+    });
+  }
+
+  /**
+   * 
+   * @param val #### `.inverseAnd(value)`, `.inverseOr(value)`
+Logical operations with negated first operand (the signal itself).
+
+```typescript
+const isInactiveAndVisible = isActive.inverseAnd(isVisible) // !isActive && isVisible
+const isInactiveOrVisible = isActive.inverseOr(isVisible) // !isActive || isVisible
+```
+   * @returns 
+   */
+  inverseAnd(val: any) {
+    return signal(this, function (i) {
+      const _val = read(val);
+      return !i && _val;
+    });
+  }
+
+  /**
+ * 
+ * @param val #### `.inverseAndNot(value)`, `.inverseOrNot(value)`
+Logical operations with both operands negated.
+
+```typescript
+const isInactiveAndHidden = isActive.inverseAndNot(isVisible) // !isActive && !isVisible
+const isInactiveOrHidden = isActive.inverseOrNot(isVisible) // !isActive || !isVisible
+```
+ * @returns 
+ */
+  inverseAndNot(val: any) {
+    return signal(this, function (i) {
+      const _val = read(val);
+      return !i && !_val;
+    });
+  }
+
+  inverseOr(val: any) {
+    return signal(this, function (i) {
+      const _val = read(val);
+      return !i || _val;
+    });
+  }
+
+  inverseOrNot(val: any) {
+    return signal(this, function (i) {
+      const _val = read(val);
+      return !i || !_val;
+    });
+  }
+
+  /**
+   * Re-evaluates a computed signal's computation function and updates the signal if the result has changed. This method only works on computed signals (signals created with a computation function). For regular signals, this method has no effect.
+This is useful when you need to manually force a computed signal to re-evaluate its computation, for example when external dependencies that aren't tracked by the signal system may have changed.
+
+```typescript
+const count = createSignalLite(0)
+const doubled = computedLite(() => count.value * 2)
+
+// Manually refresh the computed signal
+doubled.refresh()
+```
+
+@example 
+```typescript
+let externalValue = 10
+const computed = createSignalLite(null, () => count.value + externalValue)
+```
+Later, when externalValue changes outside the signal system
+
+```typescript
+externalValue = 20
+computedLite.refresh() // Force re-evaluation with new externalValue
+```  
+*/
+
+  refresh() {
+    const { compute, value } = this._;
+    if (compute) {
+      const val = peek(compute(value));
+      if (value !== val) {
+        this._.value = val;
+        this.trigger();
+      }
+    }
+  }
+
+  /**
+ * 
+ * @param val 
+#### `.nullishThen(value)`
+Returns a new signal that provides a fallback value when the current signal is nullish (`undefined` or `null`). This is similar to the nullish coalescing operator (`??`) but for signals.
+
+```typescript
+const username = createSignal(null)
+const defaultName = username.nullishThen('Anonymous')
+
+console.log(defaultName.value) // 'Anonymous'
+
+username.value = 'Eli'
+// defaultName will reactively update to 'Eli'
+
+username.value = undefined
+// defaultName will reactively update back to 'Anonymous'
+```
+ * @returns 
+ */
+  nullishThen(val: any) {
+    return signal(this, function (i) {
+      const _val = read(val);
+      return i === undefined || i === null ? _val : i;
+    });
   }
 
   and(val: any): Signal<boolean> {
@@ -639,6 +863,24 @@ class Signal<T = any> {
     return result;
   }
 
+  /**
+   * 
+   * @param val #### `.andNot(value)`, `.orNot(value)`
+Logical operations with negated second operand.
+
+```typescript
+const isPositiveAndNotZero = count.andNot(count.eq(0)) // count > 0 && !(count === 0)
+const isValidOrNotDisabled = isValid.orNot(isDisabled) // isValid || !isDisabled
+```
+   * @returns 
+   */
+  andNot(val: any) {
+    return signal(this, function (i) {
+      const _val = read(val);
+      return i && !_val;
+    });
+  }
+
   or(val: any): Signal<boolean> {
     const result = computed(() => {
       // Create a dependency on this signal
@@ -649,6 +891,13 @@ class Signal<T = any> {
       return thisValue || otherValue;
     });
     return result;
+  }
+
+  orNot(val: any) {
+    return signal(this, function (i) {
+      const _val = read(val);
+      return i || !_val;
+    });
   }
 
   eq(val: any): Signal<boolean> {
@@ -1123,6 +1372,17 @@ function signal<T>(value: T, compute?: (val: any) => any): Signal<T> {
   return new Signal<T>(value, compute);
 }
 
+Object.defineProperties(signal, {
+  ensure: {
+    value: Signal.ensure.bind(Signal),
+    enumerable: true,
+  },
+  ensureAll: {
+    value: Signal.ensureAll.bind(Signal),
+    enumerable: true,
+  },
+});
+
 /**
  * # computedLite
  * @summary #### Creates a derived signal that automatically updates based on other signals
@@ -1310,24 +1570,101 @@ function tpl(strs: TemplateStringsArray, ...exprs: any[]): Signal<string> {
   return signal(null as unknown as string, () => String.raw(raw, ...exprs));
 }
 
-function connect<T>(sigs: Signal<T>[], effect: EffectFunctionType): void {
+/**
+ * 
+ * @param val #### `not(value)`
+Creates a signal that negates the input value. Works with both signals and static values.
+
+```typescripy
+const isEnabled = signalLite(true)
+const isDisabled = not(isEnabled) // Creates a signal that returns !isEnabled.value
+
+const alwaysFalse = not(true) // Creates a signal that always returns false
+const isDifferent = not(value.eq(expectedValue)) // Negates a comparison
+```
+ * @returns 
+ */
+function not(val: any) {
+	return signal(null, function() {
+		return !read(val)
+	})
+}
+
+function connect<T>(sigs: Signal<T>[], effect: EffectFunctionType, runImmediate = true): void {
   const prevEffect = currentEffect;
   currentEffect = effect;
   for (const sig of sigs) {
-    sig.connect(effect);
-  }
-  effect();
-  currentEffect = prevEffect;
+    sig.connect(effect, false)
+	}
+	if (runImmediate) {
+		const prevEffect = currentEffect
+		currentEffect = effect
+		try {
+			effect()
+		} finally {
+			currentEffect = prevEffect
+		}
 }
 
 function bind<T>(
   handler: (val: T) => void,
   val: Signal<T> | T | (() => T)
 ): void {
-  if (isSignal(val)) val.connect(() => handler(peek(val)));
+  if (isSignal(val)) val.connect(() => 	handler(val.peek()));
   else if (typeof val === "function") watch(() => handler((val as () => T)()));
   else handler(val);
 }
+
+
+/**
+ * 
+ * @param val 
+#### `useActionLite(value?, compute?)`
+Creates an action system with an event handler and trigger function. This is useful for creating event-driven patterns where you want to listen for specific actions and respond to them.
+
+- `value`: Initial value for the internal signal
+- `compute`: Optional computation function for the internal signal
+- Returns: `[onAction, trigger]` tuple
+
+```typescript
+const [onPageLoad, triggerPageLoad] = useActionLite('idle')
+
+// Listen for page load actions
+onPageLoad((state) => {
+	console.log('Page load state:', state)
+})
+
+// Trigger actions
+triggerPageLoad('loading')
+triggerPageLoad('complete')
+
+// With computation
+const [onCounterChange, triggerCounterChange] = useActionLite(0, (val) => val * 2)
+
+onCounterChange((doubled) => {
+	console.log('Counter doubled:', doubled)
+})
+
+triggerCounterChange(5) // Logs: "Counter doubled: 10"
+```
+ * @param compute 
+ * @returns 
+ */
+function useAction(val, compute) {
+	val = signal(val, compute)
+	function onAction(cb) {
+		val.connect(function() {
+			cb(val.peek())
+		}, false)
+	}
+	function trigger(newVal) {
+		val.value = newVal
+		val.trigger()
+	}
+	return [onAction, trigger]
+}
+
+
 
 /**
  * # deriveLite
@@ -1748,11 +2085,13 @@ export {
   computed as computedLite,
   connect as connectLite,
   bind as bindLite,
+  useAction as useActionLite,
   derive as deriveLite,
   extract as extractLite,
   derivedExtract as derivedExtractLite,
   makeReactive as makeReactiveLite,
   tpl as tplLite,
+  not as notLite,
   watch as watchLite,
   peek as peekLite,
   poke as pokeLite,
@@ -1769,6 +2108,7 @@ export {
   onDispose as onDisposeLite,
   useEffect as useEffectLite,
   untrack as untrackLite,
+  freeze as freezeLite,
 
   // Special test helpers
   handleCircularDependency,
