@@ -1,5 +1,5 @@
 <div align="center">
-    <a href="https://inspatiallabs.com" target="_blank">
+    <a href="https://inspatial.io" target="_blank">
     <p align="center">
     <picture>
     <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg">
@@ -14,7 +14,7 @@
    <br>
 
 <p align="center">
-  <a href="https://inspatiallabs.com" target="_blank">
+  <a href="https://inspatial.io" target="_blank">
     <picture>
         <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-dark.svg">
         <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg">
@@ -31,7 +31,7 @@ _Reality is your canvas_
 
 [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
 [![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud)
-[![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)
+[![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.io)
 [![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -50,7 +50,7 @@ _Reality is your canvas_
 | --------- | ------------------------------------ | ---------------------------------------------- |
 | [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)  | Universal Libraries & Frameworks          | [inspatial.dev](https://www.inspatial.dev)     |
 | [![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud) | Backend APIs and SDKs | [inspatial.cloud](https://www.inspatial.cloud) |
-| [![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)   | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.app)     |
+| [![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.io)   | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.io)     |
 | [![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store) | Deploy and discover InSpatial apps | [inspatial.store](https://www.inspatial.store) |
 
 </div>
@@ -95,24 +95,22 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 
 | Package | Description | Install | Link | Status |
 |---------|------------|----------|-------|--------|
-| **XR** | XR Renderer | `deno add jsr:@inspatial/xr` | [inspatial.xr](https://www.inspatial.xr) | 🔴 Unstable |
-| **AI** | Artificial Intelligence | `deno add jsr:@inspatial/ai` | [inspatial.ai](https://www.inspatial.ai) | 🔴 Unstable |
-| **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
-| **Run** | Dev Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
-| **Type** | Runtime Validation | `deno add jsr:@inspatial/type` | [inspatial.dev/type](https://www.inspatial.dev/type) | 🟡 Preview |
-| **State** | State Management | `deno add jsr:@in/teract` | [inspatial.dev/state](https://www.inspatial.dev/state) | 🔴 Unstable |
-| **ISS** | InSpatial Style Sheet | `deno add jsr:@inspatial/iss` | [inspatial.dev/iss](https://www.inspatial.dev/iss) | 🔴 Unstable |
-| **TW** | Tailwind CSS Presets | `deno add jsr:@inspatial/tw` | [inspatial.dev/tw](https://www.inspatial.dev/tw) | 🟡 Preview |
-| **Theme** | Theme System | `deno add jsr:@inspatial/theme` | [inspatial.dev/kit/theme](https://www.inspatial.dev/kit/theme) | 🟡 Preview |
-| **CLI** | Command Line Interface | `deno add jsr:@inspatial/cli` | [inspatial.dev/cli](https://www.inspatial.dev/cli) | 🔴 Unstable |
-| **Util** | Utility Functions | `deno add jsr:@inspatial/util` | [inspatial.dev/util](https://www.inspatial.dev/util) | 🟢 Stable |
-| **Test** | Test Framework | `deno add jsr:@inspatial/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🟡 Preview |
-| **Route** | Declarative Routing | `deno add jsr:@inspatial/route` | [inspatial.dev/route](https://www.inspatial.dev/route) | 🟡 Preview |
-| **VFX** | Visual Effects | `deno add jsr:@inspatial/vfx` | [inspatial.dev/vfx](https://www.inspatial.dev/vfx) | 🔴 Unstable |
-| **Icon** | Iconography | `deno add jsr:@inspatial/icon` | [inspatial.dev/icon](https://www.inspatial.dev/icon) | 🔴 Unstable |
-| **InMoji** | InMoji | `deno add jsr:@inspatial/inmoji` | [inspatial.dev/inmoji](https://www.inspatial.dev/inmoji) | 🔴 Unstable |
+| **Run** | Framework Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
+| **Kit** | UI, Iconography, Components etc... | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
+| **AI** | Artificial Intelligence | `deno add jsr:@in/telligence` | [inspatial.ai](https://www.inspatial.ai) | 🔴 Unstable |
+| **Interact** |Interactivity & State Management | `deno add jsr:@in/teract` | [inspatial.dev/interact](https://www.inspatial.dev/interact) | 🟡 Preview |
+| **Style** | Theming & Styling Engine | `deno add jsr:@in/style` | [inspatial.dev/style](https://www.inspatial.dev/style) | 🟡 Preview |
+| **Vader** | Utility Functions | `deno add jsr:@in/vader` | [inspatial.dev/vader](https://www.inspatial.dev/vader) | 🟢 Stable |
+| **Test** | Test Framework | `deno add jsr:@in/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🟡 Preview |
+| **Type** | Runtime Validation | `deno add jsr:@in/type` | [inspatial.dev/type](https://www.inspatial.dev/type) | 🟡 Preview |
+| **Route** | Declarative & File Routing | `deno add jsr:@in/route` | [inspatial.dev/route](https://www.inspatial.dev/route) | 🟡 Preview |
+| **Motion** | Animation & Physics | `deno add jsr:@in/motion` | [inspatial.dev/montio](https://www.inspatial.dev/motion) | 🟡 Preview |
+| **Spatial** | 3D & XR Renderer | `deno add jsr:@in/spatial` | [inspatial.xr](https://www.inspatial.xr) | 🟡 Preview |
+| **DOM** | Document Object Model | `deno add jsr:@in/dom` | [inspatial.dev/renderer/dom](https://inspatial.dev/renderer/dom) | 🟡 Preview|
+| **Native** | iOS, Android, VisionOS Renderer | `deno add jsr:@in/native` | [inspatial.dev/renderer/native](inspatial.dev/renderer/native) | 🔴 Unstable |
 | **Renderer** | Universal Renderer | `deno add jsr:@inspatial/renderer` | [inspatial.dev/renderer](https://www.inspatial.dev/renderer) | 🔴 Unstable |
-| **Container** | Dev Environment | `deno add jsr:@inspatial/container` | [inspatial.dev/container](https://www.inspatial.dev/container) | 🟡 Preview |
+| **Sandbox** | Dev Environment | `deno add jsr:@in/sandbox` | [inspatial.dev/sandbox](https://www.inspatial.dev/sandbox) | 🟡 Preview |
+
 
 
 ---
@@ -220,32 +218,6 @@ A cross-platform framework runtime for building InSpatial apps:
 
 ---
 
-<div align="center">
-  <a href="https://inspatial.dev/ecs#gh-dark-mode-only" target="_blank">
-    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/ecs-icon-light.svg" alt="InSpatial ECS" height="50"/>
-  </a>
-  <a href="https://inspatial.dev/ecs#gh-light-mode-only" target="_blank">
-    <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/ecs-icon-dark.svg" alt="InSpatial ECS" height="50"/>
-  </a>
-
-  ### InSpatial ECS (Empty Component System)
-</div> 
-
-An Entity Component System architecture for building scalable and performant applications:
-
-- 🧩 Modular design
-- 🚀 Optimized for spatial computing
-- 🔄 Flexible and extensible
-
-**Key Features:**
-
-- High-performance data management
-- Easy integration with InSpatial Kit and XR
-- Scalable architecture for complex applications
-
-
----
-
 ## 🤝 Contributing
 
 We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
@@ -254,13 +226,13 @@ We welcome contributions from the community! Please read our [Contributing Guide
 
 ## 📄 License
 
-InSpatial Core is released under the Apache 2.0 License. See the [LICENSE](LICENSE) file for details.
+InSpatial Dev is released under the Intentional 1.0 License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
 <div align="center">
   <strong>Ready to shape the future of spatial computing?</strong>
   <br>
-  <a href="https://www.inspatial.app">Start Building with InSpatial</a>
+  <a href="https://www.inspatial.io">Start Building with InSpatial</a>
 </div>
 

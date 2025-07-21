@@ -4,7 +4,7 @@ globs:
 alwaysApply: true
 ---
 <div align="center">
-    <a href="https://inspatiallabs.com" target="_blank">
+    <a href="https://inspatial.io" target="_blank">
     <picture>
         <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-light.svg">
         <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/icon-brutal-dark.svg">
@@ -15,7 +15,7 @@ alwaysApply: true
 <br>
    <br>
 
-<a href="https://inspatiallabs.com" target="_blank">
+<a href="https://inspatial.io" target="_blank">
 <p align="center">
     <picture>
         <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/logo-light.svg">
@@ -33,7 +33,7 @@ _Reality is your canvas_
 
 [![InSpatial Dev](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)
 [![InSpatial Cloud](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud)
-[![InSpatial App](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)
+[![InSpatial App](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.io)
 [![InSpatial Store](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store)
 
 [![License](mdc:https:/img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -51,7 +51,7 @@ _Reality is your canvas_
 | ------------------------------------------------ | ------------------------------------ | ---------------- |
 | [![InSpatial Dev](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)     | Universal Libraries & Frameworks     | [inspatial.dev](mdc:https:/www.inspatial.dev)   |
 | [![InSpatial Cloud](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud) | Backend APIs and SDKs                | [inspatial.cloud](mdc:https:/www.inspatial.cloud) |
-| [![InSpatial App](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.app)     | Build and manage your InSpatial apps | [inspatial.app](mdc:https:/www.inspatial.app)   |
+| [![InSpatial App](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.io)     | Build and manage your InSpatial apps | [inspatial.app](mdc:https:/www.inspatial.app)   |
 | [![InSpatial Store](mdc:https:/inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store) | Deploy and discover InSpatial apps   | [inspatial.store](mdc:https:/www.inspatial.store) |
 
 </div>
@@ -489,7 +489,7 @@ We welcome contributions from the community! Please read our [Contributing Guide
 
 ## 📄 License
 
-InSpatial Core is released under the Apache 2.0 License. See the [LICENSE](mdc:LICENSE) file for details.
+InSpatial Dev is released under the Intentional 1.0 License. See the [LICENSE](mdc:LICENSE) file for details.
 
 ---
 
