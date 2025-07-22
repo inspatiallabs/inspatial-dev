@@ -13,10 +13,10 @@ The lightweight InDOM implementation.
 ## Basic Usage
 
 ```typescript
-import { createDOMLite } from '@in/dom/lite';
+import { createDOM } from '@in/dom/lite';
 
 // Create a DOM environment
-const { scope, createDocument } = createDOMLite();
+const { scope, createDocument } = createDOM();
 
 // Create a document
 const document = createDocument(null, 'html');
@@ -48,9 +48,9 @@ console.log(div.outerHTML); // <div class="container">In DOM!</div>
 ### Custom Element Registration
 
 ```typescript
-import { createDOMLite } from '@in/dom/lite';
+import { createDOM } from '@in/dom/lite';
 
-const { scope, registerElement } = createDOMLite();
+const { scope, registerElement } = createDOM();
 
 // Register a custom element
 registerElement('CustomElement', scope.HTMLElement, false, true);
@@ -63,7 +63,7 @@ custom.setAttribute('data-custom', 'value');
 ### Custom Environment Hooks
 
 ```typescript
-import { createDOMLite, EnvironmentOptions } from '@in/dom/lite';
+import { createDOM, EnvironmentOptions } from '@in/dom/lite';
 
 const options: EnvironmentOptions = {
   // Log when attributes are set
@@ -85,7 +85,7 @@ const options: EnvironmentOptions = {
   }
 };
 
-const { createDocument } = createDOMLite(options);
+const { createDocument } = createDOM(options);
 const document = createDocument(null, 'html');
 ```
 
@@ -93,7 +93,7 @@ const document = createDocument(null, 'html');
 
 ### Core Functions
 
-- `createDOMLite(options?)`: Creates a DOM environment
+- `createDOM(options?)`: Creates a DOM environment
 - `createEvent(type, options?)`: Creates a DOM event
 - `isElement(node)`: Checks if a node is an Element
 - `isNode(node)`: Checks if an object is a Node

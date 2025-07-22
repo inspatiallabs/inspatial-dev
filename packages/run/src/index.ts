@@ -1,1 +1,2 @@
-export { inspatialHMR } from "./hmr/index.ts";
+export { inspatialHMR } from "./hmr/plugin.ts";
+export { getEnv } from "./env/index.ts";

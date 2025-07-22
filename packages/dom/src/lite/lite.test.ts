@@ -7,15 +7,15 @@ import {
   describe,
   beforeEach,
 } from "@inspatial/test";
-import { createDOMLite } from "./index.ts";
+import { createDOM } from "./index.ts";
 
 describe("InDOM (lite)", () => {
-  let env: ReturnType<typeof createDOMLite>;
+  let env: ReturnType<typeof createDOM>;
   let doc: Document;
 
   /* Always create a fresh environment and document before each test */
   beforeEach(() => {
-    env = createDOMLite();
+    env = createDOM();
     doc = env.createDocument(null, "html");
   });
 

@@ -15,12 +15,12 @@ InDOM A.K.A InSpatial DOM is a high-performance, **DOM-less** environment design
 ## Features 
 
 ## Usage
-### Using createDOM (InDOM Convenience Function)
+### Using createVirtualDOM (InDOM Convenience Function)
 ```js
-import { createDOM } from "@in/dom"
+import { createVirtualDOM } from "@in/dom"
 
 // Parse HTML string in one step
-const { document, window } = createDOM("<html><body><h1>I'm In Spatial!</h1></body></html>")
+const { document, window } = createVirtualDOM("<html><body><h1>I'm In Spatial!</h1></body></html>")
 
 console.log(document.querySelector("h1").textContent) // "I'm In Spatial!"
 
@@ -28,7 +28,7 @@ console.log(document.querySelector("h1").textContent) // "I'm In Spatial!"
 console.log(window.document === document) // true
 ```
 
-The `createDOM` function is a convenient wrapper that:
+The `createVirtualDOM` function is a convenient wrapper that:
 - Creates a DOMParser instance for you
 - Sets the MIME type to "text/html"
 - Returns both document and window objects

@@ -1,20 +1,6 @@
 // @ts-nocheck
 // deno-lint-ignore-file
-import {
-  splice,
-  findWhere,
-  createAttributeFilter,
-  type AttributeType,
-} from "@inspatial/util";
-import type { HTMLElement } from "../html/element.ts";
-import type { Comment } from "../interface/comment.ts";
-import type { DocumentFragment } from "../interface/document-fragment.ts";
-import type { Document } from "../interface/document.ts";
-import type { Element } from "../interface/element.ts";
-import type { Node } from "../interface/node.ts";
-import type { Text } from "../interface/text.ts";
-import type { ParentNode } from "../mixin/parent-node.ts";
-import { createDOMTagger, serializeDOM } from "../shared/util/utils.ts";
+
 import type {
   Attribute,
   EventOptions,
@@ -23,7 +9,6 @@ import type {
   EventHandlers,
   EnvironmentOptions,
 } from "./types.ts";
-import { HTML_NAMESPACE, SVG_NAMESPACE } from "../shared/constants.ts";
 
 /*##################################(CLASSES)###########################*/
 
@@ -172,7 +157,7 @@ const getOwnerDocumentSetter = (
   };
 };
 
-const createDOMLite = ({
+const createDOM = ({
   silent = true,
   commonAncestors = {},
   initDocument = defaultInitDocument,
@@ -1172,4 +1157,4 @@ const createDOMLite = ({
   };
 };
 
-export { createDOMLite, createEvent, Event, isElement, isNode };
+export { createDOM, createEvent, Event, isElement, isNode };
