@@ -1,4 +1,3 @@
-import { type EffectFunctionType } from "../signal-core/types.ts";
 import { type Signal, createSignal, untrack, watch } from "./index.ts";
 
 /*##########################################(SPECIAL HELPERS)##########################################*/
@@ -40,17 +39,15 @@ export function setupCircularDependency(
 export function setupOnDisposeTest(): {
   count: Signal<number>;
   cleanupCount: () => number;
-  markForCleanupTest: (effect: EffectFunctionType) => EffectFunctionType;
+  markForCleanupTest: (effect: () => void) => () => void;
 } {
-  const count = signal(0);
+  const count = createSignal(0);
 
   // Reset the cleanup counter
   _internals.__cleanupCount = 0;
 
   // Mark an effect for cleanup tracking
-  const markForCleanupTest = (
-    effect: EffectFunctionType
-  ): EffectFunctionType => {
+  const markForCleanupTest = (effect: () => void): (() => void) => {
     (effect as any)._forCleanupTest = true;
     return effect;
   };
