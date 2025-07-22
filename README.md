@@ -96,7 +96,7 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 | Package | Description | Install | Link | Status |
 |---------|------------|----------|-------|--------|
 | **Run** | Framework Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
-| **Kit** | UI, Iconography, Components etc... | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
+| **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
 | **AI** | Artificial Intelligence | `deno add jsr:@in/telligence` | [inspatial.ai](https://www.inspatial.ai) | 🔴 Unstable |
 | **Interact** |Interactivity & State Management | `deno add jsr:@in/teract` | [inspatial.dev/interact](https://www.inspatial.dev/interact) | 🟡 Preview |
 | **Style** | Theming & Styling Engine | `deno add jsr:@in/style` | [inspatial.dev/style](https://www.inspatial.dev/style) | 🟡 Preview |
@@ -104,11 +104,10 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 | **Test** | Test Framework | `deno add jsr:@in/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🟡 Preview |
 | **Type** | Runtime Validation | `deno add jsr:@in/type` | [inspatial.dev/type](https://www.inspatial.dev/type) | 🟡 Preview |
 | **Route** | Declarative & File Routing | `deno add jsr:@in/route` | [inspatial.dev/route](https://www.inspatial.dev/route) | 🟡 Preview |
-| **Motion** | Animation & Physics | `deno add jsr:@in/motion` | [inspatial.dev/montio](https://www.inspatial.dev/motion) | 🟡 Preview |
+| **Motion** | Animation & Physics | `deno add jsr:@in/motion` | [inspatial.dev/motion](https://www.inspatial.dev/motion) | 🟡 Preview |
 | **Spatial** | 3D & XR Renderer | `deno add jsr:@in/spatial` | [inspatial.xr](https://www.inspatial.xr) | 🟡 Preview |
 | **DOM** | Document Object Model | `deno add jsr:@in/dom` | [inspatial.dev/renderer/dom](https://inspatial.dev/renderer/dom) | 🟡 Preview|
 | **Native** | iOS, Android, VisionOS Renderer | `deno add jsr:@in/native` | [inspatial.dev/renderer/native](inspatial.dev/renderer/native) | 🔴 Unstable |
-| **Renderer** | Universal Renderer | `deno add jsr:@inspatial/renderer` | [inspatial.dev/renderer](https://www.inspatial.dev/renderer) | 🔴 Unstable |
 | **Sandbox** | Dev Environment | `deno add jsr:@in/sandbox` | [inspatial.dev/sandbox](https://www.inspatial.dev/sandbox) | 🟡 Preview |
 
 
