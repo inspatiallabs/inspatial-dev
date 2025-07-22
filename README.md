@@ -96,7 +96,7 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 | Package | Description | Install | Link | Status |
 |---------|------------|----------|-------|--------|
 | **Run** | Framework Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
-| **Kit** | User Interface | `deno add jsr:@inspatial/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
+| **Kit** | Component & User Interface | `deno add jsr:@inspatial/run/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
 | **AI** | Artificial Intelligence | `deno add jsr:@in/telligence` | [inspatial.ai](https://www.inspatial.ai) | 🔴 Unstable |
 | **Interact** |Interactivity & State Management | `deno add jsr:@in/teract` | [inspatial.dev/interact](https://www.inspatial.dev/interact) | 🟡 Preview |
 | **Style** | Theming & Styling Engine | `deno add jsr:@in/style` | [inspatial.dev/style](https://www.inspatial.dev/style) | 🟡 Preview |
