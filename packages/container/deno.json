@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/container",
-  "license": "Apache-2.0",
+  "license": "Intentional-License-1.0",
   "version": "0.1.1",
   "description": "InSpatial Hybrid Container System",
   "imports": {

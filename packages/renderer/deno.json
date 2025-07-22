@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/renderer",
-  "license": "Apache-2.0",
+  "license": "Intentional-License-1.0",
   "version": "0.1.0",
   "description": "InSpatial Universal Renderer (GPU, DOM, Native)",
   "imports": {},

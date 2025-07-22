@@ -1,7 +1,7 @@
 import {
   ContextNotFoundErrorClass,
   createContext,
-  createRoot,
+  createInteractiveRoot,
   getContext,
   hasContext,
   NoOwnerErrorClass,
@@ -25,7 +25,7 @@ test("should create context", () => {
   expect(context.id).toBeDefined();
   expect(context.defaultValue).toEqual(1);
 
-  createRoot(() => {
+  createInteractiveRoot(() => {
     setContext(context);
     expect(getContext(context)).toEqual(1);
   });
@@ -35,11 +35,11 @@ test("should create context", () => {
 
 test("should forward context across roots", () => {
   const context = createContext(1);
-  createRoot(() => {
+  createInteractiveRoot(() => {
     setContext(context, 2);
-    createRoot(() => {
+    createInteractiveRoot(() => {
       expect(getContext(context)).toEqual(2);
-      createRoot(() => {
+      createInteractiveRoot(() => {
         expect(getContext(context)).toEqual(2);
       });
     });
@@ -50,8 +50,8 @@ test("should forward context across roots", () => {
 
 test("should not expose context on parent when set in child", () => {
   const context = createContext(1);
-  createRoot(() => {
-    createRoot(() => {
+  createInteractiveRoot(() => {
+    createInteractiveRoot(() => {
       setContext(context, 4);
     });
 
@@ -63,7 +63,7 @@ test("should not expose context on parent when set in child", () => {
 
 test("should return true if context has been provided", () => {
   const context = createContext();
-  createRoot(() => {
+  createInteractiveRoot(() => {
     setContext(context, 1);
     expect(hasContext(context)).toBeTruthy();
   });
@@ -73,7 +73,7 @@ test("should return true if context has been provided", () => {
 
 test("should return false if context has not been provided", () => {
   const context = createContext();
-  createRoot(() => {
+  createInteractiveRoot(() => {
     expect(hasContext(context)).toBeFalsy();
   });
 
@@ -96,7 +96,7 @@ test("should throw error when trying to set context outside owner", () => {
 
 test("should throw error when trying to get context without setting it first", () => {
   const context = createContext();
-  expect(() => createRoot(() => getContext(context))).toThrow(
+  expect(() => createInteractiveRoot(() => getContext(context))).toThrow(
     ContextNotFoundErrorClass
   );
 

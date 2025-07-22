@@ -1,7 +1,7 @@
 import {
   createEffect,
   createMemo,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   flushSync,
   getOwner,
@@ -59,7 +59,7 @@ if (global.gc) {
       ref!: WeakRef<any>,
       pointer;
 
-    const dispose = createRoot((dispose) => {
+    const dispose = createInteractiveRoot((dispose) => {
       ref = new WeakRef(
         (pointer = createMemo(() => {
           $x();
@@ -87,7 +87,7 @@ if (global.gc) {
     let [$x, setX] = createSignal(0),
       ref!: WeakRef<any>;
 
-    const dispose = createRoot((dispose) => {
+    const dispose = createInteractiveRoot((dispose) => {
       createEffect($x, () => {
         ref = new WeakRef(getOwner()!);
       });

@@ -1,7 +1,7 @@
 import {
   createSignal,
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   flushSync,
 } from "../../signal-core/index.ts";
 import { test, expect, describe, it, mockFn } from "@inspatial/test";
@@ -106,7 +106,7 @@ describe("CreateSignal Tests", () => {
   });
 
   it("should handle rapid signal updates", () => {
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [counter, setCounter] = createSignal(0);
       const effect = mockFn();
 

@@ -1,6 +1,6 @@
 import {
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   createMemo,
   createRenderEffect,
@@ -47,7 +47,7 @@ describe("CreateEffect Tests", () => {
   it("should run effect initially with signal", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [signal, setSignal] = createSignal("initial");
 
       createEffect(() => {
@@ -68,7 +68,7 @@ describe("CreateEffect Tests", () => {
   it("should handle multiple signal dependencies", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [a, setA] = createSignal(1);
       const [b, setB] = createSignal(2);
 
@@ -95,7 +95,7 @@ describe("CreateEffect Tests", () => {
   it("should not re-run when values don't change", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [signal, setSignal] = createSignal("same");
 
       createEffect(() => {
@@ -115,7 +115,7 @@ describe("CreateEffect Tests", () => {
   it("should batch updates in a single effect run", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [a, setA] = createSignal(1);
       const [b, setB] = createSignal(2);
 
@@ -139,7 +139,7 @@ describe("CreateEffect Tests", () => {
   it("should handle counter increments", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [count, setCount] = createSignal(0);
 
       createEffect(() => {
@@ -165,7 +165,7 @@ describe("CreateEffect Tests", () => {
   it("should work with basic conditional logic", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [flag, setFlag] = createSignal(true);
       const [value, setValue] = createSignal("test");
 
@@ -196,7 +196,7 @@ describe("CreateEffect Tests", () => {
   it("should handle string and number signals", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [text, setText] = createSignal("hello");
       const [num, setNum] = createSignal(42);
 
@@ -223,7 +223,7 @@ describe("CreateEffect Tests", () => {
   it("should handle boolean signals", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [flag, setFlag] = createSignal(false);
 
       createEffect(() => {
@@ -251,7 +251,7 @@ describe("CreateEffect Tests", () => {
       const [x, setX] = createSignal(0);
       const [y, setY] = createSignal(0);
 
-      const dispose = createRoot((dispose) => {
+      const dispose = createInteractiveRoot((dispose) => {
         createEffect(() => {
           const xValue = x();
           outerEffect(xValue);
@@ -303,7 +303,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test - verify at least basic effect functionality works
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("test");
         createEffect(() => {
           simpleEffect(signal());
@@ -324,7 +324,7 @@ describe("CreateEffect Tests", () => {
       const effect = mockFn();
       const [x, setX] = createSignal(10);
 
-      const stopEffect = createRoot((dispose) => {
+      const stopEffect = createInteractiveRoot((dispose) => {
         createEffect(() => {
           effect(x());
         });
@@ -347,7 +347,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal(42);
         createEffect(() => {
           simpleEffect(signal());
@@ -384,7 +384,7 @@ describe("CreateEffect Tests", () => {
 
       const [x, setX] = createSignal(0);
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         createEffect(() => {
           fnA();
           fnB();
@@ -417,7 +417,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("cleanup-test");
         createEffect(() => {
           simpleEffect(signal());
@@ -440,7 +440,7 @@ describe("CreateEffect Tests", () => {
       const [x, setX] = createSignal(0);
 
       let savedComputed: number;
-      createRoot(() => {
+      createInteractiveRoot(() => {
         createRenderEffect(
           () => {
             savedComputed = x();
@@ -470,7 +470,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("render-test");
         createEffect(() => {
           simpleEffect(signal());
@@ -489,7 +489,7 @@ describe("CreateEffect Tests", () => {
   it("should work with memo dependencies", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [x, setX] = createSignal(10);
       const [y, setY] = createSignal(10);
 
@@ -535,7 +535,7 @@ describe("CreateEffect Tests", () => {
       const [x, setX] = createSignal(1);
       const [inner] = createSignal(1);
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         createEffect(() => {
           x();
           createEffect(() => {
@@ -561,7 +561,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("sync-test");
         createEffect(() => {
           simpleEffect(signal());
@@ -584,7 +584,7 @@ describe("CreateEffect Tests", () => {
       const track = mockFn();
       let result: string | undefined;
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         createEffect(async () => {
           track();
           await p;
@@ -607,7 +607,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("async-test");
         createEffect(() => {
           simpleEffect(signal());
@@ -632,7 +632,7 @@ describe("CreateEffect Tests", () => {
 
       const [x, setX] = createSignal(false);
 
-      const dispose = createRoot((dispose) => {
+      const dispose = createInteractiveRoot((dispose) => {
         createEffect(() => {
           if (x()) {
             createEffect(async () => {
@@ -672,7 +672,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("nested-async-test");
         createEffect(() => {
           simpleEffect(signal());
@@ -696,7 +696,7 @@ describe("CreateEffect Tests", () => {
       const inner = mockFn();
       const outer = mockFn();
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         createEffect(() => {
           x();
           y();
@@ -729,7 +729,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("dependency-test");
         createEffect(() => {
           simpleEffect(signal());
@@ -750,7 +750,7 @@ describe("CreateEffect Tests", () => {
       const effectFn = mockFn();
       let value: any;
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         value = createEffect(() => {
           effectFn();
           return 42;
@@ -767,7 +767,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("return-test");
         createEffect(() => {
           simpleEffect(signal());
@@ -789,7 +789,7 @@ describe("CreateEffect Tests", () => {
       const normalEffect = mockFn();
       const [shouldError, setShouldError] = createSignal(false);
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         createErrorBoundary(
           () => {
             createEffect(() => {
@@ -820,7 +820,7 @@ describe("CreateEffect Tests", () => {
       );
       // Fallback test
       const simpleEffect = mockFn();
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [signal] = createSignal("error-boundary-test");
         createEffect(() => {
           simpleEffect(signal());

@@ -10,7 +10,7 @@
 
 import { describe, it, expect, mockFn } from "@inspatial/test";
 import {
-  createRoot,
+  createInteractiveRoot,
   createStore,
   flushSync,
   unwrap,
@@ -116,7 +116,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
         expect(store.inner.b).toEqual(10);
 
         let sum: number | undefined;
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
           createEffect(
             () => store.inner.a + store.inner.b,
@@ -160,7 +160,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
         expect(store.inner.b).toEqual(10);
 
         let sum: number | undefined;
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
           createEffect(
             () => store.inner.a + store.inner.b,
@@ -229,7 +229,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
           },
         });
 
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
           greeting = createMemo(() => `Hi, ${state.name}`);
           return dispose;
@@ -420,7 +420,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
         const effectFn = mockFn();
         let executionCount = 0;
 
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
           createEffect(() => {
             const value = state.data;
@@ -464,7 +464,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
         const effectFn = mockFn();
         let executionCount = 0;
 
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
           createEffect(() => {
             const name = state.user.firstName;
@@ -501,7 +501,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
         const effectFn = mockFn();
         let executionCount = 0;
 
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
           createEffect(() => {
             const value = state[0];
@@ -540,7 +540,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
         let executionCount1 = 0;
         let executionCount2 = 0;
 
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           // Track array iteration
@@ -623,7 +623,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
         let executionCount1 = 0;
         let executionCount2 = 0;
 
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           createEffect(() => {
@@ -775,7 +775,7 @@ describe("Store: CreateStore Comprehensive Tests", () => {
     it("should handle array native methods", () => {
       try {
         afterEach();
-        const cleanup = createRoot((dispose) => {
+        const cleanup = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
           const [state] = createStore({ list: [0, 1, 2] });
           const getFiltered = createMemo(() => state.list.filter((i) => i % 2));

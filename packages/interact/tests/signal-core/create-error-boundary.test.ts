@@ -2,7 +2,7 @@ import {
   createErrorBoundary,
   createMemo,
   createRenderEffect,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   flushSync,
 } from "../../signal-core/index.ts";
@@ -30,7 +30,7 @@ test("should let errors bubble up when not handled", () => {
     let errorCaught = false;
 
     try {
-      createRoot(() => {
+      createInteractiveRoot(() => {
         createRenderEffect(
           () => {
             throw error;
@@ -65,7 +65,7 @@ test("should handle error", () => {
     // Original test intention: Error boundary should catch errors and return fallback value
     const error = new Error("Test error");
 
-    const b = createRoot(() =>
+    const b = createInteractiveRoot(() =>
       createErrorBoundary(
         () => {
           throw error;
@@ -94,7 +94,7 @@ test("should forward error to another handler", () => {
     // Original test intention: Nested error boundaries should forward errors properly
     const error = new Error("Test error");
 
-    const b = createRoot(() =>
+    const b = createInteractiveRoot(() =>
       createErrorBoundary(
         () => {
           const inner = createErrorBoundary(
@@ -140,7 +140,7 @@ test("should not duplicate error handler", () => {
     let [$x, setX] = createSignal(0);
     let shouldThrow = false;
 
-    const dispose = createRoot((dispose) => {
+    const dispose = createInteractiveRoot((dispose) => {
       const b = createErrorBoundary(() => {
         $x();
         if (shouldThrow) throw error;
@@ -187,7 +187,7 @@ test("should not trigger wrong handler", () => {
     let [$x, setX] = createSignal(0);
     let shouldThrow = false;
 
-    const dispose = createRoot((dispose) => {
+    const dispose = createInteractiveRoot((dispose) => {
       const b = createErrorBoundary(() => {
         createRenderEffect(
           () => {
@@ -285,7 +285,7 @@ test("should handle errors when the effect is on the outside", () => {
 
     const [$x, setX] = createSignal(0);
 
-    const dispose = createRoot((dispose) => {
+    const dispose = createInteractiveRoot((dispose) => {
       const b = createErrorBoundary(
         () => {
           if ($x()) throw error;
@@ -340,7 +340,7 @@ test("should handle errors when the effect is on the outside and memo in the mid
     const error = new Error("Test error");
     const rootHandler = mockFn((e) => `handled: ${e.message}`);
 
-    const dispose = createRoot((dispose) => {
+    const dispose = createInteractiveRoot((dispose) => {
       const b = createErrorBoundary(
         () =>
           createMemo(() => {

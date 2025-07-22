@@ -1,6 +1,6 @@
 import {
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   getOwner,
   untrack,
   flushSync,
@@ -17,7 +17,7 @@ test("cleanup after tests", () => {
 });
 
 test("should return current owner", () => {
-  createRoot(() => {
+  createInteractiveRoot(() => {
     const owner = getOwner();
     expect(owner).toBeDefined();
     createEffect(
@@ -33,7 +33,7 @@ test("should return current owner", () => {
 });
 
 test("should return parent scope from inside untrack", () => {
-  createRoot(() => {
+  createInteractiveRoot(() => {
     untrack(() => {
       expect(getOwner()).toBeDefined();
     });

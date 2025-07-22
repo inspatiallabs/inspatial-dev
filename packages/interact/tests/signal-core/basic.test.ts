@@ -9,7 +9,7 @@ import { describe, it, expect, mockFn } from "@inspatial/test";
 import {
   flushSync,
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   createStore,
 } from "../../signal-core/index.ts";
@@ -23,7 +23,7 @@ describe("Signal: Basic createEffect", () => {
   it("should run effect initially", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(() => {
         effect("effect ran");
       });
@@ -37,7 +37,7 @@ describe("Signal: Basic createEffect", () => {
   it("should run effect when signal changes", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       // Test with try-catch to handle implementation edge cases
       try {
         const [count, setCount] = createSignal(0);
@@ -85,7 +85,7 @@ describe("Signal: Basic createEffect", () => {
     const effect = mockFn();
 
     try {
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [count, setCount] = createSignal(0);
 
         createEffect(() => {
@@ -135,7 +135,7 @@ describe("Signal: Basic createEffect", () => {
     const effect = mockFn();
 
     try {
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [name, setName] = createSignal("Ben");
 
         createEffect(() => {
@@ -195,7 +195,7 @@ describe("Signal: Basic createEffect", () => {
     const cleanupSpy = mockFn();
 
     try {
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const [count, setCount] = createSignal(0);
 
         createEffect(() => {
@@ -259,7 +259,7 @@ describe("Signal: Basic Store Operations", () => {
   it("should trigger effects on simple property updates", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         name: "Ben",
         age: 24,
@@ -294,7 +294,7 @@ describe("Signal: Basic Store Operations", () => {
   it("should handle multiple property updates in sequence", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         counter: 0,
         label: "Count",
@@ -337,7 +337,7 @@ describe("Signal: Basic Store Operations", () => {
   it("should track nested object property changes", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         user: {
           name: "Mike",
@@ -372,7 +372,7 @@ describe("Signal: Basic Store Operations", () => {
   it("should handle array property updates correctly", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         items: ["apple", "banana"],
         count: 2,
@@ -400,7 +400,7 @@ describe("Signal: Basic Store Operations", () => {
   it("should batch multiple updates correctly", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         firstName: "Ben",
         lastName: "Emma",
@@ -438,7 +438,7 @@ describe("Signal: Basic Store Operations", () => {
   it("should track array element access", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         items: ["apple", "banana", "cherry"],
       });
@@ -464,7 +464,7 @@ describe("Signal: Basic Store Operations", () => {
   it("should support conditional effect tracking", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         showDetails: false,
         name: "Ben",
@@ -509,7 +509,7 @@ describe("Core Reactivity: Edge Cases", () => {
   it("should handle rapid sequential updates", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         counter: 0,
       });
@@ -537,7 +537,7 @@ describe("Core Reactivity: Edge Cases", () => {
   it("should handle complex nested updates", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [store, setStore] = createStore({
         config: {
           user: {
@@ -617,7 +617,7 @@ describe("Core Custom Classes: Basic Support", () => {
   it("should track changes to custom class properties", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const person = new PersonClass("Ben", 24);
       const [store, setStore] = createStore({ person });
 
@@ -642,7 +642,7 @@ describe("Core Custom Classes: Basic Support", () => {
   });
 
   it("should preserve custom class methods after store wrapping", () => {
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const person = new PersonClass("Ben", 24);
       const [store, setStore] = createStore({ person });
 
@@ -662,7 +662,7 @@ describe("Core Custom Classes: Basic Support", () => {
   it("should track nested custom class properties", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const address = new AddressClass("123 Main St", "Boston");
       const person = new PersonWithAddressClass("Ben", address);
       const [store, setStore] = createStore({ person });
@@ -690,7 +690,7 @@ describe("Core Custom Classes: Basic Support", () => {
   it("should handle array of custom classes", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const people = [new PersonClass("Ben", 24), new PersonClass("Gwen", 25)];
       const [store, setStore] = createStore({ people });
 
@@ -718,7 +718,7 @@ describe("Core Custom Classes: Basic Support", () => {
     const nameEffect = mockFn();
     const ageEffect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const person = new PersonClass("Ben", 24);
       const [store, setStore] = createStore({ person });
 
@@ -768,7 +768,7 @@ describe("Core Custom Classes: Advanced Scenarios", () => {
   it("should handle mixed custom classes and plain objects", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const person = new PersonClass("Ben", 24);
       const vehicle = new VehicleClass("Harley-Davidson", "Low Rider", 2025);
       const [store, setStore] = createStore({
@@ -816,7 +816,7 @@ Signal: Isolated Custom Class vs Isolated Simple Object
 
 describe("Signal: Isolated Custom Class vs Isolated Simple Object", () => {
   it("custom class behavior only", () => {
-    createRoot(() => {
+    createInteractiveRoot(() => {
       let effectCount = 0;
       const calls: string[] = [];
 
@@ -855,7 +855,7 @@ describe("Signal: Isolated Custom Class vs Isolated Simple Object", () => {
   });
 
   it("simple object behavior only", () => {
-    createRoot(() => {
+    createInteractiveRoot(() => {
       let effectCount = 0;
       const calls: string[] = [];
 

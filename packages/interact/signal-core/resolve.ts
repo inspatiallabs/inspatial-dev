@@ -66,7 +66,7 @@
  * @since 0.1.0
  * @category Interact - (InSpatial Signal Core)
  */
-import { createRoot } from "./create-root.ts";
+import { createInteractiveRoot } from "./create-root.ts";
 import { createEffect } from "./create-effect.ts";
 import { NotReadyErrorClass } from "./create-resource.ts";
 
@@ -81,7 +81,7 @@ import { NotReadyErrorClass } from "./create-resource.ts";
  * to await the completion of an asynchronous reactive operation before proceeding with
  * non-reactive code (e.g., in an async function or when interfacing with external systems).
  *
- * Internally, `resolve` sets up a temporary reactive scope (`createRoot` and `createEffect`)
+ * Internally, `resolve` sets up a temporary reactive scope (`createInteractiveRoot` and `createEffect`)
  * to monitor the provided function `fn`. If `fn` throws `NotReadyErrorClass` (indicating that
  * an underlying asynchronous operation is still in progress), the effect simply waits for the
  * next reactive update. Once `fn` executes and returns a value without throwing `NotReadyErrorClass`,
@@ -198,7 +198,7 @@ import { NotReadyErrorClass } from "./create-resource.ts";
  */
 export function resolve<T>(fn: () => T): Promise<T> {
   return new Promise((res, rej) => {
-    createRoot((dispose) => {
+    createInteractiveRoot((dispose) => {
       createEffect(() => {
         try {
           const result = fn();

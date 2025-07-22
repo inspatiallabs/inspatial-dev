@@ -2,7 +2,7 @@ import {
   createAsync,
   createEffect,
   createMemo,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   flushSync,
   isPending,
@@ -39,7 +39,7 @@ describe("CreateAsync Tests", () => {
     const async1 = mockFn(() => Promise.resolve(s()));
     const async2 = mockFn(() => Promise.resolve(s()));
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const b = createAsync(() => async1());
       const c = createAsync(() => async2());
       createEffect(() => {
@@ -88,7 +88,7 @@ describe("CreateAsync Tests", () => {
     const async1 = mockFn(() => Promise.resolve(s()));
     const async2 = mockFn(() => Promise.resolve(s() + (a?.() || 0)));
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       a = createAsync(() => async1());
       const b = createAsync(() => async2());
 
@@ -125,7 +125,7 @@ describe("CreateAsync Tests", () => {
     const [s, set] = createSignal(1);
     const async1 = mockFn(() => Promise.resolve(s()));
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const a = createAsync(() => async1());
       const b = createMemo(() => (isPending(a) ? "stale" : "not stale"));
 
@@ -159,7 +159,7 @@ describe("CreateAsync Tests", () => {
     const [s, set] = createSignal(1);
     const async1 = mockFn(() => Promise.resolve(s()));
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const a = createAsync(() => async1());
       const b = createMemo(() => latest(a));
 
@@ -194,7 +194,7 @@ describe("CreateAsync Tests", () => {
     let value: number | undefined;
     let newValue: number | undefined;
 
-    const root = createRoot(async (dispose) => {
+    const root = createInteractiveRoot(async (dispose) => {
       const a = createAsync(() => async1());
 
       // Initial resolution
@@ -222,7 +222,7 @@ describe("CreateAsync Tests", () => {
     const effect = mockFn();
     const asyncFn = mockFn(() => Promise.resolve("async-result"));
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const asyncSignal = createAsync(() => asyncFn());
 
       createEffect(() => {
@@ -249,7 +249,7 @@ describe("CreateAsync Tests", () => {
       Promise.resolve(`async-${value}`)
     );
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const asyncSignal = createAsync(() => asyncFn(input()));
 
       createEffect(() => {

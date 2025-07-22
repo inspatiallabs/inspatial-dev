@@ -1,5 +1,5 @@
-
 # Signal-Lite
+
 #### A lightweight reactive state management library
 
 Signal-Lite is a streamlined reactivity system that helps you manage changing data in your application. Think of it like a notification system where values can announce when they change, and other parts of your code can listen and react accordingly.
@@ -9,431 +9,895 @@ Signal-Lite is a streamlined reactivity system that helps you manage changing da
 Signal-Lite provides the essential building blocks for reactive programming:
 
 - **Signals**: Containers for values that notify listeners when they change
-- **Computed Values**: Values derived from signals that update automatically
+- **Computed Values**: Values derived from createSignals that update automatically
 - **Effects**: Functions that run when their dependencies change
 
-This is a simplified alternative to the full @inspatial/interact system (State X Triggers), designed for situations where you need just the core reactivity primitives with minimal overhead.
+This is the lightweight alternative to the full InSpatial Interactivity system and state mangers, decoupled from any rendering logic making it an agnostic system that can work with any framework. Signal Lite apis are self-contained and works at the component level without an interactive root hoisted at app context tree.
 
 ## Comparison with Signal/State Core
 
 Signal-Lite is a lightweight subset of the full Signal Core system from @inspatial/interact. Here's how they differ:
 
-| Feature | Signal-Lite | Signal/State Core |
-|---------|-------------|-------------|
-| **Size** | Minimal (small bundle) | Full-featured (larger) |
-| **API** | Simpler, focused | Comprehensive |
-| **Performance** | Good for basic needs | Optimized for complex scenarios |
-| **Callbacks** | useEffectLite & onDisposeLite * onConditionLite triggers | Full integrated trigger system |
-| **State Management** | Local | Local X Global X Server (Universal) |
-| **Developer Tools** | Minimal | Advanced debugging tools |
-| **StateQL** | Not supported | Full support |
-| **Batched Updates** | Basic | Advanced optimization |
+| Feature              | Signal-Lite                                                  | Signal/State Core                   |
+| -------------------- | ------------------------------------------------------------ | ----------------------------------- |
+| **Size**             | Minimal (small bundle)                                       | Full-featured (larger)              |
+| **API**              | Simpler, focused                                             | Comprehensive                       |
+| **Performance**      | Good for basic needs                                         | Optimized for complex scenarios     |
+| **Callbacks**        | createEffectLite & onDisposeLite \* onConditionLite triggers | Full integrated trigger system      |
+| **State Management** | Local                                                        | Local X Global X Server (Universal) |
+| **Developer Tools**  | Minimal                                                      | Advanced debugging tools            |
+| **StateQL**          | Not supported                                                | Full support                        |
+| **Batched Updates**  | Automatic and Asynced                                        | Automatic and Asynced               |
 
-**When to choose Signal-Lite**: For simple state management needs, learning projects, or when you need minimal bundle size.
+**When to choose Signal-Lite**: For simple state management needs or projects when you need minimal bundle size, automatic dependency tracking and efficient updates. It is the recommeded starting point for interactivity compared to its siblings.
 
 **When to choose Signal/State Core**: For most InSpatial applications, production apps, or when you need advanced features like triggers, optimized updates, or deep integration.
 
-## Core API
+### Core API
 
-### createSignalLite(initialValue)
-Creates a new signal with the provided initial value.
+ ### ⚠️ Important Note
+ > Signal effects are semi-lazily computed, that means, no matter how many times you changed the value of a createSignal, its effects will only be executed once at the end of this tick. So if you modifred a createSignal's value and want to retrieve its updated derived createSignals value, you'll need to use `nextTick(cb)` or `await tick()` to get the new value.
+ 
 
 ```typescript
-import { createSignalLite } from "@inspatial/interact/signal-lite";
+import { createSignal } from "@in/teract/signal-lite";
 
-// Simple primitive value
-const count = createSignalLite(0);
+// Create a createSignal with an initial value
+const count = createSignal(0);
 
-// Object value
-const user = createSignalLite({ name: "Alice", age: 30 });
-
-// Access the current value
+// Get the current value
 console.log(count.value); // 0
 
 // Update the value
-count.value = 1;
-```
-
-### computedLite(fn)
-Creates a computed signal whose value is derived from other signals.
-
-```typescript
-import { createSignalLite, computedLite } from "@inspatial/interact/signal-lite";
-
-const width = createSignalLite(5);
-const height = createSignalLite(10);
-
-// This automatically updates when width or height changes
-const area = computedLite(() => width.value * height.value);
-
-console.log(area.value); // 50
-
-width.value = 10;
-console.log(area.value); // 100
-```
-
-### watchLite(fn)
-Creates an effect that runs when its dependencies change.
-
-```typescript
-import { createSignalLite, watchLite } from "@inspatial/interact/signal-lite";
-
-const count = createSignalLite(0);
-
-// This function runs initially and whenever count changes
-const dispose = watchLite(() => {
-  console.log(`Count changed to: ${count.value}`);
-});
-
-count.value = 1; // Logs: "Count changed to: 1"
-count.value = 2; // Logs: "Count changed to: 2"
-
-// Stop watching
-dispose();
-
-count.value = 3; // Nothing happens, the effect is disposed
-```
-
-### peekLite(signal)
-Gets the current value of a signal without creating a dependency relationship.
-
-```typescript
-import { createSignalLite, peekLite, watchLite } from "@inspatial/interact/signal-lite";
-
-const count = createSignalLite(0);
-
-watchLite(() => {
-  // Using peek means this effect won't re-run when count changes
-  const value = peekLite(count);
-  console.log(`Peeked value: ${value}`);
-});
-
-count.value = 5; // The effect won't run again
-```
-
-### writeLite(signal, valueOrUpdater)
-Updates a signal's value, supporting both direct values and updater functions.
-
-```typescript
-import { createSignalLite, writeLite } from "@inspatial/interact/signal-lite";
-
-const count = createSignalLite(0);
-
-// Set to a specific value
-writeLite(count, 5);
+count.value = 5;
 console.log(count.value); // 5
-
-// Use an updater function
-writeLite(count, prev => prev + 1);
-console.log(count.value); // 6
 ```
 
-### mergeLite(sources, fn)
-Combines multiple signal sources into a single derived signal.
+### Creating Computed Signals
 
 ```typescript
-import { createSignalLite, mergeLite } from "@inspatial/interact/signal-lite";
+import { createSignal, computed, nextTick } from "@in/teract/signal-lite";
 
-const firstName = createSignalLite("John");
-const lastName = createSignalLite("Doe");
+const count = createSignal(0);
+const doubled = computed(() => count.value * 2);
 
-const fullName = mergeLite([firstName, lastName], 
-  (first, last) => `${first} ${last}`);
+console.log(doubled.value); // 0
+count.value = 5;
 
-console.log(fullName.value); // "John Doe"
-
-firstName.value = "Jane";
-console.log(fullName.value); // "Jane Doe"
+nextTick(() => {
+  console.log(doubled.value); // 10
+});
 ```
 
-### deriveLite(objectSignal, property, [transform])
-Creates a signal that tracks a specific property of an object signal.
+### Effects
 
 ```typescript
-import { createSignalLite, deriveLite } from "@inspatial/interact/signal-lite";
+import { createSignal, watch } from "@in/teract/signal-lite";
 
-const user = createSignalLite({ name: "Alice", age: 30 });
+const count = createSignal(0);
 
-// Create a signal for just the name
-const name = deriveLite(user, "name");
-console.log(name.value); // "Alice"
-
-// With optional transform function
-const nameUpper = deriveLite(user, "name", n => n.toUpperCase());
-console.log(nameUpper.value); // "ALICE"
-
-// Update the object
-user.value = { ...user.value, name: "Bob" };
-console.log(name.value); // "Bob"
-console.log(nameUpper.value); // "BOB"
-```
-
-### extractLite(objectSignal, ...properties)
-Extracts multiple properties from an object signal as individual signals.
-
-```typescript
-import { createSignalLite, extractLite } from "@inspatial/interact/signal-lite";
-
-const user = createSignalLite({
-  name: "Alice",
-  age: 30,
-  email: "alice@example.com"
+// Watch for changes
+const dispose = watch(() => {
+  console.log("Count changed:", count.value);
 });
 
-// Extract specific properties
-const { name, age } = extractLite(user, "name", "age");
+count.value = 1; // Logs: "Count changed: 1"
 
-console.log(name.value); // "Alice"
-console.log(age.value); // 30
-
-// If no properties are specified, all are extracted
-const allProps = extractLite(user);
-console.log(allProps.email.value); // "alice@example.com"
-```
-
-### untrackLite(fn)
-Executes a function without tracking dependencies in the current context.
-
-```typescript
-import { createSignalLite, watchLite, untrackLite } from "@inspatial/interact/signal-lite";
-
-const count = createSignalLite(0);
-const unrelated = createSignalLite(100);
-
-watchLite(() => {
-  // This creates a dependency on count
-  console.log(`Count: ${count.value}`);
-  
-  // This reads unrelated without creating a dependency
-  untrackLite(() => {
-    console.log(`Unrelated (not tracked): ${unrelated.value}`);
-  });
+nextTick(() => {
+  count.value = 2; // Logs: "Count changed: 2"
 });
 
-// Only triggers the effect because count has a dependency
-count.value = 1;
-
-// Doesn't trigger the effect
-unrelated.value = 200;
-```
-
-### onDisposeLite(cleanupFn)
-Registers a cleanup function to run when the current effect is disposed or re-run.
-
-```typescript
-import { createSignalLite, watchLite, onDisposeLite } from "@inspatial/interact/signal-lite";
-
-const count = createSignalLite(0);
-
-const dispose = watchLite(() => {
-  console.log(`Effect running with count: ${count.value}`);
-  
-  // This interval will be cleared when the effect is disposed
-  // or when count changes and the effect runs again
-  const intervalId = setInterval(() => {
-    console.log("Interval tick");
-  }, 1000);
-  
-  onDisposeLite(() => {
-    console.log("Cleaning up interval");
-    clearInterval(intervalId);
-  });
-});
-
-// Later: clean up the effect
+// Clean up the effect
 dispose();
 ```
 
-## Additional Utility Functions
+#### `createTriggerAction(value?, compute?)`
 
-Signal-Lite provides several other utility functions for advanced usage:
+Creates an action system with an event handler and trigger function. This is useful for creating event-driven patterns where you want to listen for specific actions and respond to them.
 
-- **isSignalLite(value)**: Checks if a value is a signal
-- **connectLite(signals, effect)**: Connects an effect to multiple signals
-- **bindLite(handler, signal)**: Binds a handler function to a signal
-- **makeReactiveLite(object)**: Makes an object's properties reactive
-- **listenLite(signals, callback)**: Listens to changes on multiple signals
-- **scheduleLite(effect)**: Schedules an effect to run in the next tick
-- **tickLite()**: Triggers the next tick of the reactive system
-- **nextTickLite(callback)**: Runs a callback in the next tick
-- **readLite(signal)**: Reads a signal value (with tracking)
-- **readAllLite(signals, handler)**: Reads multiple signals and processes their values
-- **tplLite(strings, ...exprs)**: Creates a template string signal
-
-## Signal Methods
-
-Signal objects created with `createSignalLite` include these methods:
+- `value`: Initial value for the internal createSignal
+- `compute`: Optional computation function for the internal createSignal
+- Returns: `[trigger, action]` tuple
 
 ```typescript
-const count = createSignalLite(5);
+const [onDoorOpen, enterHouse] = createTriggerAction("idle");
 
-// Comparison operators (return computed signals)
+// Listen for app start trigger
+onDoorOpen((state) => {
+  console.log("Page load state:", state);
+});
+
+// Action that occures after trigger
+enterHouse("entering");
+enterHouse("entered");
+
+// With computation
+const [onCounterChange, triggerCounterChange] = createTriggerAction(
+  0,
+  (val) => val * 2
+);
+
+onCounterChange((doubled) => {
+  console.log("Counter doubled:", doubled);
+});
+
+triggerCounterChange(5); // Logs: "Counter doubled: 10"
+```
+
+## API Reference
+
+### Core Functions
+
+#### `createSignal(value, compute?)`
+
+Creates a new createSignal.
+
+- `value`: Initial value or source createSignal
+- `compute`: Optional computation function for derived createSignals
+- Returns: Signal instance
+
+```typescript
+const count = createSignal(0);
+const derived = createSignal(count, (val) => val * 2);
+```
+
+#### `computed(fn)`
+
+Creates a computed createSignal that derives its value from other createSignals.
+
+- `fn`: Function that computes the value
+- Returns: Computed createSignal
+
+```typescript
+const fullName = computed(() => `${firstName.value} ${lastName.value}`);
+```
+
+#### `isSignal(value)`
+
+Checks if a value is a createSignal.
+
+- `value`: Value to check
+- Returns: Boolean
+
+```typescript
+console.log(isSignal(count)); // true
+console.log(isSignal(42)); // false
+```
+
+#### `createSignal.ensure(value)` / `Signal.ensure(value)`
+
+Ensures a value is a createSignal. If the value is already a createSignal, it returns the createSignal unchanged. If not, it creates a new createSignal with that value.
+
+- `value`: Value to ensure as a createSignal
+- Returns: Signal
+
+```typescript
+const existingSignal = createSignal(42);
+const newSignal = createSignal(100);
+
+const ensured1 = createSignal.ensure(existingSignal); // Returns the same createSignal
+const ensured2 = createSignal.ensure(50); // Creates a new createSignal(50)
+const ensured3 = createSignal.ensure("hello"); // Creates a new createSignal('hello')
+
+console.log(ensured1 === existingSignal); // true
+console.log(isSignal(ensured2)); // true
+```
+
+#### `createSignal.ensureAll(...values)` / `Signal.ensureAll(...values)`
+
+Applies `createSignal.ensure()` to multiple values, returning an array of createSignals.
+
+- `...values`: Values to ensure as createSignals
+- Returns: Array of createSignals
+
+```typescript
+const mixed = [createSignal(1), 2, createSignal(3), 4];
+const allSignals = createSignal.ensureAll(...mixed);
+// Returns: [createSignal(1), createSignal(2), createSignal(3), createSignal(4)]
+```
+
+### Signal Instance Methods
+
+#### `.get()`
+
+Gets the current value and registers the calling effect as a dependency.
+
+```typescript
+const value = mySignal.get();
+```
+
+#### `.set(value)`
+
+Sets a new value for the createSignal.
+
+```typescript
+mySignal.set(42);
+```
+
+#### `.peek()`
+
+Gets the current value without registering dependencies.
+
+```typescript
+const value = mySignal.peek();
+```
+
+#### `.poke(value)`
+
+Sets a value without triggering updates.
+
+```typescript
+mySignal.poke(42);
+```
+
+#### `.trigger()`
+
+Manually triggers updates for all connected effects.
+
+```typescript
+mySignal.trigger();
+```
+
+#### `.refresh()`
+
+Re-evaluates a computed createSignal's computation function and updates the createSignal if the result has changed. This method only works on computed createSignals (createSignals created with a computation function). For regular createSignals, this method has no effect.
+
+This is useful when you need to manually force a computed createSignal to re-evaluate its computation, for example when external dependencies that aren't tracked by the createSignal system may have changed.
+
+```typescript
+const count = createSignal(0);
+const doubled = computed(() => count.value * 2);
+
+// Manually refresh the computed createSignal
+doubled.refresh();
+
+// Example with external dependency
+let externalValue = 10;
+const computed = createSignal(null, () => count.value + externalValue);
+
+// Later, when externalValue changes outside the createSignal system
+externalValue = 20;
+computed.refresh(); // Force re-evaluation with new externalValue
+```
+
+#### `.connect(effect, runImmediate = true)`
+
+Manually connects an effect to the createSignal.
+
+- `effect`: The effect function to connect
+- `runImmediate`: Whether to run the effect immediately (default: true)
+
+```typescript
+mySignal.connect(() => console.log("Signal changed"));
+
+// Connect without running immediately
+mySignal.connect(() => console.log("Signal changed"), false);
+```
+
+#### `.touch()`
+
+Subscribes the current effect to this createSignal without reading its value. This is useful when you want to trigger an effect when a createSignal changes, but you don't need its value inside the effect.
+
+```typescript
+mySignal.touch();
+```
+
+### Signal Properties
+
+#### `.value`
+
+Getter/setter for the createSignal's value.
+
+```typescript
+mySignal.value = 42;
+console.log(mySignal.value);
+```
+
+#### `.connected`
+
+Boolean indicating if the createSignal has any connected effects.
+
+```typescript
+console.log(mySignal.connected); // true/false
+```
+
+#### `.hasValue()`
+
+Checks if the createSignal has a non-nullish value (not `undefined` or `null`).
+
+```typescript
+const name = createSignal("Ben");
+const empty = createSignal(null);
+
+console.log(name.hasValue()); // Should return true
+console.log(empty.hasValue()); // Should return false
+```
+
+#### `.nullishThen(value)`
+
+Returns a new createSignal that provides a fallback value when the current createSignal is nullish (`undefined` or `null`). This is similar to the nullish coalescing operator (`??`) but for createSignals.
+
+```typescript
+const username = createSignal(null);
+const defaultName = username.nullishThen("Anonymous");
+
+console.log(defaultName.value); // 'Anonymous'
+
+username.value = "Charlotte";
+// defaultName will reactively update to 'Charlotte'
+
+username.value = undefined;
+// defaultName will reactively update back to 'Anonymous'
+```
+
+### Signal Operations
+
+Signals support various comparison and logical operations:
+
+#### `.inverse()`
+
+Returns a createSignal that negates the current createSignal's value.
+
+```typescript
+const isEnabled = createSignal(true);
+const isDisabled = isEnabled.inverse(); // !isEnabled.value
+```
+
+#### `.and(value)`, `.or(value)`
+
+Basic logical operations.
+
+```typescript
+const isPositive = count.gt(0);
+const isValid = isPositive.and(isEnabled);
+const hasValueOrDefault = value.or(defaultValue);
+```
+
+#### `.andNot(value)`, `.orNot(value)`
+
+Logical operations with negated second operand.
+
+```typescript
+const isPositiveAndNotZero = count.andNot(count.eq(0)); // count > 0 && !(count === 0)
+const isValidOrNotDisabled = isValid.orNot(isDisabled); // isValid || !isDisabled
+```
+
+#### `.inverseAnd(value)`, `.inverseOr(value)`
+
+Logical operations with negated first operand (the createSignal itself).
+
+```typescript
+const isInactiveAndVisible = isActive.inverseAnd(isVisible); // !isActive && isVisible
+const isInactiveOrVisible = isActive.inverseOr(isVisible); // !isActive || isVisible
+```
+
+#### `.inverseAndNot(value)`, `.inverseOrNot(value)`
+
+Logical operations with both operands negated.
+
+```typescript
+const isInactiveAndHidden = isActive.inverseAndNot(isVisible); // !isActive && !isVisible
+const isInactiveOrHidden = isActive.inverseOrNot(isVisible); // !isActive || !isVisible
+```
+
+#### `.eq(value)`, `.neq(value)`
+
+Equality comparisons.
+
+```typescript
+const isZero = count.eq(0);
+const isNotZero = count.neq(0);
+```
+
+#### `.gt(value)`, `.lt(value)`
+
+Numeric comparisons.
+
+```typescript
 const isPositive = count.gt(0);
 const isNegative = count.lt(0);
-const equalsZero = count.eq(0);
-const notZero = count.neq(0);
-
-// Logical operators
-const a = createSignalLite(true);
-const b = createSignalLite(false);
-const bothTrue = a.and(b);
-const eitherTrue = a.or(b);
-
-// Method chaining
-const result = count.gt(0).and(count.lt(10));
 ```
 
-## Example: Simple Counter
+### Utility Functions
+
+#### `read(value)`
+
+Reads a value, safe for the value to be a createSignal or not.
 
 ```typescript
-import { createSignalLite, computedLite, watchLite } from "@inspatial/interact/signal-lite";
+const result = read(someValue); // Works with createSignals or regular values
+```
 
-// Create the base state
-const count = createSignalLite(0);
-const doubled = computedLite(() => count.value * 2);
-const isPositive = computedLite(() => count.value > 0);
+#### `peek(value)`
 
-// Create effects
-watchLite(() => {
-  console.log(`
-    Count: ${count.value}
-    Doubled: ${doubled.value}
-    Is Positive: ${isPositive.value ? "Yes" : "No"}
-  `);
+Peeks at a value without creating dependencies.
+
+```typescript
+const result = peek(someSignal);
+```
+
+#### `write(createSignal, newValue)`
+
+Writes to a createSignal or applies a function. Has no effect if the value to be written is not a createSignal.
+
+```typescript
+write(count, 42);
+write(count, (prev) => prev + 1);
+```
+
+#### `readAll(...values)`
+
+Reads all values and return an array of plain values.
+
+```typescript
+const [val1, val2] = readAll(createSignal1, createSignal2);
+```
+
+#### `poke(createSignal, newValue)`
+
+Pokes a value into a createSignal, same as `createSignal.poke(newValue)`. Has no effect if the value to be written is not a createSignal.
+
+```typescript
+poke(count, 42);
+```
+
+#### `touch(...values)`
+
+Touches a list of createSignals to register a dependency. Has no effect if the value is not a createSignal.
+
+```typescript
+touch(someValue, someOtherValue); // Works with createSignals or regular values
+```
+
+### Effect Management
+
+#### `watch(effect)`
+
+Creates an effect that runs when dependencies change.
+
+- `effect`: Function to run
+- Returns: Dispose function
+
+```typescript
+const dispose = watch(() => {
+  console.log("Value:", mySignal.value);
+});
+```
+
+#### `connect(createSignals, effect, runImmediate = true)`
+
+Connects multiple createSignals to an effect.
+
+- `createSignals`: Array of createSignals to connect to
+- `effect`: The effect function to connect
+- `runImmediate`: Whether to run the effect immediately (default: true)
+
+```typescript
+connect([createSignal1, createSignal2], () => {
+  console.log("Signals changed");
 });
 
-// Update the state
-count.value = 5;
-// The effect automatically runs with the new values
+// Connect without running immediately
+connect(
+  [createSignal1, createSignal2],
+  () => {
+    console.log("Signals changed");
+  },
+  false
+);
 ```
 
-## Example: Shopping Cart
+#### `bind(handler, value)`
+
+Binds a handler to a value (createSignal, function, or static value).
 
 ```typescript
-import { createSignalLite, computedLite } from "@inspatial/interact/signal-lite";
+bind(console.log, mySignal);
+```
 
-function createCart() {
-  const items = createSignalLite([]);
-  
-  const total = computedLite(() => {
-    return items.value.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  });
-  
-  const itemCount = computedLite(() => {
-    return items.value.reduce((count, item) => count + item.quantity, 0);
-  });
-  
-  function addItem(product, quantity = 1) {
-    const currentItems = [...items.value];
-    const existingItem = currentItems.find(item => item.id === product.id);
-    
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      currentItems.push({ ...product, quantity });
-    }
-    
-    items.value = currentItems;
-  }
-  
-  function removeItem(productId) {
-    items.value = items.value.filter(item => item.id !== productId);
-  }
-  
-  return {
-    items,
-    total,
-    itemCount,
-    addItem,
-    removeItem,
+#### `listen(createSignals, callback)`
+
+Listens to multiple createSignals with a single callback.
+
+```typescript
+listen([createSignal1, createSignal2], () => {
+  console.log("One of the createSignals changed");
+});
+```
+
+### Advanced Signal Operations
+
+#### `merge(createSignals, handler)`
+
+Merges multiple createSignals into a computed createSignal.
+
+```typescript
+const fullName = merge(
+  [firstName, lastName],
+  (first, last) => `${first} ${last}`
+);
+```
+
+#### `tpl(strings, ...expressions)`
+
+Creates a template string createSignal.
+
+```typescript
+const message = tpl`Hello ${name}, you have ${count} items`;
+```
+
+#### `not(value)`
+
+Creates a createSignal that negates the input value. Works with both createSignals and static values.
+
+```typescript
+const isEnabled = createSignal(true);
+const isDisabled = not(isEnabled); // Creates a createSignal that returns !isEnabled.value
+
+const alwaysFalse = not(true); // Creates a createSignal that always returns false
+const isDifferent = not(value.eq(expectedValue)); // Negates a comparison
+```
+
+#### `derive(createSignal, key, compute?)`
+
+Creates a derived createSignal from an object property. The derieved createSignal's content will be updated when the original createSignal changes, or when the original createSignal's corresponding property is a createSignal, when the specific createSignal changes. Writing the derived createSignal will not update the original createSignal's property.
+
+```typescript
+const name = derive(user, "name");
+```
+
+#### `extract(createSignal, ...keys)`
+
+Extracts properties from a createSignal into separate createSignals. The extracted createSignals' content will be updated only when the original createSignal changes. Writing the exteracted createSignals will not update the original createSignal's properties.
+
+```typescript
+const { name, age } = extract(user, "name", "age");
+```
+
+#### `derivedExtract(createSignal, ...keys)`
+
+Similar to extract but creates derived createSignals.
+
+```typescript
+const { name, age } = derivedExtract(user, "name", "age");
+```
+
+#### `makeReactive(object)`
+
+Creates a reactive proxy of an object.
+
+```typescript
+const reactive = makeReactive({
+  count: createSignal(0),
+  name: "Ben",
+});
+```
+
+### Conditional Logic
+
+#### `onCondition(createSignal, compute?)`
+
+Creates conditional matching based on createSignal values.
+
+```typescript
+const stateMatch = onCondition(state);
+const isLoading = stateMatch("loading");
+const isError = stateMatch("error");
+```
+
+### Lifecycle Management
+
+#### `onDispose(callback)`
+
+Registers a cleanup callback.
+
+```typescript
+onDispose(() => {
+  console.log("Cleaning up");
+});
+```
+
+#### `createEffect(effect, ...args)`
+
+Registers an effect that runs automatically and handles its own cleanup. The `effect` function is executed immediately and re-executed whenever its createSignal dependencies change.
+
+If the `effect` function returns another function, that returned function will be used as a `cleanup` handler. The cleanup is called right before the effect re-runs, and also when the component/scope is disposed.
+
+Any additional arguments passed to `createEffect` after the `effect` function will be passed along to the `effect` function when it's called.
+
+- `effect`: The function to execute.
+- `...args`: Optional arguments to pass to the effect function.
+- Returns: A function to cancel the effect manually.
+
+```typescript
+// Example 1: Basic side effect with cleanup
+const interval = createSignal(1000);
+createEffect(() => {
+  const timer = setInterval(() => {
+    console.log("Timer tick");
+  }, interval);
+
+  // Cleanup function
+  return () => {
+    console.log("Clearing timer");
+    clearInterval(timer);
   };
+});
+
+// Will stop the previous timer and restart a new timer with the interval 2000
+interval.value = 2000;
+
+// Example 2: Effect with dependencies
+const count = createSignal(0);
+createEffect(() => {
+  console.log(`The count is: ${count.value}`);
+
+  // This effect has a dependency on `count`.
+  // It will re-run whenever `count.value` changes.
+});
+
+// Example 3: Passing arguments to an effect
+const name = createSignal("Charlotte");
+
+function logName(user) {
+  console.log(`Current user: ${user.value}`);
 }
 
-// Usage
-const cart = createCart();
-cart.addItem({ id: 1, name: "Product 1", price: 10 });
-console.log(`Total: $${cart.total.value}, Items: ${cart.itemCount.value}`);
+createEffect(logName, name);
+
+// Later...
+name.value = "Mike"; // Will trigger the effect and log "Current user: Mike"
 ```
 
-## Advanced Patterns
+#### `collectDisposers(disposers, fn, cleanup?)`
 
-### Handling Circular Dependencies
-
-Signal-Lite includes helpers for handling potentially circular dependency patterns:
+Collects disposers within a function scope. Used internally, do not use if you don't know how it works.
 
 ```typescript
-import { createSignalLite, watchLite, untrackLite } from "@inspatial/interact/signal-lite";
-
-const a = createSignalLite(0);
-const b = createSignalLite(0);
-
-// Update b when a changes (without creating a circular dependency)
-watchLite(() => {
-  const aValue = a.value;
-  untrackLite(() => {
-    b.value = aValue * 2;
-  });
+const dispose = collectDisposers([], () => {
+  // Create effects here
 });
-
-// Update a when b changes (without creating a circular dependency)
-watchLite(() => {
-  const bValue = b.value;
-  untrackLite(() => {
-    a.value = Math.floor(bValue / 2);
-  });
-});
-
-a.value = 5; // b becomes 10
 ```
 
-### Conditional Reactions with onConditionLite
+### Control Flow
+
+#### `untrack(fn)`
+
+Runs a function without tracking dependencies.
 
 ```typescript
-import { createSignalLite, onConditionLite } from "@inspatial/interact/signal-lite";
-
-const status = createSignalLite("pending");
-
-// Create a matcher function
-const statusIs = onConditionLite(status);
-
-// Create conditional signals
-const isPending = statusIs("pending");
-const isComplete = statusIs("complete");
-const isError = statusIs("error");
-
-console.log(isPending.value); // true
-console.log(isComplete.value); // false
-
-status.value = "complete";
-console.log(isPending.value); // false 
-console.log(isComplete.value); // true
+const result = untrack(() => {
+  return someSignal.value; // Won't create dependency
+});
 ```
 
-## Limitations
+#### `freeze(fn)`
 
-Signal-Lite is designed to be simple and lightweight, which comes with some limitations compared to the full Interaction system:
+Freezes the current effect context for a function.
 
-- No built-in trigger system for cross-component communication 
-- Limited optimization for deep object hierarchies
-- No specialized debugging tooling
-- Manual integration with other systems (not automatic)
-- No batching of updates for performance optimization
-- No StateQL support for complex state queries
+```typescript
+const frozenFn = freeze(myFunction);
+```
 
-These limitations are intentional to keep Signal-Lite focused and lightweight.
+### Scheduling
+
+#### `tick()`
+
+Triggers the next tick of the scheduler.
+
+```typescript
+tick().then(() => {
+  console.log("Updates applied");
+});
+```
+
+#### `nextTick(callback, ...args)`
+
+Waits for the next tick and executes a callback after all pending createSignal updates and effects have been processed. Returns a Promise that resolves after the callback completes.
+
+- `callback`: Function to execute after the tick completes
+- `...args`: Optional arguments to pass to the callback function
+- Returns: Promise that resolves after the callback executes
+
+This is essential when you need to access updated computed createSignal values after making changes, since createSignal effects are processed asynchronously.
+
+```typescript
+const count = createSignal(0);
+const doubled = computed(() => count.value * 2);
+
+count.value = 5;
+
+// Without nextTick - might still see old value
+console.log(doubled.value); // Could be 0 (old value)
+
+// With nextTick - guaranteed to see updated value
+nextTick(() => {
+  console.log(doubled.value); // Will be 10 (updated value)
+});
+
+// With additional arguments
+const logValue = (prefix, createSignal) => {
+  console.log(prefix, createSignal.value);
+};
+
+nextTick(logValue, "Doubled:", doubled);
+
+// Can also be used with async/await
+await nextTick(() => {
+  console.log("All updates processed");
+});
+```
+
+### Special Signal Behaviors
+
+Signals have some special behaviors when used in certain contexts, thanks to `toJSON`, `Symbol.toPrimitive`, and `Symbol.iterator` implementations.
+
+#### `JSON.stringify(createSignal)`
+
+When a createSignal is stringified using `JSON.stringify`, it automatically returns its value by calling `.get()`.
+
+```typescript
+const data = createSignal({ a: 1 });
+JSON.stringify({ data }); // '{"data":{"a":1}}'
+```
+
+#### Coercion
+
+Signals can be automatically coerced to primitives, which calls `.get()`.
+
+```typescript
+const count = createSignal(5);
+console.log(count + 5); // 10
+console.log(`${count}`); // "5"
+if (count) {
+  /* ... */
+} // true if count.value is truthy
+```
+
+#### Iteration
+
+If a createSignal contains an iterable, it can be used in a `for...of` loop or with the spread syntax, which calls `.get()`.
+
+```typescript
+const items = createSignal([1, 2, 3]);
+for (const item of items) {
+  console.log(item);
+}
+// 1
+// 2
+// 3
+
+const spreadItems = [...items]; // [1, 2, 3]
+```
+
+## Advanced Features
+
+### Custom Effects
+
+```typescript
+const myEffect = () => {
+  const value = mySignal.value;
+  console.log("Signal value:", value);
+};
+
+watch(myEffect);
+```
+
+### Batched Updates
+
+Updates are automatically batched and applied asynchronously:
+
+```typescript
+count.value = 1;
+count.value = 2;
+count.value = 3;
+// Only triggers effects once with final value
+```
+
+## Best Practices
+
+1. **Use computed createSignals for derived data**:
+
+   ```typescript
+   const fullName = computed(() => `${first.value} ${last.value}`);
+   ```
+
+2. **Dispose of effects when no longer needed**:
+
+   ```typescript
+   const dispose = watch(() => {
+     // effect logic
+   });
+
+   // Later...
+   dispose();
+   ```
+
+3. **Use `peek()` to avoid creating dependencies**:
+
+   ```typescript
+   const currentValue = mySignal.peek(); // Doesn't create dependency
+   ```
+
+4. **Batch related updates**:
+
+   ```typescript
+   // Updates are automatically batched
+   firstName.value = "Ben";
+   lastName.value = "Emma";
+   // fullName updates only once
+   ```
+
+5. **Use `untrack()` for non-reactive operations**:
+   ```typescript
+   const result = untrack(() => {
+     // This won't create dependencies
+     return someSignal.value + otherSignal.value;
+   });
+   ```
+
+## Examples
+
+### Counter Example
+
+```typescript
+import { createSignal, computed, watch } from "@in/teract/signal-lite";
+
+const count = createSignal(0);
+const doubled = computed(() => count.value * 2);
+
+watch(() => {
+  console.log(`Count: ${count.value}, Doubled: ${doubled.value}`);
+});
+
+count.value = 5; // Logs: "Count: 5, Doubled: 10"
+```
+
+### Todo List Example
+
+```typescript
+const todos = createSignal([]);
+const filter = createSignal("all");
+
+const filteredTodos = computed(() => {
+  const todoList = todos.value;
+  const currentFilter = filter.value;
+
+  switch (currentFilter) {
+    case "active":
+      return todoList.filter((todo) => !todo.completed);
+    case "completed":
+      return todoList.filter((todo) => todo.completed);
+    default:
+      return todoList;
+  }
+});
+
+// Add todo
+function addTodo(text) {
+  todos.value = [...todos.value, { id: Date.now(), text, completed: false }];
+}
+
+// Toggle todo
+function toggleTodo(id) {
+  todos.value = todos.value.map((todo) =>
+    todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  );
+}
+```
 
 ## TypeScript Support
 
 Signal-Lite is fully typed and provides generic typing for all its functions:
 
 ```typescript
-import { createSignalLite, SignalLite } from "@inspatial/interact/signal-lite";
+import { createSignal, SignalLite } from "@in/teract/signal-lite";
 
-// Specify the signal type explicitly
-const count: SignalLite<number> = createSignalLite(0);
+// Specify the createSignal type explicitly
+const count: SignalLite<number> = createSignal(0);
 
 // Type is inferred automatically
-const name = createSignalLite("Alice"); // SignalLite<string>
+const name = createSignal("Ben"); // SignalLite<string>
 
 // Complex types
 interface User {
@@ -441,5 +905,5 @@ interface User {
   age: number;
 }
 
-const user = createSignalLite<User>({ name: "Bob", age: 30 });
+const user = createSignal<User>({ name: "Eli", age: 30 });
 ```

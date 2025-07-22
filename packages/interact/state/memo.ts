@@ -14,7 +14,7 @@
  */
 
 import { createMemo } from "../signal-core/create-memo.ts";
-import { createRoot } from "../signal-core/create-root.ts";
+import { createInteractiveRoot } from "../signal-core/create-root.ts";
 import type { StateInstanceType, ComputedOptionsType } from "./types.ts";
 
 /**
@@ -28,7 +28,7 @@ export function createComputed<T>(
   compute: () => T,
   options?: ComputedOptionsType<T>
 ): () => T {
-  return createRoot((dispose) => {
+  return createInteractiveRoot((dispose) => {
     // Create the memo computation
     const memo = createMemo(compute, undefined, {
       equals: options?.equals,

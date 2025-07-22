@@ -1,6 +1,6 @@
 import {
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   flushSync,
   mapArray,
@@ -107,7 +107,7 @@ test("should notify observer", () => {
   });
 
   const effect = mockFn();
-  createRoot(() => {
+  createInteractiveRoot(() => {
     createEffect(() => {
       const result = map();
       effect(result);

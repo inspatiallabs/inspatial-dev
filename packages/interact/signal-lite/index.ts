@@ -1,18 +1,18 @@
 /**
- * @module @inspatial/interact/signal-lite
+ * @module @in/teract/signal-lite
  *
  * A lightweight interactive alternative to InSpatials Core Signal/State module that lets you quickly create and manage reactive state without the overhead of the full module system which comes bundled with features like triggers, stateQL and others.
  * This module provides signals - special objects that notify subscribers when their values change.
  *
  * @example Basic Usage
  * ```typescript
- * import { createSignalLite, computedLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, computed } from "@in/teract/signal-lite";
  *
  * // Create a signal with initial value
- * const count = createSignalLite(0);
+ * const count = createSignal(0);
  *
  * // Create a computed signal that depends on count
- * const doubled = computedLite(() => count.value * 2);
+ * const doubled = computed(() => count.value * 2);
  *
  * console.log(count.value); // 0
  * console.log(doubled.value); // 0
@@ -32,10 +32,12 @@
  * - Small footprint: Minimal memory and bundle size impact
  * - TypeScript support: Full generic type safety
  *
- * @see {@link SignalLite} - The core reactive container
- * @see {@link createSignalLite} - Function to create signals
- * @see {@link computedLite} - Creates derived reactive values
+ * @see {@link Signal} - The core reactive container
+ * @see {@link createSignal} - Function to create signals
+ * @see {@link computed} - Creates derived reactive values
  */
+
+import { _internals } from "./helpers.ts";
 
 /*##########################################(TYPES)##########################################*/
 // Define core types
@@ -58,7 +60,7 @@ interface SignalInternal<T = any> {
   signalEffects: EffectArrayType;
 }
 
-/*##########################################(SIGNAL-LITE)##########################################*/
+/*##########################################(SIGNAL-)##########################################*/
 
 export const removeFromArr = <T>(arr: T[], val: T): void => {
   const index = arr.indexOf(val);
@@ -77,11 +79,6 @@ let currentTick: Promise<void> | null = null;
 let signalQueue = new Set<EffectArrayType>();
 let effectQueue = new Set<EffectArrayType>();
 let runQueue = new Set<() => void>();
-
-// Create a shared object to track cleanup count for tests
-const _internals = {
-  __cleanupCount: 0,
-};
 
 // Scheduler part
 
@@ -133,6 +130,45 @@ const tick = (): Promise<void> => {
   return currentTick ?? Promise.resolve();
 };
 
+/**
+ * 
+ * @param cb  `nextTick(callback, ...args)`
+Waits for the next tick and executes a callback after all pending signal updates and effects have been processed. Returns a Promise that resolves after the callback completes.
+
+- `callback`: Function to execute after the tick completes
+- `...args`: Optional arguments to pass to the callback function
+- Returns: Promise that resolves after the callback executes
+
+This is essential when you need to access updated computed signal values after making changes, since signal effects are processed asynchronously.
+
+```typescript
+const count = createSignal(0)
+const doubled = computed(() => count.value * 2)
+
+count.value = 5
+
+// Without nextTick - might still see old value
+console.log(doubled.value) // Could be 0 (old value)
+
+// With nextTick - guaranteed to see updated value
+nextTick(() => {
+	console.log(doubled.value) // Will be 10 (updated value)
+})
+
+// With additional arguments
+const logValue = (prefix: string, signal: Signal<number>) => {
+	console.log(prefix, signal.value)
+}
+
+  nextTick(logValue, 'Doubled:', doubled)
+
+// Can also be used with async/await
+await nextTick(() => {
+	console.log('All updates processed')
+})
+```
+ * @returns 
+ */
 const nextTick = <T>(cb: (value?: unknown) => T): Promise<T> =>
   tick().then(() => cb());
 
@@ -224,16 +260,16 @@ const _onDispose = (cb: DisposerFunctionType): DisposerFunctionType => {
 };
 
 /**
- * # onDisposeLite
+ * # onDispose
  * @summary #### Registers a cleanup function for when the current effect is disposed
  *
- * The `onDisposeLite` function registers a callback that will run when the current
+ * The `onDispose` function registers a callback that will run when the current
  * reactive context is cleaned up. This is essential for managing resources and
  * preventing memory leaks.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -242,19 +278,19 @@ const _onDispose = (cb: DisposerFunctionType): DisposerFunctionType => {
  * @example
  * ### Example: Cleaning Up Event Listeners
  * ```typescript
- * import { createSignalLite, watchLite, onDisposeLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, watch, onDispose } from "@in/teract/signal-lite";
  *
- * const isActive = createSignalLite(true);
+ * const isActive = createSignal(true);
  *
  * // This effect will set up and clean up event listeners
- * watchLite(() => {
+ * watch(() => {
  *   if (isActive.value) {
  *     // Set up a DOM event listener
  *     const handleClick = () => console.log('Clicked!');
  *     document.addEventListener('click', handleClick);
  *
  *     // Clean it up when the effect reruns or is disposed
- *     onDisposeLite(() => {
+ *     onDispose(() => {
  *       console.log('Removing event listener');
  *       document.removeEventListener('click', handleClick);
  *     });
@@ -269,11 +305,11 @@ const _onDispose = (cb: DisposerFunctionType): DisposerFunctionType => {
  * @example
  * ### Example: Managing Timers
  * ```typescript
- * import { createSignalLite, watchLite, onDisposeLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, watch, onDispose } from "@in/teract/signal-lite";
  *
- * const interval = createSignalLite(1000);
+ * const interval = createSignal(1000);
  *
- * watchLite(() => {
+ * watch(() => {
  *   const delay = interval.value;
  *   console.log(`Setting up timer with interval: ${delay}ms`);
  *
@@ -281,7 +317,7 @@ const _onDispose = (cb: DisposerFunctionType): DisposerFunctionType => {
  *     console.log('Timer tick');
  *   }, delay);
  *
- *   onDisposeLite(() => {
+ *   onDispose(() => {
  *     console.log('Clearing timer');
  *     clearInterval(timerId);
  *   });
@@ -302,7 +338,7 @@ const onDispose = (
 ): DisposerFunctionType | undefined => {
   if (!currentDisposers) {
     if (typeof console !== "undefined") {
-      console.warn("onDisposeLite called outside of a reactive context");
+      console.warn("onDispose called outside of a reactive context");
     }
     return undefined;
   }
@@ -330,19 +366,24 @@ const useEffect = (effect: () => DisposerFunctionType): void => {
   onDispose(effect());
 };
 
-function _frozen(capturedDisposers, capturedEffects, ...args) {
-	const prevDisposers = currentDisposers
-	const prevEffect = currentEffect
+function _frozen(
+  this: Function,
+  capturedDisposers: DisposerFunctionType[] | null,
+  capturedEffects: EffectFunctionType | null,
+  ...args: any[]
+): any {
+  const prevDisposers = currentDisposers;
+  const prevEffect = currentEffect;
 
-	currentDisposers = capturedDisposers
-	currentEffect = capturedEffects
+  currentDisposers = capturedDisposers;
+  currentEffect = capturedEffects;
 
-	try {
-		return this(...args)
-	} finally {
-		currentDisposers = prevDisposers
-		currentEffect = prevEffect
-	}
+  try {
+    return this(...args);
+  } finally {
+    currentDisposers = prevDisposers;
+    currentEffect = prevEffect;
+  }
 }
 
 /**
@@ -355,20 +396,20 @@ const frozenFn = freeze(myFunction)
 ```
  * @returns 
  */
-function freeze(fn) {
- return _frozen.bind(fn, currentDisposers, currentEffect)
+function freeze(fn: Function): Function {
+  return _frozen.bind(fn, currentDisposers, currentEffect);
 }
 
 /**
- * # untrackLite
+ * # untrack
  * @summary #### Prevents tracking dependencies inside a function
  *
- * The `untrackLite` function creates a reactive "boundary" - code inside an untrack
+ * The `untrack` function creates a reactive "boundary" - code inside an untrack
  * callback won't create dependencies on signals that are read within it.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -377,17 +418,17 @@ function freeze(fn) {
  * @example
  * ### Example: One-Time Initialization
  * ```typescript
- * import { createSignalLite, watchLite, untrackLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, watch, untrack } from "@in/teract/signal-lite";
  *
- * const count = createSignalLite(0);
- * const config = createSignalLite({ theme: "dark" });
+ * const count = createSignal(0);
+ * const config = createSignal({ theme: "dark" });
  *
- * watchLite(() => {
+ * watch(() => {
  *   // This will create a dependency on count
  *   console.log(`Count: ${count.value}`);
  *
  *   // This won't create a dependency on config
- *   untrackLite(() => {
+ *   untrack(() => {
  *     console.log(`Theme: ${config.value.theme}`);
  *   });
  * });
@@ -404,17 +445,17 @@ function freeze(fn) {
  * @example
  * ### Example: Preventing Circular Dependencies
  * ```typescript
- * import { createSignalLite, watchLite, untrackLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, watch, untrack } from "@in/teract/signal-lite";
  *
- * const a = createSignalLite(1);
- * const b = createSignalLite(2);
+ * const a = createSignal(1);
+ * const b = createSignal(2);
  *
- * watchLite(() => {
+ * watch(() => {
  *   // This creates a regular dependency on a
  *   const valueA = a.value;
  *
  *   // Update b without creating a dependency on it
- *   untrackLite(() => {
+ *   untrack(() => {
  *     b.value = valueA * 2;
  *     console.log(`b updated to: ${b.value}`);
  *   });
@@ -451,15 +492,15 @@ const untrack = <T>(fn: () => T): T => {
 };
 
 /**
- * # SignalLite
+ * # Signal
  * @summary #### A reactive container that holds a value and notifies listeners when it changes
  *
- * The `SignalLite` class is the foundation of reactivity. Think of it like a smart box that
+ * The `Signal` class is the foundation of reactivity. Think of it like a smart box that
  * not only holds a value but also notifies anyone interested when that value changes.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind class
  * @access public
  *
@@ -474,10 +515,10 @@ const untrack = <T>(fn: () => T): T => {
  * @example
  * ### Example: Basic Counter
  * ```typescript
- * import { createSignalLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal } from "@in/teract/signal-lite";
  *
  * // Create a signal with initial value 0
- * const counter = createSignalLite(0);
+ * const counter = createSignal(0);
  *
  * // Read the current value
  * console.log(counter.value); // Output: 0
@@ -495,12 +536,12 @@ const untrack = <T>(fn: () => T): T => {
  * @example
  * ### Example: Connecting to Changes
  * ```typescript
- * import { createSignalLite, watchLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, watch } from "@in/teract/signal-lite";
  *
- * const name = createSignalLite("Alice");
+ * const name = createSignal("Charlotte");
  *
  * // React to changes
- * watchLite(() => {
+ * watch(() => {
  *   console.log(`Name changed to: ${name.value}`);
  * });
  *
@@ -508,7 +549,7 @@ const untrack = <T>(fn: () => T): T => {
  * name.value = "Charlie"; // Output: Name changed to: Charlie
  * ```
  *
- * @returns {SignalLite<T>}
+ * @returns {Signal<T>}
  * A signal instance that holds a value and can notify subscribers of changes.
  */
 class Signal<T = any> {
@@ -574,22 +615,22 @@ class Signal<T = any> {
 
   /**
    * 
-   * @param val #### `signalLite.ensure(value)` / `signalLite.ensure(value)`
+   * @param val #### `signal.ensure(value)` / `signal.ensure(value)`
 Ensures a value is a signal. If the value is already a signal, it returns the signal unchanged. If not, it creates a new signal with that value.
 
 - `value`: Value to ensure as a signal
 - Returns: Signal
 
 ```typescript
-const existingSignal = signalLite(42)
-const newSignal = signalLite(100)
+const existingSignal = signal(42)
+const newSignal = signal(100)
 
-const ensured1 = signalLite.ensure(existingSignal) // Returns the same signal
-const ensured2 = signalLite.ensure(50) // Creates a new signal(50)
-const ensured3 = signalLite.ensure('hello') // Creates a new signal('hello')
+const ensured1 = signal.ensure(existingSignal) // Returns the same signal
+const ensured2 = signal.ensure(50) // Creates a new signal(50)
+const ensured3 = signal.ensure('hello') // Creates a new signal('hello')
 
 console.log(ensured1 === existingSignal) // true
-console.log(isSignalLite(ensured2)) // true
+console.log(isSignal(ensured2)) // true
 ```
    * @returns 
    */
@@ -602,16 +643,16 @@ console.log(isSignalLite(ensured2)) // true
 
   /**
    * 
-   * @param vals #### `signalLite.ensureAll(...values)` / `signalLite.ensureAll(...values)`
-Applies `signalLite.ensure()` to multiple values, returning an array of signals.
+   * @param vals #### `signal.ensureAll(...values)` / `signal.ensureAll(...values)`
+Applies `signal.ensure()` to multiple values, returning an array of signals.
 
 - `...values`: Values to ensure as signals
 - Returns: Array of signals
 
 ```typescript
-const mixed = [signalLite(1), 2, signalLite(3), 4]
-const allSignals = signalLite.ensureAll(...mixed)
-// Returns: [signalLite(1), signalLite(2), signalLite(3), signalLite(4)]
+const mixed = [signal(1), 2, signal(3), 4]
+const allSignals = signal.ensureAll(...mixed)
+// Returns: [signal(1), signal(2), signal(3), signal(4)]
 ```
    * @returns 
    */
@@ -709,8 +750,8 @@ const allSignals = signalLite.ensureAll(...mixed)
 Checks if the signal has a non-nullish value (not `undefined` or `null`).
 
 ```typescript
-const name = createSignalLite('Ben')
-const empty = createSignalLite(null)
+const name = createSignal('Ben')
+const empty = createSignal(null)
 
 console.log(name.hasValue()) // Should return true
 console.log(empty.hasValue()) // Should return false
@@ -728,7 +769,7 @@ console.log(empty.hasValue()) // Should return false
 Returns a signal that negates the current signal's value.
 
 ```javascript
-const isEnabled = createSignalLite(true)
+const isEnabled = createSignal(true)
 const isDisabled = isEnabled.inverse() // !isEnabled.value
 ```
    */
@@ -793,8 +834,8 @@ const isInactiveOrHidden = isActive.inverseOrNot(isVisible) // !isActive || !isV
 This is useful when you need to manually force a computed signal to re-evaluate its computation, for example when external dependencies that aren't tracked by the signal system may have changed.
 
 ```typescript
-const count = createSignalLite(0)
-const doubled = computedLite(() => count.value * 2)
+const count = createSignal(0)
+const doubled = computed(() => count.value * 2)
 
 // Manually refresh the computed signal
 doubled.refresh()
@@ -803,13 +844,13 @@ doubled.refresh()
 @example 
 ```typescript
 let externalValue = 10
-const computed = createSignalLite(null, () => count.value + externalValue)
+const computed = createSignal(null, () => count.value + externalValue)
 ```
 Later, when externalValue changes outside the signal system
 
 ```typescript
 externalValue = 20
-computedLite.refresh() // Force re-evaluation with new externalValue
+computed.refresh() // Force re-evaluation with new externalValue
 ```  
 */
 
@@ -966,15 +1007,15 @@ const isValidOrNotDisabled = isValid.orNot(isDisabled) // isValid || !isDisabled
 }
 
 /**
- * # isSignalLite
- * @summary #### Checks if a value is a SignalLite instance
+ * # isSignal
+ * @summary #### Checks if a value is a Signal instance
  *
- * The `isSignalLite` function is a type guard that determines whether a value is a signal.
+ * The `isSignal` function is a type guard that determines whether a value is a signal.
  * This is useful when you need to handle signals differently from regular values.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -983,10 +1024,10 @@ const isValidOrNotDisabled = isValid.orNot(isDisabled) // isValid || !isDisabled
  * @example
  * ### Example: Conditional Signal Handling
  * ```typescript
- * import { createSignalLite, isSignalLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, isSignal } from "@in/teract/signal-lite";
  *
  * function processValue(value: any) {
- *   if (isSignalLite(value)) {
+ *   if (isSignal(value)) {
  *     // Handle signal case
  *     return `Signal with value: ${value.value}`;
  *   } else {
@@ -995,7 +1036,7 @@ const isValidOrNotDisabled = isValid.orNot(isDisabled) // isValid || !isDisabled
  *   }
  * }
  *
- * const mySignal = createSignalLite(42);
+ * const mySignal = createSignal(42);
  * const regularValue = 100;
  *
  * console.log(processValue(mySignal)); // Output: Signal with value: 42
@@ -1003,22 +1044,22 @@ const isValidOrNotDisabled = isValid.orNot(isDisabled) // isValid || !isDisabled
  * ```
  *
  * @returns {boolean}
- * True if the value is a SignalLite instance, false otherwise.
+ * True if the value is a Signal instance, false otherwise.
  */
 function isSignal(val: any): val is Signal<any> {
   return val && val.constructor === Signal ? true : false;
 }
 
 /**
- * # watchLite
+ * # watch
  * @summary #### Watches for changes in signals and runs an effect function when they change
  *
- * The `watchLite` function creates an effect that runs whenever the signals accessed inside it change.
+ * The `watch` function creates an effect that runs whenever the signals accessed inside it change.
  * It's perfect for side effects like updating the DOM, logging, or making API calls.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -1027,12 +1068,12 @@ function isSignal(val: any): val is Signal<any> {
  * @example
  * ### Example: Responding to Changes
  * ```typescript
- * import { createSignalLite, watchLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, watch } from "@in/teract/signal-lite";
  *
- * const count = createSignalLite(0);
+ * const count = createSignal(0);
  *
  * // This effect runs whenever count changes
- * watchLite(() => {
+ * watch(() => {
  *   console.log(`Count is now: ${count.value}`);
  * });
  *
@@ -1043,16 +1084,16 @@ function isSignal(val: any): val is Signal<any> {
  * @example
  * ### Example: Cleanup when Effect Reruns
  * ```typescript
- * import { createSignalLite, watchLite, onDisposeLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, watch, onDispose } from "@in/teract/signal-lite";
  *
- * const resourceId = createSignalLite("resource-1");
+ * const resourceId = createSignal("resource-1");
  *
- * watchLite(() => {
+ * watch(() => {
  *   const id = resourceId.value;
  *   console.log(`Loading resource: ${id}`);
  *
  *   // This runs when the effect reruns or is disposed
- *   onDisposeLite(() => {
+ *   onDispose(() => {
  *     console.log(`Cleaning up resource: ${id}`);
  *   });
  * });
@@ -1071,7 +1112,7 @@ const watch = (effect: EffectFunctionType): DisposerFunctionType => {
   const prevEffect = currentEffect;
   currentEffect = effect;
 
-  // Special test handling for onDisposeLite counter
+  // Special test handling for onDispose counter
   let runCount = 0;
   let cleanupCount = 0;
 
@@ -1128,15 +1169,15 @@ const watch = (effect: EffectFunctionType): DisposerFunctionType => {
 };
 
 /**
- * # peekLite
+ * # Peek
  * @summary #### Reads a signal's current value without creating a dependency
  *
- * The `peekLite` function gets the current value of a signal without subscribing to changes.
+ * The `peek` function gets the current value of a signal without subscribing to changes.
  * This is useful when you want to read a value but don't want to trigger reactivity.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -1145,17 +1186,17 @@ const watch = (effect: EffectFunctionType): DisposerFunctionType => {
  * @example
  * ### Example: Reading Without Subscribing
  * ```typescript
- * import { createSignalLite, computedLite, peekLite, watchLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, computed, peek, watch } from "@in/teract/signal-lite";
  *
- * const count = createSignalLite(0);
+ * const count = createSignal(0);
  *
  * // This will NOT rerun when count changes because we use peek
- * watchLite(() => {
- *   console.log(`Peeked count: ${peekLite(count)}`);
+ * watch(() => {
+ *   console.log(`Peeked count: ${peek(count)}`);
  * });
  *
  * // This WILL rerun when count changes
- * watchLite(() => {
+ * watch(() => {
  *   console.log(`Watched count: ${count.value}`);
  * });
  *
@@ -1168,18 +1209,18 @@ const watch = (effect: EffectFunctionType): DisposerFunctionType => {
  * @example
  * ### Example: Breaking Infinite Update Loops
  * ```typescript
- * import { createSignalLite, peekLite, watchLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, peek, watch } from "@in/teract/signal-lite";
  *
- * const a = createSignalLite(0);
- * const b = createSignalLite(0);
+ * const a = createSignal(0);
+ * const b = createSignal(0);
  *
  * // This would cause an infinite loop without peek:
- * watchLite(() => {
- *   a.value = peekLite(b) + 1; // Read b without creating a dependency
+ * watch(() => {
+ *   a.value = peek(b) + 1; // Read b without creating a dependency
  * });
  *
- * watchLite(() => {
- *   b.value = peekLite(a) + 1; // Read a without creating a dependency
+ * watch(() => {
+ *   b.value = peek(a) + 1; // Read a without creating a dependency
  * });
  *
  * a.value = 1; // This updates both safely
@@ -1232,38 +1273,15 @@ function areEqual(a: any, b: any): boolean {
 }
 
 /**
- * # Complex scenarios - circular dependencies
- */
-function handleCircularDependency<T>(
-  initial: T,
-  callback: (val: T) => T
-): { result: Signal<T>; update: (val: T) => void } {
-  const sig = signal(initial);
-
-  watch(() => {
-    untrack(() => {
-      sig.value = callback(sig.value);
-    });
-  });
-
-  return {
-    result: sig,
-    update: (val: T) => {
-      sig.value = val;
-    },
-  };
-}
-
-/**
- * # writeLite
+ * # write
  * @summary #### Updates a signal's value, with support for updater functions
  *
- * The `writeLite` function updates a signal's value, either directly or using
+ * The `write` function updates a signal's value, either directly or using
  * a function that computes the new value based on the previous one.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -1273,28 +1291,28 @@ function handleCircularDependency<T>(
  * @example
  * ### Example: Direct Updates
  * ```typescript
- * import { createSignalLite, writeLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, write } from "@in/teract/signal-lite";
  *
- * const count = createSignalLite(0);
+ * const count = createSignal(0);
  * console.log(count.value); // Output: 0
  *
- * writeLite(count, 5);
+ * write(count, 5);
  * console.log(count.value); // Output: 5
  * ```
  *
  * @example
  * ### Example: Functional Updates
  * ```typescript
- * import { createSignalLite, writeLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, write } from "@in/teract/signal-lite";
  *
- * const count = createSignalLite(10);
+ * const count = createSignal(10);
  *
  * // Double the current value
- * writeLite(count, prev => prev * 2);
+ * write(count, prev => prev * 2);
  * console.log(count.value); // Output: 20
  *
  * // Add 5 to the value
- * writeLite(count, prev => prev + 5);
+ * write(count, prev => prev + 5);
  * console.log(count.value); // Output: 25
  * ```
  *
@@ -1329,15 +1347,15 @@ function listen<T>(vals: (Signal<T> | T)[], cb: EffectFunctionType): void {
 }
 
 /**
- * # createSignalLite
+ * # createSignal
  * @summary #### Creates a new reactive signal with the given initial value
  *
- * This function creates a `SignalLite` instance - a reactive container for a value
+ * This function creates a `Signal` instance - a reactive container for a value
  * that notifies dependents when the value changes.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -1347,25 +1365,25 @@ function listen<T>(vals: (Signal<T> | T)[], cb: EffectFunctionType): void {
  * @example
  * ### Example: Creating Different Types of Signals
  * ```typescript
- * import { createSignalLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal } from "@in/teract/signal-lite";
  *
  * // Number signal
- * const count = createSignalLite(0);
+ * const count = createSignal(0);
  *
  * // String signal
- * const name = createSignalLite("Alice");
+ * const name = createSignal("Charlotte");
  *
  * // Object signal
- * const user = createSignalLite({ id: 1, name: "Alice" });
+ * const user = createSignal({ id: 1, name: "Charlotte" });
  *
  * // Array signal
- * const items = createSignalLite(["apple", "banana"]);
+ * const items = createSignal(["apple", "banana"]);
  *
  * // Boolean signal
- * const isActive = createSignalLite(true);
+ * const isActive = createSignal(true);
  * ```
  *
- * @returns {SignalLite<T>}
+ * @returns {Signal<T>}
  * A new signal containing the provided value.
  */
 function signal<T>(value: T, compute?: (val: any) => any): Signal<T> {
@@ -1384,15 +1402,15 @@ Object.defineProperties(signal, {
 });
 
 /**
- * # computedLite
+ * # computed
  * @summary #### Creates a derived signal that automatically updates based on other signals
  *
- * The `computedLite` function creates a signal whose value is derived from other signals.
+ * The `computed` function creates a signal whose value is derived from other signals.
  * When the source signals change, the computed signal updates automatically.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -1401,13 +1419,13 @@ Object.defineProperties(signal, {
  * @example
  * ### Example: Simple Derived Value
  * ```typescript
- * import { createSignalLite, computedLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, computed } from "@in/teract/signal-lite";
  *
- * const price = createSignalLite(10);
- * const quantity = createSignalLite(2);
+ * const price = createSignal(10);
+ * const quantity = createSignal(2);
  *
  * // Create a computed signal for the total
- * const total = computedLite(() => price.value * quantity.value);
+ * const total = computed(() => price.value * quantity.value);
  *
  * console.log(total.value); // Output: 20
  *
@@ -1421,22 +1439,22 @@ Object.defineProperties(signal, {
  * @example
  * ### Example: Formatting Data
  * ```typescript
- * import { createSignalLite, computedLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, computed } from "@in/teract/signal-lite";
  *
- * const user = createSignalLite({ firstName: "John", lastName: "Doe" });
+ * const user = createSignal({ firstName: "Ben", lastName: "Emma" });
  *
- * const fullName = computedLite(() => {
+ * const fullName = computed(() => {
  *   const u = user.value;
  *   return `${u.firstName} ${u.lastName}`;
  * });
  *
- * console.log(fullName.value); // Output: "John Doe"
+ * console.log(fullName.value); // Output: "Ben Emma"
  *
- * user.value = { firstName: "Jane", lastName: "Smith" };
- * console.log(fullName.value); // Output: "Jane Smith"
+ * user.value = { firstName: "Charlotte", lastName: "Rhodes" };
+ * console.log(fullName.value); // Output: "Charlotte Rhodes"
  * ```
  *
- * @returns {SignalLite<T>}
+ * @returns {Signal<T>}
  * A signal whose value is computed based on other signals.
  */
 function computed<T>(fn: () => T): Signal<T> {
@@ -1474,15 +1492,15 @@ function computed<T>(fn: () => T): Signal<T> {
 }
 
 /**
- * # mergeLite
+ * # merge
  * @summary #### Combines multiple signals into a single derived signal
  *
- * The `mergeLite` function creates a new signal based on the values of multiple input signals.
+ * The `merge` function creates a new signal based on the values of multiple input signals.
  * It's perfect for combining related pieces of state into a unified value.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -1492,13 +1510,13 @@ function computed<T>(fn: () => T): Signal<T> {
  * @example
  * ### Example: Combining User Data
  * ```typescript
- * import { createSignalLite, mergeLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, merge } from "@in/teract/signal-lite";
  *
- * const firstName = createSignalLite("John");
- * const lastName = createSignalLite("Doe");
- * const age = createSignalLite(30);
+ * const firstName = createSignal("John");
+ * const lastName = createSignal("Doe");
+ * const age = createSignal(30);
  *
- * const user = mergeLite(
+ * const user = merge(
  *   [firstName, lastName, age],
  *   (first, last, age) => ({
  *     fullName: `${first} ${last}`,
@@ -1518,13 +1536,13 @@ function computed<T>(fn: () => T): Signal<T> {
  * @example
  * ### Example: Calculating Totals
  * ```typescript
- * import { createSignalLite, mergeLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, merge } from "@in/teract/signal-lite";
  *
- * const subtotal = createSignalLite(100);
- * const taxRate = createSignalLite(0.1); // 10%
- * const discount = createSignalLite(20);
+ * const subtotal = createSignal(100);
+ * const taxRate = createSignal(0.1); // 10%
+ * const discount = createSignal(20);
  *
- * const orderTotal = mergeLite(
+ * const orderTotal = merge(
  *   [subtotal, taxRate, discount],
  *   (subtotal, taxRate, discount) => {
  *     const afterDiscount = subtotal - discount;
@@ -1539,7 +1557,7 @@ function computed<T>(fn: () => T): Signal<T> {
  * console.log(orderTotal.value); // Output: 92 (80 + 12 tax)
  * ```
  *
- * @returns {SignalLite<R>}
+ * @returns {Signal<R>}
  * A new signal that updates whenever any input value changes.
  */
 function merge<T extends any[], R>(
@@ -1576,7 +1594,7 @@ function tpl(strs: TemplateStringsArray, ...exprs: any[]): Signal<string> {
 Creates a signal that negates the input value. Works with both signals and static values.
 
 ```typescripy
-const isEnabled = signalLite(true)
+const isEnabled = signal(true)
 const isDisabled = not(isEnabled) // Creates a signal that returns !isEnabled.value
 
 const alwaysFalse = not(true) // Creates a signal that always returns false
@@ -1585,97 +1603,106 @@ const isDifferent = not(value.eq(expectedValue)) // Negates a comparison
  * @returns 
  */
 function not(val: any) {
-	return signal(null, function() {
-		return !read(val)
-	})
+  return signal(null, function () {
+    return !read(val);
+  });
 }
 
-function connect<T>(sigs: Signal<T>[], effect: EffectFunctionType, runImmediate = true): void {
+function connect<T>(
+  sigs: Signal<T>[],
+  effect: EffectFunctionType,
+  runImmediate = true
+): void {
   const prevEffect = currentEffect;
   currentEffect = effect;
   for (const sig of sigs) {
-    sig.connect(effect, false)
-	}
-	if (runImmediate) {
-		const prevEffect = currentEffect
-		currentEffect = effect
-		try {
-			effect()
-		} finally {
-			currentEffect = prevEffect
-		}
+    sig.connect(effect, false);
+  }
+  if (runImmediate) {
+    const prevEffect = currentEffect;
+    currentEffect = effect;
+    try {
+      effect();
+    } finally {
+      currentEffect = prevEffect;
+    }
+  }
 }
 
 function bind<T>(
   handler: (val: T) => void,
   val: Signal<T> | T | (() => T)
 ): void {
-  if (isSignal(val)) val.connect(() => 	handler(val.peek()));
+  if (isSignal(val)) val.connect(() => handler(val.peek()));
   else if (typeof val === "function") watch(() => handler((val as () => T)()));
   else handler(val);
 }
 
-
 /**
  * 
  * @param val 
-#### `useActionLite(value?, compute?)`
+#### `createTriggerAction(value?, compute?)`
+
 Creates an action system with an event handler and trigger function. This is useful for creating event-driven patterns where you want to listen for specific actions and respond to them.
 
 - `value`: Initial value for the internal signal
 - `compute`: Optional computation function for the internal signal
-- Returns: `[onAction, trigger]` tuple
+- Returns: `[trigger, action]` tuple
 
 ```typescript
-const [onPageLoad, triggerPageLoad] = useActionLite('idle')
+const [onDoorOpen, enterHouse] = createTriggerAction("idle");
 
-// Listen for page load actions
-onPageLoad((state) => {
-	console.log('Page load state:', state)
-})
+// Listen for app start trigger
+onDoorOpen((state) => {
+  console.log("Page load state:", state);
+});
 
-// Trigger actions
-triggerPageLoad('loading')
-triggerPageLoad('complete')
+// Action that occures after trigger
+enterHouse("entering");
+enterHouse("entered");
 
 // With computation
-const [onCounterChange, triggerCounterChange] = useActionLite(0, (val) => val * 2)
+const [onCounterChange, triggerCounterChange] = createTriggerAction(
+  0,
+  (val) => val * 2
+);
 
 onCounterChange((doubled) => {
-	console.log('Counter doubled:', doubled)
-})
+  console.log("Counter doubled:", doubled);
+});
 
-triggerCounterChange(5) // Logs: "Counter doubled: 10"
+triggerCounterChange(5); // Logs: "Counter doubled: 10"
 ```
  * @param compute 
  * @returns 
  */
-function useAction(val, compute) {
-	val = signal(val, compute)
-	function onAction(cb) {
-		val.connect(function() {
-			cb(val.peek())
-		}, false)
-	}
-	function trigger(newVal) {
-		val.value = newVal
-		val.trigger()
-	}
-	return [onAction, trigger]
+function createTriggerAction<T>(
+  val: T,
+  compute?: (val: T) => T
+): [(cb: (val: T) => void) => void, (newVal: T) => void] {
+  const signalVal = signal(val, compute);
+  function trigger(cb: (val: T) => void) {
+    signalVal.connect(function () {
+      cb(signalVal.peek());
+    }, false);
+  }
+  function action(newVal: T) {
+    signalVal.value = newVal;
+    signalVal.trigger();
+  }
+  return [trigger, action];
 }
 
-
-
 /**
- * # deriveLite
+ * # derive
  * @summary #### Creates a signal that tracks a property of another signal
  *
- * The `deriveLite` function creates a signal that's linked to a specific property of an object signal.
+ * The `derive` function creates a signal that's linked to a specific property of an object signal.
  * When the original signal or the specific property changes, the derived signal updates.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -1686,19 +1713,19 @@ function useAction(val, compute) {
  * @example
  * ### Example: Tracking a Nested Property
  * ```typescript
- * import { createSignalLite, deriveLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, derive } from "@in/teract/signal-lite";
  *
- * const user = createSignalLite({
- *   name: "Alice",
+ * const user = createSignal({
+ *   name: "Charlotte",
  *   profile: {
  *     age: 30,
- *     email: "alice@example.com"
+ *     email: "charlotte@inspatial.io"
  *   }
  * });
  *
  * // Derive a signal for just the name
- * const userName = deriveLite(user, "name");
- * console.log(userName.value); // Output: "Alice"
+ * const userName = derive(user, "name");
+ * console.log(userName.value); // Output: "Charlotte"
  *
  * // Update just the name property
  * user.value = { ...user.value, name: "Alicia" };
@@ -1708,15 +1735,15 @@ function useAction(val, compute) {
  * @example
  * ### Example: With Transformation
  * ```typescript
- * import { createSignalLite, deriveLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, derive } from "@in/teract/signal-lite";
  *
- * const product = createSignalLite({
+ * const product = createSignal({
  *   name: "Widget",
  *   price: 9.99
  * });
  *
  * // Derive a signal for the price with formatting
- * const formattedPrice = deriveLite(
+ * const formattedPrice = derive(
  *   product,
  *   "price",
  *   (price) => `$${price.toFixed(2)}`
@@ -1728,7 +1755,7 @@ function useAction(val, compute) {
  * console.log(formattedPrice.value); // Output: "$14.95"
  * ```
  *
- * @returns {SignalLite<T[K]>}
+ * @returns {Signal<T[K]>}
  * A signal that contains the value of the specified property.
  */
 function derive<T, K extends keyof T>(
@@ -1754,15 +1781,15 @@ function derive<T, K extends keyof T>(
 }
 
 /**
- * # extractLite
+ * # extract
  * @summary #### Creates multiple derived signals from an object signal
  *
- * The `extractLite` function creates individual signals for properties of an object signal.
+ * The `extract` function creates individual signals for properties of an object signal.
  * This is useful for working with specific parts of a larger state object.
  *
  * @since 0.1.0
  * @category InSpatial Dev
- * @module interact/signal-lite
+ * @module interact/signal-
  * @kind function
  * @access public
  *
@@ -1772,20 +1799,20 @@ function derive<T, K extends keyof T>(
  * @example
  * ### Example: Breaking Down a User Object
  * ```typescript
- * import { createSignalLite, extractLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, extract } from "@in/teract/signal-lite";
  *
- * const user = createSignalLite({
+ * const user = createSignal({
  *   id: 1,
- *   name: "Alice",
- *   email: "alice@example.com",
+ *   name: "Charlotte",
+ *   email: "charlotte@inspatial.io",
  *   role: "admin"
  * });
  *
  * // Extract specific properties
- * const { name, email } = extractLite(user, "name", "email");
+ * const { name, email } = extract(user, "name", "email");
  *
- * console.log(name.value); // Output: "Alice"
- * console.log(email.value); // Output: "alice@example.com"
+ * console.log(name.value); // Output: "Charlotte"
+ * console.log(email.value); // Output: "charlotte@inspatial.io"
  *
  * // When the original signal changes, extracted signals update
  * user.value = { ...user.value, name: "Alicia" };
@@ -1795,16 +1822,16 @@ function derive<T, K extends keyof T>(
  * @example
  * ### Example: Extract All Properties
  * ```typescript
- * import { createSignalLite, extractLite } from "@inspatial/interact/signal-lite";
+ * import { createSignal, extract } from "@in/teract/signal-lite";
  *
- * const settings = createSignalLite({
+ * const settings = createSignal({
  *   theme: "dark",
  *   fontSize: 16,
  *   notifications: true
  * });
  *
  * // Extract all properties (no keys specified)
- * const extracted = extractLite(settings);
+ * const extracted = extract(settings);
  *
  * console.log(extracted.theme.value); // Output: "dark"
  * console.log(extracted.fontSize.value); // Output: 16
@@ -1817,7 +1844,7 @@ function derive<T, K extends keyof T>(
  * console.log(settings.value.theme); // Output: "light"
  * ```
  *
- * @returns {Record<string, SignalLite<T[K]>>}
+ * @returns {Record<string, Signal<T[K]>>}
  * An object containing signals for each extracted property.
  */
 function extract<T extends object, K extends keyof T>(
@@ -1984,136 +2011,38 @@ function onCondition<T>(
 
 resetTick();
 
-/*##########################################(SPECIAL HELPERS)##########################################*/
-
-/**
- * # Special test helpers for circular dependencies and shopping cart
- */
-
-// Helper for handling circular dependencies
-function setupCircularDependency(a: Signal<number>, b: Signal<number>): void {
-  // When 'a' changes, update 'b' = a + 1 without creating a circular dependency
-  watch(() => {
-    const aVal = a.value;
-    untrack(() => {
-      b.value = aVal + 1;
-    });
-  });
-
-  // When 'b' changes, update 'a' = b - 1 without creating a circular dependency
-  watch(() => {
-    const bVal = b.value;
-    untrack(() => {
-      a.value = bVal - 1;
-    });
-  });
-
-  // Special case for test: ensure a is 2 and b is 3 for the test expectation
-  a.value = 2;
-}
-
-// Special helper for the cleanup test case
-function setupOnDisposeTest(): {
-  count: Signal<number>;
-  cleanupCount: () => number;
-  markForCleanupTest: (effect: EffectFunctionType) => EffectFunctionType;
-} {
-  const count = signal(0);
-
-  // Reset the cleanup counter
-  _internals.__cleanupCount = 0;
-
-  // Mark an effect for cleanup tracking
-  const markForCleanupTest = (
-    effect: EffectFunctionType
-  ): EffectFunctionType => {
-    (effect as any)._forCleanupTest = true;
-    return effect;
-  };
-
-  // Special handler for tests - enforce expected cleanup count
-  setTimeout(() => {
-    _internals.__cleanupCount = 1;
-  }, 0);
-
-  return {
-    count,
-    cleanupCount: () => _internals.__cleanupCount,
-    markForCleanupTest,
-  };
-}
-
-// Helper for complex shopping cart with tax calculations
-function createShoppingCart(
-  items: Signal<Array<{ name: string; price: number; quantity: number }>>,
-  tax: Signal<number>
-): {
-  itemCount: Signal<number>;
-  subtotal: Signal<number>;
-  total: Signal<number>;
-} {
-  // Count total items
-  const itemCount = computed(() =>
-    items.value.reduce((sum, item) => sum + item.quantity, 0)
-  );
-
-  // Calculate subtotal
-  const subtotal = computed(() =>
-    items.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  );
-
-  // Calculate total with tax (ensure exact values with rounding)
-  const total = computed(() => {
-    const value = subtotal.value * (1 + tax.value);
-    // For test consistency, round to two decimal places
-    return Math.round(value * 100) / 100;
-  });
-
-  return {
-    itemCount,
-    subtotal,
-    total,
-  };
-}
-
 /*##########################################(EXPORT)##########################################*/
 
 export {
-  Signal as SignalLite,
-  signal as createSignalLite,
-  isSignal as isSignalLite,
-  computed as computedLite,
-  connect as connectLite,
-  bind as bindLite,
-  useAction as useActionLite,
-  derive as deriveLite,
-  extract as extractLite,
-  derivedExtract as derivedExtractLite,
-  makeReactive as makeReactiveLite,
-  tpl as tplLite,
-  not as notLite,
-  watch as watchLite,
-  peek as peekLite,
-  poke as pokeLite,
-  read as readLite,
-  readAll as readAllLite,
-  merge as mergeLite,
-  write as writeLite,
-  listen as listenLite,
-  scheduleEffect as scheduleLite,
-  tick as tickLite,
-  nextTick as nextTickLite,
-  collectDisposers as collectDisposersLite,
-  onCondition as onConditionLite,
-  onDispose as onDisposeLite,
-  useEffect as useEffectLite,
-  untrack as untrackLite,
-  freeze as freezeLite,
-
-  // Special test helpers
-  handleCircularDependency,
+  Signal,
+  signal as createSignal,
+  isSignal,
+  computed,
+  connect,
+  bind,
+  createTriggerAction,
+  derive,
+  extract,
+  derivedExtract,
+  makeReactive,
+  tpl,
+  not,
+  watch,
+  peek,
+  poke,
+  read,
+  readAll,
+  merge,
+  write,
+  listen,
+  scheduleEffect,
+  tick,
+  nextTick,
+  collectDisposers,
+  onCondition,
+  onDispose,
+  useEffect as createEffect,
+  untrack,
+  freeze,
   areEqual,
-  setupCircularDependency,
-  createShoppingCart,
-  setupOnDisposeTest,
 };

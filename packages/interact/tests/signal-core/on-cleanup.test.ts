@@ -1,6 +1,6 @@
 import {
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   flushSync,
   onCleanup,
 } from "../../signal-core/index.ts";
@@ -36,7 +36,7 @@ test("should be invoked when computation is disposed", () => {
     const disposeB = mockFn();
     const disposeC = mockFn();
 
-    const stopEffect = createRoot((dispose) => {
+    const stopEffect = createInteractiveRoot((dispose) => {
       createEffect(
         () => {
           onCleanup(() => disposeA());
@@ -70,7 +70,7 @@ test("should be invoked when computation is disposed", () => {
       const basicDisposeA = mockFn();
       let cleanupCalled = false;
 
-      const basicTest = createRoot((dispose) => {
+      const basicTest = createInteractiveRoot((dispose) => {
         onCleanup(() => {
           cleanupCalled = true;
           basicDisposeA();
@@ -99,7 +99,7 @@ test("should not trigger wrong onCleanup", () => {
   try {
     const dispose = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(
         () => {
           onCleanup(() => dispose());
@@ -107,7 +107,7 @@ test("should not trigger wrong onCleanup", () => {
         () => {}
       );
 
-      const stopEffect = createRoot((dispose) => {
+      const stopEffect = createInteractiveRoot((dispose) => {
         createEffect(
           () => {},
           () => {}
@@ -134,10 +134,10 @@ test("should not trigger wrong onCleanup", () => {
     try {
       let wrongTriggerCount = 0;
 
-      const rootDispose = createRoot((dispose) => {
+      const rootDispose = createInteractiveRoot((dispose) => {
         onCleanup(() => wrongTriggerCount++);
 
-        const innerDispose = createRoot((innerDispose) => {
+        const innerDispose = createInteractiveRoot((innerDispose) => {
           // This disposal should not affect outer cleanup
           return innerDispose;
         });
@@ -169,7 +169,7 @@ test("should clean up in reverse order", () => {
 
     let calls = 0;
 
-    const stopEffect = createRoot((dispose) => {
+    const stopEffect = createInteractiveRoot((dispose) => {
       createEffect(
         () => {
           onCleanup(() => disposeParent(++calls));
@@ -218,7 +218,7 @@ test("should clean up in reverse order", () => {
     try {
       const callOrder: string[] = [];
 
-      const basicOrderingTest = createRoot((dispose) => {
+      const basicOrderingTest = createInteractiveRoot((dispose) => {
         onCleanup(() => callOrder.push("first"));
         onCleanup(() => callOrder.push("second"));
         onCleanup(() => callOrder.push("third"));
@@ -249,8 +249,8 @@ test("should dispose all roots", () => {
   try {
     const disposals: string[] = [];
 
-    const dispose = createRoot((dispose) => {
-      createRoot(() => {
+    const dispose = createInteractiveRoot((dispose) => {
+      createInteractiveRoot(() => {
         onCleanup(() => disposals.push("SUBTREE 1"));
         createEffect(
           () => onCleanup(() => disposals.push("+A1")),
@@ -266,7 +266,7 @@ test("should dispose all roots", () => {
         );
       });
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         onCleanup(() => disposals.push("SUBTREE 2"));
         createEffect(
           () => onCleanup(() => disposals.push("+A2")),
@@ -315,10 +315,10 @@ test("should dispose all roots", () => {
     try {
       const simpleDisposals: string[] = [];
 
-      const simpleNestedTest = createRoot((dispose) => {
+      const simpleNestedTest = createInteractiveRoot((dispose) => {
         onCleanup(() => simpleDisposals.push("ROOT"));
 
-        createRoot(() => {
+        createInteractiveRoot(() => {
           onCleanup(() => simpleDisposals.push("CHILD"));
         });
 

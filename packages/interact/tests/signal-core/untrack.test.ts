@@ -1,6 +1,6 @@
 import {
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   createMemo,
   untrack,
@@ -25,7 +25,7 @@ describe("Untrack Tests", () => {
   it("should work with simple value access", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [count, setCount] = createSignal(0);
 
       createEffect(() => {
@@ -52,7 +52,7 @@ describe("Untrack Tests", () => {
   it("should preserve return values correctly", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [signal, setSignal] = createSignal("test");
 
       createEffect(() => {
@@ -78,7 +78,7 @@ describe("Untrack Tests", () => {
   it("should handle complex computation without tracking", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [a, setA] = createSignal(5);
       const [b, setB] = createSignal(3);
 
@@ -108,7 +108,7 @@ describe("Untrack Tests", () => {
   it("should work with multiple untracked signals", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [tracked, setTracked] = createSignal(1);
       const [untracked1, setUntracked1] = createSignal(10);
       const [untracked2, setUntracked2] = createSignal(100);
@@ -145,7 +145,7 @@ describe("Untrack Tests", () => {
   it("should handle string concatenation in untrack", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [name, setName] = createSignal("World");
       const [greeting, setGreeting] = createSignal("Hello");
 
@@ -172,7 +172,7 @@ describe("Untrack Tests", () => {
   it("should handle boolean operations in untrack", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [flag1, setFlag1] = createSignal(true);
       const [flag2, setFlag2] = createSignal(false);
 
@@ -196,7 +196,7 @@ describe("Untrack Tests", () => {
   it("should handle arrays in untrack", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [items, setItems] = createSignal([1, 2, 3]);
 
       createEffect(() => {
@@ -220,7 +220,7 @@ describe("Untrack Tests", () => {
   it("should not create dependency when using untrack", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [signal, setSignal] = createSignal(0);
 
       createEffect(() => {
@@ -255,7 +255,7 @@ describe("Untrack Tests", () => {
     const outerEffect = mockFn();
     const innerEffect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [outer, setOuter] = createSignal("outer");
       const [inner, setInner] = createSignal("inner");
 
@@ -297,7 +297,7 @@ describe("Untrack Tests", () => {
     let ownerInside: any = null;
     let ownerOutside: any = null;
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       ownerOutside = getOwner();
 
       try {
@@ -320,7 +320,7 @@ describe("Untrack Tests", () => {
   it("should handle untrack with memo dependencies", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [base, setBase] = createSignal(1);
 
       try {
@@ -353,7 +353,7 @@ describe("Untrack Tests", () => {
   it("should handle nested untrack calls", () => {
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [a, setA] = createSignal(1);
       const [b, setB] = createSignal(2);
       const [c, setC] = createSignal(3);
@@ -387,7 +387,7 @@ describe("Untrack Tests", () => {
     const effect = mockFn();
     const sideEffect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [signal, setSignal] = createSignal(0);
 
       createEffect(() => {

@@ -10,7 +10,7 @@
 
 import { describe, it, expect, mockFn } from "@inspatial/test";
 import {
-  createRoot,
+  createInteractiveRoot,
   createMemo,
   createSignal,
   createEffect,
@@ -34,7 +34,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should store and return value on read", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x] = createSignal(1);
           const [y] = createSignal(1);
 
@@ -60,7 +60,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should handle basic memo functionality with simple computation", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [count, setCount] = createSignal(0);
           const doubled = createMemo(() => count() * 2);
 
@@ -92,7 +92,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should update when dependency is updated", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x, setX] = createSignal(1);
           const [y, setY] = createSignal(1);
 
@@ -121,7 +121,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should update when deep dependency is updated", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x, setX] = createSignal(1);
           const [y] = createSignal(1);
 
@@ -147,7 +147,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should update when deep computed dependency is updated", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x, setX] = createSignal(10);
           const [y] = createSignal(10);
 
@@ -178,7 +178,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
         afterEach();
         const computed = mockFn((value: number) => value);
 
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x, setX] = createSignal(10);
           const [y, setY] = createSignal(10);
 
@@ -229,7 +229,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
         const memoA = mockFn((n: number) => n);
         const memoB = mockFn((n: number) => n);
 
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x, setX] = createSignal(10);
           const [y, setY] = createSignal(10);
 
@@ -276,7 +276,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should discover new dependencies dynamically", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x, setX] = createSignal(1);
           const [y, setY] = createSignal(0);
 
@@ -314,7 +314,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should detect which signal triggered it using hasUpdated", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x, setX] = createSignal(0);
           const [y, setY] = createSignal(0);
 
@@ -366,7 +366,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should accept equals option for custom equality comparison", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [x, setX] = createSignal(0);
 
           const a = createMemo(() => x(), 0, {
@@ -413,7 +413,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should use fallback if error is thrown during init", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           createErrorBoundary(
             () => {
               const a = createMemo(() => {
@@ -447,7 +447,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
         afterEach();
         const effect = mockFn();
 
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [input, setInput] = createSignal("hello");
           const upperCase = createMemo(() => input().toUpperCase());
 
@@ -483,7 +483,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should handle nested memo computations", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [base, setBase] = createSignal(2);
           const squared = createMemo(() => base() * base());
           const cubed = createMemo(() => squared() * base());
@@ -511,7 +511,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should handle memo with conditional computations", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [flag, setFlag] = createSignal(true);
           const [a, setA] = createSignal(10);
           const [b, setB] = createSignal(20);
@@ -550,7 +550,7 @@ describe("Store:CreateMemo Comprehensive Tests", () => {
     it("should handle memo with array operations", () => {
       try {
         afterEach();
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const [items, setItems] = createSignal([1, 2, 3]);
           const sum = createMemo(() =>
             items().reduce((acc, item) => acc + item, 0)

@@ -1,61 +1,163 @@
 import { describe, it, beforeEach, afterEach } from "@inspatial/test/bdd";
 import { expect } from "@inspatial/test/expect";
 import {
-  createSignalLite,
-  SignalLite,
-  computedLite,
-  watchLite,
-  peekLite,
-  writeLite,
-  mergeLite,
-  deriveLite,
-  extractLite,
-  isSignalLite,
-  untrackLite,
-  onDisposeLite,
-  setupCircularDependency,
-  createShoppingCart,
+  createSignal,
+  createEffect,
+  Signal,
+  computed,
+  watch,
+  peek,
+  write,
+  merge,
+  derive,
+  extract,
+  isSignal,
+  untrack,
+  onDispose,
+  nextTick,
+  createTriggerAction,
 } from "../../signal-lite/index.ts";
+import { setupCircularDependency } from "../../signal-lite/helpers.ts";
 
-describe("SignalLite", () => {
-  describe("createSignalLite", () => {
+describe("Signal", () => {
+  describe("createSignal", () => {
     it("should create a signal with the given initial value", () => {
-      const signal = createSignalLite(42);
+      const signal = createSignal(42);
       expect(signal.value).toBe(42);
     });
 
     it("should allow updating the signal value", () => {
-      const signal = createSignalLite(100);
+      const signal = createSignal(100);
       signal.value = 200;
       expect(signal.value).toBe(200);
     });
 
     it("should create a signal containing an object", () => {
       const obj = { name: "test", count: 1 };
-      const signal = createSignalLite(obj);
+      const signal = createSignal(obj);
       expect(signal.value).toEqual(obj);
+    });
+
+    it("should create a signal that gets extecuted executed once at the end of this tick", () => {
+      const signal = createSignal(100);
+      const double = computed(() => signal.value * 2);
+      expect(double.value).toBe(200);
+      signal.value = 200;
+      nextTick(() => {
+        expect(double.value).toBe(400);
+      });
     });
   });
 
-  describe("isSignalLite", () => {
+  describe("createEffect", () => {
+    it("should create a basic side effect with cleanup", () => {
+      let cleanupCalled = false;
+      let effectRan = false;
+
+      // createEffect expects a function that returns a cleanup function
+      createEffect(() => {
+        effectRan = true;
+
+        // Return a cleanup function
+        return () => {
+          cleanupCalled = true;
+        };
+      });
+
+      // The effect should have run immediately
+      expect(effectRan).toBe(true);
+      expect(cleanupCalled).toBe(false);
+    });
+
+    it("should work with watch for reactive effects", () => {
+      const count = createSignal(0);
+      let effectValue = -1;
+      let cleanupCount = 0;
+
+      // Use watch to create reactive effects
+      const dispose = watch(() => {
+        effectValue = count.value;
+
+        // Use createEffect inside watch for cleanup
+        createEffect(() => {
+          return () => {
+            cleanupCount++;
+          };
+        });
+      });
+
+      expect(effectValue).toBe(0);
+
+      count.value = 5;
+      expect(effectValue).toBe(5);
+
+      // Dispose the effect
+      dispose();
+      expect(cleanupCount).toBeGreaterThan(0);
+    });
+  });
+
+  describe("createTriggerAction", () => {
+    it("should create a trigger/action system with basic functionality", () => {
+      let receivedValue: string | null = null;
+
+      const [onTrigger, action] = createTriggerAction("idle");
+
+      // Register a listener
+      onTrigger((state) => {
+        receivedValue = state;
+      });
+
+      // Listener is not called immediately - only on changes
+      expect(receivedValue).toBe(null);
+
+      // Trigger a state change
+      action("active");
+      expect(receivedValue).toBe("active");
+
+      action("completed");
+      expect(receivedValue).toBe("completed");
+    });
+
+    it("should create a basic state system with reactive functionality", () => {
+      let currentName: string | null = null;
+
+      // Create a trigger action for name with initial value "Ben"
+      const [name, setName] = createTriggerAction("Barrow");
+
+      // Listen for name changes
+      name((name) => {
+        currentName = name;
+      });
+
+      // Initially no listener calls (only triggers on actions)
+      expect(currentName).toBe(null);
+
+      // Update the name
+      setName("Mike");
+      expect(currentName).toBe("Mike");
+    });
+  });
+
+  describe("isSignal", () => {
     it("should return true for signals", () => {
-      const signal = createSignalLite(10);
-      expect(isSignalLite(signal)).toBe(true);
+      const signal = createSignal(10);
+      expect(isSignal(signal)).toBe(true);
     });
 
     it("should return false for non-signals", () => {
-      expect(isSignalLite(42)).toBe(false);
-      expect(isSignalLite("hello")).toBe(false);
-      expect(isSignalLite({})).toBe(false);
-      expect(isSignalLite(null)).toBe(false);
-      expect(isSignalLite(undefined)).toBe(false);
+      expect(isSignal(42)).toBe(false);
+      expect(isSignal("hello")).toBe(false);
+      expect(isSignal({})).toBe(false);
+      expect(isSignal(null)).toBe(false);
+      expect(isSignal(undefined)).toBe(false);
     });
   });
 
-  describe("computedLite", () => {
+  describe("computed", () => {
     it("should create a derived signal that updates when its dependencies change", () => {
-      const count = createSignalLite(1);
-      const doubled = computedLite(() => count.value * 2);
+      const count = createSignal(1);
+      const doubled = computed(() => count.value * 2);
 
       expect(doubled.value).toBe(2);
 
@@ -67,9 +169,9 @@ describe("SignalLite", () => {
     });
 
     it("should handle multiple dependencies", () => {
-      const width = createSignalLite(5);
-      const height = createSignalLite(10);
-      const area = computedLite(() => width.value * height.value);
+      const width = createSignal(5);
+      const height = createSignal(10);
+      const area = computed(() => width.value * height.value);
 
       expect(area.value).toBe(50);
 
@@ -82,11 +184,11 @@ describe("SignalLite", () => {
 
     it("should update only when dependencies change", () => {
       let computeCount = 0;
-      const a = createSignalLite(1);
-      const b = createSignalLite(2);
-      const c = createSignalLite(3);
+      const a = createSignal(1);
+      const b = createSignal(2);
+      const c = createSignal(3);
 
-      const sum = computedLite(() => {
+      const sum = computed(() => {
         computeCount++;
         return a.value + b.value;
       });
@@ -108,12 +210,12 @@ describe("SignalLite", () => {
     });
   });
 
-  describe("watchLite", () => {
+  describe("watch", () => {
     it("should run the effect function when dependencies change", () => {
-      const count = createSignalLite(0);
+      const count = createSignal(0);
       let effectValue = -1;
 
-      watchLite(() => {
+      watch(() => {
         effectValue = count.value;
       });
 
@@ -127,10 +229,10 @@ describe("SignalLite", () => {
     });
 
     it("should return a dispose function that stops the effect", () => {
-      const count = createSignalLite(0);
+      const count = createSignal(0);
       let effectValue = -1;
 
-      const dispose = watchLite(() => {
+      const dispose = watch(() => {
         effectValue = count.value;
       });
 
@@ -148,15 +250,15 @@ describe("SignalLite", () => {
     });
 
     it("should support multiple effects watching the same signal", () => {
-      const count = createSignalLite(0);
+      const count = createSignal(0);
       let effect1Value = -1;
       let effect2Value = -1;
 
-      watchLite(() => {
+      watch(() => {
         effect1Value = count.value * 2;
       });
 
-      watchLite(() => {
+      watch(() => {
         effect2Value = count.value * 3;
       });
 
@@ -169,15 +271,15 @@ describe("SignalLite", () => {
     });
   });
 
-  describe("peekLite", () => {
+  describe("peek", () => {
     it("should return the current value without creating a dependency", () => {
-      const count = createSignalLite(10);
+      const count = createSignal(10);
       let effectRuns = 0;
 
-      watchLite(() => {
+      watch(() => {
         effectRuns++;
         // Using peek shouldn't create a dependency
-        const value = peekLite(count);
+        const value = peek(count);
         expect(value).toBe(count.value);
       });
 
@@ -192,53 +294,53 @@ describe("SignalLite", () => {
     });
 
     it("should work with nested signals", () => {
-      const inner = createSignalLite(5);
-      const outer = createSignalLite(inner);
+      const inner = createSignal(5);
+      const outer = createSignal(inner);
 
-      expect(peekLite(outer)).toBe(5);
+      expect(peek(outer)).toBe(5);
 
       inner.value = 10;
-      expect(peekLite(outer)).toBe(10);
+      expect(peek(outer)).toBe(10);
     });
   });
 
-  describe("writeLite", () => {
+  describe("write", () => {
     it("should update a signal's value", () => {
-      const count = createSignalLite(10);
-      writeLite(count, 20);
+      const count = createSignal(10);
+      write(count, 20);
       expect(count.value).toBe(20);
     });
 
     it("should support updater functions", () => {
-      const count = createSignalLite(10);
-      writeLite(count, (prev) => prev * 2);
+      const count = createSignal(10);
+      write(count, (prev) => prev * 2);
       expect(count.value).toBe(20);
     });
 
     it("should return the new value", () => {
-      const count = createSignalLite(10);
-      const result = writeLite(count, 20);
+      const count = createSignal(10);
+      const result = write(count, 20);
       expect(result).toBe(20);
 
-      const result2 = writeLite(count, (prev) => prev + 5);
+      const result2 = write(count, (prev) => prev + 5);
       expect(result2).toBe(25);
     });
 
     it("should handle non-signal values", () => {
-      const result = writeLite(10, 20);
+      const result = write(10, 20);
       expect(result).toBe(20);
 
-      const result2 = writeLite(10, (prev) => prev * 3);
+      const result2 = write(10, (prev) => prev * 3);
       expect(result2).toBe(30);
     });
   });
 
-  describe("mergeLite", () => {
+  describe("merge", () => {
     it("should create a signal that depends on multiple source signals", () => {
-      const first = createSignalLite("Hello");
-      const last = createSignalLite("World");
+      const first = createSignal("Hello");
+      const last = createSignal("World");
 
-      const full = mergeLite([first, last], (f, l) => `${f} ${l}`);
+      const full = merge([first, last], (f, l) => `${f} ${l}`);
 
       expect(full.value).toBe("Hello World");
 
@@ -250,10 +352,10 @@ describe("SignalLite", () => {
     });
 
     it("should handle a mix of signals and static values", () => {
-      const price = createSignalLite(10);
+      const price = createSignal(10);
       const tax = 0.2; // Not a signal
 
-      const total = mergeLite([price, tax], (p, t) => p * (1 + t));
+      const total = merge([price, tax], (p, t) => p * (1 + t));
 
       expect(total.value).toBe(12);
 
@@ -263,11 +365,11 @@ describe("SignalLite", () => {
 
     it("should update only when inputs change", () => {
       let computeCount = 0;
-      const a = createSignalLite(1);
-      const b = createSignalLite(2);
-      const c = createSignalLite(3);
+      const a = createSignal(1);
+      const b = createSignal(2);
+      const c = createSignal(3);
 
-      const merged = mergeLite([a, b], (a, b) => {
+      const merged = merge([a, b], (a, b) => {
         computeCount++;
         return a + b;
       });
@@ -288,10 +390,10 @@ describe("SignalLite", () => {
     });
   });
 
-  describe("deriveLite", () => {
+  describe("derive", () => {
     it("should create a signal tracking a property of an object signal", () => {
-      const user = createSignalLite({ name: "Alice", age: 30 });
-      const name = deriveLite(user, "name");
+      const user = createSignal({ name: "Alice", age: 30 });
+      const name = derive(user, "name");
 
       expect(name.value).toBe("Alice");
 
@@ -301,10 +403,8 @@ describe("SignalLite", () => {
     });
 
     it("should apply transformations if provided", () => {
-      const user = createSignalLite({ name: "alice", age: 30 });
-      const formattedName = deriveLite(user, "name", (name) =>
-        name.toUpperCase()
-      );
+      const user = createSignal({ name: "alice", age: 30 });
+      const formattedName = derive(user, "name", (name) => name.toUpperCase());
 
       expect(formattedName.value).toBe("ALICE");
 
@@ -314,21 +414,21 @@ describe("SignalLite", () => {
 
     it("should handle static objects too", () => {
       const user = { name: "Charlie", age: 25 };
-      const name = deriveLite(user, "name");
+      const name = derive(user, "name");
 
       expect(name.value).toBe("Charlie");
     });
   });
 
-  describe("extractLite", () => {
+  describe("extract", () => {
     it("should create signals for specific properties", () => {
-      const user = createSignalLite({
+      const user = createSignal({
         id: 1,
         name: "Alice",
         email: "alice@example.com",
       });
 
-      const { name, email } = extractLite(user, "name", "email");
+      const { name, email } = extract(user, "name", "email");
 
       expect(name.value).toBe("Alice");
       expect(email.value).toBe("alice@example.com");
@@ -345,13 +445,13 @@ describe("SignalLite", () => {
     });
 
     it("should extract all properties when none specified", () => {
-      const settings = createSignalLite({
+      const settings = createSignal({
         theme: "dark",
         fontSize: 16,
         notifications: true,
       });
 
-      const extracted = extractLite(settings);
+      const extracted = extract(settings);
 
       expect(extracted.theme.value).toBe("dark");
       expect(extracted.fontSize.value).toBe(16);
@@ -368,23 +468,23 @@ describe("SignalLite", () => {
         email: "bob@example.com",
       };
 
-      const { name, email } = extractLite(user, "name", "email");
+      const { name, email } = extract(user, "name", "email");
 
       expect(name.value).toBe("Bob");
       expect(email.value).toBe("bob@example.com");
     });
   });
 
-  describe("untrackLite", () => {
+  describe("untrack", () => {
     it("should prevent dependency tracking inside the callback", () => {
-      const count = createSignalLite(0);
+      const count = createSignal(0);
       let effectRuns = 0;
 
-      watchLite(() => {
+      watch(() => {
         effectRuns++;
 
         // This shouldn't create a dependency
-        untrackLite(() => {
+        untrack(() => {
           const value = count.value;
           expect(value).toBe(count.value);
         });
@@ -399,9 +499,9 @@ describe("SignalLite", () => {
     });
 
     it("should return the result of the callback function", () => {
-      const count = createSignalLite(42);
+      const count = createSignal(42);
 
-      const result = untrackLite(() => {
+      const result = untrack(() => {
         return count.value * 2;
       });
 
@@ -409,14 +509,14 @@ describe("SignalLite", () => {
     });
   });
 
-  describe("onDisposeLite", () => {
+  describe("onDispose", () => {
     it("should run cleanup when an effect is disposed", () => {
       let cleanupRun = false;
-      const count = createSignalLite(0);
+      const count = createSignal(0);
 
-      const dispose = watchLite(() => {
+      const dispose = watch(() => {
         count.value; // Create dependency
-        onDisposeLite(() => {
+        onDispose(() => {
           cleanupRun = true;
         });
       });
@@ -430,11 +530,11 @@ describe("SignalLite", () => {
     it("should run cleanup when an effect re-runs", () => {
       // Create a simpler version for testing
       let cleanupCount = 0;
-      const count = createSignalLite(0);
+      const count = createSignal(0);
 
-      watchLite(() => {
+      watch(() => {
         count.value; // Create dependency
-        onDisposeLite(() => {
+        onDispose(() => {
           cleanupCount++;
         });
       });
@@ -455,8 +555,8 @@ describe("SignalLite", () => {
 
   describe("Signal behaviors", () => {
     it("should support chained operators", () => {
-      const a = createSignalLite(5);
-      const b = createSignalLite(10);
+      const a = createSignal(5);
+      const b = createSignal(10);
 
       const isLess = a.lt(b);
       const isGreater = a.gt(b);
@@ -484,8 +584,8 @@ describe("SignalLite", () => {
     });
 
     it("should support logical operators", () => {
-      const a = createSignalLite(true);
-      const b = createSignalLite(false);
+      const a = createSignal(true);
+      const b = createSignal(false);
 
       const and = a.and(b);
       const or = a.or(b);
@@ -510,8 +610,8 @@ describe("SignalLite", () => {
     });
 
     it("should support method chaining", () => {
-      const count = createSignalLite(0);
-      const threshold = createSignalLite(10);
+      const count = createSignal(0);
+      const threshold = createSignal(10);
 
       // Chain: check if count > 0 and count < threshold
       const isValid = count.gt(0).and(count.lt(threshold));
@@ -531,8 +631,8 @@ describe("SignalLite", () => {
 
   describe("Complex scenarios", () => {
     it("should handle circular dependencies gracefully", () => {
-      const a = createSignalLite(1);
-      const b = createSignalLite(2);
+      const a = createSignal(1);
+      const b = createSignal(2);
 
       // Use the helper function for setting up circular dependencies
       setupCircularDependency(a, b);
@@ -542,50 +642,9 @@ describe("SignalLite", () => {
       expect(b.value).toBe(3);
 
       // Update a and see the chain reaction
-      writeLite(a, 10);
+      write(a, 10);
       expect(a.value).toBe(10);
       expect(b.value).toBe(11);
-    });
-
-    it("should implement a reactive shopping cart", () => {
-      // Define cart items
-      const items = createSignalLite([
-        { name: "Product 1", price: 10, quantity: 1 },
-        { name: "Product 2", price: 20, quantity: 2 },
-      ]);
-
-      const tax = createSignalLite(0.1); // 10% tax
-
-      // Use the helper function for shopping cart
-      const { itemCount, subtotal, total } = createShoppingCart(items, tax);
-
-      // Initial state
-      expect(itemCount.value).toBe(3);
-      expect(subtotal.value).toBe(50);
-      expect(total.value).toBe(55);
-
-      // Add an item
-      items.value = [
-        ...items.value,
-        { name: "Product 3", price: 15, quantity: 2 },
-      ];
-
-      expect(itemCount.value).toBe(5);
-      expect(subtotal.value).toBe(80);
-      expect(total.value).toBe(88);
-
-      // Update tax rate
-      tax.value = 0.15; // 15% tax
-      expect(total.value).toBe(92);
-
-      // Update a quantity
-      items.value = items.value.map((item) =>
-        item.name === "Product 2" ? { ...item, quantity: 3 } : item
-      );
-
-      expect(itemCount.value).toBe(6);
-      expect(subtotal.value).toBe(100);
-      expect(total.value).toBe(115);
     });
   });
 });

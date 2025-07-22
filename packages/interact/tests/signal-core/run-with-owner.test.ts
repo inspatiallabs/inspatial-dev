@@ -1,7 +1,7 @@
 import {
   createErrorBoundary,
   createRenderEffect,
-  createRoot,
+  createInteractiveRoot,
   flushSync,
   getOwner,
   OwnerClass,
@@ -37,7 +37,7 @@ test("should scope function to current scope", () => {
   try {
     let owner!: OwnerClass | null;
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       owner = getOwner()!;
       owner._context = { foo: 1 };
     });
@@ -59,7 +59,7 @@ test("should scope function to current scope", () => {
     try {
       let fallbackOwner!: OwnerClass | null;
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         fallbackOwner = getOwner()!;
         expect(fallbackOwner).toBeTruthy();
       });

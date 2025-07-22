@@ -1,7 +1,7 @@
 import {
   createEffect,
   createMemo,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   createStore,
   flushSync,
@@ -20,7 +20,7 @@ describe("Recursive Effects", () => {
     let called = 0;
     let next: any;
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(
         () => {
           next = sharedClone(next, store);
@@ -52,7 +52,7 @@ describe("Recursive Effects", () => {
     let called = 0;
     let next: any;
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(
         () => {
           next = sharedClone(next, untrack(() => store).bar);
@@ -90,7 +90,7 @@ describe("Recursive Effects", () => {
     let prev: any;
     let next: any;
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(
         () => {
           prev = next;
@@ -127,7 +127,7 @@ describe("Recursive Effects", () => {
     const [x, setX] = createSignal(0);
     const simpleM = createMemo(() => x());
     let calls = 0;
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(
         () => {
           createEffect(

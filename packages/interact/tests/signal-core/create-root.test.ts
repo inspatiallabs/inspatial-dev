@@ -1,7 +1,7 @@
 /**
- * # CreateRoot Tests for Interact - (InSpatial Signal Core)
+ * # createInteractiveRoot Tests for Interact - (InSpatial Signal Core)
  *
- * Comprehensive test suite for createRoot functionality using proven working patterns.
+ * Comprehensive test suite for createInteractiveRoot functionality using proven working patterns.
  * Tests root isolation, disposal, and tracking scope management.
  *
  * @category Interact - (InSpatial Signal Core)
@@ -13,7 +13,7 @@ import {
   ComputationClass,
   createEffect,
   createMemo,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   flushSync,
   getOwner,
@@ -31,7 +31,7 @@ const afterEach = () => {
   flushSync();
 };
 
-describe("Store:CreateRoot Comprehensive Tests", () => {
+describe("Store:createInteractiveRoot Comprehensive Tests", () => {
   it("should dispose of inner computations", () => {
     afterEach();
 
@@ -41,7 +41,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
 
       const memo = mockFn(() => x![0]() + 10);
 
-      createRoot((dispose) => {
+      createInteractiveRoot((dispose) => {
         x = createSignal(10);
         y = createMemo(() => memo());
         y(); // Trigger initial computation
@@ -69,7 +69,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
       // Fallback test - basic disposal functionality
       const basicMemoFn = (v?: unknown): unknown => 42;
       const basicMemo = mockFn(basicMemoFn);
-      const result = createRoot((dispose) => {
+      const result = createInteractiveRoot((dispose) => {
         const memo = createMemo(basicMemoFn);
         const value = memo();
         dispose();
@@ -84,7 +84,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
   it("should return result", () => {
     afterEach();
 
-    const result = createRoot((dispose) => {
+    const result = createInteractiveRoot((dispose) => {
       dispose();
       return 10;
     });
@@ -99,12 +99,12 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
       const [x, setX] = createSignal(0);
       const effect = mockFn();
 
-      const stopEffect = createRoot((dispose) => {
+      const stopEffect = createInteractiveRoot((dispose) => {
         createEffect(() => {
           x(); // Track x in outer effect
 
           // Create inner effect in new root scope
-          createRoot(() => {
+          createInteractiveRoot(() => {
             createEffect(() => {
               effect(x());
             });
@@ -136,7 +136,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
       const [signal, setSignal] = createSignal(0);
       const basicEffect = mockFn();
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         createEffect(() => {
           basicEffect(signal());
         });
@@ -158,7 +158,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
     let x: SignalType<number> | undefined;
     const root = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       x = createSignal(0);
       x[0](); // Access signal in root (should not track)
       root();
@@ -176,10 +176,10 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
     afterEach();
 
     try {
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const parent = getOwner();
 
-        createRoot(() => {
+        createInteractiveRoot(() => {
           const child = getOwner();
           expect((child as any)?._parent).toBe(parent);
         });
@@ -191,7 +191,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
       );
 
       // Fallback test - basic owner tracking
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const owner = getOwner();
         expect(owner).toBeDefined();
       });
@@ -204,7 +204,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
     try {
       const [x] = createSignal(0);
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         x(); // Access signal in root
         const owner = getOwner() as ComputationClass;
 
@@ -219,7 +219,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
       );
 
       // Fallback test - basic root owner exists
-      createRoot(() => {
+      createInteractiveRoot(() => {
         const owner = getOwner();
         expect(owner).toBeDefined();
       });
@@ -231,7 +231,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
 
     // This should not throw an error
     expect(() => {
-      createRoot((dispose) => {
+      createInteractiveRoot((dispose) => {
         onCleanup(() => dispose());
         dispose();
       });
@@ -241,7 +241,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
   it("should handle basic root functionality", () => {
     afterEach();
 
-    const result = createRoot(() => {
+    const result = createInteractiveRoot(() => {
       const [count, setCount] = createSignal(0);
 
       // Root should provide isolation
@@ -264,7 +264,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
       outerEffect(signal());
     });
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(() => {
         innerEffect(signal());
       });
@@ -290,7 +290,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
       };
       let dispose: (() => void) | undefined;
 
-      createRoot((disp) => {
+      createInteractiveRoot((disp) => {
         dispose = disp;
         onCleanup(cleanupFn);
 
@@ -319,7 +319,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
       const cleanupFunction = (): void => {};
       const basicCleanup = mockFn(cleanupFunction);
 
-      createRoot(() => {
+      createInteractiveRoot(() => {
         onCleanup(cleanupFunction);
       });
 
@@ -336,7 +336,7 @@ describe("Store:CreateRoot Comprehensive Tests", () => {
 
     const basicCleanup = mockFn(cleanupFn);
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       onCleanup(cleanupFn);
     });
 

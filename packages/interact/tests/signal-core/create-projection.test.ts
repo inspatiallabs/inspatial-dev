@@ -2,7 +2,7 @@ import {
   createMemo,
   createProjection,
   createRenderEffect,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   flushSync,
 } from "../../signal-core/index.ts";
@@ -26,7 +26,7 @@ describe("CreateProjection Tests", () => {
 
     it("should observe key changes", () => {
       try {
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           let previous;
@@ -120,7 +120,7 @@ describe("CreateProjection Tests", () => {
         );
 
         // Fallback test - basic projection creation
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           const [source] = createSignal(0);
@@ -141,7 +141,7 @@ describe("CreateProjection Tests", () => {
       try {
         const spy = mockFn();
         const [bar, setBar] = createSignal("foo");
-        const projection = createRoot((dispose) => {
+        const projection = createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           return createProjection(
@@ -172,7 +172,7 @@ describe("CreateProjection Tests", () => {
 
         // Fallback test - basic projection update
         const spy = mockFn();
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           const [signal, setSignal] = createSignal("initial");
@@ -201,7 +201,7 @@ describe("CreateProjection Tests", () => {
         let count = 0;
         const list: Array<string> = [];
 
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           const isSelected = createProjection<Record<number, boolean>>(
@@ -259,7 +259,7 @@ describe("CreateProjection Tests", () => {
         );
 
         // Fallback test - basic selection behavior
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           const [selected] = createSignal(0);
@@ -282,7 +282,7 @@ describe("CreateProjection Tests", () => {
         let count = 0;
         const list: Array<string>[] = [];
 
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           const isSelected = createProjection<Record<number, boolean>>(
@@ -342,7 +342,7 @@ describe("CreateProjection Tests", () => {
         );
 
         // Fallback test - basic double effect behavior
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           cleanupFns.push(dispose);
 
           const [value] = createSignal("test");

@@ -55,10 +55,10 @@ import type { OwnerClass } from "./owner.ts";
  * @example
  * ### Example 1: Assigning an effect to a different root
  * ```typescript
- * import { createRoot, createSignal, createEffect, runWithOwner, getOwner, onCleanup } from "@in/teract/signal-core";
+ * import { createInteractiveRoot, createSignal, createEffect, runWithOwner, getOwner, onCleanup } from "@in/teract/signal-core";
  *
- * const root1 = createRoot(dispose => ({ dispose, owner: getOwner() }));
- * const root2 = createRoot(dispose => ({ dispose, owner: getOwner() }));
+ * const root1 = createInteractiveRoot(dispose => ({ dispose, owner: getOwner() }));
+ * const root2 = createInteractiveRoot(dispose => ({ dispose, owner: getOwner() }));
  *
  * runWithOwner(root1.owner, () => {
  *   const [name, setName] = createSignal("Root 1 Signal");

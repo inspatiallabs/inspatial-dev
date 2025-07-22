@@ -6,17 +6,17 @@ This coverage summary is based on manual analysis of test cases and implementati
 
 | Function/Feature   | Tested | Coverage Notes                                        |
 | ------------------ | ------ | ----------------------------------------------------- |
-| `createSignalLite` | ✅     | Tested with primitives and objects                    |
-| `isSignalLite`     | ✅     | Tested with signals and non-signals                   |
-| `computedLite`     | ✅     | Tested with single and multiple dependencies          |
-| `watchLite`        | ✅     | Tested effect running, disposal, and multiple effects |
-| `peekLite`         | ✅     | Tested non-reactive reads and nested signals          |
-| `writeLite`        | ✅     | Tested direct updates and updater functions           |
-| `mergeLite`        | ✅     | Tested with multiple signals and mixed signal/values  |
-| `deriveLite`       | ✅     | Tested object property access and transformations     |
-| `extractLite`      | ✅     | Tested selected properties and full object extraction |
-| `untrackLite`      | ✅     | Tested dependency isolation                           |
-| `onDisposeLite`    | ✅     | Tested cleanup on disposal and re-runs                |
+| `createSignal` | ✅     | Tested with primitives and objects                    |
+| `isSignal`     | ✅     | Tested with signals and non-signals                   |
+| `computed`     | ✅     | Tested with single and multiple dependencies          |
+| `watch`        | ✅     | Tested effect running, disposal, and multiple effects |
+| `peek`         | ✅     | Tested non-reactive reads and nested signals          |
+| `write`        | ✅     | Tested direct updates and updater functions           |
+| `merge`        | ✅     | Tested with multiple signals and mixed signal/values  |
+| `derive`       | ✅     | Tested object property access and transformations     |
+| `extract`      | ✅     | Tested selected properties and full object extraction |
+| `untrack`      | ✅     | Tested dependency isolation                           |
+| `onDispose`    | ✅     | Tested cleanup on disposal and re-runs                |
 
 ## Signal Methods Coverage
 
@@ -31,6 +31,7 @@ This coverage summary is based on manual analysis of test cases and implementati
 | `lt()`         | ✅     | Tested in signal behaviors                      |
 | `and()`        | ✅     | Tested in logical operators and method chaining |
 | `or()`         | ✅     | Tested in logical operators                     |
+
 
 ## Specialized Features Coverage
 

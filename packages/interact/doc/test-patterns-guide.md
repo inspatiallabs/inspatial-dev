@@ -6,13 +6,13 @@
 
 ```typescript
 import { describe, it, expect, mockFn } from "@inspatial/test";
-import { createRoot, createEffect, flushSync } from "../../../signal-core/index.ts";
+import { createInteractiveRoot, createEffect, flushSync } from "../../../signal-core/index.ts";
 import { createStore } from "../../../signal/src/create-store.ts";
 
 it("should track property changes", () => {
   const effect = mockFn();
   
-  createRoot(() => {
+  createInteractiveRoot(() => {
     const [store, setStore] = createStore({ name: "John" });
     
     createEffect(() => {
@@ -46,7 +46,7 @@ class PersonClass {
 it("should track custom class properties", () => {
   const effect = mockFn();
   
-  createRoot(() => {
+  createInteractiveRoot(() => {
     const person = new PersonClass("John", 30);
     const [store, setStore] = createStore({ person });
     
@@ -76,7 +76,7 @@ it("should track custom class properties", () => {
 it("should handle arrays with separate count tracking", () => {
   const effect = mockFn();
   
-  createRoot(() => {
+  createInteractiveRoot(() => {
     const [store, setStore] = createStore({
       items: ["apple", "banana"],
       count: 2
@@ -106,7 +106,7 @@ it("should handle arrays with separate count tracking", () => {
 it("should track nested properties", () => {
   const effect = mockFn();
   
-  createRoot(() => {
+  createInteractiveRoot(() => {
     const [store, setStore] = createStore({
       user: {
         profile: {
@@ -140,7 +140,7 @@ it("should track nested properties", () => {
 it("should batch multiple updates", () => {
   const effect = mockFn();
   
-  createRoot(() => {
+  createInteractiveRoot(() => {
     const [store, setStore] = createStore({
       firstName: "John",
       lastName: "Doe",
@@ -172,7 +172,7 @@ it("should batch multiple updates", () => {
 - ✅ Use `mockFn()` from `@inspatial/test`
 - ✅ Always call `flushSync()` after effect creation
 - ✅ Use `toHaveBeenCalledTimes()` for verification  
-- ✅ Wrap everything in `createRoot()`
+- ✅ Wrap everything in `createInteractiveRoot()`
 - ✅ Use `setStore(state => { ... })` for updates
 - ✅ Track array changes with separate count properties
 - ✅ Test one specific behavior per test
@@ -197,7 +197,7 @@ it("should handle multiple effects", () => {
   const nameEffect = mockFn();
   const ageEffect = mockFn();
   
-  createRoot(() => {
+  createInteractiveRoot(() => {
     const [store, setStore] = createStore({ name: "John", age: 30 });
     
     createEffect(() => nameEffect(store.name));
@@ -224,7 +224,7 @@ it("should handle multiple effects", () => {
 it("should handle conditional tracking", () => {
   const effect = mockFn();
   
-  createRoot(() => {
+  createInteractiveRoot(() => {
     const [store, setStore] = createStore({
       showDetails: false,
       name: "John",
@@ -267,7 +267,7 @@ tests/core/
 ```typescript
 // Always use these exact imports
 import { describe, it, expect, mockFn } from "@inspatial/test";
-import { createRoot, createEffect, flushSync } from "../../../signal-core/index.ts";
+import { createInteractiveRoot, createEffect, flushSync } from "../../../signal-core/index.ts";
 import { createStore } from "../../../signal/src/create-store.ts";
 ```
 

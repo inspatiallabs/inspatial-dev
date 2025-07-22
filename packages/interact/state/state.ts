@@ -29,7 +29,7 @@ import {
   createTypeValidator,
 } from "./validation.ts";
 import { createSignal } from "../signal-core/create-signal.ts";
-import { createRoot } from "../signal-core/create-root.ts";
+import { createInteractiveRoot } from "../signal-core/create-root.ts";
 import { createEffect } from "../signal-core/create-effect.ts";
 
 // Define __DEV__ if not defined (for development mode detection)
@@ -103,7 +103,7 @@ export function createState<T extends object>(
   }
 
   // Create root reactive scope
-  return createRoot((dispose: () => void) => {
+  return createInteractiveRoot((dispose: () => void) => {
     // Create the reactive signal with initial state
     const [getInternalState, setInternalState] = createSignal<T>(
       config.initialState as any,
@@ -254,7 +254,7 @@ export function createState<T extends object>(
         // Unregister from manager
         StateManager.unregisterState(id, isGlobal);
 
-        // Call dispose function from createRoot
+        // Call dispose function from createInteractiveRoot
         dispose();
       },
 

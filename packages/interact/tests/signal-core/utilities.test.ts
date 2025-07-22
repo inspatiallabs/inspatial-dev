@@ -1,6 +1,6 @@
 import {
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   createStore,
   flushSync,
@@ -308,7 +308,7 @@ describe("Merge Signal", () => {
 
     // Skip this test for now - it's causing issues with the queue
     /*
-    createRoot(() => {
+    createInteractiveRoot(() => {
       props = merge(defaults, s);
       createEffect(
         () => props.a as string,
@@ -346,7 +346,7 @@ describe("Merge Signal", () => {
 
 describe("omit Props", () => {
   test("omit in two", () => {
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const out = Comp2({
         greeting: "Hi",
         get name() {
@@ -357,7 +357,7 @@ describe("omit Props", () => {
     });
   });
   test("omit in two with store", () => {
-    createRoot(() => {
+    createInteractiveRoot(() => {
       const [state] = createStore({ greeting: "Yo", name: "Bob" });
       const out = Comp2(state);
       expect(out).toBe("Yo Bob");

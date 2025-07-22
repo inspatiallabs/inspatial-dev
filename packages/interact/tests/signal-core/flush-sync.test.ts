@@ -1,6 +1,6 @@
 import {
   createEffect,
-  createRoot,
+  createInteractiveRoot,
   createSignal,
   flushSync,
 } from "../../signal-core/index.ts";
@@ -23,7 +23,7 @@ describe("FlushSync Tests", () => {
     const [x, setX] = createSignal(10);
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(() => {
         effect(x());
       });
@@ -45,7 +45,7 @@ describe("FlushSync Tests", () => {
     const [x, setX] = createSignal(10);
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(() => {
         effect(x());
       });
@@ -67,7 +67,7 @@ describe("FlushSync Tests", () => {
     const [a, setA] = createSignal(10);
     const effect = mockFn();
 
-    createRoot(() => {
+    createInteractiveRoot(() => {
       createEffect(() => {
         effect(a());
         flushSync(); // Call flushSync inside effect

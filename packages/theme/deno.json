@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/theme",
-  "license": "Apache-2.0",
+  "license": "Intentional-License-1.0",
   "version": "0.1.8",
   "compilerOptions": {
     "lib": ["deno.window", "dom", "esnext", "deno.ns", "deno.unstable", "scripthost"]

@@ -8,7 +8,7 @@ import {
   createSignal,
   createEffect,
   createMemo,
-  createRoot,
+  createInteractiveRoot,
   flushSync,
 } from "../../signal-core/index.ts";
 import { mockCleanup } from "../helpers/test-helpers.ts";
@@ -75,7 +75,7 @@ describe("Signal System Diagnostics", () => {
       try {
         const [count] = createSignal(0);
 
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           createEffect(() => {
             effectRuns++;
             effectCallbackSpy(count());
@@ -112,7 +112,7 @@ describe("Signal System Diagnostics", () => {
       try {
         const [count, setCount] = createSignal(0);
 
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           createEffect(() => {
             effectRuns++;
             effectCallbackSpy(count());
@@ -158,7 +158,7 @@ describe("Signal System Diagnostics", () => {
       try {
         const [count, setCount] = createSignal(0);
 
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           createEffect(() => {
             const value = count();
             return () => {
@@ -307,7 +307,7 @@ describe("Signal System Diagnostics", () => {
       try {
         const [a, setA] = createSignal("a");
 
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           createEffect(() => {
             const value = a();
             executionCount++;
@@ -354,7 +354,7 @@ describe("Signal System Diagnostics", () => {
         const [a, setA] = createSignal(1);
         const [b, setB] = createSignal(2);
 
-        createRoot((dispose) => {
+        createInteractiveRoot((dispose) => {
           createEffect(() => {
             const aVal = a();
             const bVal = b();

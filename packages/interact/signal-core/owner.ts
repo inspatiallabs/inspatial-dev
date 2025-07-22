@@ -11,7 +11,7 @@
  *
  * @example Basic Owner Tree Structure
  * ```typescript
- * import { createRoot } from "@in/teract/signal-core/create-root.ts";
+ * import { createInteractiveRoot } from "@in/teract/signal-core/create-root.ts";
  *
  * // Creates a tree structure like:
  * //    a
@@ -20,12 +20,12 @@
  * //    |
  * //    d
  *
- * const a = createRoot(() => {
- *   const b = createRoot(() => {});
- *   const c = createRoot(() => {
- *     const d = createRoot(() => {});
+ * const a = createInteractiveRoot(() => {
+ *   const b = createInteractiveRoot(() => {});
+ *   const c = createInteractiveRoot(() => {
+ *     const d = createInteractiveRoot(() => {});
  *   });
- *   const e = createRoot(() => {});
+ *   const e = createInteractiveRoot(() => {});
  * });
  * ```
  *
@@ -42,15 +42,15 @@
  *
  * @example Advanced Owner Management
  * ```typescript
- * import { createRoot, getOwner, setOwner } from "@in/teract/signal-core";
+ * import { createInteractiveRoot, getOwner, setOwner } from "@in/teract/signal-core";
  *
  * // Create a root scope with error handling
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   const owner = getOwner();
  *   console.log("Current owner:", owner);
  *
  *   // Child scope inherits context
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     const childOwner = getOwner();
  *     console.log("Child owner parent:", childOwner._parent === owner);
  *   });
@@ -60,7 +60,7 @@
  * @example Owner Context and Error Handling
  * ```typescript
  * // Error handling propagation through owner tree
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   const owner = getOwner();
  *
  *   // Set up error handler for this scope and all children
@@ -68,7 +68,7 @@
  *     console.log("Caught error in scope:", error);
  *   }];
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     // This child inherits the error handler
  *     throw new Error("Child error"); // Will be caught by parent handler
  *   });
@@ -79,12 +79,12 @@
  * ```typescript
  * import { onCleanup } from "@in/teract/signal-core/on-cleanup.ts";
  *
- * createRoot((dispose) => {
+ * createInteractiveRoot((dispose) => {
  *   // Register cleanup functions
  *   onCleanup(() => console.log("Cleaning up resource 1"));
  *   onCleanup(() => console.log("Cleaning up resource 2"));
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     onCleanup(() => console.log("Child cleanup"));
  *   });
  *
@@ -96,7 +96,7 @@
  * @example Custom Owner Management
  * ```typescript
  * // Advanced scope management with custom contexts
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   const owner = getOwner();
  *
  *   // Set custom context for this scope
@@ -106,7 +106,7 @@
  *     user: { id: 123, name: "Ben" }
  *   };
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     // Child automatically inherits parent context
  *     const childOwner = getOwner();
  *     console.log(childOwner._context.theme); // "dark"
@@ -129,7 +129,7 @@
  * 4. Register cleanup functions for any resources that need explicit disposal
  * 5. Avoid manual owner manipulation unless building advanced reactive primitives
  *
- * @see {@link createRoot} - Creates a new reactive scope with an owner
+ * @see {@link createInteractiveRoot} - Creates a new reactive scope with an owner
  * @see {@link onCleanup} - Registers cleanup functions with the current owner
  * @see {@link createContext} - Uses owner tree for context value lookup
  * @see {@link createEffect} - Effects are owned and cleaned up automatically
@@ -257,12 +257,12 @@ export const defaultContext = {};
  * @example
  * ### Example 1: Basic Owner Access
  * ```typescript
- * import { createRoot, getOwner } from "@in/teract/signal-core";
+ * import { createInteractiveRoot, getOwner } from "@in/teract/signal-core";
  *
  * // Outside any scope
  * console.log(getOwner()); // null
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   // Inside a reactive scope
  *   const owner = getOwner();
  *   console.log(owner !== null); // true
@@ -277,13 +277,13 @@ export const defaultContext = {};
  * @example
  * ### Example 2: Advanced Owner Inspection
  * ```typescript
- * import { createRoot, getOwner, createEffect } from "@in/teract/signal-core";
+ * import { createInteractiveRoot, getOwner, createEffect } from "@in/teract/signal-core";
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   const rootOwner = getOwner();
  *   console.log("Root owner context:", rootOwner._context);
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     const childOwner = getOwner();
  *     console.log("Child owner parent:", childOwner._parent === rootOwner); // true
  *     console.log("Context inherited:", childOwner._context !== rootOwner._context); // true but values copied
@@ -318,7 +318,7 @@ export const defaultContext = {};
  *
  * ### 🔗 Related Resources
  * - {@link setOwner} - Changes the current owner context
- * - {@link createRoot} - Creates a new owner scope
+ * - {@link createInteractiveRoot} - Creates a new owner scope
  * - {@link OwnerClass} - The owner class that manages reactive scopes
  */
 export function getOwner(): OwnerClass | null {
@@ -362,7 +362,7 @@ export function getOwner(): OwnerClass | null {
  * <summary>Click to learn more about owner switching</summary>
  *
  * > [!NOTE]
- * > This is an advanced API - most users should use createRoot instead
+ * > This is an advanced API - most users should use createInteractiveRoot instead
  *
  * > [!NOTE]
  * > Always restore the previous owner to avoid scope leaks
@@ -386,9 +386,9 @@ export function getOwner(): OwnerClass | null {
  * @example
  * ### Example 1: Basic Owner Switching
  * ```typescript
- * import { createRoot, getOwner, setOwner } from "@in/teract/signal-core";
+ * import { createInteractiveRoot, getOwner, setOwner } from "@in/teract/signal-core";
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   const originalOwner = getOwner();
  *   console.log("Original owner:", originalOwner);
  *
@@ -406,12 +406,12 @@ export function getOwner(): OwnerClass | null {
  * @example
  * ### Example 2: Advanced Manual Computation Management
  * ```typescript
- * import { createRoot, setOwner, getOwner, ComputationClass } from "@in/teract/signal-core";
+ * import { createInteractiveRoot, setOwner, getOwner, ComputationClass } from "@in/teract/signal-core";
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   const parentOwner = getOwner();
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     const childOwner = getOwner();
  *
  *     // Create a computation under the parent instead of child
@@ -445,7 +445,7 @@ export function getOwner(): OwnerClass | null {
  *
  * ### 🔗 Related Resources
  * - {@link getOwner} - Gets the current owner context
- * - {@link createRoot} - High-level API for creating owner scopes
+ * - {@link createInteractiveRoot} - High-level API for creating owner scopes
  * - {@link OwnerClass} - The owner class that manages reactive scopes
  */
 export function setOwner(owner: OwnerClass | null): OwnerClass | null {
@@ -619,7 +619,7 @@ export function setOwner(owner: OwnerClass | null): OwnerClass | null {
  * <details>
  * <summary>Click to see what to avoid</summary>
  *
- * - **Manual owner creation**: Use createRoot instead for most cases
+ * - **Manual owner creation**: Use createInteractiveRoot instead for most cases
  * - **Forgetting disposal**: Always dispose owners to prevent memory leaks
  * - **Context mutation**: Don't modify inherited context directly, create new objects
  * - **Missing error handlers**: Set up error boundaries at appropriate levels
@@ -639,7 +639,7 @@ export function setOwner(owner: OwnerClass | null): OwnerClass | null {
  * - ✅ Bun
  *
  * ### 🔗 Related Resources
- * - {@link createRoot} - High-level API for creating owner scopes
+ * - {@link createInteractiveRoot} - High-level API for creating owner scopes
  * - {@link getOwner} - Gets the current owner context
  * - {@link setOwner} - Changes the current owner context
  */
@@ -866,7 +866,7 @@ export class OwnerClass {
  * When these operations are called outside any reactive scope, this error is thrown.
  *
  * This commonly happens when you try to create reactive computations or access context
- * outside of a `createRoot` scope, similar to trying to use a hotel key card when you
+ * outside of a `createInteractiveRoot` scope, similar to trying to use a hotel key card when you
  * haven't checked into any room.
  *
  * @since 0.1.0
@@ -886,7 +886,7 @@ export class OwnerClass {
  * Before working with this error:
  * - Understanding of reactive scopes and when they're active
  * - Knowledge of which operations require reactive contexts
- * - Familiarity with createRoot and other scope-creating functions
+ * - Familiarity with createInteractiveRoot and other scope-creating functions
  *
  * ### 📚 Terminology
  * > **Reactive Scope**: An active context where reactive operations can safely execute
@@ -901,7 +901,7 @@ export class OwnerClass {
  * > Most commonly occurs with onCleanup, getContext, and similar functions
  *
  * > [!NOTE]
- * > Can be resolved by wrapping code in createRoot or similar scope creators
+ * > Can be resolved by wrapping code in createInteractiveRoot or similar scope creators
  *
  * > [!NOTE]
  * > The error message includes helpful details in development mode
@@ -913,7 +913,7 @@ export class OwnerClass {
  * ### Example 1: Common Error Scenario
  * ```typescript
  * import { onCleanup } from "@in/teract/signal-core/on-cleanup.ts";
- * import { createRoot } from "@in/teract/signal-core/create-root.ts";
+ * import { createInteractiveRoot } from "@in/teract/signal-core/create-root.ts";
  *
  * // ❌ This will throw NoOwnerErrorClass
  * try {
@@ -924,7 +924,7 @@ export class OwnerClass {
  * }
  *
  * // ✅ This works correctly
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   onCleanup(() => console.log("cleanup")); // No error
  * });
  * ```
@@ -945,7 +945,7 @@ export class OwnerClass {
  * }
  *
  * // ✅ This works correctly
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   setContext(ThemeContext, "dark");
  *   const theme = getContext(ThemeContext); // No error
  *   console.log(theme); // "dark"
@@ -976,7 +976,7 @@ export class OwnerClass {
  * - ✅ Bun
  *
  * ### 🔗 Related Resources
- * - {@link createRoot} - Creates a reactive scope to avoid this error
+ * - {@link createInteractiveRoot} - Creates a reactive scope to avoid this error
  * - {@link getOwner} - Checks if there's a current reactive scope
  * - {@link onCleanup} - Common function that requires a reactive scope
  */

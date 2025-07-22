@@ -51,7 +51,7 @@ import { isUndefined } from "./utils.ts";
  * > Default values are only used when no provider exists in the component tree
  *
  * > [!NOTE]
- * > Context values must be accessed within a reactive scope (inside createRoot, createEffect, etc.)
+ * > Context values must be accessed within a reactive scope (inside createInteractiveRoot, createEffect, etc.)
  * </details>
  *
  * @template T - The type of data this context will hold
@@ -76,7 +76,7 @@ import { isUndefined } from "./utils.ts";
  * ### Example 1: Basic User Authentication Context
  * ```typescript
  * import { createContext, getContext, setContext } from "@in/teract/signal-core/create-context.ts";
- * import { createRoot } from "@in/teract/signal-core/create-root.ts";
+ * import { createInteractiveRoot } from "@in/teract/signal-core/create-root.ts";
  *
  * // Create a context for user authentication data
  * interface User {
@@ -93,7 +93,7 @@ import { isUndefined } from "./utils.ts";
  * }, "UserAuthentication");
  *
  * // In your app root, provide the actual user data
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   const currentUser: User = {
  *     id: 123,
  *     name: "Ben Smith",
@@ -142,7 +142,7 @@ import { isUndefined } from "./utils.ts";
  * }, "ApplicationConfiguration");
  *
  * // Root application setup
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   // Advanced configuration based on user preferences and environment
  *   const userRole = "admin";
  *   const environment = "development";
@@ -220,7 +220,7 @@ import { isUndefined } from "./utils.ts";
  * #### Internal References
  * - {@link getContext} - Retrieves a value from a context within the component tree
  * - {@link setContext} - Provides a value for a context to descendant components
- * - {@link createRoot} - Creates a reactive scope where contexts can be provided and consumed
+ * - {@link createInteractiveRoot} - Creates a reactive scope where contexts can be provided and consumed
  *
  * @external GitHub
  * {@link https://github.com/inspatiallabs/inspatial-core GitHub Repository}
@@ -290,7 +290,7 @@ export class ContextNotFoundErrorClass extends Error {
  * - Searches up the reactive owner tree for context values
  * - Returns the first matching value found in the hierarchy
  * - Falls back to default values when no provider exists
- * - Must be called within a reactive scope (inside createRoot, createEffect, etc.)
+ * - Must be called within a reactive scope (inside createInteractiveRoot, createEffect, etc.)
  *
  * ### 🎯 Prerequisites
  * Before you start:
@@ -338,16 +338,16 @@ export class ContextNotFoundErrorClass extends Error {
  * ### Example 1: Basic Context Retrieval
  * ```typescript
  * import { createContext, getContext, setContext } from "@in/teract/signal-core/create-context.ts";
- * import { createRoot } from "@in/teract/signal-core/create-root.ts";
+ * import { createInteractiveRoot } from "@in/teract/signal-core/create-root.ts";
  *
  * // Create a theme context
  * const ThemeContext = createContext<string>("light", "AppTheme");
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   // Parent sets dark theme
  *   setContext(ThemeContext, "dark");
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     // Child can access the theme
  *     const theme = getContext(ThemeContext);
  *     console.log(`Current theme: ${theme}`); // "Current theme: dark"
@@ -374,7 +374,7 @@ export class ContextNotFoundErrorClass extends Error {
  *   canDelete: false
  * }, "UserPermissions");
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   // Root level: basic user permissions
  *   setContext(PermissionsContext, {
  *     canRead: true,
@@ -386,7 +386,7 @@ export class ContextNotFoundErrorClass extends Error {
  *   const rootPerms = getContext(PermissionsContext);
  *   console.log(`Root permissions:`, rootPerms);
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     // Admin section: elevated permissions
  *     setContext(PermissionsContext, {
  *       canRead: true,
@@ -398,7 +398,7 @@ export class ContextNotFoundErrorClass extends Error {
  *     const adminPerms = getContext(PermissionsContext);
  *     console.log(`Admin permissions:`, adminPerms);
  *
- *     createRoot(() => {
+ *     createInteractiveRoot(() => {
  *       // Nested component: inherits admin permissions
  *       console.log("=== Nested Component ===");
  *       const nestedPerms = getContext(PermissionsContext);
@@ -451,7 +451,7 @@ export function getContext<T>(
         ? `context "${context.id.description}"`
         : "context";
     throw new NoOwnerErrorClass(
-      `No owner found when trying to get ${contextDetails}. Ensure getContext is called within a reactive scope (e.g., createRoot, createSignal, createMemo, createEffect).`
+      `No owner found when trying to get ${contextDetails}. Ensure getContext is called within a reactive scope (e.g., createInteractiveRoot, createSignal, createMemo, createEffect).`
     );
   }
 
@@ -548,7 +548,7 @@ export function getContext<T>(
  * ### Example 1: Basic Context Provision
  * ```typescript
  * import { createContext, getContext, setContext } from "@in/teract/signal-core/create-context.ts";
- * import { createRoot } from "@in/teract/signal-core/create-root.ts";
+ * import { createInteractiveRoot } from "@in/teract/signal-core/create-root.ts";
  *
  * // Create an API configuration context
  * interface ApiConfig {
@@ -561,7 +561,7 @@ export function getContext<T>(
  *   timeout: 5000
  * }, "ApiConfiguration");
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   // Provide production API configuration
  *   const prodConfig: ApiConfig = {
  *     baseUrl: "https://api.production.com",
@@ -592,7 +592,7 @@ export function getContext<T>(
  *   apiUrl: "http://localhost:3000"
  * }, "Environment");
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   // Global environment configuration
  *   setContext(EnvironmentContext, {
  *     name: "production",
@@ -604,7 +604,7 @@ export function getContext<T>(
  *   const prodEnv = getContext(EnvironmentContext);
  *   console.log(`Environment: ${prodEnv.name}, Debug: ${prodEnv.debug}`);
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     // Testing environment: override with test-specific settings
  *     setContext(EnvironmentContext, {
  *       name: "testing",
@@ -616,7 +616,7 @@ export function getContext<T>(
  *     const testEnv = getContext(EnvironmentContext);
  *     console.log(`Environment: ${testEnv.name}, Debug: ${testEnv.debug}`);
  *
- *     createRoot(() => {
+ *     createInteractiveRoot(() => {
  *       // Nested scope: inherits testing environment
  *       console.log("=== Nested Scope (Inherited) ===");
  *       const nestedEnv = getContext(EnvironmentContext);
@@ -627,7 +627,7 @@ export function getContext<T>(
  *     });
  *
  *     // Demonstrate explicit undefined handling
- *     createRoot(() => {
+ *     createInteractiveRoot(() => {
  *       // Explicitly set undefined to use default value
  *       setContext(EnvironmentContext, undefined);
  *
@@ -760,7 +760,7 @@ export function setContext<T>(
  * ### Example 1: Basic Context Availability Checking
  * ```typescript
  * import { createContext, getContext, setContext, hasContext } from "@in/teract/signal-core/create-context.ts";
- * import { createRoot } from "@in/teract/signal-core/create-root.ts";
+ * import { createInteractiveRoot } from "@in/teract/signal-core/create-root.ts";
  *
  * interface UserPreferences {
  *   theme: string;
@@ -770,7 +770,7 @@ export function setContext<T>(
  * // Context without default value
  * const PreferencesContext = createContext<UserPreferences>(undefined, "UserPreferences");
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   // Check if preferences are available before using them
  *   if (hasContext(PreferencesContext)) {
  *     const prefs = getContext(PreferencesContext);
@@ -782,7 +782,7 @@ export function setContext<T>(
  *     console.log(`Using default theme: ${defaultPrefs.theme}`);
  *   }
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     // Provide preferences in child scope
  *     setContext(PreferencesContext, {
  *       theme: "dark",
@@ -838,11 +838,11 @@ export function setContext<T>(
  *   }
  * }
  *
- * createRoot(() => {
+ * createInteractiveRoot(() => {
  *   console.log("=== Without Feature Flags ===");
  *   renderDashboard(); // Uses defaults
  *
- *   createRoot(() => {
+ *   createInteractiveRoot(() => {
  *     // Enable feature flags in a subsection
  *     setContext(FeatureFlagsContext, {
  *       experimentalUI: true,
