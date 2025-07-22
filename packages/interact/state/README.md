@@ -55,7 +55,7 @@ _Reality is your canvas_
 
 ## 🔍 InSpatial State (🔴 Unstable)
 
-Universal state management with powerful type validation for all InSpatial applications.
+InSpatial State is an application-level state manager built on top of `@in/teract` reactive signals. Unlike its foundational primitives it is tightly coupled to InSpatial. 
 
 ### 👨‍💻 What Can I Do With InSpatial State?
 
@@ -72,18 +72,22 @@ Universal state management with powerful type validation for all InSpatial appli
 - 🎮 **Integrated State Triggers**: Connect actions directly to state updates
 - 📝 **Type-Safe State**: Runtime validation using InSpatial Type system
 - 🎯 **Intuitive API**: Simple get/update methods with minimal boilerplate
-- ⚡ **Optimized Performance**: Fine-tuned for minimal re-renders and updates
-- 🔄 **Computed Values**: Create derived values that update automatically
-- 🔍 **Persistence Layer**: Optional storage of state in various backends
-- 🎨 **Expressive Updates**: Template literals for more intuitive state changes
-- 🛡️ **Schema Validation**: Runtime checking of state against schemas
+- 🎨 **StateQL** - Template literals for expressive state updates
 - 🔄 **Batched Updates**: Performance optimization for multiple updates
 - 🧪 **Time-Travel Debugging**: Dev tools for tracking state changes
 - 📝 **Documentation Generation**: Auto-generate API docs from state schema
 - 🧩 **Composable Design**: Build complex state from simpler pieces
 - 📸 **State Snapshots**: Create and restore snapshots for testing
 - 📈 **Built On Signal Core**: Seamless bridge between signals and triggers
-- 📦 **Storage Adapters**: Multiple storage backends with unified API
+- 📦 **Persistence & Storage Adapters**:  Built-in InSpatial Cloud and local storage backend
+- 🔗 **Trigger Integration** - Connect state to triggers for reactive programming
+- ⚡ **Optimized Performance**: Fine-tuned for minimal re-renders and updates
+- 🔄 **Computed Values**: Create derived values that update automatically
+- 🎨 **Expressive Updates**: Template literals for more intuitive state changes
+- 🛡️ **Schema Generation & Validation**: Generate JSON Schema documentation from state types and validate at runtime
+
+
+
 
 ## 🔮 Coming Soon
 
@@ -91,141 +95,8 @@ Universal state management with powerful type validation for all InSpatial appli
 - 🌐 **Distributed State**: Multi-device state sharing and synchronization
 - 📊 **State Analytics**: Performance monitoring and usage analytics
 - 🤖 **AI-Powered State**: Intelligent state optimization and prediction
-
-## ✨ Advanced Features ✨
-
-<table>
-  <tr>
-    <td>
-      <h4>🔄 Type-Safe State</h4>
-      <p>Runtime validation with InSpatial Type system ensures your state always matches its expected shape.</p>
-      <pre><code>const userState = createState({
-  id: "user",
-  initialState: { name: "ben", age: 24 },
-  type: type({
-    name: "string",
-    age: "number|>0|<120"
-  })
-});
-
-// Valid update - passes validation
-userState.update({ age: 31 });
-
-// Invalid update - caught at runtime
-userState.update({ age: "not a number" });
-</code></pre>
-    </td>
-    <td>
-      <h4>🧩 Trigger Integration</h4>
-      <p>Connect state to triggers for clean, reactive programming patterns with automatic action generation.</p>
-      <pre><code>const incrementTrigger = registerTrigger("counter:increment", 
-  (state, amount = 1) => ({
-    count: state.count + amount
-  })
-);
-
-const counterState = createState({
-  initialState: { count: 0 },
-  triggers: ["counter:increment"]
-});
-
-// Use generated action
-counterState.action.increment(5);
-</code></pre>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h4>⚡ StateQL</h4>
-      <p>Express state updates naturally using JavaScript template literals with arithmetic and conditional logic.</p>
-      <pre><code>const gameState = stateQL(createState({
-  initialState: {
-    health: 100,
-    position: { x: 0, y: 0 },
-    inventory: []
-  }
-}));
-
-gameState.update`
-  health -= 10,
-  position.x += 5,
-  inventory.push(${newItem})
-`;
-</code></pre>
-    </td>
-    <td>
-      <h4>📋 Computed State</h4>
-      <p>Create derived values that update automatically when dependencies change, optimized with memoization.</p>
-      <pre><code>const totalItems = createComputed(() => {
-  return cartState.get().items.reduce((sum, item) => 
-    sum + item.quantity, 0);
-});
-
-// Auto-updates when cart changes
-cartState.update({ 
-  items: [...cartState.get().items, newItem]
-});
-
-console.log(totalItems()); // Updated value
-</code></pre>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center">
-      <h4>📚 Persistence & Storage</h4>
-      <p>Store state with flexible backends from localStorage to remote databases with automatic synchronization.</p>
-      <pre><code>const userPrefsState = createState({
-  id: "userPrefs",
-  initialState: { theme: "light", fontSize: "medium" },
-  persist: {
-    storage: "localStorage",
-    key: "user-preferences",
-    autoSave: true
-  }
-});
-
-// Automatically saved and restored
-userPrefsState.update({ theme: "dark" });
-</code></pre>
-    </td>
-  </tr>
-</table>
-
-<div align="center">
-  <h4>🚀 Keep reading to learn how to use all these amazing features! 🚀</h4>
-</div>
-
-## 📦 Install InSpatial State:
-
-Choose your preferred package manager:
-
-```bash
-deno install jsr:@in/teract/state
-```
-
-##
-
-```bash
-npx jsr add @in/teract/state
-```
-
-##
-
-```bash
-yarn dlx jsr add @in/teract/state
-```
-
-##
-
-```bash
-pnpm dlx jsr add @in/teract/state
-```
-
-##
-
-```bash
-bunx jsr add @in/teract/state
-```
+- 🌐 Intent - Intentional/predictive prefetch for server state
+- 📊 Time Travel Debugging - Replay state changes and signal updates
 
 ## 🛠️ Step-by-Step Usage Guide
 
@@ -234,7 +105,7 @@ Here are the essential usage patterns for working with InSpatial State:
 ### 1. **Basic State Creation**
 
 ```typescript
-import { createState } from "@in/teract/state"
+import { createState } from "@inspatial/run/state"
 
 // Create a simple counter state
 const counterState = createState({
@@ -264,7 +135,7 @@ counterState.destroy();
 ### 2. **Type-Safe State with Validation**
 
 ```typescript
-import { createState } from "@in/teract/state"
+import { createState } from "@inspatial/run/state"
 import { type } from "@inspatial/type"
 
 // Define a user profile type
@@ -305,154 +176,391 @@ const nonValidatedState = createState({
 });
 ```
 
-### 3. **Connecting Triggers to State**
+<details>
+<summary><h3>🏗️ State API - Application-Level State Management</h3></summary>
+
+State provides high-level state management with validation, persistence, and expressive update patterns built on Signal Core.
+
+### Core State Management
+
+#### `createState<T>(config: StateConfig<T>): StateInstance<T>`
+
+Creates a managed state instance with optional validation and persistence.
 
 ```typescript
-import { createState } from "@in/teract/state"
-import { registerTrigger } from "@in/teract/trigger"
+import { createState } from "@in/teract/state";
+import { type } from "@inspatial/type";
 
-// Define triggers
-const incrementTrigger = registerTrigger("counter:increment", 
-  (state, amount = 1) => ({
-    count: state.count + amount
-  })
-);
-
-const resetTrigger = registerTrigger("counter:reset", 
-  state => ({ count: 0 })
-);
-
-// Create state with triggers
-const counterState = createState({
-  initialState: { count: 0 },
-  triggers: ["counter:increment", "counter:reset"]
+const UserType = type({
+  name: "string|minLength(2)",
+  email: "string|regex(/@.+\\..+$/)",
+  age: "number|>=0|<=120",
 });
 
-// Use the auto-generated actions
-counterState.action.increment(5); // count = 5
-counterState.action.reset();      // count = 0
+const userState = createState({
+  id: "user",
+  initialState: {
+    name: "ben",
+    email: "ben@inspatiallabs.com",
+    age: 24,
+  },
+  type: UserType,
+  persist: { storage: "localStorage" },
+});
 
-// Add a trigger dynamically
-const multiplyTrigger = registerTrigger("counter:multiply", 
-  (state, factor = 2) => ({
-    count: state.count * factor
+// Read state
+console.log(userState.get().name); // "ben"
+
+// Update state (validated automatically)
+userState.update({ age: 25 });
+
+// Subscribe to changes
+const unsubscribe = userState.subscribe((state) => {
+  console.log("User updated:", state);
+});
+```
+
+### StateQL - Template Literal Updates
+
+#### `stateQL<T>(state: StateInstance<T>): StateQLInstance<T>`
+
+Enhances a state with template literal update syntax.
+
+```typescript
+import { createState, stateQL } from "@in/teract/state";
+
+const gameState = stateQL(
+  createState({
+    initialState: {
+      player: {
+        health: 100,
+        mana: 50,
+        position: { x: 0, y: 0, z: 0 },
+      },
+      inventory: [],
+      score: 0,
+    },
   })
 );
 
-counterState.connectTrigger(multiplyTrigger);
-counterState.action.multiply(10); // count = 0 * 10 = 0
-```
-
-### 4. **Using StateQL for Expressive Updates**
-
-```typescript
-import { createState, stateQL } from "@in/teract/state"
-
-// Create a state with StateQL
-const gameState = stateQL(createState({
-  initialState: {
-    player: {
-      health: 100,
-      mana: 50,
-      position: { x: 0, y: 0, z: 0 },
-      inventory: []
-    },
-    enemies: [],
-    gameTime: 0
-  }
-}));
-
-// Use template literals for updates
+// Expressive updates with template literals
 gameState.update`
   player.health -= 10,
   player.mana -= 5,
-  player.position.x += 5,
-  player.position.y += 2
+  score += 100
 `;
 
 // Interpolate dynamic values
-const newItem = { id: "potion", name: "Health Potion", quantity: 1 };
-gameState.update`player.inventory.push(${newItem})`;
+const newItem = { id: "potion", name: "Health Potion" };
+gameState.update`inventory.push(${newItem})`;
 
-// Conditional updates
+// Conditional logic
 gameState.update`
   if (player.health < 30) {
-    player.status = "critical",
-    player.effects.push("injured")
-  } else if (player.health < 70) {
-    player.status = "wounded" 
+    player.status = "critical"
   } else {
     player.status = "healthy"
   }
 `;
 ```
 
----
+### Computed State and Derivation
 
-### 🔄 Type-Safe State - Runtime Validation with InSpatial Type
+#### `createComputed<T>(computation: () => T): () => T`
 
-InSpatial State integrates with the InSpatial Type system to provide runtime validation of your application state, ensuring it always matches its expected structure.
+Creates a computed value that updates when dependencies change.
 
 ```typescript
-import { createState, StateTypes } from "@in/teract/state"
-import { type } from "@inspatial/type"
+import { createState, createComputed } from "@in/teract/state";
 
-// Use a predefined state type
+const cartState = createState({
+  initialState: {
+    items: [
+      { id: "1", price: 19.99, quantity: 2 },
+      { id: "2", price: 39.99, quantity: 1 },
+    ],
+    taxRate: 0.08,
+  },
+});
+
+const subtotal = createComputed(() =>
+  cartState
+    .get()
+    .items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+);
+
+const total = createComputed(() => {
+  const sub = subtotal();
+  return sub + sub * cartState.get().taxRate;
+});
+
+console.log(total()); // Automatically updates when cart changes
+```
+
+#### `createDerivedState<T, U>(source: StateInstance<T>, computation: (state: T) => U): StateInstance<U>`
+
+Creates state derived from another state instance.
+
+```typescript
+import { createState, createDerivedState } from "@in/teract/state";
+
+const userState = createState({
+  initialState: { name: "ben", age: 24, isActive: true },
+});
+
+const userUIState = createDerivedState(userState, (user) => ({
+  displayName: user.name.toUpperCase(),
+  canVote: user.age >= 18,
+  statusText: user.isActive ? "Online" : "Offline",
+}));
+
+console.log(userUIState.get().displayName); // "BEN"
+```
+
+### Trigger Integration
+
+#### `registerTrigger<T>(name: string, handler: (state: T, ...args: any[]) => Partial<T>): Trigger<T>`
+
+Registers a trigger that can be connected to state instances.
+
+```typescript
+import { createState } from "@in/teract/state";
+import { registerTrigger } from "@in/teract/trigger";
+
+// Define triggers
+const incrementTrigger = registerTrigger(
+  "counter:increment",
+  (state, amount = 1) => ({
+    count: state.count + amount,
+  })
+);
+
+const resetTrigger = registerTrigger("counter:reset", () => ({ count: 0 }));
+
+// Create state with triggers
+const counterState = createState({
+  initialState: { count: 0 },
+  triggers: ["counter:increment", "counter:reset"],
+});
+
+// Use auto-generated actions
+counterState.action.increment(5); // count = 5
+counterState.action.reset(); // count = 0
+```
+
+### Persistence and Storage
+
+#### `setupPersistence<T>(state: StateInstance<T>, options: PersistOptions): PersistenceController`
+
+Configures persistence for a state instance.
+
+```typescript
+import {
+  createState,
+  setupPersistence,
+  StorageAdapters,
+} from "@in/teract/state";
+
+const gameState = createState({
+  initialState: { level: 1, score: 0, playerName: "Player1" },
+});
+
+const { save, load, clear } = setupPersistence(gameState, {
+  storage: "indexedDB",
+  key: "game_save_data",
+  autoSave: true,
+  saveInterval: 5000,
+  include: ["level", "score"], // Only persist these fields
+  exclude: ["playerName"], // Don't persist player name
+});
+
+// Manual operations
+await save();
+await load();
+await clear();
+```
+
+### Type-Safe State with Validation
+
+#### Predefined State Types
+
+```typescript
+import { createState, StateTypes } from "@in/teract/state";
+
+// Use predefined types
 const toggleState = createState({
-  id: "feature-flags",
   initialState: { enabled: false },
-  type: StateTypes.Toggle
+  type: StateTypes.Toggle,
 });
 
-// Or create a custom type with complex validation
-const ProductType = type({
-  id: "string",
-  name: "string|minLength(2)|maxLength(100)",
-  price: "number|>0",
-  stock: "number|>=0|integer", 
-  category: "'electronics'|'clothing'|'food'|'books'",
-  tags: "string[]"
+const counterState = createState({
+  initialState: { count: 0, step: 1 },
+  type: StateTypes.Counter,
 });
 
-const productState = createState({
-  id: "product",
-  initialState: {
-    id: "prod-001",
-    name: "Smartphone",
-    price: 599.99,
-    stock: 50,
-    category: "electronics",
-    tags: ["tech", "mobile", "gadget"]
-  },
-  type: ProductType
-});
-
-// Invalid updates will be caught
-try {
-  productState.update({ price: -100 }); // Invalid: price must be > 0
-} catch (error) {
-  console.error("Price validation failed:", error);
-}
-
-try {
-  productState.update({ category: "vehicles" }); // Invalid: not in allowed categories
-} catch (error) {
-  console.error("Category validation failed:", error);
-}
-
-// You can disable validation for specific states
-const nonValidatedProduct = createState({
-  id: "draft-product",
-  initialState: {
-    id: "draft-001",
-    name: "New Product",
-    price: 0 // Would be invalid with validation
-  },
-  type: ProductType // Type still used for documentation
-}, {
-  validateType: false // Disable validation
+const listState = createState({
+  initialState: { items: [], filter: "all" },
+  type: StateTypes.List,
 });
 ```
+
+### State API Reference
+
+| Function                           | Description                                      |
+| ---------------------------------- | ------------------------------------------------ |
+| `createState<T>()`                 | Creates a managed state instance with validation |
+| `stateQL<T>()`                     | Enhances state with template literal syntax      |
+| `createComputed<T>()`              | Creates a computed value from state              |
+| `createDerivedState<T, U>()`       | Creates state derived from another state         |
+| `createDerivedStateFromMultiple()` | Creates state from multiple sources              |
+| `setupPersistence<T>()`            | Configures state persistence                     |
+| `connectTriggerToState<T>()`       | Connects triggers to state manually              |
+| `validateState<T>()`               | Validates state against a type schema            |
+| `registerStateSchema<T>()`         | Registers reusable state schemas                 |
+| `getStateJsonSchema<T>()`          | Generates JSON Schema from state type            |
+
+### Storage Adapters
+
+| Adapter          | Description                      |
+| ---------------- | -------------------------------- |
+| `localStorage`   | Browser localStorage (default)   |
+| `sessionStorage` | Browser sessionStorage           |
+| `indexedDB`      | Browser IndexedDB for large data |
+| `memory`         | In-memory storage (testing)      |
+| `custom`         | Custom storage implementation    |
+
+</details>
+
+<details>
+<summary><h3>🎮 Trigger API - Event-Driven Actions</h3></summary>
+
+Triggers provide a clean way to connect actions and events to state changes.
+
+### Core Trigger Functions
+
+#### `registerTrigger<T>(name: string, handler: TriggerHandler<T>): Trigger<T>`
+
+Registers a trigger with a specific name and handler.
+
+```typescript
+import { registerTrigger } from "@in/teract/trigger";
+
+const addItemTrigger = registerTrigger(
+  "cart:addItem",
+  (state, item, quantity = 1) => {
+    const existingItem = state.items.find((i) => i.id === item.id);
+
+    if (existingItem) {
+      return {
+        items: state.items.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
+        ),
+      };
+    }
+
+    return {
+      items: [...state.items, { ...item, quantity }],
+    };
+  }
+);
+```
+
+#### `triggerAction<T>(name: string, ...args: any[]): void`
+
+Manually triggers an action.
+
+```typescript
+import { triggerAction } from "@in/teract/trigger";
+
+// Trigger actions manually
+triggerAction("cart:addItem", { id: "prod1", name: "Laptop", price: 999 });
+triggerAction("cart:removeItem", "prod1");
+```
+
+### Trigger Integration with State
+
+```typescript
+import { createState } from "@in/teract/state";
+import { registerTrigger } from "@in/teract/trigger";
+
+// Define multiple triggers
+const triggers = {
+  increment: registerTrigger("counter:increment", (state, amount = 1) => ({
+    count: state.count + amount,
+  })),
+  decrement: registerTrigger("counter:decrement", (state, amount = 1) => ({
+    count: state.count - amount,
+  })),
+  reset: registerTrigger("counter:reset", () => ({ count: 0 })),
+  set: registerTrigger("counter:set", (state, value) => ({ count: value })),
+};
+
+// Create state connected to triggers
+const counterState = createState({
+  initialState: { count: 0 },
+  triggers: Object.keys(triggers),
+});
+
+// Use generated actions
+counterState.action.increment(5); // count = 5
+counterState.action.decrement(2); // count = 3
+counterState.action.set(10); // count = 10
+counterState.action.reset(); // count = 0
+```
+
+### Advanced Trigger Patterns
+
+#### Async Triggers
+
+```typescript
+const fetchUserTrigger = registerTrigger(
+  "user:fetch",
+  async (state, userId) => {
+    try {
+      const response = await fetch(`/api/users/${userId}`);
+      const user = await response.json();
+      return { user, loading: false, error: null };
+    } catch (error) {
+      return { user: null, loading: false, error: error.message };
+    }
+  }
+);
+```
+
+#### Conditional Triggers
+
+```typescript
+const conditionalUpdateTrigger = registerTrigger(
+  "game:update",
+  (state, action) => {
+    if (state.gameOver) {
+      return state; // No changes if game is over
+    }
+
+    switch (action.type) {
+      case "MOVE":
+        return { player: { ...state.player, ...action.position } };
+      case "SCORE":
+        return { score: state.score + action.points };
+      default:
+        return state;
+    }
+  }
+);
+```
+
+### Trigger API Reference
+
+| Function                     | Description                            |
+| ---------------------------- | -------------------------------------- |
+| `registerTrigger<T>()`       | Registers a named trigger with handler |
+| `triggerAction()`            | Manually triggers an action            |
+| `connectTriggerToState<T>()` | Connects trigger to state instance     |
+| `disconnectTrigger()`        | Removes trigger from state             |
+| `listTriggers()`             | Gets all registered triggers           |
+| `getTrigger()`               | Gets specific trigger by name          |
+
+</details>
 
 #### Type-Safe State Functions
 
@@ -482,7 +590,7 @@ const nonValidatedProduct = createState({
 Connect your state to the InSpatial Trigger system for responsive, event-driven applications.
 
 ```typescript
-import { createState } from "@in/teract/state"
+import { createState } from "@inspatial/run/state"
 import { registerTrigger } from "@in/teract/trigger"
 
 // Define triggers for a shopping cart
@@ -537,7 +645,7 @@ cartState.action.clear();
 StateQL provides a more expressive way to update state using JavaScript template literals with natural syntax.
 
 ```typescript
-import { createState, stateQL } from "@in/teract/state"
+import { createState, stateQL } from "@inspatial/run/state"
 
 // Create a player state with StateQL
 const playerState = stateQL(createState({
@@ -600,7 +708,7 @@ import {
   createComputed,
   createDerivedState,
   createDerivedStateFromMultiple 
-} from "@in/teract/state"
+} from "@inspatial/run/state"
 
 // Base shopping cart state
 const cartState = createState({
@@ -649,7 +757,7 @@ console.log(cartUIState.get()); // { itemCount: 4, isEmpty: false, hasDiscount: 
 Store state with flexible persistence options across multiple storage backends.
 
 ```typescript
-import { createState, setupPersistence, StorageAdapters } from "@in/teract/state"
+import { createState, setupPersistence, StorageAdapters } from "@inspatial/run/state"
 
 // Create state with built-in persistence
 const userPrefsState = createState({
@@ -744,7 +852,7 @@ InSpatial State is optimized for performance with features like batched updates,
 
 ### "Can I use this with existing React/Vue/Svelte/Angular/Solid/React-Native/NativeScript/Lynx applications?"
 
-Yes! InSpatial State is designed to work seamlessly across any JavaScript or TypeScript runtime environment, making it fully compatible with any framework or platform including React, Vue, Svelte, Angular, Solid, React Native, and NativeScript.
+InSpatial State is a custom abstraction on top of `@in/teract` designed specifically inside and for the `@inspatial/run` framework. In a nutshell NO!
 
 ### "What happens when type validation fails?"
 
@@ -851,5 +959,5 @@ InSpatial Dev is released under the Intentional 1.0 License. See the [LICENSE](L
 <div align="center">
   <strong>Ready to shape the future of spatial computing?</strong>
   <br>
-  <a href="https://www.inspatiallabs.com">Start Building with InSpatial</a>
+  <a href="https://www.inspatial.io">Start Building with InSpatial</a>
 </div> 

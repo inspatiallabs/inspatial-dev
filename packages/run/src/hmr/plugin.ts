@@ -200,7 +200,7 @@ const END = "/* ----  END INSPATIAL HMR INJECT  ---- */";
  *
  * ### 🎮 Usage Examples
  *
- * Basic Vite setup: Configure your vite.config.ts with inspatialHMR() in the plugins array.
+ * Basic Vite setup: Configure your vite.config.ts with InspatialHMR() in the plugins array.
  * The plugin will automatically enable HMR for .jsx, .tsx, and .mdx files during development.
  *
  * Custom file patterns: Use the include and exclude options to specify exactly which files
@@ -253,7 +253,7 @@ const END = "/* ----  END INSPATIAL HMR INJECT  ---- */";
  * {@link https://rollupjs.org/plugin-development/ Rollup Plugin Guide}
  * Guide for developing Rollup plugins
  */
-export function inspatialHMR(
+export function InspatialHMR(
   options: HMRPluginOptionsType = {}
 ): HMRPluginReturnType | undefined {
   const {

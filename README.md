@@ -106,10 +106,8 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 | **Route** | Declarative & File Routing | `deno add jsr:@in/route` | [inspatial.dev/route](https://www.inspatial.dev/route) | 🟡 Preview |
 | **Motion** | Animation & Physics | `deno add jsr:@in/motion` | [inspatial.dev/motion](https://www.inspatial.dev/motion) | 🟡 Preview |
 | **Spatial** | 3D & XR Renderer | `deno add jsr:@in/spatial` | [inspatial.xr](https://www.inspatial.xr) | 🟡 Preview |
-| **DOM** | Document Object Model | `deno add jsr:@in/dom` | [inspatial.dev/renderer/dom](https://inspatial.dev/renderer/dom) | 🟡 Preview|
+| **DOM** | Document Object Model & Web Renderer | `deno add jsr:@in/dom` | [inspatial.dev/renderer/dom](https://inspatial.dev/renderer/dom) | 🟡 Preview|
 | **Native** | iOS, Android, VisionOS Renderer | `deno add jsr:@in/native` | [inspatial.dev/renderer/native](inspatial.dev/renderer/native) | 🔴 Unstable |
-| **Sandbox** | Dev Environment | `deno add jsr:@in/sandbox` | [inspatial.dev/sandbox](https://www.inspatial.dev/sandbox) | 🟡 Preview |
-
 
 
 ---
