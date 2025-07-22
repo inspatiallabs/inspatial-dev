@@ -1,8 +1,3 @@
-// Declare global __DEV__ variable for TypeScript
-declare global {
-  var __DEV__: boolean;
-}
-
 // Set development mode first - make it available globally
 if (typeof (globalThis as any).__DEV__ === "undefined") {
   (globalThis as any).__DEV__ = true;
@@ -14,7 +9,6 @@ import * as SignalLite from "./signal-lite/index.ts";
 
 // Export namespaced modules so users can choose which implementation to use
 export { SignalCore, SignalLite };
-
 
 // Signal Lite as the default signal implementation and starting point
 export {
@@ -28,6 +22,5 @@ export {
   peek,
   write,
   onDispose,
-  createEffect
+  createEffect,
 } from "./signal-lite/index.ts";
-
