@@ -634,7 +634,7 @@ console.log(isSignal(ensured2)) // true
 ```
    * @returns 
    */
-  static ensure(val: any) {
+  static ensure(val: any): Signal<any> {
     if (isSignal(val)) {
       return val;
     }
@@ -656,7 +656,7 @@ const allSignals = signal.ensureAll(...mixed)
 ```
    * @returns 
    */
-  static ensureAll(...vals: any) {
+  static ensureAll(...vals: any): Signal<any>[] {
     return vals.map(this.ensure);
   }
 
@@ -758,7 +758,7 @@ console.log(empty.hasValue()) // Should return false
 ```
  */
 
-  hasValue() {
+  hasValue(): boolean {
     const val = this.get();
     return val !== undefined && val !== null;
   }
@@ -773,10 +773,8 @@ const isEnabled = createSignal(true)
 const isDisabled = isEnabled.inverse() // !isEnabled.value
 ```
    */
-  inverse() {
-    return signal(this, function (i) {
-      return !i;
-    });
+  inverse(): Signal<boolean> {
+    return computed(() => !Boolean(this.value));
   }
 
   /**
@@ -790,10 +788,11 @@ const isInactiveOrVisible = isActive.inverseOr(isVisible) // !isActive || isVisi
 ```
    * @returns 
    */
-  inverseAnd(val: any) {
-    return signal(this, function (i) {
-      const _val = read(val);
-      return !i && _val;
+  inverseAnd(val: any): Signal<boolean> {
+    return computed(() => {
+      const thisValue = !Boolean(this.value);
+      const otherValue = Boolean(isSignal(val) ? val.value : val);
+      return thisValue && otherValue;
     });
   }
 
@@ -808,24 +807,27 @@ const isInactiveOrHidden = isActive.inverseOrNot(isVisible) // !isActive || !isV
 ```
  * @returns 
  */
-  inverseAndNot(val: any) {
-    return signal(this, function (i) {
-      const _val = read(val);
-      return !i && !_val;
+  inverseAndNot(val: any): Signal<boolean> {
+    return computed(() => {
+      const thisValue = !Boolean(this.value);
+      const otherValue = !Boolean(isSignal(val) ? val.value : val);
+      return thisValue && otherValue;
     });
   }
 
-  inverseOr(val: any) {
-    return signal(this, function (i) {
-      const _val = read(val);
-      return !i || _val;
+  inverseOr(val: any): Signal<boolean> {
+    return computed(() => {
+      const thisValue = !Boolean(this.value);
+      const otherValue = Boolean(isSignal(val) ? val.value : val);
+      return thisValue || otherValue;
     });
   }
 
-  inverseOrNot(val: any) {
-    return signal(this, function (i) {
-      const _val = read(val);
-      return !i || !_val;
+  inverseOrNot(val: any): Signal<boolean> {
+    return computed(() => {
+      const thisValue = !Boolean(this.value);
+      const otherValue = !Boolean(isSignal(val) ? val.value : val);
+      return thisValue || otherValue;
     });
   }
 
@@ -885,10 +887,11 @@ username.value = undefined
 ```
  * @returns 
  */
-  nullishThen(val: any) {
-    return signal(this, function (i) {
-      const _val = read(val);
-      return i === undefined || i === null ? _val : i;
+  nullishThen(val: any): Signal<any> {
+    return computed(() => {
+      const thisValue = this.value;
+      const fallbackValue = isSignal(val) ? val.value : val;
+      return thisValue === undefined || thisValue === null ? fallbackValue : thisValue;
     });
   }
 
@@ -915,10 +918,11 @@ const isValidOrNotDisabled = isValid.orNot(isDisabled) // isValid || !isDisabled
 ```
    * @returns 
    */
-  andNot(val: any) {
-    return signal(this, function (i) {
-      const _val = read(val);
-      return i && !_val;
+  andNot(val: any): Signal<boolean> {
+    return computed(() => {
+      const thisValue = Boolean(this.value);
+      const otherValue = !Boolean(isSignal(val) ? val.value : val);
+      return thisValue && otherValue;
     });
   }
 
@@ -934,10 +938,11 @@ const isValidOrNotDisabled = isValid.orNot(isDisabled) // isValid || !isDisabled
     return result;
   }
 
-  orNot(val: any) {
-    return signal(this, function (i) {
-      const _val = read(val);
-      return i || !_val;
+  orNot(val: any): Signal<boolean> {
+    return computed(() => {
+      const thisValue = Boolean(this.value);
+      const otherValue = !Boolean(isSignal(val) ? val.value : val);
+      return thisValue || otherValue;
     });
   }
 
@@ -1602,9 +1607,9 @@ const isDifferent = not(value.eq(expectedValue)) // Negates a comparison
 ```
  * @returns 
  */
-function not(val: any) {
-  return signal(null, function () {
-    return !read(val);
+function not(val: any): Signal<boolean> {
+  return computed(() => {
+    return !Boolean(isSignal(val) ? val.value : val);
   });
 }
 

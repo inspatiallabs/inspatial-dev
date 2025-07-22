@@ -5,6 +5,7 @@ import type {
   EffectOptionsType,
   NoInferType,
 } from "./types.ts";
+import { __DEV__ } from "./constants.ts";
 
 /**
  * # CreateEffect

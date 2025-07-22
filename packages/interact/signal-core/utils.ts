@@ -1,4 +1,4 @@
-import { SUPPORTS_PROXY } from "./constants.ts";
+import { SUPPORTS_PROXY, __DEV__ } from "./constants.ts";
 import { createMemo } from "./create-memo.ts";
 import { $PROXY } from "./create-store.ts";
 
@@ -82,7 +82,7 @@ export type Merge<T extends unknown[]> = Simplify<_Merge<T>>;
 
 function resolveSource(s: any) {
   return !(s = typeof s === "function" ? s() : s) ? {} : s;
-}
+  }
 
 const $SOURCES = Symbol(__DEV__ ? "MERGE_SOURCE" : 0);
 export function merge<T extends unknown[]>(...sources: T): Merge<T> {

@@ -172,3 +172,78 @@ export const SUPPORTS_PROXY = typeof Proxy === "function";
  * @default Symbol("store-raw")
  */
 export const $RAW = Symbol("store-raw");
+
+/**
+ * # Signal Constants
+ * 
+ * Global constants used throughout the signal system.
+ * 
+ * @module @inspatial/interact/signal-core/constants
+ */
+
+/**
+ * Development mode flag - true in development, false in production
+ */
+export const __DEV__: boolean = typeof (globalThis as any).__DEV__ !== "undefined" 
+  ? (globalThis as any).__DEV__ 
+  : true;
+
+/**
+ * Symbol representing reactive nodes that have been computed
+ */
+export const COMPUTED = Symbol("COMPUTED");
+
+/**
+ * Symbol representing reactive nodes that have been invalidated
+ */
+export const INVALIDATED = Symbol("INVALIDATED");
+
+/**
+ * Symbol representing reactive nodes that need update
+ */
+export const UPDATE = Symbol("UPDATE");
+
+/**
+ * Symbol representing reactive nodes that are dependencies
+ */
+export const DEPENDENCY = Symbol("DEPENDENCY");
+
+/**
+ * Symbol representing reactive nodes that are effects
+ */
+export const EFFECT = Symbol("EFFECT");
+
+/**
+ * Symbol representing reactive nodes that are memos
+ */
+export const MEMO = Symbol("MEMO");
+
+/**
+ * Symbol representing reactive nodes that are signals  
+ */
+export const SIGNAL = Symbol("SIGNAL");
+
+/**
+ * Symbol representing reactive nodes that are stores
+ */
+export const STORE = Symbol("STORE");
+
+/**
+ * Symbol representing reactive nodes that are contexts
+ */
+export const CONTEXT = Symbol("CONTEXT");
+
+/**
+ * Symbol representing reactive nodes that are resources
+ */
+export const RESOURCE = Symbol("RESOURCE");
+
+/**
+ * Symbol representing reactive nodes that are suspense boundaries
+ */
+export const SUSPENSE = Symbol("SUSPENSE");
+
+/**
+ * Symbol representing reactive nodes that are error boundaries
+ */
+export const ERROR_BOUNDARY = Symbol("ERROR_BOUNDARY");

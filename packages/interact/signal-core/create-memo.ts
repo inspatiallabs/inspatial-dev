@@ -5,6 +5,7 @@ import type {
   MemoOptionsType,
   NoInferType,
 } from "./types.ts";
+import { __DEV__ } from "./constants.ts";
 
 /**
  * # CreateMemo
