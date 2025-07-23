@@ -3,8 +3,8 @@
   "license": "Intentional-License-1.0",
   "version": "0.0.1",
   "imports": {
-    "@in/teract": "../interact/index.ts",
-    "@in/teract/signal-lite": "../interact/signal-lite/index.ts",
+    "@in/teract": "jsr:@in/teract@^0.1.2",
+    "@in/teract/signal-lite": "jsr:@in/teract@^0.1.2/signal-lite",
     "@inspatial/run": "./src/index.ts",
     "@inspatial/run/jsx": "./src/runtime/jsx/jsx-runtime.ts",
     "@inspatial/run/hmr": "./src/hmr/index.ts"
