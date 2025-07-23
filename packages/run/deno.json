@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/run",
   "license": "Intentional-License-1.0",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "imports": {
     "@in/teract": "jsr:@in/teract@^0.1.2",
     "@in/teract/signal-lite": "jsr:@in/teract@^0.1.2/signal-lite",
