@@ -1,136 +1,226 @@
-	import { signalLite } from "../../../interact/signal-lite/index.ts";
-	import { isProduction, isPrimitive } from "../constant/index.ts";
+import { createSignal, type Signal } from "@in/teract/signal-lite";
+import { isProduction, isPrimitive } from "../constant/index.ts";
+import type { Component } from "../kit/component/index.ts";
+import type { AnyFunction } from "../kit/type.ts";
 
-	export const hotEnabled =
-	!isProduction && !!(/* @InSpatial webpack */ import.meta.hot);
+/*#################################(Types)#################################*/
 
-	export const KEY_HMRWRAP = Symbol("K_HMRWRAP");
-	export const KEY_HMRWRAPPED = Symbol("K_HMRWARPPED");
+/** Extend ImportMeta to include hot property */
+declare global {
+  interface ImportMeta {
+    hot?: {
+      accept?: () => void;
+      dispose?: (callback: (data: any) => void) => void;
+      invalidate?: (reason: string) => void;
+    };
+  }
+}
 
-	const toString = Object.prototype.toString;
+/** HMR wrapper symbol key */
+export const KEY_HMRWRAP = Symbol("K_HMRWRAP");
 
-	function compareVal(origVal: any, newVal: any): boolean {
-	return (
-		toString.call(origVal) !== toString.call(newVal) ||
-		String(origVal) !== String(newVal)
-	);
-	}
+/** HMR wrapped symbol key */
+export const KEY_HMRWRAPPED = Symbol("K_HMRWARPPED");
 
-	function makeHMR(fn) {
-	if (typeof fn !== "function") {
-		return fn;
-	}
-	const wrapped = fn.bind(null);
-	wrapped[KEY_HMRWRAPPED] = true;
-	return wrapped;
-	}
+/** Hot module replacement enabled flag */
+export const hotEnabled =
+  !isProduction && !!(/* @InSpatial webpack */ import.meta.hot);
 
-	function wrapComponent(fn) {
-	const wrapped = signalLite(fn, makeHMR);
-	Object.defineProperty(fn, KEY_HMRWRAP, {
-		value: wrapped,
-		enumerable: false,
-	});
-	wrapped.name = fn.name;
-	wrapped.hot = false;
-	return wrapped;
-	}
+/** Function with HMR wrapper property */
+interface HMRFunction {
+  (...args: any[]): any;
+  [KEY_HMRWRAP]?: HMRSignal;
+  [KEY_HMRWRAPPED]?: boolean;
+  name?: string;
+  bind?: Function["bind"];
+}
 
-	function handleError(err: any, _: any, { name, hot }: { name: string, hot: boolean }) {
-	if (hot) {
-		console.error(
-		`[InSpatial HMR] Error happened when rendering <${name}>:\n`,
-		err
-		);
-	} else {
-		throw err;
-	}
-	}
+/** HMR Signal with additional properties */
+interface HMRSignal extends Signal<AnyFunction> {
+  name?: string;
+  hot?: boolean;
+}
 
-	export function enableHMR({
-	builtins: any,
-	makeDyn: any,
-	Component: any,
-	createComponentRaw: any,
-	}) {
-	console.info("InSpatial Ran Hot Module Replacement.");
-	return function (tpl: any, props: any, ...children: any[]) {
-		let hotLevel = 0;
+/** Error context for HMR error handling */
+interface ErrorContext {
+  name: string;
+  hot: boolean;
+}
 
-		if (typeof tpl === "function" && !builtins.has(tpl)) {
-		if (tpl[KEY_HMRWRAP]) {
-			tpl = tpl[KEY_HMRWRAP];
-			hotLevel = 2;
-		} else if (!tpl[KEY_HMRWRAPPED]) {
-			tpl = wrapComponent(tpl);
-			hotLevel = 1;
-		}
-		}
+/** HMR configuration options */
+interface HMRConfig {
+  builtins: WeakSet<AnyFunction>;
+  makeDyn: (template: any, handleError: AnyFunction) => AnyFunction;
+  Component: typeof Component;
+  createComponentRaw: (
+    template: any,
+    props?: any,
+    ...children: any[]
+  ) => Component;
+}
 
-		if (hotLevel) {
-		return new Component(makeDyn(tpl, handleError), props ?? {}, ...children);
-		}
+/** HMR module update data */
+interface HMRModuleData {
+  [KEY_HMRWRAP]?: any;
+  [key: string]: any;
+}
 
-		return createComponentRaw(tpl, props, ...children);
-	};
-	}
+/** HMR setup parameters */
+interface HMRSetupParams {
+  data: HMRModuleData;
+  current: any;
+  accept: () => void;
+  dispose: (callback: (data: any) => void) => void;
+  invalidate: (reason: string) => void;
+}
 
-	async function update(newModule: any, invalidate: any) {
-	newModule = await newModule;
-	if (!newModule) {
-		return;
-	}
-	const oldModule = Object.entries(await this);
-	for (let [key, origVal] of oldModule) {
-		const newVal = newModule[key];
+/** Component creation function type */
+type CreateComponentFunction = (
+  template: any,
+  props?: any,
+  ...children: any[]
+) => Component;
 
-		if (
-		typeof origVal === "function" &&
-		typeof newVal === "function" &&
-		(key === "default" || key[0].toUpperCase() === key[0])
-		) {
-		let wrapped = origVal[KEY_HMRWRAP];
-		if (wrapped) {
-			wrapped.hot = true;
-		} else {
-			wrapped = wrapComponent(origVal);
-		}
-		if (typeof newVal === "function") {
-			Object.defineProperty(newVal, KEY_HMRWRAP, {
-			value: wrapped,
-			enumerable: false,
-			});
-		}
-		wrapped.value = newVal;
-		} else {
-		let invalid = false;
+/*#################################(Utilities)#################################*/
 
-		if ((isPrimitive(origVal) || isPrimitive(newVal)) && origVal !== newVal) {
-			invalid = true;
-		} else {
-			invalid = compareVal(origVal, newVal);
-			if (!invalid) {
-			console.warn(
-				`[InSpatial HMR] Export "${key}" does not seem to have changed. Refresh the page manually if neessary.`
-			);
-			}
-		}
+const toString = Object.prototype.toString;
 
-		if (invalid) {
-			invalidate(`[InSpatial HMR] Non HMR-able export "${key}" changed.`);
-		}
-		}
-	}
-	}
+function compareVal(origVal: any, newVal: any): boolean {
+  return (
+    toString.call(origVal) !== toString.call(newVal) ||
+    String(origVal) !== String(newVal)
+  );
+}
 
-	function onDispose(data: any) {
-	data[KEY_HMRWRAP] = this;
-	}
+function makeHMR(fn: AnyFunction): HMRFunction {
+  if (typeof fn !== "function") {
+    return fn;
+  }
+  const wrapped = fn.bind(null) as HMRFunction;
+  wrapped[KEY_HMRWRAPPED] = true;
+  return wrapped;
+}
 
-	export function setup({ data, current, accept, dispose, invalidate }: { data: any, current: any, accept: any, dispose: any, invalidate: any }) {
-	if (data?.[KEY_HMRWRAP]) {
-		update.call(data[KEY_HMRWRAP], current, invalidate);
-	}
-	dispose(onDispose.bind(current));
-	accept();
-	}
+function wrapComponent(fn: HMRFunction): HMRSignal {
+  const wrapped = createSignal(fn, makeHMR) as HMRSignal;
+  Object.defineProperty(fn, KEY_HMRWRAP, {
+    value: wrapped,
+    enumerable: false,
+  });
+  wrapped.name = fn.name;
+  wrapped.hot = false;
+  return wrapped;
+}
+
+function handleError(err: any, _: any, { name, hot }: ErrorContext): void {
+  if (hot) {
+    console.error(
+      `[InSpatial HMR] Error happened when rendering <${name}>:\n`,
+      err
+    );
+  } else {
+    throw err;
+  }
+}
+
+/*#################################(HMR Core)#################################*/
+
+export function enableHMR({
+  builtins,
+  makeDyn,
+  Component,
+  createComponentRaw,
+}: HMRConfig): CreateComponentFunction {
+  console.info("InSpatial Ran Hot Module Replacement.");
+  return function (tpl: any, props?: any, ...children: any[]): Component {
+    let hotLevel = 0;
+
+    if (typeof tpl === "function" && !builtins.has(tpl)) {
+      const hmrTpl = tpl as HMRFunction;
+      if (hmrTpl[KEY_HMRWRAP]) {
+        tpl = hmrTpl[KEY_HMRWRAP];
+        hotLevel = 2;
+      } else if (!hmrTpl[KEY_HMRWRAPPED]) {
+        tpl = wrapComponent(hmrTpl);
+        hotLevel = 1;
+      }
+    }
+
+    if (hotLevel) {
+      return new Component(makeDyn(tpl, handleError), props ?? {}, ...children);
+    }
+
+    return createComponentRaw(tpl, props, ...children);
+  };
+}
+
+async function update(
+  this: any,
+  newModule: any,
+  invalidate: (reason: string) => void
+): Promise<void> {
+  newModule = await newModule;
+  if (!newModule) {
+    return;
+  }
+  const oldModule = Object.entries(await this);
+  for (let [key, origVal] of oldModule) {
+    const newVal = newModule[key];
+
+    if (
+      typeof origVal === "function" &&
+      typeof newVal === "function" &&
+      (key === "default" || key[0].toUpperCase() === key[0])
+    ) {
+      const origFunc = origVal as HMRFunction;
+      let wrapped = origFunc[KEY_HMRWRAP];
+      if (wrapped) {
+        (wrapped as HMRSignal).hot = true;
+      } else {
+        wrapped = wrapComponent(origFunc);
+      }
+      if (typeof newVal === "function") {
+        Object.defineProperty(newVal, KEY_HMRWRAP, {
+          value: wrapped,
+          enumerable: false,
+        });
+      }
+      wrapped.value = newVal;
+    } else {
+      let invalid = false;
+
+      if ((isPrimitive(origVal) || isPrimitive(newVal)) && origVal !== newVal) {
+        invalid = true;
+      } else {
+        invalid = compareVal(origVal, newVal);
+        if (!invalid) {
+          console.warn(
+            `[InSpatial HMR] Export "${key}" does not seem to have changed. Refresh the page manually if neessary.`
+          );
+        }
+      }
+
+      if (invalid) {
+        invalidate(`[InSpatial HMR] Non HMR-able export "${key}" changed.`);
+      }
+    }
+  }
+}
+
+function onDispose(this: any, data: HMRModuleData): void {
+  data[KEY_HMRWRAP] = this;
+}
+
+export function setup({
+  data,
+  current,
+  accept,
+  dispose,
+  invalidate,
+}: HMRSetupParams): void {
+  if (data?.[KEY_HMRWRAP]) {
+    update.call(data[KEY_HMRWRAP], current, invalidate);
+  }
+  dispose(onDispose.bind(current));
+  accept();
+}

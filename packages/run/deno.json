@@ -3,7 +3,7 @@
   "license": "Intentional-License-1.0",
   "version": "0.0.1",
   "imports": {
-    "@in/teract": "jsr:@in/teract@^0.1.1",
+    "@in/teract": "jsr:@in/teract@^0.1.2",
     "@inspatial/run": "./src/index.ts",
     "@inspatial/run/jsx": "./src/runtime/jsx/jsx-runtime.ts",
     "@inspatial/run/hmr": "./src/hmr/index.ts",

@@ -13,14 +13,15 @@ export { SignalCore, SignalLite };
 // Signal Lite as the default signal implementation and starting point
 export {
   createSignal,
-  computed,
+  createEffect,
+  computed as $,
   watch,
   isSignal,
-  merge,
+  merge as $$,
   untrack,
   nextTick,
   peek,
   write,
   onDispose,
-  createEffect,
+  tpl as t,
 } from "./signal-lite/index.ts";

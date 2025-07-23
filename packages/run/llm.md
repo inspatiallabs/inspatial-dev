@@ -105,15 +105,15 @@ InSpatial State is built-in state management system for InSpatial Run. It is bui
 
 - **Extensible Architecture:** Decouples component logic from rendering environment.
 - **`createRenderer(nodeOps, rendererID?)`:** Creates a custom renderer.
-- **`createDOMRenderer(defaults)` (`@inspatial/run/renderer/dom`):** For interactive web applications.
+- **`DOMRenderer(withDirectives)` (`@inspatial/run/renderer/dom`):** For interactive web applications.
   _ **Triggers & Event Handling:** `on:eventName` (e.g., `on:click`). Supports modifiers like `on-once:`, `on-passive:`, `on-capture:`, `on-prevent:`, `on-stop:`.
   _ **Props & Attributes:** Automatically handles DOM properties vs. HTML attributes. Use `attr:` prefix for attributes, `prop:` for properties(default, usually don't needed).
   _ **Browser Preset Directives:** `class:className={signal}` for conditional classes, `style:property={value}` for individual styling (CSS) properties.
   _ **Handling Dynamic HTML Content:** For inserting dynamic HTML (e.g., from APIs), prefer parsing the HTML into a `DocumentFragment` and rendering it directly within the component. This is more robust and integrates better with InSpatial's retained mode rendering than using `innerHTML` directly, which can have security implications and reconciliation challenges.
 
-- **`createNativeRenderer(defaults)` (`@inspatial/run/renderer/native`):** For interactive iOS, Android and VisionOS applications. \* \*\*Soon...
+- **`NativeRenderer(withDirectives)` (`@inspatial/run/renderer/native`):** For interactive iOS, Android and VisionOS applications. \* \*\*Soon...
 
-- **`createSpatialRenderer(defaults)` (`@inspatial/run/renderer/spatial`):** For interactive 3D & XR applications. \* \*\*Soon...
+- **`SpatialRenderer(withDirectives)` (`@inspatial/run/renderer/spatial`):** For interactive 3D & XR applications. \* \*\*Soon...
 
 **5. InSpatial Runtime (JSX):**
 Built on top the universal runtime
@@ -170,9 +170,9 @@ Note: hasValue returns plain boolean. Returns true when the value of the signal 
 
 **Renderer Setup:**
 
-- `createDOMRenderer(defaults)` from `@in/dom`
-- `defaults` from `InSpatial/browser` for browser preset with `class:` and `style:` directives
-- Event handling: `on:event`, `on-once:event`, `on-passive:event`, `on-capture:event`
+- `DOMRenderer(withDirectives)` from `@in/dom`
+- `withDirectives` from `@inspatial/run/renderer` for browser preset with `class:` and `style:` directives
+- Trigger system & Event handling: `on:event`, `on-once:event`, `on-passive:event`, `on-capture:event`
 - Attributes: `attr:name`, `prop:name`, automatic detection for most cases
 
 **JSX Configuration (Vite):**
@@ -399,10 +399,10 @@ const commentsUrl = t`https://news.ycombinator.com/item?id=${postId}`;
 
 ```typescript
 // ✅ InSpatial entry point
-import { createDOMRenderer, defaults } from "@inspatial/run";
+import { DOMRenderer, withDirectives } from "@inspatial/run";
 import App from "./app.tsx";
 
-const web = createDOMRenderer(defaults);
+const web = DOMRenderer(withDirectives);
 web.render(document.getElementById("root"), App);
 ```
 

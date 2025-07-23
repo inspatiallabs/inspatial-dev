@@ -103,6 +103,7 @@ Interact is an signal based interactivity and state management system. It is sub
     <td>
       <h4>🔄 Signal Core</h4>
       <pre><code>
+      import { createSignal, createEffect } from "@in/teract/signal-core";
 const [count, updateCount] = createSignal(0);
 const double = createMemo(() => count() * 2);
 createEffect(() => console.log(double()));</code></pre>
