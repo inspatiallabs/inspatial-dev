@@ -1,0 +1,41 @@
+{
+  "imports": {
+    "@in/teract": "jsr:@in/teract@^0.1.2",
+    "@in/teract/signal-lite": "jsr:@in/teract/signal-lite@^0.1.2",
+    "@in/dom": "jsr:@in/dom@^0.1.2",
+    "@inspatial/run": "../src/index.ts",
+    "@inspatial/run/jsx": "../src/runtime/jsx/jsx-runtime.ts",
+    "@inspatial/run/jsx-dev": "../src/runtime/jsx/jsx-dev-runtime.ts",
+    "@inspatial/cloud": "jsr:@inspatial/cloud@^0.5.4",
+    "@inspatial/cloud-client": "jsr:@inspatial/cloud-client@^0.1.15",
+    "vite": "npm:vite@^7.0.5"
+  },
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext", "deno.ns"],
+    "types": ["@types/deno"],
+    "strict": true,
+    "allowJs": true,
+    "jsx": "preserve"
+  },
+  "tasks": {
+    "dev": "deno run -A vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "deno check index.ts",
+    "fmt": "deno fmt",
+    "lint": "deno lint"
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "preserve",
+    "include": ["src/", "*.ts", "*.js", "*.jsx", "*.tsx"]
+  },
+  "lint": {
+    "include": ["src/", "*.ts"],
+    "exclude": ["dist/"]
+  }
+}

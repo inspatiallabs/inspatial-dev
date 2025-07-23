@@ -1,5 +1,5 @@
 import { collectDisposers, isSignal } from "@in/teract/signal-lite";
-import { hotEnabled, enableHMR } from "../../hmr/index.ts";
+// import { hotEnabled, enableHMR } from "../../hmr/index.ts";
 import {
   isProduction,
   removeFromArr,
@@ -32,7 +32,7 @@ export interface ComponentInstance {
 }
 
 /*#################################(Constants)#################################*/
-export const KEY_CTX = Symbol(isProduction ? "" : "K_Ctx");
+export const KEY_CTX: symbol = Symbol(isProduction ? "" : "K_Ctx");
 export let currentCtx: Context | null = null;
 
 /*#################################(Capture)#################################*/
@@ -236,22 +236,22 @@ export const createComponent = (function () {
     return component;
   }
 
-  if (hotEnabled) {
-    const builtins = new WeakSet([
-      Fn,
-      For,
-      If,
-      Dynamic,
-      Async,
-      Render,
-      Component,
-    ]);
-    // deno-lint-ignore no-inner-declarations
-    function makeDyn(tpl: any, handleErr: any) {
-      return _dynContainer.bind(tpl, "Dynamic", handleErr, tpl);
-    }
-    return enableHMR({ builtins, makeDyn, Component, createComponentRaw });
-  }
+  // if (hotEnabled) {
+  //   const builtins = new WeakSet([
+  //     Fn,
+  //     For,
+  //     If,
+  //     Dynamic,
+  //     Async,
+  //     Render,
+  //     Component,
+  //   ]);
+  //   // deno-lint-ignore no-inner-declarations
+  //   function makeDyn(tpl: any, handleErr: any) {
+  //     return _dynContainer.bind(tpl, "Dynamic", handleErr, tpl);
+  //   }
+  //   return enableHMR({ builtins, makeDyn, Component, createComponentRaw });
+  // }
 
   return createComponentRaw;
 })();

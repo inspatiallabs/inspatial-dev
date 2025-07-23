@@ -558,8 +558,10 @@ class Signal<T = any> {
 
   constructor(value: T, compute?: (val: any) => any) {
     if (
-      typeof Deno !== "undefined" &&
-      Deno.env.get("DENO_ENV") === "development" &&
+      typeof globalThis !== "undefined" &&
+      "Deno" in globalThis &&
+      (globalThis as any).Deno &&
+      (globalThis as any).Deno.env.get("DENO_ENV") === "development" &&
       new.target !== Signal
     )
       throw new Error("Signal must not be extended!");

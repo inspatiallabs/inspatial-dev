@@ -1,5 +1,3 @@
-/// <reference lib="deno.ns" />
-
 /**
  * @module @inspatial/run/hmr
  *
@@ -36,7 +34,8 @@
  * @see {@link RollupTransformResultType} - Transform result type
  */
 
-import { createFilter } from "@rollup/pluginutils";
+import { createFilter } from "npm:@rollup/pluginutils@^5.2.0";
+import { isProduction } from "../constant/index.ts";
 
 /**
  * # HMRPluginOptionsType
@@ -264,7 +263,7 @@ export function InspatialHMR(
 
   const filter = createFilter(include, exclude);
 
-  const enabled = options.enabled ?? Deno.env.get("NODE_ENV") !== "production";
+  const enabled = options.enabled ?? !isProduction;
   if (!enabled) return;
 
   // Vite-specific hint (pre-serve only for Vite; for plain Rollup we check `command`)

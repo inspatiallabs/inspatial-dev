@@ -2,10 +2,14 @@ export function isPrimitive(val: any): boolean {
   return Object(val) !== val;
 }
 
-export const isProduction =
-  (typeof Deno !== "undefined" && typeof Deno.env !== "undefined"
-    ? Deno.env.get("NODE_ENV") === "production"
-    : typeof import.meta !== "undefined" && import.meta.env?.PROD);
+export const isProduction: boolean =
+  (typeof globalThis !== "undefined" && 
+   "Deno" in globalThis && 
+   (globalThis as any).Deno && 
+   typeof (globalThis as any).Deno.env !== "undefined"
+    ? (globalThis as any).Deno.env.get("NODE_ENV") === "production"
+    : typeof import.meta !== "undefined" && (import.meta as any).env?.PROD) ||
+  false;
 
 export function removeFromArr(arr: any[], val: any) {
   const index = arr.indexOf(val);

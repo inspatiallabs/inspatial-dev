@@ -10,12 +10,13 @@
     "./apps/templates/*",
     "./apps/extensions/*",
     "./packages/*",
-
     "./packages/dev/*",
     "./packages/dev/cli/*",
     "./packages/dev/kit/*",
     "./packages/interact/*",
     "./packages/dev/run/*",
+    "./packages/run/example",
+    "./packages/interact/signal-lite/deno-example",
     "./packages/dev/renderer/*",
     "./packages/dev/spatial/*",
     "./packages/dev/theme/*",
@@ -66,7 +67,7 @@
     "broadcast-channel",
     "node-globals",
     "bare-node-builtins",
-    "detect-cjs"   
+    "detect-cjs"
   ],
   "nodeModulesDir": "auto",
   "fmt": {

@@ -328,7 +328,7 @@ export class EnvManager {
  * - ✅ Deno
  * - ✅ Bun
  */
-export const env = new EnvManager();
+export const env: EnvManager = new EnvManager();
 
 
 /**

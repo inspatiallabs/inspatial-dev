@@ -171,20 +171,74 @@ Note: hasValue returns plain boolean. Returns true when the value of the signal 
 **Renderer Setup:**
 
 - `DOMRenderer(withDirectives)` from `@in/dom`
-- `withDirectives` from `@inspatial/run/renderer` for browser preset with `class:` and `style:` directives
+- `withDirectives` from `@inspatial/run/trigger` to ship the default/core web props i.e `class:` and `style:` directives
 - Trigger system & Event handling: `on:event`, `on-once:event`, `on-passive:event`, `on-capture:event`
 - Attributes: `attr:name`, `prop:name`, automatic detection for most cases
 
-**JSX Configuration (Vite):**
+**JSX Configuration**
+
+## Globally defined JSX Runtime for Deno
+
+JSX runtime is essential when using InSpatial together with runtimes like [Deno](https://github.com/denoland/deno/issues/29584), compilers like [SWC](https://github.com/swc-project/swc/issues/10553) or generators like [MDX](https://mdxjs.com/), since they lack the ability to correctly transform JSX via parameters.
+
+### Setup
+
+To use it, you first need to configure your build tool (like Vite, Rollup with Babel, or webpack) to use InSpatial's JSX runtime.
+
+#### Vite (`vite.config.js`)
 
 ```javascript
+import { defineConfig } from "vite";
+
 export default defineConfig({
   esbuild: {
-    jsxFactory: "R.c",
-    jsxFragment: "R.f",
+    jsx: "automatic",
+    jsxImportSource: "@inspatial/run/jsx", // This tells Vite/esbuild where to find the runtime
   },
 });
 ```
+
+#### Babel (`.babelrc.json`)
+
+```json
+{
+  "presets": [
+    [
+      "@babel/preset-react",
+      {
+        "runtime": "automatic",
+        "importSource": "@inspatial/run/jsx"
+      }
+    ]
+  ]
+}
+```
+
+### Initialization
+
+Once your build tool is configured, you need to initialize the runtime with a renderer in your application's entry point. The `wrap` function from the runtime connects it to your chosen renderer (e.g., the `DOMRenderer`).
+
+**Example (`index.ts`):**
+
+```javascript
+import { DOMRenderer } from "@inspatial/run/renderer";
+import { wrap } from "@inspatial/run/jsx";
+import { withDirectives } from "@inspatial/run/trigger";
+import { App } from "./app.jsx"; // Your root component
+
+//1. Create a renderer (DOM)
+const web = DOMRenderer(withDirectives);
+
+//2. Wrap the renderer with the JSX runtime
+wrap(web);
+
+//3. Render InSpatial App
+const root = document.getElementById("app")!;
+web.render(root, App);
+
+```
+
+Now, any `.jsx` or `.tsx` file will be automatically transformed to use the initialized runtime, so you don't need any special imports to write JSX.
 
 **HMR Setup:**
 

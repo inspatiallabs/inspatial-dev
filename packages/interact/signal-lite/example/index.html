@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signal Lite Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: #f8fafc;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+    }
+    
+    .demo-section {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+    
+    .demo-section h2 {
+      margin-top: 0;
+      color: #475569;
+      font-size: 1.25rem;
+    }
+    
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 0.5rem 0.5rem 0.5rem 0;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background: #2563eb;
+    }
+    
+    .secondary {
+      background: #6b7280;
+    }
+    
+    .secondary:hover {
+      background: #4b5563;
+    }
+    
+    .danger {
+      background: #ef4444;
+    }
+    
+    .danger:hover {
+      background: #dc2626;
+    }
+    
+    input {
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      margin: 0.5rem 0.5rem 0.5rem 0;
+      width: 200px;
+    }
+    
+    .output {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      font-family: 'Courier New', monospace;
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .status.online {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .status.offline {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .user-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .user-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      margin: 0.5rem 0;
+    }
+    
+    .remove-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 InSpatial Signal Lite Example</h1>
+    <p>This demonstrates reactive signals working with vanilla DOM APIs</p>
+
+    <!-- Counter Demo -->
+    <div class="demo-section">
+      <h2>📊 Counter Demo</h2>
+      <p>Basic signal reactivity with computed values</p>
+      <button id="increment">+1</button>
+      <button id="decrement">-1</button>
+      <button id="reset" class="secondary">Reset</button>
+      <div class="output">
+        Count: <span id="count-display">0</span><br>
+        Doubled: <span id="doubled-display">0</span><br>
+        Is Even: <span id="even-display">true</span>
+      </div>
+    </div>
+
+    <!-- Text Input Demo -->
+    <div class="demo-section">
+      <h2>✏️ Text Input Demo</h2>
+      <p>Two-way binding and derived values</p>
+      <input type="text" id="text-input" placeholder="Type something..." value="Hello">
+      <div class="output">
+        Text: "<span id="text-display">Hello</span>"<br>
+        Length: <span id="length-display">5</span><br>
+        Upper: "<span id="upper-display">HELLO</span>"
+      </div>
+    </div>
+
+    <!-- User Management Demo -->
+    <div class="demo-section">
+      <h2>👥 User Management Demo</h2>
+      <p>Array signals and complex state management</p>
+      <input type="text" id="user-input" placeholder="Enter user name">
+      <button id="add-user">Add User</button>
+      <div class="output">
+        <div>Total Users: <span id="user-count">3</span></div>
+        <ul id="user-list" class="user-list">
+          <!-- Users will be populated by JavaScript -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- Status Toggle Demo -->
+    <div class="demo-section">
+      <h2>🔄 Status Toggle Demo</h2>
+      <p>Boolean signals and conditional rendering</p>
+      <button id="toggle-status">Toggle Status</button>
+      <div class="output">
+        Status: <span id="status-display" class="status online">Online</span><br>
+        Message: <span id="status-message">All systems operational</span>
+      </div>
+    </div>
+
+    <!-- Computed Chain Demo -->
+    <div class="demo-section">
+      <h2>⛓️ Signal Chain Demo</h2>
+      <p>Complex computed dependencies</p>
+      <input type="number" id="price-input" value="100" step="0.01">
+      <input type="number" id="quantity-input" value="2" step="1">
+      <input type="number" id="tax-input" value="0.1" step="0.01">
+      <div class="output">
+        Price: $<span id="price-display">100.00</span><br>
+        Quantity: <span id="quantity-display">2</span><br>
+        Tax Rate: <span id="tax-display">10</span>%<br>
+        Subtotal: $<span id="subtotal-display">200.00</span><br>
+        Tax: $<span id="tax-amount-display">20.00</span><br>
+        <strong>Total: $<span id="total-display">220.00</span></strong>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html> 

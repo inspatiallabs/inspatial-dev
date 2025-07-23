@@ -3,17 +3,21 @@
   "license": "Intentional-License-1.0",
   "version": "0.0.1",
   "imports": {
-    "@in/teract": "jsr:@in/teract@^0.1.2",
+    "@in/teract": "../interact/index.ts",
+    "@in/teract/signal-lite": "../interact/signal-lite/index.ts",
     "@inspatial/run": "./src/index.ts",
     "@inspatial/run/jsx": "./src/runtime/jsx/jsx-runtime.ts",
-    "@inspatial/run/hmr": "./src/hmr/index.ts",
-    "@rollup/pluginutils": "npm:@rollup/pluginutils@^5.2.0"
+    "@inspatial/run/hmr": "./src/hmr/index.ts"
   },
   "exports": {
     ".": "./src/index.ts",
     "./jsx": "./src/runtime/jsx/jsx-runtime.ts",
+    "./jsx-dev-runtime": "./src/runtime/jsx/jsx-dev-runtime.ts",
     "./hmr": "./src/hmr/index.ts",
-    "./env": "./src/env/index.ts"
+    "./env": "./src/env/index.ts",
+    "./renderer": "./src/renderer/index.ts",
+    "./renderer/dom": "./src/renderer/dom.ts",
+    "./trigger": "./src/trigger/directives.ts"
   },
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"
@@ -22,8 +26,6 @@
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   },
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "@inspatial/run",
     "lib": ["dom", "dom.iterable", "esnext"]
   }
 }

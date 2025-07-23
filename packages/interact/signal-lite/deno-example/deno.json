@@ -1,0 +1,41 @@
+{
+  "imports": {
+    "@inspatial/signal-lite": "../index.ts",
+    "vite": "npm:vite@^5.0.0"
+  },
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "deno.ns"
+    ],
+    "types": [
+      "@types/deno"
+    ],
+    "strict": true,
+    "allowJs": true,
+    "jsx": "preserve"
+  },
+  "tasks": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "deno check src/main.ts",
+    "fmt": "deno fmt",
+    "lint": "deno lint"
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "preserve",
+    "include": ["src/", "*.ts", "*.js"]
+  },
+  "lint": {
+    "include": ["src/", "*.ts"],
+    "exclude": ["dist/"]
+  }
+} 
