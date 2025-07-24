@@ -6,7 +6,7 @@ import {
   type Signal,
 } from "@in/teract/signal-lite";
 import { isProduction, splitFirst } from "../constant/index.ts";
-import { createRenderer } from "./index.ts";
+import { createRenderer } from "./create-renderer.ts";
 
 //NOTE: This is currently coupling the DOM renderer with the trigger system.
 //TODO(@benemma): Refactor this to decouple the DOM renderer from the trigger system i.e use InSpatial Trigger System from @in/teract
@@ -78,7 +78,8 @@ Apply order:
 3. Create with namespace
 */
 
-export const defaultRendererID = "DOM";
+/** Default renderer ID */
+const defaultRendererID = "DOM";
 
 /*#################################(Utilities)#################################*/
 

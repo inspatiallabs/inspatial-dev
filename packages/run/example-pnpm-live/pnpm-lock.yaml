@@ -6,12 +6,12 @@ settings:
 
 dependencies:
   '@inspatial/run':
-    specifier: npm:@jsr/inspatial__run@^0.0.1
-    version: /@jsr/inspatial__run@0.0.1
+    specifier: npm:@jsr/inspatial__run@^0.0.2
+    version: /@jsr/inspatial__run@0.0.2
 
 devDependencies:
   vite:
-    specifier: ^7.0.2
+    specifier: ^7.0.5
     version: 7.0.5
 
 packages:
@@ -266,8 +266,8 @@ packages:
       '@jsr/inspatial__type': 0.1.3
     dev: false
 
-  /@jsr/inspatial__run@0.0.1:
-    resolution: {integrity: sha512-K/ZHuDfFelpOrHIUvH6CvoBSBxx95CSr/KrCOwg3DUTXSOdhIe9VpfQsfxp52ehLms8A51Z6vtiecqkrxsIuuA==, tarball: https://npm.jsr.io/~/11/@jsr/inspatial__run/0.0.1.tgz}
+  /@jsr/inspatial__run@0.0.2:
+    resolution: {integrity: sha512-4hzh2q59Ox+sSfTl13GfEfG6hzzRbRXWOVoFu0yM6baj3rL/KH5NQbxZ062RwyTJam6IVNfY28m2W0eKkWzoGA==, tarball: https://npm.jsr.io/~/11/@jsr/inspatial__run/0.0.2.tgz}
     dependencies:
       '@jsr/in__teract': 0.1.2
       '@rollup/pluginutils': 5.2.0

@@ -7,12 +7,8 @@ import {
   isPrimitive,
 } from "../../constant/index.ts";
 import type { AnyFunction, Dispose } from "../type.ts";
-import { Render } from "../control-flow/render/index.ts";
-import { Fn } from "../control-flow/fn/index.ts";
-import { For } from "../control-flow/for/index.ts";
-import { If } from "../control-flow/if/index.ts";
-import { _dynContainer, Dynamic } from "../control-flow/dynamic/index.ts";
-import { _asyncContainer, Async } from "../control-flow/async/index.ts";
+import { _dynContainer } from "../control-flow/dynamic/index.ts";
+import { _asyncContainer } from "../control-flow/async/index.ts";
 
 /*#################################(Types)#################################*/
 export interface Context {

@@ -1,0 +1,16 @@
+{
+  "name": "run-example-pnpm-live",
+  "version": "0.0.0",
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "allowImportingTsExtensions": true,
+    "jsx": "preserve"
+  },
+  "lint": {
+    "exclude": ["**/*"]
+  },
+  "fmt": {
+    "exclude": ["**/*"]
+  }
+} 

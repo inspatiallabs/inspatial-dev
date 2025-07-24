@@ -9,9 +9,9 @@
         "preview": "vite preview"
     },
     "devDependencies": {
-        "vite": "^7.0.2"
+        "vite": "^7.0.5"
     },
     "dependencies": {
-        "@inspatial/run": "npm:@jsr/inspatial__run@^0.0.1"
+        "@inspatial/run": "npm:@jsr/inspatial__run@^0.0.2"
     }
 }

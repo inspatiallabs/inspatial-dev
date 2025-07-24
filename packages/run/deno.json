@@ -1,23 +1,18 @@
 {
   "name": "@inspatial/run",
   "license": "Intentional-License-1.0",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "imports": {
-    "@in/teract": "jsr:@in/teract@^0.1.2",
-    "@in/teract/signal-lite": "jsr:@in/teract@^0.1.2/signal-lite",
-    "@inspatial/run": "./src/index.ts",
-    "@inspatial/run/jsx": "./src/runtime/jsx/jsx-runtime.ts",
-    "@inspatial/run/hmr": "./src/hmr/index.ts"
+    "@in/teract": "jsr:@in/teract@^0.1.2"
   },
   "exports": {
     ".": "./src/index.ts",
-    "./jsx": "./src/runtime/jsx/jsx-runtime.ts",
-    "./jsx-dev-runtime": "./src/runtime/jsx/jsx-dev-runtime.ts",
-    "./hmr": "./src/hmr/index.ts",
     "./env": "./src/env/index.ts",
+    "./hmr": "./src/hmr/index.ts",
+    "./kit": "./src/kit/index.ts",
     "./renderer": "./src/renderer/index.ts",
-    "./renderer/dom": "./src/renderer/dom.ts",
-    "./trigger": "./src/trigger/directives.ts"
+    "./jsx": "./src/runtime/index.ts",
+    "./trigger": "./src/trigger/index.ts"
   },
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"

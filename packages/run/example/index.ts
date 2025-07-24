@@ -1,4 +1,4 @@
-import { DOMRenderer } from "../src/renderer/dom.ts";
+import { DOMRenderer } from "../src/renderer/dom-renderer.ts";
 import { wrap } from "../src/runtime/jsx/jsx-runtime.ts";
 import { withDirectives } from "../src/trigger/directives.ts";
 import { App } from "./app.jsx";
