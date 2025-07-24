@@ -205,7 +205,11 @@ export class Component implements ComponentInstance {
 
 const emptyProp = { $ref: null };
 
-export const createComponent = (function () {
+export const createComponent: (
+  tpl: any,
+  props?: Record<string, any>,
+  ...children: any[]
+) => Component = (function () {
   function createComponentRaw(
     tpl: any,
     props?: Record<string, any>,
