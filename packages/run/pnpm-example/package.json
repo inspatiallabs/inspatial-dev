@@ -1,0 +1,20 @@
+{
+  "name": "run-example-pnpm-live",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.0.5",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@inspatial/run": "npm:@jsr/inspatial__run@^0.0.3",
+    "@in/teract": "npm:@jsr/in__teract@^0.1.2"
+  }
+}

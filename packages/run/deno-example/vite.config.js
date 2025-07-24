@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-// import { InspatialHMR } from '../src/hmr/plugin.ts';
+// import { InspatialHMR } from '@inspatial/run/hmr';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -9,7 +9,6 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   root: '.',
   server: {
-    // hmr: InspatialHMR(),
     port: 6310,
     open: true,
   },
@@ -36,4 +35,7 @@ export default defineConfig({
     jsx: "automatic",
     jsxImportSource: "../src/runtime/jsx",
   },
+  // plugins: [
+  //   InspatialHMR(),
+  // ],
 }); 
