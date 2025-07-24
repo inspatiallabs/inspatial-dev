@@ -1,9 +1,10 @@
 {
   "name": "@inspatial/run",
   "license": "Intentional-License-1.0",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "imports": {
-    "@in/teract": "jsr:@in/teract@^0.1.2"
+    "@in/teract": "jsr:@in/teract@^0.1.2",
+    "@inspatial/run/jsx": "./src/runtime/index.ts"
   },
   "exports": {
     ".": "./src/index.ts",

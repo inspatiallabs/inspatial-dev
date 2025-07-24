@@ -1,0 +1,99 @@
+{
+  "name": "@inspatial/run",
+  "version": "0.0.4",
+  "description": "InSpatial Run - Universal development framework for cross-platform and spatial applications",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./env": {
+      "types": "./src/env/index.ts",
+      "import": "./src/env/index.ts",
+      "default": "./src/env/index.ts"
+    },
+    "./hmr": {
+      "types": "./src/hmr/index.ts",
+      "import": "./src/hmr/index.ts",
+      "default": "./src/hmr/index.ts"
+    },
+    "./kit": {
+      "types": "./src/kit/index.ts",
+      "import": "./src/kit/index.ts",
+      "default": "./src/kit/index.ts"
+    },
+    "./renderer": {
+      "types": "./src/renderer/index.ts",
+      "import": "./src/renderer/index.ts",
+      "default": "./src/renderer/index.ts"
+    },
+    "./jsx": {
+      "types": "./src/runtime/jsx/jsx-runtime.ts",
+      "import": "./src/runtime/jsx/jsx-runtime.ts",
+      "default": "./src/runtime/jsx/jsx-runtime.ts"
+    },
+    "./jsx-dev": {
+      "types": "./src/runtime/jsx/jsx-dev-runtime.ts",
+      "import": "./src/runtime/jsx/jsx-dev-runtime.ts",
+      "default": "./src/runtime/jsx/jsx-dev-runtime.ts"
+    },
+    "./trigger": {
+      "types": "./src/trigger/index.ts",
+      "import": "./src/trigger/index.ts",
+      "default": "./src/trigger/index.ts"
+    }
+  },
+  "files": [
+    "src/**/*"
+  ],
+  "keywords": [
+    "refui",
+    "inspatial",
+    "ude",
+    "universal-development-envrionemnt",
+    "jsx",
+    "reactive",
+    "realtime",
+    "server",
+    "client",
+    "signals",
+    "spatial",
+    "ar",
+    "vr",
+    "mr",
+    "xr",
+    "web",
+    "web-gpu",
+    "frontend",
+    "native",
+    "ios",
+    "android",
+    "androidxr",
+    "windows",
+    "macos",
+    "visionos",
+    "embedded",
+    "cross-platform"
+  ],
+  "author": "InSpatial Labs",
+  "license": "Intentional-1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inspatiallabs/inspatial-dev.git",
+    "directory": "packages/run"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@in/teract": "^0.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

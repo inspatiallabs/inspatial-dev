@@ -15,6 +15,7 @@
     "./packages/dev/kit/*",
     "./packages/interact/*",
     "./packages/dev/run/*",
+    "./packages/run/example",
     "./packages/run/pnpm-example",
     "./packages/run/deno-example",
     "./packages/interact/signal-lite/deno-example",

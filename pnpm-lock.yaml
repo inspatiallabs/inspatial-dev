@@ -4,36 +4,53 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
-  '@in/teract':
-    specifier: npm:@jsr/in__teract@^0.1.2
-    version: /@jsr/in__teract@0.1.2
-  '@inspatial/run':
-    specifier: npm:@jsr/inspatial__run@^0.0.3
-    version: /@jsr/inspatial__run@0.0.3
+importers:
 
-devDependencies:
-  '@types/node':
-    specifier: ^20.0.0
-    version: 20.19.9
-  typescript:
-    specifier: ^5.0.0
-    version: 5.8.3
-  vite:
-    specifier: ^7.0.5
-    version: 7.0.6(@types/node@20.19.9)
+  .:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.9
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+
+  packages/interact:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+
+  packages/run:
+    dependencies:
+      '@in/teract':
+        specifier: ^0.1.2
+        version: link:../interact
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+
+  packages/run/pnpm-example:
+    dependencies:
+      '@in/teract':
+        specifier: workspace:*
+        version: link:../../interact
+      '@inspatial/run':
+        specifier: workspace:*
+        version: link:..
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.9
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+      vite:
+        specifier: ^7.0.5
+        version: 7.0.6(@types/node@20.19.9)
 
 packages:
-
-  /@ark/schema@0.46.0:
-    resolution: {integrity: sha512-c2UQdKgP2eqqDArfBqQIJppxJHvNNXuQPeuSPlDML4rjw+f1cu0qAlzOG4b8ujgm9ctIDWwhpyw6gjG5ledIVQ==}
-    dependencies:
-      '@ark/util': 0.46.0
-    dev: false
-
-  /@ark/util@0.46.0:
-    resolution: {integrity: sha512-JPy/NGWn/lvf1WmGCPw2VGpBg5utZraE84I7wli18EDF3p3zc/e9WolT35tINeZO3l7C77SjqRJeAUoT0CvMRg==}
-    dev: false
 
   /@esbuild/aix-ppc64@0.25.8:
     resolution: {integrity: sha512-urAvrUedIqEiFR3FYSLTWQgLu5tb+m0qZw0NBEasUeo6wuqatkMDaRT+1uABiGXEu5vqgPd7FGE1BhsAIy9QVA==}
@@ -269,41 +286,6 @@ packages:
     dev: true
     optional: true
 
-  /@jsr/in__teract@0.1.2:
-    resolution: {integrity: sha512-X5aGn3xcEoYiDRxJavZNnOvk6lZD02l32Psz2rRniEZlkiGqbQ8zHmO9+UrIrLysLf2MIAEk+aBUM8/vK/emzA==, tarball: https://npm.jsr.io/~/11/@jsr/in__teract/0.1.2.tgz}
-    dependencies:
-      '@jsr/inspatial__type': 0.1.3
-    dev: false
-
-  /@jsr/inspatial__run@0.0.3:
-    resolution: {integrity: sha512-reg1+MQX6yThAUMCVZaikp+UNDM7A1NLGXzNVls0YusbMJF55N0TlWVJaIntVY9kUu7vMHZBMQz4kwlp0iJVLg==, tarball: https://npm.jsr.io/~/11/@jsr/inspatial__run/0.0.3.tgz}
-    dependencies:
-      '@jsr/in__teract': 0.1.2
-      '@rollup/pluginutils': 5.2.0
-    transitivePeerDependencies:
-      - rollup
-    dev: false
-
-  /@jsr/inspatial__type@0.1.3:
-    resolution: {integrity: sha512-G0vZ/brVCCEiLAVTeI0cLir97YXfjMOIYxjbUhbTvymMRiWJJGE9ABE3gEyJrk83KWJW0E4PwMPRVwbocefvMQ==, tarball: https://npm.jsr.io/~/11/@jsr/inspatial__type/0.1.3.tgz}
-    dependencies:
-      arktype: 2.1.20
-    dev: false
-
-  /@rollup/pluginutils@5.2.0:
-    resolution: {integrity: sha512-qWJ2ZTbmumwiLFomfzTyt5Kng4hwPi9rwCYN4SHb6eaRU1KNO4ccxINHr/VhH4GgPlt1XfSTLX2LBTme8ne4Zw==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@types/estree': 1.0.8
-      estree-walker: 2.0.2
-      picomatch: 4.0.3
-    dev: false
-
   /@rollup/rollup-android-arm-eabi@4.45.1:
     resolution: {integrity: sha512-NEySIFvMY0ZQO+utJkgoMiCAjMrGvnbDLHvcmlA33UXJpYBCvlBEbMMtV837uCkS+plG2umfhn0T5mMAxGrlRA==}
     cpu: [arm]
@@ -466,19 +448,13 @@ packages:
 
   /@types/estree@1.0.8:
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
+    dev: true
 
   /@types/node@20.19.9:
     resolution: {integrity: sha512-cuVNgarYWZqxRJDQHEB58GEONhOK79QVR/qYx4S7kcUObQvUwvFnYxJuuHUKm2aieN9X3yZB4LZsuYNU1Qphsw==}
     dependencies:
       undici-types: 6.21.0
     dev: true
-
-  /arktype@2.1.20:
-    resolution: {integrity: sha512-IZCEEXaJ8g+Ijd59WtSYwtjnqXiwM8sWQ5EjGamcto7+HVN9eK0C4p0zDlCuAwWhpqr6fIBkxPuYDl4/Mcj/+Q==}
-    dependencies:
-      '@ark/schema': 0.46.0
-      '@ark/util': 0.46.0
-    dev: false
 
   /esbuild@0.25.8:
     resolution: {integrity: sha512-vVC0USHGtMi8+R4Kz8rt6JhEWLxsv9Rnu/lGYbPR8u47B+DCBksq9JarW0zOO7bs37hyOK1l2/oqtbciutL5+Q==}
@@ -514,10 +490,6 @@ packages:
       '@esbuild/win32-x64': 0.25.8
     dev: true
 
-  /estree-walker@2.0.2:
-    resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
-    dev: false
-
   /fdir@6.4.6(picomatch@4.0.3):
     resolution: {integrity: sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==}
     peerDependencies:
@@ -550,6 +522,7 @@ packages:
   /picomatch@4.0.3:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
+    dev: true
 
   /postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
