@@ -1,4 +1,4 @@
-import { DOMRenderer, wrap, withDirectives } from "jsr:@inspatial/run";
+import { DOMRenderer, wrap, withDirectives } from "@inspatial/run";
 import { App } from "./app.jsx";
 
 //1. Create a renderer (DOM)
