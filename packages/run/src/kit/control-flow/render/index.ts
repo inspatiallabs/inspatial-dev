@@ -1,17 +1,30 @@
-import { read, type Signal } from "@in/teract/signal-lite";
-import { type ComponentInstance, KEY_CTX } from "../../component/index.ts";
-import type { AnyFunction, Renderer } from "../../type.ts";
+import { type SignalValueType, read } from "../../../signal.ts";
+import {
+  type ComponentContext,
+  KEY_CTX,
+  render,
+} from "../../component/index.ts";
 import { Fn } from "../fn/index.ts";
+import { DebugContext } from "../../../debug/index.ts";
 
-/*#################################(Types)#################################*/
 export interface RenderProps {
-  from: Signal<ComponentInstance> | ComponentInstance;
+  from: SignalValueType<any>;
 }
 
-/*#################################(Render)#################################*/
+export type RenderFunction = (renderer: any) => any;
 
-function render(instance: ComponentInstance, renderer: Renderer): any {
-  const ctx = instance[KEY_CTX];
+export function Render(props: RenderProps): RenderFunction {
+  return function (R: any) {
+    return R.c(Fn, { name: "Render" }, function () {
+      const instance = read(props.from);
+      if (instance !== null && instance !== undefined)
+        return render(instance, R);
+    });
+  };
+}
+
+export function render(instance: any, renderer: any): any {
+  const ctx = instance[KEY_CTX] as ComponentContext | undefined;
   if (!ctx) {
     return;
   }
@@ -20,15 +33,5 @@ function render(instance: ComponentInstance, renderer: Renderer): any {
   if (!renderComponent || typeof renderComponent !== "function")
     return renderComponent;
 
-  return run(renderComponent, renderer)[0];
-}
-
-export function Render({ from }: RenderProps): AnyFunction {
-  return function (R: Renderer) {
-    return R.c(Fn, { name: "Render" }, function () {
-      const instance = read(from);
-      if (instance !== null && instance !== undefined)
-        return render(instance, R);
-    });
-  };
+  return run!(renderComponent, renderer)[0];
 }

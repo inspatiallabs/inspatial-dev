@@ -1,20 +1,20 @@
-import { isSignal } from "@in/teract/signal-lite";
+import { SignalValueType, isSignal, Signal } from "../../../signal.ts";
+import { ComponentFunction, RenderFunction } from "../../component/index.ts";
 import { Fn } from "../fn/index.ts";
 
-/*#################################(Types)#################################*/
 export interface IfProps {
-  condition?: any;
-  true?: any;
+  condition?: SignalValueType<any>;
+  true?: SignalValueType<any>;
   else?: any;
 }
 
-/*#################################(If)#################################*/
-
 export function If(
-  { condition, true: trueCondition, else: otherwise }: IfProps,
-  trueBranch?: any,
-  falseBranch?: any
-): any {
+  props: IfProps,
+  trueBranch?: ComponentFunction,
+  falseBranch?: ComponentFunction
+): ComponentFunction | RenderFunction {
+  let { condition, true: trueCondition, else: otherwise } = props;
+
   if (otherwise) {
     falseBranch = otherwise;
   }
@@ -24,7 +24,7 @@ export function If(
 
   if (isSignal(condition)) {
     return Fn({ name: "If" }, function () {
-      if (condition.value) return trueBranch;
+      if ((condition as Signal).value) return trueBranch;
       else return falseBranch;
     });
   }
@@ -39,6 +39,6 @@ export function If(
     });
   }
 
-  if (condition) return trueBranch;
-  return falseBranch;
+  if (condition) return trueBranch as any;
+  return falseBranch as any;
 }

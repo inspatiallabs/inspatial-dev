@@ -1,48 +1,40 @@
-import { hotEnabled } from "../../../hmr/main.ts";
-import { _runInSnapshot, snapshot } from "../../component/index.ts";
-import type { Renderer, AnyFunction } from "../../type.ts";
+import { hotReloadEnabler } from "../../../hmr/index.ts";
+import { type ComponentFunction, snapshotComponent } from "../../component/index.ts";
 
-/*#################################(Types)#################################*/
-export interface LazyCache<T = any> {
-  cache: T | null;
-}
-
-/*#################################(Lazy Load)#################################*/
-export async function _lazyLoad<T = any>(
-  this: LazyCache<T>,
-  loader: () => Promise<any>,
-  symbol: string | null | undefined,
+export async function _lazyLoad<T>(
+  this: { cache: ComponentFunction | null },
+  loader: () => Promise<T>,
+  symbol?: keyof T | "default",
   ...args: any[]
 ): Promise<any> {
-  const run = snapshot(_runInSnapshot);
+  const run = snapshotComponent();
   if (!this.cache) {
     const result = await loader();
     if (
       (symbol === undefined || symbol === null) &&
       typeof result === "function"
     ) {
-      this.cache = result as T;
+      this.cache = result as any;
     } else {
-      this.cache = result[symbol ?? "default"];
+      this.cache = (result as any)[symbol ?? "default"] as any;
     }
 
-    if (hotEnabled) {
-      const component = this.cache as any;
-      this.cache = function (...args: any[]) {
-        return function (R: Renderer) {
-          return R.c(component, ...args);
+    if (hotReloadEnabler) {
+      const component = this.cache;
+      this.cache = function (...componentArgs: any[]) {
+        return function (R: any) {
+          return R.c(component, ...componentArgs);
         };
-      } as T;
+      };
     }
   }
 
-  return run(this.cache as AnyFunction, ...args);
+  return run.apply(null, [this.cache, ...args] as any);
 }
 
-/*#################################(Lazy)#################################*/
-export function lazy<T = any>(
-  loader: () => Promise<any>,
-  symbol?: string | null
-): (...args: any[]) => Promise<any> {
-  return _lazyLoad.bind({ cache: null } as LazyCache<T>, loader, symbol);
+export function lazy<T>(
+  loader: () => Promise<T>,
+  symbol?: keyof T | "default"
+): ComponentFunction {
+  return _lazyLoad.bind({ cache: null }, loader, symbol as any);
 }

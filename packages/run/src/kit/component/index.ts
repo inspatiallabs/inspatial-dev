@@ -1,44 +1,61 @@
-import { collectDisposers, isSignal } from "@in/teract/signal-lite";
-// import { hotEnabled, enableHMR } from "../../hmr/index.ts";
 import {
-  isProduction,
-  removeFromArr,
-  isThenable,
-  isPrimitive,
-} from "../../constant/index.ts";
-import type { AnyFunction, Dispose } from "../type.ts";
-import { _dynContainer } from "../control-flow/dynamic/index.ts";
-import { _asyncContainer } from "../control-flow/async/index.ts";
+  collectDisposers,
+  freeze,
+  isSignal,
+  type Signal,
+  type SignalDisposerFunctionType,
+} from "../../signal.ts";
+import {
+  hotReloadEnabler,
+  enableHotReload,
+} from "../../hmr/hot-reload/index.ts";
+import { removeFromArr, isThenable, isPrimitive } from "../../utils.ts";
+import { env } from "../../env/index.ts";
+import type { DebugContext } from "../../debug/index.ts";
+import { List, If, Fn } from "../control-flow/index.ts";
+import { _asyncContainer, Async } from "../control-flow/async/index.ts";
+import { _dynContainer, Dynamic } from "../control-flow/dynamic/index.ts";
+import { Render, type RenderFunction } from "../control-flow/render/index.ts";
 
-/*#################################(Types)#################################*/
-export interface Context {
-  run: <T extends AnyFunction>(
-    fn: T,
-    ...args: Parameters<T>
-  ) => [ReturnType<T>, Dispose];
-  render: any;
-  dispose: Dispose;
+// Type definitions
+export type ComponentFunction<P = any> = (props: P, ...children: any[]) => any;
+export type ComponentTemplate<P = any> = ComponentFunction<P>;
+export type ComponentProps = Record<string, any> & {
+  $ref?: Signal<any> | ((instance: any) => void);
+};
+
+export interface ComponentContext {
+  run:
+    | ((
+        fn: (...args: any[]) => any,
+        ...args: any[]
+      ) => [any, SignalDisposerFunctionType])
+    | null;
+  render: RenderFunction | null;
+  disposeComponent: SignalDisposerFunctionType | null;
   wrapper: any;
   hasExpose: boolean;
   self: any;
 }
 
-export interface ComponentInstance {
-  [KEY_CTX]?: Context;
+export const KEY_CTX: symbol = Symbol(env.isProduction() ? "" : "K_Ctx");
+
+let currentCtx: ComponentContext | null = null;
+
+// Global debug context (set by renderer)
+let globalDebugCtx: DebugContext | null = null;
+
+export function setComponentDebugContext(ctx: DebugContext | null): void {
+  globalDebugCtx = ctx;
 }
 
-/*#################################(Constants)#################################*/
-export const KEY_CTX: symbol = Symbol(isProduction ? "" : "K_Ctx");
-export let currentCtx: Context | null = null;
-
-/*#################################(Capture)#################################*/
-function _captured<T extends AnyFunction>(
-  this: T,
-  capturedCtx: Context | null,
-  ...args: Parameters<T>
-): ReturnType<T> {
+function _captureComponentd<T extends any[], R>(
+  this: (...args: T) => R,
+  captureComponentdCtx: ComponentContext | null,
+  ...args: T
+): R {
   const prevCtx = currentCtx;
-  currentCtx = capturedCtx;
+  currentCtx = captureComponentdCtx;
 
   try {
     return this(...args);
@@ -47,26 +64,27 @@ function _captured<T extends AnyFunction>(
   }
 }
 
-/*#################################(Snapshot)#################################*/
-export function capture<T extends AnyFunction>(fn: T): T {
-  return ((...args: Parameters<T>) => {
-    return _captured.call(fn, currentCtx, ...args);
-  }) as T;
+export function captureComponent<T extends any[], R>(
+  fn: (...args: T) => R
+): (...args: T) => R {
+  return _captureComponentd.bind(freeze(fn), currentCtx) as any;
 }
 
-export function _runInSnapshot<T extends AnyFunction>(
-  fn: T,
-  ...args: Parameters<T>
-): ReturnType<T> {
+function _runInSnapshot<T extends any[], R>(
+  fn: (...args: T) => R,
+  ...args: T
+): R {
   return fn(...args);
 }
 
-export function snapshot<T extends AnyFunction>(fn: T): T {
-  return capture(fn);
+export function snapshotComponent(): <T extends any[], R>(
+  fn: (...args: T) => R,
+  ...args: T
+) => R {
+  return captureComponent(_runInSnapshot);
 }
 
-/*#################################(Expose)#################################*/
-function exposeReducer(
+function exposeComponentReducer(
   descriptors: PropertyDescriptorMap,
   [key, value]: [string, any]
 ): PropertyDescriptorMap {
@@ -88,7 +106,7 @@ function exposeReducer(
   return descriptors;
 }
 
-export function expose(kvObj: Record<string, any>): void {
+export function exposeComponent(kvObj: Record<string, any>): void {
   if (!currentCtx || isPrimitive(kvObj)) {
     return;
   }
@@ -97,7 +115,7 @@ export function expose(kvObj: Record<string, any>): void {
   if (entries.length) {
     currentCtx.hasExpose = true;
 
-    const descriptors = entries.reduce(exposeReducer, {});
+    const descriptors = entries.reduce(exposeComponentReducer, {});
 
     Object.defineProperties(currentCtx.self, descriptors);
 
@@ -107,47 +125,54 @@ export function expose(kvObj: Record<string, any>): void {
   }
 }
 
-export function dispose(instance: ComponentInstance): void {
-  const ctx = instance[KEY_CTX];
+export function disposeComponent(instance: any): void {
+  const ctx = instance[KEY_CTX] as ComponentContext | undefined;
   if (!ctx) {
     return;
   }
 
-  ctx.dispose();
+  ctx.disposeComponent!();
 }
 
 export function getCurrentSelf(): any {
   return currentCtx?.self;
 }
 
-/*#################################(Component)#################################*/
-export class Component implements ComponentInstance {
-  [KEY_CTX]?: Context;
+export function getCurrentRun(): ComponentContext["run"] | null {
+  return currentCtx?.run ?? null;
+}
+
+export class Component {
+  [KEY_CTX]: ComponentContext | null = null;
 
   constructor(
-    tpl: AnyFunction,
-    props: Record<string, any>,
+    tpl: ComponentTemplate,
+    props?: ComponentProps,
     ...children: any[]
   ) {
-    const ctx: Context = {
-      run: null as any,
+    const ctx: ComponentContext = {
+      run: null,
       render: null,
-      dispose: null as any,
+      disposeComponent: null,
       wrapper: null,
       hasExpose: false,
       self: this,
     };
+    
+    // Track component mounting
+    const componentName = typeof tpl === 'function' ? tpl.name || 'Anonymous' : String(tpl);
+    globalDebugCtx?.trackComponent('mount', componentName);
 
     const prevCtx = currentCtx;
     currentCtx = ctx;
 
-    const disposers: Dispose[] = [];
+    const disposeComponentrs: SignalDisposerFunctionType[] = [];
 
-    ctx.run = capture(function <T extends AnyFunction>(
-      fn: T,
-      ...args: Parameters<T>
-    ): [ReturnType<T>, Dispose] {
-      let result: ReturnType<T>;
+    ctx.run = captureComponent(function (
+      fn: (...args: any[]) => any,
+      ...args: any[]
+    ) {
+      let result: any;
       const cleanup = collectDisposers(
         [],
         function () {
@@ -155,23 +180,23 @@ export class Component implements ComponentInstance {
         },
         function (batch?: boolean) {
           if (!batch) {
-            removeFromArr(disposers, cleanup);
+            removeFromArr(disposeComponentrs, cleanup);
           }
         }
       );
-      disposers.push(cleanup);
-      return [result!, cleanup];
+      disposeComponentrs.push(cleanup);
+      return [result, cleanup];
     });
 
     try {
-      ctx.dispose = collectDisposers(
-        disposers,
+      ctx.disposeComponent = collectDisposers(
+        disposeComponentrs,
         function () {
           let renderFn = tpl(props, ...children);
           if (isThenable(renderFn)) {
-            const { fallback, catch: catchErr, ..._props } = props;
+            const { fallback, catch: catchErr, ..._props } = props || {};
             renderFn = _asyncContainer.call(
-              renderFn,
+              renderFn as Promise<any>,
               "Future",
               fallback,
               catchErr,
@@ -189,7 +214,7 @@ export class Component implements ComponentInstance {
         }
       );
     } catch (error) {
-      for (let i of disposers) i(true);
+      for (let i of disposeComponentrs) i(true);
       throw error;
     } finally {
       currentCtx = prevCtx;
@@ -203,16 +228,12 @@ export class Component implements ComponentInstance {
   }
 }
 
-const emptyProp = { $ref: null };
+const emptyProp: ComponentProps = { $ref: undefined };
 
-export const createComponent: (
-  tpl: any,
-  props?: Record<string, any>,
-  ...children: any[]
-) => Component = (function () {
+export const createComponent = (function () {
   function createComponentRaw(
-    tpl: any,
-    props?: Record<string, any>,
+    tpl: ComponentTemplate,
+    props?: ComponentProps,
     ...children: any[]
   ): Component {
     if (isSignal(tpl)) {
@@ -226,32 +247,38 @@ export const createComponent: (
     const component = new Component(tpl, _props, ...children);
     if ($ref) {
       if (isSignal($ref)) {
-        $ref.value = component;
+        ($ref as Signal).value = component; // Fixed: was 'node' but should be 'component'
       } else if (typeof $ref === "function") {
         $ref(component);
-      } else if (!isProduction) {
+      } else if (!env.isProduction()) {
         throw new Error(`Invalid $ref type: ${typeof $ref}`);
       }
     }
     return component;
   }
 
-  // if (hotEnabled) {
-  //   const builtins = new WeakSet([
-  //     Fn,
-  //     For,
-  //     If,
-  //     Dynamic,
-  //     Async,
-  //     Render,
-  //     Component,
-  //   ]);
-  //   // deno-lint-ignore no-inner-declarations
-  //   function makeDyn(tpl: any, handleErr: any) {
-  //     return _dynContainer.bind(tpl, "Dynamic", handleErr, tpl);
-  //   }
-  //   return enableHMR({ builtins, makeDyn, Component, createComponentRaw });
-  // }
+  if (hotReloadEnabler) {
+    const builtins = new Set<Function>([
+      Fn,
+      List,
+      If,
+      Dynamic,
+      Async,
+      Render,
+      Component,
+    ]);
+
+    const makeDyn = (tpl: Function, handleErr?: Function): any => {
+      return _dynContainer.bind(tpl as any, "Dynamic", handleErr, tpl);
+    };
+
+    return enableHotReload({
+      builtins,
+      makeDyn,
+      Component,
+      createComponentRaw,
+    });
+  }
 
   return createComponentRaw;
 })();

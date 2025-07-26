@@ -1,4 +1,4 @@
-import { nextTick, bind } from "@in/teract/signal-lite";
+import { nextTick, bind } from "../signal.ts";
 
 /*#################################(Types)#################################*/
 

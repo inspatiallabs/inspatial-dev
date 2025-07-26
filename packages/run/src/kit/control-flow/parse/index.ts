@@ -1,41 +1,28 @@
-import { read, type Signal } from "@in/teract/signal-lite";
+import { read, type SignalValueType } from "../../../signal.ts";
 import { Fn } from "../fn/index.ts";
-import type { AnyFunction, Renderer } from "../../type.ts";
 
-/*#################################(Types)#################################*/
-
-/** Parser function type that processes text and returns renderable content */
-type ParserFunction = (text: string, renderer: Renderer) => any;
-
-/** Props interface for Parse component */
-interface ParseProps {
-  /** Text content to parse - can be a signal or direct value */
-  text: Signal<string> | string;
-  /** Parser function that processes the text */
-  parser: Signal<ParserFunction> | ParserFunction;
+export interface ParseProps {
+  text: SignalValueType<string>;
+  parser: SignalValueType<(text: string, R: any) => any>;
 }
 
-/** Component function type that takes renderer context */
-type ComponentFunction = (renderer: Renderer) => any;
+export function Parse({ text, parser }: ParseProps) {
+  let currentText = "";
+  let currentParser: ((text: string, R: any) => any) | null = null;
+  let currentRender: ((R: any) => any) | null = null;
 
-/*#################################(Parse)#################################*/
-export function Parse({ text, parser }: ParseProps): AnyFunction {
-  let currentText: string = "";
-  let currentParser: ParserFunction | null = null;
-  let currentRender: ComponentFunction | null = null;
-
-  return Fn({ name: "Parse" }, function (): ComponentFunction {
-    const newText: string = read(text);
-    const newParser: ParserFunction = read(parser);
+  return Fn({ name: "Parse" }, function () {
+    const newText = read(text);
+    const newParser = read(parser);
 
     if (newText === currentText && currentParser === newParser) {
-      return currentRender!;
+      return currentRender;
     }
 
     currentText = newText;
     currentParser = newParser;
 
-    return (currentRender = function (R: Renderer): any {
+    return (currentRender = function (R: any) {
       return R.c(R.f, null, newParser(newText, R));
     });
   });

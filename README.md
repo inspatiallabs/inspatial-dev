@@ -9,7 +9,6 @@
 </p>
    </a>
 
-
    <br>
    <br>
 
@@ -39,36 +38,77 @@ _Reality is your canvas_
 [![Twitter](https://img.shields.io/badge/twitter-follow_us-1d9bf0.svg?style=flat-square)](https://twitter.com/inspatiallabs)
 [![LinkedIn](https://img.shields.io/badge/linkedin-connect_with_us-0a66c2.svg?style=flat-square)](https://www.linkedin.com/company/inspatiallabs)
 
-
 </div>
 
 ##
 
 <div align="center">
 
-| InSpatial | Description                          | Link                                           |
-| --------- | ------------------------------------ | ---------------------------------------------- |
-| [![InSpatial Dev](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg)](https://www.inspatial.dev)  | Universal Libraries & Frameworks          | [inspatial.dev](https://www.inspatial.dev)     |
-| [![InSpatial Cloud](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg)](https://www.inspatial.cloud) | Backend APIs and SDKs | [inspatial.cloud](https://www.inspatial.cloud) |
-| [![InSpatial App](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg)](https://www.inspatial.io)   | Build and manage your InSpatial apps | [inspatial.app](https://www.inspatial.io)     |
-| [![InSpatial Store](https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg)](https://www.inspatial.store) | Deploy and discover InSpatial apps | [inspatial.store](https://www.inspatial.store) |
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">InSpatial</th>
+      <th align="center">Description</th>
+      <th align="center">Link</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">
+        <a href="https://www.inspatial.dev">
+          <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/dev-badge.svg" alt="InSpatial Dev">
+        </a>
+      </td>
+      <td align="center">Universal Libraries & Frameworks</td>
+      <td align="center"><a href="https://www.inspatial.dev">inspatial.dev</a></td>
+    </tr>
+    <tr>
+      <td align="center">
+        <a href="https://www.inspatial.cloud">
+          <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/cloud-badge.svg" alt="InSpatial Cloud">
+        </a>
+      </td>
+      <td align="center">Backend APIs and SDKs</td>
+      <td align="center"><a href="https://www.inspatial.cloud">inspatial.cloud</a></td>
+    </tr>
+    <tr>
+      <td align="center">
+        <a href="https://www.inspatial.io">
+          <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/app-badge.svg" alt="InSpatial App">
+        </a>
+      </td>
+      <td align="center">Build and manage your InSpatial apps</td>
+      <td align="center"><a href="https://www.inspatial.io">inspatial.app</a></td>
+    </tr>
+    <tr>
+      <td align="center">
+        <a href="https://www.inspatial.store">
+          <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/store-badge.svg" alt="InSpatial Store">
+        </a>
+      </td>
+      <td align="center">Deploy and discover InSpatial apps</td>
+      <td align="center"><a href="https://www.inspatial.store">inspatial.store</a></td>
+    </tr>
+  </tbody>
+</table>
 
-</div>
+</p>
 
 ---
 
-## 🌟 Welcome to InSpatial Dev
+<div align="left">
+<h2>🌟 Welcome to InSpatial Dev </h2>
 
 InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructure for building universal and spatial applications. Our mission is to empower you to create immersive, cross-platform experiences that works everywhere in every device, rendering environment and platform.
+</div>
 
 ---
 
  <br>
 
-
 <div align="center">
     <a href="https://inspatial.app" target="_blank">
-    <p align="center">
+    <p align="left">
     <picture>
     <source media="(prefers-color-scheme: light)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-banner-blur.png">
       <source media="(prefers-color-scheme: dark)" srcset="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-app-banner-blur.png">
@@ -78,11 +118,140 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
    </a>
 </div>
 
+## 📦 InSpatial Dev Modules
 
+<div align="center">
+
+### 👨‍💻 For App Creators
+
+<table>
+  <thead>
+    <tr style="background-color: #9000ff;">
+      <th align="left"><strong>📦 Package</strong></th>
+      <th align="left"><strong>📝 Description</strong></th>
+      <th align="left"><strong>⚡ Install</strong></th>
+      <th align="left"><strong>🔗 Link</strong></th>
+      <th align="left"><strong>🚦 Status</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><strong>Run</strong></td>
+      <td align="left">UDE Framework</td>
+      <td align="left"><code>deno add jsr:@inspatial/run</code></td>
+      <td align="left"><a href="https://www.inspatial.run">inspatial.run</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr style="background-color: #1b2240;">
+      <td align="left"><strong>Kit</strong></td>
+      <td align="left">Component & User Interface</td>
+      <td align="left"><code>deno add jsr:@inspatial/run/kit</code></td>
+      <td align="left"><a href="https://www.inspatial.dev/kit">inspatial.dev/kit</a></td>
+      <td align="left">🔴 Unstable</td>
+    </tr>
+  </tbody>
+</table>
+
+<br/>
+
+### 🔧 For Framework Authors
+
+<table>
+  <thead>
+    <tr style="background-color: #9000ff;">
+      <th align="left"><strong>📦 Package</strong></th>
+      <th align="left"><strong>📝 Description</strong></th>
+      <th align="left"><strong>⚡ Install</strong></th>
+      <th align="left"><strong>🔗 Link</strong></th>
+      <th align="left"><strong>🚦 Status</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left"><strong>AI</strong></td>
+      <td align="left">Artificial Intelligence</td>
+      <td align="left"><code>deno add jsr:@in/telligence</code></td>
+      <td align="left"><a href="https://www.inspatial.ai">inspatial.ai</a></td>
+      <td align="left">🔴 Unstable</td>
+    </tr>
+    <tr style="background-color: #1b2240;">
+      <td align="left"><strong>Interact</strong></td>
+      <td align="left">Interactivity & State Management</td>
+      <td align="left"><code>deno add jsr:@in/teract</code></td>
+      <td align="left"><a href="https://www.inspatial.dev/interact">inspatial.dev/interact</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>Style</strong></td>
+      <td align="left">Theming & Styling Engine</td>
+      <td align="left"><code>deno add jsr:@in/style</code></td>
+      <td align="left"><a href="https://www.inspatial.dev/style">inspatial.dev/style</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr style="background-color: #1b2240;">
+      <td align="left"><strong>Vader</strong></td>
+      <td align="left">Utility Functions</td>
+      <td align="left"><code>deno add jsr:@in/vader</code></td>
+      <td align="left"><a href="https://www.inspatial.dev/vader">inspatial.dev/vader</a></td>
+      <td align="left">🟢 Stable</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>Test</strong></td>
+      <td align="left">Test Framework</td>
+      <td align="left"><code>deno add jsr:@in/test</code></td>
+      <td align="left"><a href="https://www.inspatial.dev/test">inspatial.dev/test</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr style="background-color: #1b2240;">
+      <td align="left"><strong>Type</strong></td>
+      <td align="left">Runtime Validation</td>
+      <td align="left"><code>deno add jsr:@in/type</code></td>
+      <td align="left"><a href="https://www.inspatial.dev/type">inspatial.dev/type</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>Route</strong></td>
+      <td align="left">Declarative & File Routing</td>
+      <td align="left"><code>deno add jsr:@in/route</code></td>
+      <td align="left"><a href="https://www.inspatial.dev/route">inspatial.dev/route</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr style="background-color: #1b2240;">
+      <td align="left"><strong>Motion</strong></td>
+      <td align="left">Animation & Physics</td>
+      <td align="left"><code>deno add jsr:@in/motion</code></td>
+      <td align="left"><a href="https://www.inspatial.dev/motion">inspatial.dev/motion</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>Spatial</strong></td>
+      <td align="left">3D & XR Renderer</td>
+      <td align="left"><code>deno add jsr:@in/spatial</code></td>
+      <td align="left"><a href="https://www.inspatial.xr">inspatial.xr</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr style="background-color: #1b2240;">
+      <td align="left"><strong>DOM</strong></td>
+      <td align="left">Document Object Model & Web Renderer</td>
+      <td align="left"><code>deno add jsr:@in/dom</code></td>
+      <td align="left"><a href="https://inspatial.dev/renderer/dom">inspatial.dev/renderer/dom</a></td>
+      <td align="left">🟡 Preview</td>
+    </tr>
+    <tr>
+      <td align="left"><strong>Native</strong></td>
+      <td align="left">iOS, Android, VisionOS Renderer</td>
+      <td align="left"><code>deno add jsr:@in/native</code></td>
+      <td align="left"><a href="https://inspatial.dev/renderer/native">inspatial.dev/renderer/native</a></td>
+      <td align="left">🔴 Unstable</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
 
 ---
- 
- <div align="center">
+
+ <div align="left">
   <a href="https://www.inspatial.dev#gh-dark-mode-only" target="_blank">
       <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-light.svg"  alt="InSpatial Dev" height="45">
   </a>
@@ -93,27 +262,9 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 
  <br>
 
-| Package | Description | Install | Link | Status |
-|---------|------------|----------|-------|--------|
-| **Run** | Framework Runtime | `deno add jsr:@inspatial/run` | [inspatial.run](https://www.inspatial.run) | 🔴 Unstable |
-| **Kit** | Component & User Interface | `deno add jsr:@inspatial/run/kit` | [inspatial.dev/kit](https://www.inspatial.dev/kit) | 🔴 Unstable |
-| **AI** | Artificial Intelligence | `deno add jsr:@in/telligence` | [inspatial.ai](https://www.inspatial.ai) | 🔴 Unstable |
-| **Interact** |Interactivity & State Management | `deno add jsr:@in/teract` | [inspatial.dev/interact](https://www.inspatial.dev/interact) | 🟡 Preview |
-| **Style** | Theming & Styling Engine | `deno add jsr:@in/style` | [inspatial.dev/style](https://www.inspatial.dev/style) | 🟡 Preview |
-| **Vader** | Utility Functions | `deno add jsr:@in/vader` | [inspatial.dev/vader](https://www.inspatial.dev/vader) | 🟢 Stable |
-| **Test** | Test Framework | `deno add jsr:@in/test` | [inspatial.dev/test](https://www.inspatial.dev/test) | 🟡 Preview |
-| **Type** | Runtime Validation | `deno add jsr:@in/type` | [inspatial.dev/type](https://www.inspatial.dev/type) | 🟡 Preview |
-| **Route** | Declarative & File Routing | `deno add jsr:@in/route` | [inspatial.dev/route](https://www.inspatial.dev/route) | 🟡 Preview |
-| **Motion** | Animation & Physics | `deno add jsr:@in/motion` | [inspatial.dev/motion](https://www.inspatial.dev/motion) | 🟡 Preview |
-| **Spatial** | 3D & XR Renderer | `deno add jsr:@in/spatial` | [inspatial.xr](https://www.inspatial.xr) | 🟡 Preview |
-| **DOM** | Document Object Model & Web Renderer | `deno add jsr:@in/dom` | [inspatial.dev/renderer/dom](https://inspatial.dev/renderer/dom) | 🟡 Preview|
-| **Native** | iOS, Android, VisionOS Renderer | `deno add jsr:@in/native` | [inspatial.dev/renderer/native](inspatial.dev/renderer/native) | 🔴 Unstable |
-
-
 ---
 
-
-<div align="center">
+<div align="left">
   <a href="https://inspatial.dev/kit#gh-dark-mode-only" target="_blank">
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-light.svg" alt="InSpatial Kit" height="50"/>
   </a>
@@ -121,8 +272,9 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-dark.svg" alt="InSpatial Kit" height="50"/>
   </a>
 
-  ### InSpatial Kit
-</div> 
+### InSpatial Kit
+
+</div>
 
 A universal UI library for crafting stunning user interfaces across multiple platforms and environments:
 
@@ -139,7 +291,7 @@ A universal UI library for crafting stunning user interfaces across multiple pla
 - Themeability & Theme Controls
 - Built In Skeletal system
 - Built in Haptic Feedback and Sound System.
-- Full Figma Kit and Integration 
+- Full Figma Kit and Integration
 - Tailwind and Yoga Support
 - Multipurpose driven (Game UI, OS, Web, Mobile and XR)
 - Fully customizable pre-styled headless components
@@ -155,10 +307,9 @@ A universal UI library for crafting stunning user interfaces across multiple pla
 - Responsive design system
 - Cursor Trails
 
-
 ---
 
-<div align="center">
+<div align="left">
   <a href="https://inspatial.xr#gh-dark-mode-only" target="_blank">
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/xr-icon-light.svg" alt="InSpatial XR" height="50"/>
   </a>
@@ -166,8 +317,9 @@ A universal UI library for crafting stunning user interfaces across multiple pla
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/xr-icon-dark.svg" alt="InSpatial XR" height="50"/>
   </a>
 
-  ### InSpatial XR
-</div> 
+### InSpatial XR
+
+</div>
 
 A progressive and native cross-platform AR/MR/VR renderer:
 
@@ -183,10 +335,9 @@ A progressive and native cross-platform AR/MR/VR renderer:
 - Gesture and voice input support
 - Spatial mapping and anchoring
 
-
 ---
 
-<div align="center">
+<div align="left">
 <a href="https://inspatial.run#gh-dark-mode-only" target="_blank">
   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/run-icon-light.svg" alt="InSpatial Run" height="50"/>
 </a>
@@ -194,7 +345,8 @@ A progressive and native cross-platform AR/MR/VR renderer:
   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/run-icon-dark.svg" alt="InSpatial Run" height="50"/>
 </a>
 
-  ### InSpatial Run
+### InSpatial Run
+
 </div> 
 A cross-platform framework runtime for building InSpatial apps:
 
@@ -227,9 +379,8 @@ InSpatial Dev is released under the Intentional 1.0 License. See the [LICENSE](L
 
 ---
 
-<div align="center">
+<div align="left">
   <strong>Ready to shape the future of spatial computing?</strong>
   <br>
   <a href="https://www.inspatial.io">Start Building with InSpatial</a>
 </div>
-

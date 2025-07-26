@@ -1,44 +1,50 @@
-// deno-lint-ignore-file ban-unused-ignore
-import { peek, onDispose, watch, read, nextTick } from "@in/teract/signal-lite";
-import { currentCtx } from "../../component/index.ts";
-import type { AnyFunction, Renderer, Dispose } from "../../type.ts";
+import {
+  type SignalValueType,
+  type SignalDisposerFunctionType,
+  watch,
+  read,
+  peek,
+  onDispose,
+  nextTick,
+} from "../../../signal.ts";
+import { nop } from "../../../utils.ts";
+import {
+  type ComponentFunction,
+  getCurrentRun,
+} from "../../component/index.ts";
+import type { RenderFunction } from "../render/index.ts";
 
-/*#################################(Types)#################################*/
 export interface FnProps {
   name?: string;
   ctx?: any;
-  catch?: any;
+  catch?: SignalValueType<ComponentFunction | undefined> | ComponentFunction;
 }
 
-/*#################################(Fn)#################################*/
 export function Fn(
-  { name = "Fn", ctx, catch: catchErr }: FnProps,
-  handler?: any,
-  handleErr?: any
-): AnyFunction {
+  props: FnProps,
+  handler?: SignalValueType<ComponentFunction>,
+  handleErr?: ComponentFunction
+): RenderFunction {
+  const { name = "Fn", ctx, catch: catchErr } = props;
+
   if (!handler) {
     return nop;
   }
 
   if (!catchErr) {
-    catchErr = handleErr;
+    // catchErr = handleErr;
   }
 
-  const run = currentCtx?.run;
-
-  // deno-lint-ignore no-inner-declarations
-  function nop() {
-    return;
-  }
+  const run = getCurrentRun();
 
   if (!run) {
     return nop;
   }
 
-  return function (R: Renderer) {
+  return function (R: any) {
     const fragment = R.createFragment(name);
     let currentRender: any = null;
-    let currentDispose: Dispose | null = null;
+    let currentDispose: SignalDisposerFunctionType | null = null;
 
     watch(function () {
       const newHandler = read(handler);
@@ -66,7 +72,9 @@ export function Fn(
             );
           } catch (err) {
             errored = true;
-            const errorHandler = peek(catchErr);
+            const errorHandler = peek(
+              catchErr as SignalValueType<ComponentFunction | undefined>
+            );
             if (errorHandler) {
               newResult = R.ensureElement(errorHandler(err, name, ctx));
             } else {

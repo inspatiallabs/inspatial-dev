@@ -1,1 +1,1 @@
-export { env, getEnv } from "./get.ts";
+export { env, getEnv, EnvManager, EnvironmentVariableError } from "./get.ts";

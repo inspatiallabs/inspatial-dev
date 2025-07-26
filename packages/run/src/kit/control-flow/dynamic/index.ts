@@ -1,66 +1,63 @@
+import env from "../../../env/get.ts";
 import {
-  createSignal,
+  type SignalValueType,
   isSignal,
-  read,
   type Signal,
-} from "@in/teract/signal-lite";
+  read,
+  createSignal,
+} from "../../../signal.ts";
 import {
-  type ComponentInstance,
-  type Context,
-  currentCtx,
-  expose,
+  type ComponentProps,
+  type ComponentFunction,
+  type ComponentContext,
   KEY_CTX,
+  exposeComponent,
+  getCurrentSelf,
 } from "../../component/index.ts";
-import { isProduction } from "../../../constant/index.ts";
-import type { Renderer } from "../../type.ts";
 import { Fn } from "../fn/index.ts";
+import type { RenderFunction } from "../render/index.ts";
 
-/*#################################(Types)#################################*/
-export interface DynamicProps {
-  is: any;
+export interface DynamicProps extends ComponentProps {
+  is: SignalValueType<ComponentFunction>;
   ctx?: any;
-  $ref?: Signal<any> | ((node: any) => void);
-  [key: string]: any;
 }
 
-/*#################################(Dynamic Container)#################################*/
-
 export function _dynContainer(
-  this: any,
+  this: SignalValueType<ComponentFunction>,
   name: string,
   catchErr: any,
   ctx: any,
-  { $ref, ...props }: DynamicProps,
+  props: ComponentProps,
   ...children: any[]
-): any {
-  const self = currentCtx!.self;
+): RenderFunction {
+  const self = getCurrentSelf();
 
   let syncRef: ((node: any) => void) | null = null;
 
-  if ($ref) {
-    if (isSignal($ref)) {
+  if (props.$ref) {
+    if (isSignal(props.$ref)) {
       syncRef = function (node: any) {
-        $ref.value = node;
+        (props.$ref as Signal).value = node;
       };
-    } else if (typeof $ref === "function") {
-      syncRef = $ref;
-    } else if (!isProduction) {
-      throw new Error(`Invalid $ref type: ${typeof $ref}`);
+    } else if (typeof props.$ref === "function") {
+      syncRef = props.$ref;
+    } else if (!env.isProduction()) {
+      throw new Error(`Invalid $ref type: ${typeof props.$ref}`);
     }
   }
 
-  let oldCtx: Context | null = null;
-  props.$ref = (newInstance: ComponentInstance) => {
+  let oldCtx: ComponentContext | null = null;
+  props.$ref = (newInstance: any) => {
     if (oldCtx) {
       oldCtx.wrapper = null;
       oldCtx = null;
     }
 
-    const newCtx = newInstance?.[KEY_CTX];
+    const newCtx = newInstance?.[KEY_CTX] as ComponentContext | undefined;
     if (newCtx) {
       if (newCtx.hasExpose) {
         const extraKeys = Object.getOwnPropertyDescriptors(newInstance);
-        delete extraKeys[KEY_CTX];
+        delete (extraKeys as any)[KEY_CTX];
         Object.defineProperties(self, extraKeys);
       }
 
@@ -72,7 +69,7 @@ export function _dynContainer(
   };
 
   let current: any = null;
-  let renderFn: any = null;
+  let renderFn: RenderFunction | null = null;
 
   return Fn(
     { name, ctx },
@@ -87,7 +84,7 @@ export function _dynContainer(
       }
 
       current = component;
-      renderFn = function (R: Renderer) {
+      renderFn = function (R: any) {
         return R.c(component, props, ...children);
       };
 
@@ -97,21 +94,14 @@ export function _dynContainer(
   );
 }
 
-/*#################################(Dynamic)#################################*/
 export function Dynamic(
-  { is, ctx, ...props }: DynamicProps,
+  props: DynamicProps,
   ...children: any[]
-): any {
-  props.$ref = createSignal(null);
-  expose({
-    current: () => props.$ref,
+): RenderFunction {
+  const { is, ctx, ...restProps } = props;
+  const newProps = { ...restProps, $ref: createSignal(undefined) };
+  exposeComponent({
+    current: newProps.$ref,
   });
-  return _dynContainer.call(
-    is,
-    "Dynamic",
-    null,
-    ctx,
-    { ...props, is },
-    ...children
-  );
+  return _dynContainer.call(is, "Dynamic", null, ctx, newProps, ...children);
 }

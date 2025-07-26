@@ -6,6 +6,8 @@ InSpatial Run is the Framework Runtime for InSpatial universal renderer which ta
 
 InSpatial Run is the highest layer of abstraction for both InSpatial dev and cloud modules. All core utilities, actions and APIs are encapsulated into simpler functions and file routes essentially removing the need for any form of project initialization or configurations. InSpatial Run removes the need to install or use any of InSpatial's stand-alone dev and cloud modules.
 
+
+
 ### NOTE
 
 Build success doesn't mean no runtime issues. Check carefully if you have made any existing variables disappear during the edit, or the new variables has not been declared.

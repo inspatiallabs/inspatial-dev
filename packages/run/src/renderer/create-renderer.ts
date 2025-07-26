@@ -1,10 +1,12 @@
-import { isSignal, type Signal } from "@in/teract/signal-lite";
-import { isProduction, removeFromArr } from "../constant/index.ts";
-import { createComponent, type Component } from "../kit/component/index.ts";
-import { Fn } from "../kit/control-flow/fn/index.ts";
-import type { AnyFunction } from "../kit/type.ts";
+import { isSignal, type Signal } from "../signal.ts";
+import { type Component, createComponent, Fn, render } from "../kit/index.ts";
+import { removeFromArr } from "../utils.ts";
+import { env } from "../env/index.ts";
+import type { DebugContext } from "../debug/index.ts";
 
 /*#################################(Types)#################################*/
+
+export type AnyFunction = (...args: any[]) => any;
 
 /** Node operations interface for the renderer */
 interface NodeOps {
@@ -105,10 +107,14 @@ export function createRenderer(
   function createFragment(name?: string): any {
     const fragment = createFragmentRaw();
     const anchorStart = createAnchor(
-      isProduction ? "" : name === undefined || name === null ? "" : `<${name}>`
+      env.isProduction()
+        ? ""
+        : name === undefined || name === null
+        ? ""
+        : `<${name}>`
     );
     const anchorEnd = createAnchor(
-      isProduction
+      env.isProduction()
         ? ""
         : name === undefined || name === null
         ? ""
@@ -300,7 +306,7 @@ export function createRenderer(
             $ref.value = node;
           } else if (typeof $ref === "function") {
             $ref(node);
-          } else if (!isProduction) {
+          } else if (!env.isProduction()) {
             throw new Error(`Invalid $ref type: ${typeof $ref}`);
           }
         }
@@ -321,8 +327,22 @@ export function createRenderer(
 
   function renderComponent(target: any, ...args: any[]): Component {
     const instance = (createComponent as any)(...args);
+    
+    // Get component name for debug tracking
+    const componentName = args[0] && typeof args[0] === 'function' 
+      ? args[0].name || 'Anonymous' 
+      : 'Component';
+    
+    // Track render if debug context is available
+    const debugCtx = (renderer as any)._debugCtx as DebugContext | undefined;
+    const trackRender = debugCtx?.trackRender(componentName);
+    
     const node = render(instance, renderer);
     if (target && node) appendNode(target, node);
+    
+    // Complete render tracking
+    trackRender?.();
+    
     return instance;
   }
 
@@ -347,7 +367,3 @@ export function createRenderer(
 
   return renderer;
 }
-
-// IMPORTANT: The `render` function is expected to be imported from elsewhere
-// or defined in a different module that handles component rendering
-declare function render(instance: Component, renderer: Renderer): any;

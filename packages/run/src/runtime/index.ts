@@ -1,2 +1,10 @@
-export { jsxDEV, Fragment, wrap } from "./jsx/jsx-dev-runtime.ts";
-export { jsx, jsxs } from "./jsx/jsx-runtime.ts";
+export {
+  jsx,
+  jsxs,
+  Fragment,
+  wrap,
+  setGlobalRenderer,
+  getGlobalRenderer,
+  c,
+} from "./jsx-runtime.ts";
+export { jsxDEV } from "./jsx-dev-runtime.ts";

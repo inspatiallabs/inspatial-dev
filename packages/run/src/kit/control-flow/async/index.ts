@@ -1,32 +1,42 @@
-import { watch, read, nextTick, createSignal } from "@in/teract/signal-lite";
-import { getCurrentSelf, capture, KEY_CTX } from "../../component/index.ts";
-import type { Dispose } from "../../type.ts";
+import {
+  type SignalValueType,
+  createSignal,
+  type SignalDisposerFunctionType,
+  watch,
+  read,
+  nextTick,
+} from "../../../signal.ts";
+import {
+  type ComponentProps,
+  type ComponentFunction,
+  type RenderFunction,
+  getCurrentSelf,
+  captureComponent,
+  KEY_CTX,
+} from "../../component/index.ts";
 import { Fn } from "../fn/index.ts";
 
-/*#################################(Types)#################################*/
-export interface AsyncProps {
+export interface AsyncProps extends ComponentProps {
   future: Promise<any>;
-  fallback?: any;
-  catch?: any;
-  [key: string]: any;
+  fallback?: SignalValueType<ComponentFunction> | ComponentFunction;
+  catch?: SignalValueType<ComponentFunction> | ComponentFunction;
 }
 
-/*#################################(Async Container)#################################*/
 export function _asyncContainer(
   this: Promise<any>,
   name: string,
   fallback: any,
   catchErr: any,
-  props: Record<string, any>,
+  props: ComponentProps,
   ...children: any[]
-): any {
+): RenderFunction {
   const self = getCurrentSelf();
-  const component = createSignal(null);
-  let currentDispose: Dispose | null = null;
+  const component = createSignal(undefined);
+  let currentDispose: SignalDisposerFunctionType | null = null;
 
   const inputFuture = Promise.resolve(this);
   const resolvedFuture = inputFuture.then(
-    capture(function (result: any) {
+    captureComponent(function (result: any) {
       if (self[KEY_CTX]) {
         currentDispose?.();
         currentDispose = watch(function () {
@@ -38,7 +48,7 @@ export function _asyncContainer(
 
   if (catchErr) {
     resolvedFuture.catch(
-      capture(function (error: any) {
+      captureComponent(function (error: any) {
         if (self[KEY_CTX]) {
           currentDispose?.();
           currentDispose = watch(function () {
@@ -58,7 +68,7 @@ export function _asyncContainer(
 
   if (fallback) {
     nextTick(
-      capture(function () {
+      captureComponent(function () {
         if (self[KEY_CTX] && !component.peek()) {
           currentDispose?.();
           currentDispose = watch(function () {
@@ -81,25 +91,27 @@ export function _asyncContainer(
   });
 }
 
-/*#################################(Async)#################################*/
 export function Async(
-  { future, fallback, catch: catchErr, ...props }: AsyncProps,
-  then?: any,
-  now?: any,
-  handleErr?: any
-): any {
-  future = Promise.resolve(future).then(
-    capture(function (result: any) {
+  props: AsyncProps,
+  then?: ComponentFunction,
+  now?: ComponentFunction,
+  handleErr?: ComponentFunction
+): RenderFunction {
+  const { future, fallback, catch: catchErr, ...restProps } = props;
+
+  const modifiedFuture = Promise.resolve(future).then(
+    captureComponent(function (result: any) {
       return Fn({ name: "Then" }, () => {
-        return then?.({ ...props, result });
+        const handler = read(then);
+        return then?.({ ...restProps, result });
       });
     })
   );
   return _asyncContainer.call(
-    future,
+    modifiedFuture,
     "Async",
     fallback ?? now,
     catchErr ?? handleErr,
-    props
+    restProps
   );
 }

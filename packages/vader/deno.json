@@ -1,7 +1,7 @@
 {
-  "name": "@inspatial/util",
+  "name": "@in/vader",
   "license": "Intentional-License-1.0",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "imports": {
     "@inspatial/theme": "jsr:@inspatial/theme@^0.1.7"
   },

@@ -1,43 +1,54 @@
 import {
+  type SignalValueType,
+  type SignalDisposerFunctionType,
   peek,
-  isSignal,
+  type Signal,
   onDispose,
   createSignal,
   collectDisposers,
   watch,
   read,
-  type Signal,
-} from "@in/teract/signal-lite";
-import { removeFromArr } from "../../../constant/index.ts";
-import { expose } from "../../component/index.ts";
-import type { AnyFunction, Dispose, Renderer } from "../../type.ts";
+} from "../../../signal.ts";
+import { removeFromArr } from "../../../utils.ts";
+import {
+  type ComponentFunction,
+  exposeComponent,
+} from "../../component/index.ts";
+import { type RenderFunction } from "../render/index.ts";
 
-/*#################################(Types)#################################*/
-export interface ForProps {
+export interface ListProps<T = any> {
   name?: string;
-  entries: Signal<any[]> | any[];
-  track?: string | Signal<string>;
+  each: SignalValueType<T[]>;
+  track?: SignalValueType<keyof T>;
   indexed?: boolean;
+  unkeyed?: boolean;
 }
 
-/*#################################(For)#################################*/
-export function For(
-  { name = "For", entries, track, indexed }: ForProps,
-  itemTemplate: any
-): AnyFunction {
+export function List<T>(
+  props: ListProps<T>,
+  itemTemplate: ComponentFunction
+): RenderFunction {
+  const { name = "List", each, track, indexed, unkeyed } = props;
   let currentData: any[] = [];
 
-  let kv = track ? new Map<any, any>() : null;
-  let ks = indexed ? new Map<any, Signal<number>>() : null;
-  let nodeCache = new Map<any, any>();
-  let disposers = new Map<any, Dispose>();
+  let kv = track && new Map();
+  let ks = indexed && new Map();
+  let nodeCache = new Map();
+  let disposers = new Map<any, SignalDisposerFunctionType>();
+
+  // Unkeyed-specific state
+  let rawSigEntries: Signal[] = [];
+  let sigEntries: Signal | null = null;
 
   function _clear(): void {
-    // deno-lint-ignore prefer-const
-    for (let [, _dispose] of disposers) _dispose(true);
+    for (const [, _dispose] of Array.from(disposers)) _dispose(true);
     nodeCache = new Map();
     disposers = new Map();
     if (ks) ks = new Map();
+    if (unkeyed) {
+      rawSigEntries = [];
+      if (sigEntries) sigEntries = createSignal([]);
+    }
   }
 
   function flushKS(): void {
@@ -55,10 +66,8 @@ export function For(
 
   function remove(itemKey: any): void {
     const itemData = getItem(itemKey);
-    removeFromArr(peek(entries), itemData);
-    if (isSignal(entries)) {
-      entries.trigger();
-    }
+    removeFromArr(peek(each), itemData);
+    (each as Signal).trigger();
   }
 
   function clear(): void {
@@ -66,23 +75,35 @@ export function For(
     _clear();
     if (kv) kv = new Map();
     currentData = [];
-    const entriesValue = isSignal(entries) ? entries.value : entries;
-    if (entriesValue.length) {
-      if (isSignal(entries)) {
-        entries.value = [];
-      }
-    }
+    if ((each as Signal).value?.length) (each as Signal).value = [];
   }
 
   onDispose(_clear);
 
-  expose({
+  exposeComponent({
     getItem,
     remove,
     clear,
   });
 
-  return function (R: Renderer) {
+  // Initialize unkeyed signals if needed
+  if (unkeyed) {
+    sigEntries = createSignal(rawSigEntries);
+
+    watch(function () {
+      const rawEntries = read(each);
+      const oldLength = rawSigEntries.length;
+      rawSigEntries.length = rawEntries.length;
+      for (let i in rawEntries) {
+        if (rawSigEntries[i]) rawSigEntries[i].value = rawEntries[i];
+        else rawSigEntries[i] = createSignal(rawEntries[i]);
+      }
+
+      if (oldLength !== rawEntries.length) sigEntries!.trigger();
+    });
+  }
+
+  return function (R: any) {
     const fragment = R.createFragment(name);
 
     function getItemNode(itemKey: any): any {
@@ -115,10 +136,56 @@ export function For(
       return node;
     }
 
+    // Special handling for unkeyed mode
+    if (unkeyed) {
+      watch(function () {
+        const data = read(sigEntries!);
+        if (!data || !data.length) return clear();
+
+        currentData = [...data];
+
+        // Clear existing nodes
+        for (const [, _dispose] of Array.from(disposers)) _dispose(true);
+        nodeCache = new Map();
+        disposers = new Map();
+        if (ks) ks = new Map();
+
+        // Create nodes for all items
+        for (let i = 0; i < currentData.length; i++) {
+          const itemKey = i;
+          const item = currentData[i];
+          let idxSig = ks ? createSignal(i) : i;
+          if (ks) ks.set(itemKey, idxSig);
+
+          const dispose = collectDisposers(
+            [],
+            function () {
+              const node = R.c(itemTemplate, { item, index: idxSig });
+              nodeCache.set(itemKey, node);
+              R.appendNode(fragment, node);
+            },
+            function (batch?: boolean) {
+              if (!batch) {
+                nodeCache.delete(itemKey);
+                disposers.delete(itemKey);
+                if (ks) ks.delete(itemKey);
+              }
+              const node = nodeCache.get(itemKey);
+              if (node) R.removeNode(node);
+            }
+          );
+          disposers.set(itemKey, dispose);
+        }
+      });
+
+      return fragment;
+    }
+
+    // Original List logic for keyed/tracked mode
     // eslint-disable-next-line complexity
     watch(function () {
       /* eslint-disable max-depth */
-      const data = read(entries);
+      const data = read(each);
       if (!data || !data.length) return clear();
 
       let oldData = currentData;
@@ -135,9 +202,9 @@ export function For(
       let newData: any[] | null = null;
 
       if (oldData.length) {
-        const obsoleteDataKeys = [
-          ...new Set([...currentData, ...oldData]),
-        ].slice(currentData.length);
+        const obsoleteDataKeys = Array.from(
+          new Set([...currentData, ...oldData])
+        ).slice(currentData.length);
 
         if (obsoleteDataKeys.length === oldData.length) {
           _clear();
@@ -145,14 +212,14 @@ export function For(
         } else {
           if (obsoleteDataKeys.length) {
             for (let oldItemKey of obsoleteDataKeys) {
-              disposers.get(oldItemKey)?.();
+              disposers.get(oldItemKey)!();
               removeFromArr(oldData, oldItemKey);
             }
           }
 
-          const newDataKeys = [...new Set([...oldData, ...currentData])].slice(
-            oldData.length
-          );
+          const newDataKeys = Array.from(
+            new Set([...oldData, ...currentData])
+          ).slice(oldData.length);
           const hasNewKeys = !!newDataKeys.length;
 
           let newDataCursor = 0;
@@ -258,4 +325,4 @@ export function For(
 
     return fragment;
   };
-}
+} 

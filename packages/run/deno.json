@@ -1,27 +1,86 @@
 {
   "name": "@inspatial/run",
   "license": "Intentional-License-1.0",
-  "version": "0.0.5",
-  "imports": {
-    "@in/teract": "jsr:@in/teract@^0.1.2",
-    "@inspatial/run/jsx": "./src/runtime/index.ts"
-  },
-  "exports": {
-    ".": "./src/index.ts",
-    "./env": "./src/env/index.ts",
-    "./hmr": "./src/hmr/index.ts",
-    "./kit": "./src/kit/index.ts",
-    "./renderer": "./src/renderer/index.ts",
-    "./jsx": "./src/runtime/index.ts",
-    "./trigger": "./src/trigger/index.ts"
-  },
+  "version": "0.4.0",
   "tasks": {
-    "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts"
+    "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts",
+    "lint": "deno lint",
+    "fmt": "deno fmt",
+    "check": "deno check **/*.ts",
+    "clean": "rm -rf node_modules && rm -rf deno.lock && rm -rf dist"
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   },
+
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"]
+    "allowImportingTsExtensions": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "deno.ns",
+      "dom.asynciterable",
+      "deno.unstable",
+      "deno.worker",
+      "deno.window",
+      "esnext",
+      "webworker.asynciterable",
+      "webworker",
+      "webworker.importscripts",
+      "webworker.iterable",
+      "decorators",
+      "scripthost"
+    ]
+  },
+  "unstable": [
+    "cron",
+    "kv",
+    "webgpu",
+    "byonm",
+    "http",
+    "fs",
+    "net",
+    "fmt-sql",
+    "worker-options",
+    "broadcast-channel",
+    "node-globals",
+    "bare-node-builtins",
+    "detect-cjs"
+  ],
+  "nodeModulesDir": "auto",
+  "fmt": {
+    "semiColons": false,
+    "singleQuote": false,
+    "proseWrap": "preserve",
+    "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mdx"]
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended", "jsx", "jsr"],
+      "include": [
+        "no-var",
+        "no-window",
+        "no-unused-vars",
+        "ban-untagged-todo",
+        "no-empty-interface",
+        "no-slow-types",
+        "no-deprecated-deno-api",
+        "no-duplicate-case",
+        "no-dupe-class-members",
+        "camelcase",
+        "no-dupe-args",
+        "no-sloppy-imports",
+        "no-class-assign",
+        "no-unsafe-finally"
+      ],
+      "exclude": ["no-explicit-any", "ban-ts-comment"]
+    }
+  },
+  "imports": {
+    "@inspatial/cloud": "jsr:@inspatial/cloud@^0.5.5",
+    "@inspatial/cloud-client": "jsr:@inspatial/cloud-client@^0.1.15"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   }
 }
