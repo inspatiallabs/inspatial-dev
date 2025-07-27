@@ -38,8 +38,6 @@ React creates a fragmented ecosystem—thousands of dependencies trying to stitc
 
 If we built on top of React, we'd inherit the same continuity issues plaguing the other 10,000+ frameworks in React's ecosystem. We'd be limited by React's architectural decisions and performance constraints.
 
-### Our Philosophy
-
 React is the "operating system of the modern web." We're building a more universal operating system. We're inspired by our predecessors—we embrace the good (JSX, component model), fix the bad (virtual DOM, fragmentation), and complete the incomplete (true universal rendering).
 
 We're not replacing React to be different. We're creating what React could have been if it was designed for today's multi-platform, GPU-accelerated, AI first, universal computing reality.
