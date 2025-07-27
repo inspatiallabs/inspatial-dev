@@ -44,8 +44,6 @@ React is the "operating system of the modern web." We're building a more univers
 
 We're not replacing React to be different. We're creating what React could have been if it was designed for today's multi-platform, GPU-accelerated, AI first, universal computing reality.
 
-Here's a refined explanation of InSpatial's templating approach:
-
 ### JSX Is Just One Templating Choice Among Many
 
 **InSpatial JSX Runtime Looks Like React But Isn't Built On It**
