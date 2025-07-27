@@ -171,7 +171,7 @@ export function detectEnvironment(): EnvironmentInfo {
     // Try to get NativeScript version
     const runtimeVersion = safeGlobalAccess('__runtimeVersion');
     const appVersion = safeGlobalAccess('Application');
-    version = runtimeVersion || appVersion?.version;
+    version = runtimeVersion || appVersion?.version; 
     
     return {
       type: 'nativescript',

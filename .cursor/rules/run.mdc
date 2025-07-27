@@ -1,12 +1,10 @@
-InSpatial Run is based on InSpatial's own signal reactive primitives that sematically shares sytax with the likes of React, SolidJS and Preact.
+InSpatial Run is based on InSpatial's own signal reactive primitives `@in/teract` that sematically shares sytax with the likes of React, SolidJS and Preact.
 
-InSpatial Run is the Framework Runtime for InSpatial universal renderer which targets all platforms with support for multiple templating e.g JSX.
+InSpatial Run is the Framework Runtime for InSpatial universal renderer `@in/renderer` which targets all platforms with support for multiple templating e.g JSX.
 
-**Important** InSpatial Run is its own independent self-contained framework powered by its own dev modules, concept and renderers and as such IT IS IS DIFFERENT FROM REACT, SOLIDJS, PREACT or other framework.
+**Important** InSpatial Run is its own independent self-contained framework powered by its own dev modules, concept, opinions and renderers and as such IT IS IS DIFFERENT FROM REACT, SOLIDJS, PREACT or other framework.
 
-InSpatial Run is the highest layer of abstraction for both InSpatial dev and cloud modules. All core utilities, actions and APIs are encapsulated into simpler functions and file routes essentially removing the need for any form of project initialization or configurations. InSpatial Run removes the need to install or use any of InSpatial's stand-alone dev and cloud modules.
-
-
+InSpatial Run is the highest layer of abstraction for both InSpatial dev and cloud UDE modules. All core utilities, actions and APIs are encapsulated into simpler functions and file routes essentially removing the need for any form of project initialization or configurations. InSpatial Run removes the need to install or use any of InSpatial's stand-alone dev and cloud modules as they come bundled with it by default.
 
 ### NOTE
 
@@ -27,18 +25,18 @@ If you want to check build errors in deno use the deno core command `deno check`
 **Important Notes for this Project:**
 
 - **Retained Mode Rendering:** InSpatial directly manages the DOM based on state, unlike virtual DOM libraries.
-- **Browser Preset:** The project specifically uses `@in/dom` an InSpatial DOM/Web renderer module which is a sibling to @in/native for native (iOS, Android, and VisionOS) rendering as well as @in/spatial for 3D & XR rendering.
-- **Reactivity:** Use InSpatial primary Signal Lite apis `signal`, `computed`/`$`, `watch`, for interactity and state management.
-- **Kit:** Use InSpatial Kit `For`, and `If` components for control flow
+- **Browser Preset:** The project specifically uses `@in/dom` an InSpatial DOM/Web renderer module which is a sibling to `@in/native` for native (iOS, Android, and VisionOS) rendering as well as `@in/gpu` for 3D & XR rendering.
+- **Reactivity:** Use InSpatial primary Signal Ref apis `signal`, `computed`/`$`, `watch`, for interactity and state management.
+- **Kit:** Use InSpatial Kit control-flow primitives like `List`, and `If`
 - **InSpatial Cloud:** All datasource and backend functionality must use `@inspatial/cloud` and `@inspatial/cloud-client.
-- **Vite Build System:** Vite is used for development and building, including Hot Module Replacement (HMR).
+- **Vite Build System:** Vite is used for development and building, including Hot Reload also known as Hot Module Replacement (HMR).
 
 ---
 
 **InSpatial Run Primary Concepts & Usage Summary:**
 
 **1. Signals (Interactivity):**
-InSpatial Run is fundamentally reactive signal based system. The core signal primitives InSpatial State is that @in/teract is an signa based interactivity and state management system. It is subdivided into two types of reactive systems. There is Signal Core and Signal Lite each inspired by SolidJS and Preact respectively.
+InSpatial Run is fundamentally reactive signal based system. The core signal primitives InSpatial State is that `@in/teract` is an signal based interactivity and state management system. It is subdivided into two types of reactive systems. There is Signal Core and Signal Lite each inspired by SolidJS and Preact respectively.
 
 - **Definition:** Reactive containers (`createSignal()`) that notify observers on value changes.
 - **Computed Signals:** Derive values from other signals (`computed()`, or `$(...)` alias) and update automatically.
@@ -86,11 +84,11 @@ InSpatial State is built-in state management system for InSpatial Run. It is bui
 - **Structure:** A component is a function `(props, ...children) => (R) => Node`. The inner function receives the renderer `R`.
 - **Structure & Control Flow Components:**
   _ `<If condition={signal}>`: Conditional rendering. Supports `true` and `else` props. For one-off static conditions, you can use inline typescript to return the desired branch directly just like in React(but will not have reactivity).
-  _ `<For entries={signalOfArray} track="key" indexed={true}>`: Efficiently renders lists with reconciliation. Use `track` for stable keys. Exposes `getItem()`, `remove()`, `clear()` methods. `track` is only needed when data is completely loaded fresh from other sources.
+  _ `<List each={signalOfArray} unkeyed={false} track="key" indexed={true}>`: Efficiently renders lists with reconciliation by handling all list rendering scenarios. Use `track` for stable keys. Exposes `getItem()`, `remove()`, `clear()` methods. `track` is only needed when data is completely loaded fresh from other sources. With unkeyed=true, individual item changes only update that specific item when set to false while setting it to false provides collection-level reactivity. 
   _ `<Async future={promise}>`: Manages asynchronous operations (pending, resolved, rejected states). `async` components automatically get `fallback` and `catch` props.
   _ **Error Handling in Asynchronous Components:** Implement robust error handling within `async` components. Utilize the `catch` prop of `<Async>` components or direct `fallback`/`catch` props on async components, and `try...catch` blocks for network requests to gracefully manage and display errors to the user.
   _ `<Dynamic is={componentOrTag}>`: Renders a component or HTML tag that can change dynamically.
-  _ `<Fn ctx={value} catch={errorHandler}>`: Executes a function that returns a render function, useful for complex logic with error boundaries. \* **List Management:** Use `For` component's exposed methods (`getItem()`, `remove()`, `clear()`) for imperative list manipulation when needed.
+  _ `<Fn ctx={value} catch={errorHandler}>`: Executes a function that returns a render function, useful for complex logic with error boundaries. \* **List Management:** Use `List` component's exposed methods (`getItem()`, `remove()`, `clear()`) for imperative list manipulation when needed.
 
 - **`$ref` Prop:** Special prop to get a reference to a DOM element or component instance (as a signal or function). **Critical for HMR in dev mode:** always use `$ref` for component references, not `createComponent()` return values.
 - **`expose()`:** Allows child components to expose properties/methods to their parent via `$ref`.
@@ -101,7 +99,7 @@ InSpatial State is built-in state management system for InSpatial Run. It is bui
   **`dispose(instance)`:** Cleans up component resources
   **`getCurrentSelf()`:** Gets current component instance
   **`snapshot()`:** Creates context snapshots for async operations
-- **JSX Children in Control Flow Components:** When using components like `<If>` and `<For>`, ensure their render function children return either a _single root element_ or a `Fragment` (`<>...</>`) if rendering multiple sibling elements. This prevents unexpected rendering issues.
+- **JSX Children in Control Flow Components:** When using components like `<If>` and `<List>`, ensure their render function children return either a _single root element_ or a `Fragment` (`<>...</>`) if rendering multiple sibling elements. This prevents unexpected rendering issues.
 
 **4. InSpatial Renderers:**
 
@@ -115,13 +113,13 @@ InSpatial State is built-in state management system for InSpatial Run. It is bui
 
 - **`NativeRenderer(withDirectives)` (`@inspatial/run/renderer/native`):** For interactive iOS, Android and VisionOS applications. \* \*\*Soon...
 
-- **`SpatialRenderer(withDirectives)` (`@inspatial/run/renderer/spatial`):** For interactive 3D & XR applications. \* \*\*Soon...
+- **`GPURenderer(withDirectives)` (`@inspatial/run/renderer/spatial`):** For interactive 3D & XR applications. \* \*\*Soon...
 
 **5. InSpatial Runtime (JSX):**
 Built on top the universal runtime
 
 - **Retained Mode:** JSX templates are evaluated once to build the initial UI.
-- **Classic Transform (Recommended)::** Provides maximum flexibility. Requires configuring `jsxFactory: 'R.c'` and `jsxFragment: 'R.f'` in build tools (Vite, Babel). Components receive `R` as an argument.
+- **Pragma Transform (Recommended)::** Provides maximum flexibility. Requires configuring `jsxFactory: 'R.c'` and `jsxFragment: 'R.f'` in build tools (Vite, Babel). Components receive `R` as an argument.
 - **Automatic Runtime:** Easier setup, but less flexible. Configures `jsx: 'automatic'` and `jsxImportSource: 'InSpatial'`. Requires `wrap(R)` initialization.
 - **Hot Module Replacement (HMR):** Use `InSpatialHMR` extension for seamless client HMR in development.
 
@@ -165,7 +163,7 @@ Note: hasValue returns plain boolean. Returns true when the value of the signal 
 **Built-in Components:**
 
 - `<If condition={} true={} else={}>` - Conditional rendering
-- `<For entries={} track="" indexed={}>` - List rendering with reconciliation
+- `<List each={} track="" indexed={}>` - List rendering with reconciliation
 - `<Async future={} fallback={} catch={}>` - Promise handling
 - `<Dynamic is={}>` - Dynamic component/tag rendering
 - `<Fn ctx={} catch={}>` - Function execution with error boundaries
@@ -185,11 +183,40 @@ JSX runtime is essential when using InSpatial together with runtimes like [Deno]
 
 ### Setup
 
-To use it, you first need to configure your build tool (like Vite, Rollup with Babel, or webpack) to use InSpatial's JSX runtime.
+To use it, you first need to configure your build tool (like Vite, Rollup with Babel, Rspack or Webpack) to use InSpatial's JSX runtime.
 
-#### Vite (`vite.config.js`)
+#### Vite (`vite.config.ts`)
 
-```javascript
+##### Pragma Config (Default)
+
+```typescript
+import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
+import deno from "@deno/vite-plugin";
+import { InSpatial } from "@inspatial/run/hmr";
+
+export default defineConfig({
+  server: {
+    port: 6310,
+  },
+  esbuild: {
+    jsxFactory: "R.c",
+    jsxFragment: "R.f",
+  },
+  plugins: [
+    deno(),
+    tailwindcss(), // Optional
+    InSpatial(),
+  ],
+  build: {
+    target: "esnext",
+  },
+});
+```
+
+##### Automatic Config
+
+```typescript
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -218,36 +245,52 @@ export default defineConfig({
 
 ### Initialization
 
-Once your build tool is configured, you need to initialize the runtime with a renderer in your application's entry point. The `wrap` function from the runtime connects it to your chosen renderer (e.g., the `DOMRenderer`).
+Once your build tool is configured, you need to initialize the runtime with a renderer in your application's entry point. There are two ways you can configure the renderer. 
 
-**Example (`index.ts`):**
+#### Automatic Render (Preferred)
 
-```javascript
-import { DOMRenderer } from "@inspatial/run/renderer";
-import { wrap } from "@inspatial/run/jsx";
-import { withDirectives } from "@inspatial/run/trigger";
-import { App } from "./app.jsx"; // Your root component
+```typescript
+import "./kit.css";
+import { createRenderer } from "@inspatial/run/renderer";
+import { App } from "../my/app/root.tsx";
 
-//1. Create a renderer (DOM)
-const web = DOMRenderer(withDirectives);
+// 1. Create InSpatial Renderer
+const InSpatial = await createRenderer({
+  mode: "auto", 
+  debug: true,
+});
 
-//2. Wrap the renderer with the JSX runtime
-wrap(web);
-
-//3. Render InSpatial App
-const root = document.getElementById("app")!;
-web.render(root, App);
-
+// 2. Render InSpatial App
+if (document.getElementById("app")) {
+  InSpatial.render(document.getElementById("app"), App);
+}
 ```
 
 Now, any `.jsx` or `.tsx` file will be automatically transformed to use the initialized runtime, so you don't need any special imports to write JSX.
 
-**HMR Setup:**
+**Hot Reload:**
+
+#### Vite
 
 ```javascript
-import InSpatialHMR from "@inspatial/run/hmr";
+import { defineConfig } from "vite";
+import InSpatial from "@inspatial/run/hmr";
+
 export default defineConfig({
-  plugins: [InSpatialHMR()],
+  plugins: [InSpatial()],
+  // ... jsx config
+});
+```
+
+#### Rspack (RsBuild) or Webpack
+
+```javascript
+import { defineConfig } from '@rsbuild/core';
+import InSpatialRun from "@inspatial/run/hmr";
+
+
+export default defineConfig({
+  plugins: [InSpatialRun()],
   // ... jsx config
 });
 ```
@@ -271,7 +314,7 @@ export default defineConfig({
 | Components are functions                                    | Components return functions `(props) => (R) => JSX`              |
 | Virtual DOM re-renders                                      | Retained mode, direct DOM updates                                |
 | Conditional: `{condition && <div/>}`                        | `<If condition={signal}>{() => <div/>}</If>`                     |
-| Reactive Lists: `{items.map(item => <div key={item.id}/>)}` | `<For entries={items} track="id">{({item}) => <div/>}</For>`     |
+| Reactive Lists: `{items.map(item => <div key={item.id}/>)}` | `<List each={items} track="id">{({item}) => <div/>}</List>`      |
 
 ---
 
@@ -341,9 +384,9 @@ const TodoList = () => {
   const todos = createSignal([{ id: 1, text: "Learn InSpatial" }]);
   return (R) => (
     <YStack>
-      <For entries={todos} track="id">
+      <List each={todos} track="id">
         {({ item }) => <ScrollView>{item.text}</ScrollView>}
-      </For>
+      </List>
     </YStack>
   );
 };
@@ -353,7 +396,7 @@ const TodoList = () => {
 
 ```javascript
 // ❌ React way - DON'T DO THIS
-createEffect(() => {
+useEffect(() => {
   const handler = () => console.log("resize");
   window.addEventListener("resize", handler);
   return () => window.removeEventListener("resize", handler);
@@ -472,8 +515,9 @@ web.render(document.getElementById("root"), App);
 4. **Effects**: `watch(() => { /* reactive code */ })`
 5. **Cleanup**: `createEffect(() => { /* setup */; return () => { /* cleanup */ } })`
 6. **Conditional Classes**: `class:active={isActive}`
-7. **Lists**: `<For entries={items}>{({item}) => <Item data={item}/>}</For>`
+7. **Lists**: `<List each={items}>{({item}) => <Item data={item}/>}</List>`
 8. **Conditions**: `<If condition={show}>{() => <Content/>}</If>`
 9. **Async**: Components can be `async` functions with `fallback` and `catch` props
 10. **Signal Operations**: Use `.eq()`, `.gt()`, `.and()`, etc. for comparisons
 11. **Render to Web**: `web.render(container, component, props, ...children)`
+`

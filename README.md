@@ -147,7 +147,7 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
       <td align="left">Component & User Interface</td>
       <td align="left"><code>deno add jsr:@inspatial/run/kit</code></td>
       <td align="left"><a href="https://www.inspatial.dev/kit">inspatial.dev/kit</a></td>
-      <td align="left">🔴 Unstable</td>
+      <td align="left">🟡 Preview</td>
     </tr>
   </tbody>
 </table>
@@ -251,20 +251,7 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
 
 ---
 
- <div align="left">
-  <a href="https://www.inspatial.dev#gh-dark-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-light.svg"  alt="InSpatial Dev" height="45">
-  </a>
-  <a href="https://www.inspatial.dev#gh-light-mode-only" target="_blank">
-      <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/inspatial-dev-dark.svg"  alt="InSpatial Dev" height="45">
-  </a>
- </div>
-
- <br>
-
----
-
-<div align="left">
+<div align="center">
   <a href="https://inspatial.dev/kit#gh-dark-mode-only" target="_blank">
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-light.svg" alt="InSpatial Kit" height="50"/>
   </a>
@@ -272,9 +259,8 @@ InSpatial Dev is a comprehensive suite of cross-platform tools and infrastructur
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/kit-icon-dark.svg" alt="InSpatial Kit" height="50"/>
   </a>
 
-### InSpatial Kit
-
-</div>
+  ### InSpatial Kit
+</div> 
 
 A universal UI library for crafting stunning user interfaces across multiple platforms and environments:
 
@@ -291,7 +277,7 @@ A universal UI library for crafting stunning user interfaces across multiple pla
 - Themeability & Theme Controls
 - Built In Skeletal system
 - Built in Haptic Feedback and Sound System.
-- Full Figma Kit and Integration
+- Full Figma Kit and Integration 
 - Tailwind and Yoga Support
 - Multipurpose driven (Game UI, OS, Web, Mobile and XR)
 - Fully customizable pre-styled headless components
@@ -307,9 +293,10 @@ A universal UI library for crafting stunning user interfaces across multiple pla
 - Responsive design system
 - Cursor Trails
 
+
 ---
 
-<div align="left">
+<div align="center">
   <a href="https://inspatial.xr#gh-dark-mode-only" target="_blank">
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/xr-icon-light.svg" alt="InSpatial XR" height="50"/>
   </a>
@@ -317,9 +304,8 @@ A universal UI library for crafting stunning user interfaces across multiple pla
     <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/xr-icon-dark.svg" alt="InSpatial XR" height="50"/>
   </a>
 
-### InSpatial XR
-
-</div>
+  ### InSpatial XR
+</div> 
 
 A progressive and native cross-platform AR/MR/VR renderer:
 
@@ -335,9 +321,10 @@ A progressive and native cross-platform AR/MR/VR renderer:
 - Gesture and voice input support
 - Spatial mapping and anchoring
 
+
 ---
 
-<div align="left">
+<div align="center">
 <a href="https://inspatial.run#gh-dark-mode-only" target="_blank">
   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/run-icon-light.svg" alt="InSpatial Run" height="50"/>
 </a>
@@ -345,8 +332,7 @@ A progressive and native cross-platform AR/MR/VR renderer:
   <img src="https://inspatial-storage.s3.eu-west-2.amazonaws.com/media/run-icon-dark.svg" alt="InSpatial Run" height="50"/>
 </a>
 
-### InSpatial Run
-
+  ### InSpatial Run
 </div> 
 A cross-platform framework runtime for building InSpatial apps:
 
@@ -379,7 +365,7 @@ InSpatial Dev is released under the Intentional 1.0 License. See the [LICENSE](L
 
 ---
 
-<div align="left">
+<div align="center">
   <strong>Ready to shape the future of spatial computing?</strong>
   <br>
   <a href="https://www.inspatial.io">Start Building with InSpatial</a>
