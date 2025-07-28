@@ -87,7 +87,7 @@ export async function createRenderer(options: RenderModeOptions = {}): Promise<a
     setSignalDebugContext(debugCtx);
     setComponentDebugContext(debugCtx);
     
-    // Also make it available globally for HMR and other systems
+    // Also make it available globally for HOT and other systems
     (globalThis as any).debug = debugCtx.debug;
   }
 

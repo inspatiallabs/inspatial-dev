@@ -1,4 +1,4 @@
-import { hotReloadEnabler } from "../../../hmr/index.ts";
+import { hotReloadEnabler } from "../../../hot/index.ts";
 import { type ComponentFunction, snapshotComponent } from "../../component/index.ts";
 
 export async function _lazyLoad<T>(

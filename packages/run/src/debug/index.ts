@@ -8,7 +8,7 @@ export type DebugLevel = "error" | "warn" | "info" | "debug" | "trace";
 export type DebugCategory =
   | "renderer"
   | "environment"
-  | "hmr"
+  | "hot"
   | "signal"
   | "component"
   | "env-vars"
@@ -328,7 +328,7 @@ class InSpatialDebugger {
       const categoryEmoji = {
         renderer: "🎨",
         environment: "🌍",
-        hmr: "🔥",
+        hot: "🔥",
         signal: "⚡",
         component: "🧩",
         "env-vars": "🔧",
@@ -429,8 +429,8 @@ class InSpatialDebugger {
     }
   }
 
-  hmrActivity(action: string, details?: any): void {
-    this.debug("hmr", `HMR ${action}`, details);
+  hotActivity(action: string, details?: any): void {
+    this.debug("hot", `HOT ${action}`, details);
   }
 
   componentLifecycle(action: string, component: string, details?: any): void {
@@ -482,7 +482,7 @@ class InSpatialDebugger {
     const byCategory = {
       renderer: 0,
       environment: 0,
-      hmr: 0,
+      hot: 0,
       signal: 0,
       component: 0,
       "env-vars": 0,
@@ -576,13 +576,13 @@ export const environment = {
     debug.info("environment", message, ...data),
 };
 
-export const hmr = {
+export const hot = {
   activity: (action: string, details?: any) =>
-    debug.hmrActivity(action, details),
+    debug.hotActivity(action, details),
   error: (message: string, ...data: any[]) =>
-    debug.error("hmr", message, ...data),
+    debug.error("hot", message, ...data),
   warn: (message: string, ...data: any[]) =>
-    debug.warn("hmr", message, ...data),
+    debug.warn("hot", message, ...data),
   info: (message: string, ...data: any[]) =>
-    debug.info("hmr", message, ...data),
+    debug.info("hot", message, ...data),
 };

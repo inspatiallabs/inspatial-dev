@@ -1,8 +1,7 @@
 {
   "name": "@inspatial/run",
   "license": "Intentional-License-1.0",
-  "version": "0.4.4",
-  "exports": "./src/index.ts",
+  "version": "0.4.5",
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts",
     "lint": "deno lint",
@@ -34,6 +33,22 @@
       "scripthost"
     ]
   },
+  "unstable": [
+    "cron",
+    "kv",
+    "webgpu",
+    "byonm",
+    "http",
+    "fs",
+    "net",
+    "fmt-sql",
+    "worker-options",
+    "broadcast-channel",
+    "node-globals",
+    "bare-node-builtins",
+    "detect-cjs"
+  ],
+  "nodeModulesDir": "auto",
   "fmt": {
     "semiColons": false,
     "singleQuote": false,
@@ -61,6 +76,5 @@
       ],
       "exclude": ["no-explicit-any", "ban-ts-comment"]
     }
-  },
-  "imports": {}
+  }
 }

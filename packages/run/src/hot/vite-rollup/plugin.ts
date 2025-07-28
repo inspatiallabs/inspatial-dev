@@ -4,7 +4,7 @@ import { createFilter, type FilterPattern, DEFAULT_INCLUDE_PATTERNS } from "../u
 const BEGIN = "/* ---- BEGIN INSPATIAL HOT RELOAD INJECT ---- */";
 const END = "/* ----  END INSPATIAL HOT RELOAD INJECT  ---- */";
 
-interface InSpatialPluginOptions {
+interface InVitePluginOptions {
 	include?: FilterPattern;
 	exclude?: FilterPattern;
 	importSource?: string;
@@ -15,25 +15,26 @@ interface TransformResult {
 	code: string;
 	map: any;
 }
-
+ 
 interface RollupPluginContext {
 	meta: {
 		watchMode?: boolean;
 	};
 }
 
-interface ViteRollupPlugin {
+// Define proper Vite plugin interface
+interface VitePlugin {
 	name: string;
-	apply?: string;
+	apply?: "build" | "serve" | ((this: void, config: any, env: { command: string }) => boolean);
 	buildStart?(this: RollupPluginContext, options: any, inputOptions?: any): void;
 	transform?(code: string, id: string): TransformResult | null;
 }
 
-export function InSpatial(options: InSpatialPluginOptions = {}): ViteRollupPlugin | undefined {
+export function InVite(options: InVitePluginOptions = {}): VitePlugin | undefined {
 	const {
 		include = DEFAULT_INCLUDE_PATTERNS,
 		exclude,
-		importSource = "@inspatial/run/hmr", 
+		importSource = "@inspatial/run/hot", 
 	} = options;
 
 	const filter = createFilter(include, exclude);
@@ -65,7 +66,7 @@ ${END}
 `;
 
 	return {
-		name: "InSpatial",
+		name: "InVite",
 		apply,
 
 		// Rollup-only: record whether we are running a production build

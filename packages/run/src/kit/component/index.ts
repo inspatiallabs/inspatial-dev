@@ -8,7 +8,7 @@ import {
 import {
   hotReloadEnabler,
   enableHotReload,
-} from "../../hmr/hot-reload/index.ts";
+} from "../../hot/hot-reload/index.ts";
 import { removeFromArr, isThenable, isPrimitive } from "../../utils.ts";
 import { env } from "../../env/index.ts";
 import type { DebugContext } from "../../debug/index.ts";

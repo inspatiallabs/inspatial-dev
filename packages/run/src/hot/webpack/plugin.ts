@@ -74,7 +74,7 @@ interface WebpackRule {
   }>;
 }
 
-interface InSpatialPluginOptions {
+interface InPackPluginOptions {
   include?: FilterPattern;
   exclude?: FilterPattern;
   importSource?: string;
@@ -82,7 +82,7 @@ interface InSpatialPluginOptions {
   [key: string]: any; // For additional loader options
 }
 
-export class InSpatial {
+export class InPack {
   private importSource: string;
   private include?: FilterPattern;
   private exclude?: FilterPattern;
@@ -92,11 +92,11 @@ export class InSpatial {
   /**
    * @param opts Configuration options
    */
-  constructor(opts: InSpatialPluginOptions = {}) {
+  constructor(opts: InPackPluginOptions = {}) {
     const {
       include,
       exclude,
-      importSource = "@inspatial/run/hmr",
+      importSource = "@inspatial/run/hot",
       enabled,
       ...loaderOpts
     } = opts;
@@ -138,7 +138,7 @@ export class InSpatial {
       test,
       use: [
         {
-          loader: "@inspatial/run/hmr",
+          loader: "@inspatial/run/hot",
           options: this.loaderOpts,
         },
       ],

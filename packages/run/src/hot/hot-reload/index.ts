@@ -19,8 +19,8 @@ export const hotReloadEnabler =
   !env.isProduction() &&
   !!(/* @inspatial webpack */ (import.meta as ExtendedImportMeta).hot);
 
-export const KEY_HMRWRAP = Symbol("K_HMRWRAP");
-export const KEY_HMRWRAPPED = Symbol("K_HMRWARPPED");
+export const KEY_HOTWRAP = Symbol("K_HOTWRAP");
+export const KEY_HOTWRAPPED = Symbol("K_HOTWARPPED");
 
 const toString = Object.prototype.toString;
 
@@ -32,7 +32,7 @@ interface HotReloadOptions {
 }
 
 interface HotModuleData {
-  [KEY_HMRWRAP]?: any;
+  [KEY_HOTWRAP]?: any;
 }
 
 interface HotModule {
@@ -51,8 +51,8 @@ interface SetupOptions {
 }
 
 interface WrappedFunction extends Function {
-  [KEY_HMRWRAP]?: any;
-  [KEY_HMRWRAPPED]?: boolean;
+  [KEY_HOTWRAP]?: any;
+  [KEY_HOTWRAPPED]?: boolean;
   hot?: boolean;
   value?: Function;
 }
@@ -69,13 +69,13 @@ function createHotReloader(fn: any): any {
     return fn;
   }
   const wrapped = fn.bind(null);
-  (wrapped as WrappedFunction)[KEY_HMRWRAPPED] = true;
+  (wrapped as WrappedFunction)[KEY_HOTWRAPPED] = true;
   return wrapped;
 }
 
 function wrapComponent(fn: Function): any {
   const wrapped = createSignal(fn as any, createHotReloader) as any;
-  Object.defineProperty(fn, KEY_HMRWRAP, {
+  Object.defineProperty(fn, KEY_HOTWRAP, {
     value: wrapped,
     enumerable: false,
   });
@@ -102,10 +102,10 @@ export function enableHotReload({
   Component,
   createComponentRaw,
 }: HotReloadOptions) {
-  // Use the global debug instance for HMR logging
+  // Use the global debug instance for HOT logging
   const globalDebug = (globalThis as any).debug;
   if (globalDebug?.info) {
-    globalDebug.info("hmr", "InSpatial Hot Reload enabled");
+    globalDebug.info("hot", "InSpatial Hot Reload enabled");
   } else {
     console.info("InSpatial Hot Reload enabled.");
   }
@@ -114,10 +114,10 @@ export function enableHotReload({
 
     if (typeof tpl === "function" && !builtins.has(tpl)) {
       const wrappedFn = tpl as WrappedFunction;
-      if (wrappedFn[KEY_HMRWRAP]) {
-        tpl = wrappedFn[KEY_HMRWRAP];
+      if (wrappedFn[KEY_HOTWRAP]) {
+        tpl = wrappedFn[KEY_HOTWRAP];
         hotLevel = 2;
-      } else if (!wrappedFn[KEY_HMRWRAPPED]) {
+      } else if (!wrappedFn[KEY_HOTWRAPPED]) {
         tpl = wrapComponent(tpl);
         hotLevel = 1;
       }
@@ -149,14 +149,14 @@ async function update(
       typeof newVal === "function" &&
       (key === "default" || key[0].toUpperCase() === key[0])
     ) {
-      let wrapped = (origVal as WrappedFunction)[KEY_HMRWRAP];
+      let wrapped = (origVal as WrappedFunction)[KEY_HOTWRAP];
       if (wrapped) {
         wrapped.hot = true;
       } else {
         wrapped = wrapComponent(origVal as Function);
       }
       if (typeof newVal === "function") {
-        Object.defineProperty(newVal, KEY_HMRWRAP, {
+        Object.defineProperty(newVal, KEY_HOTWRAP, {
           value: wrapped,
           enumerable: false,
         });
@@ -184,7 +184,7 @@ async function update(
 }
 
 function onDispose(this: any, data: HotModuleData): void {
-  data[KEY_HMRWRAP] = this;
+  data[KEY_HOTWRAP] = this;
 }
 
 export function setup({
@@ -194,8 +194,8 @@ export function setup({
   dispose,
   invalidate,
 }: SetupOptions): void {
-  if (data?.[KEY_HMRWRAP]) {
-    update.call(data[KEY_HMRWRAP], current, invalidate);
+  if (data?.[KEY_HOTWRAP]) {
+    update.call(data[KEY_HOTWRAP], current, invalidate);
   }
   dispose(onDispose.bind(current));
   accept();

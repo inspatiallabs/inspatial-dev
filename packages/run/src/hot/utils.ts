@@ -1,6 +1,6 @@
 /**
- * @fileoverview Shared utilities for HMR plugins
- * @module @inspatial/run/hmr/utils
+ * @fileoverview Shared utilities for HOT plugins
+ * @module @inspatial/run/hot/utils
  */
 
 /**
@@ -72,6 +72,6 @@ export function createFilter(include: FilterPattern = [], exclude: FilterPattern
 }
 
 /**
- * Default file patterns for InSpatial HMR
+ * Default file patterns for InSpatial HOT
  */
 export const DEFAULT_INCLUDE_PATTERNS: string[] = ["**/*.jsx", "**/*.tsx", "**/*.mdx"]; 

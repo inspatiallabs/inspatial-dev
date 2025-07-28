@@ -23,7 +23,7 @@ const renderer = await createRenderer({
 debug.configure({
   enabled: true,
   level: 'debug',
-  categories: 'all', // or specific ['renderer', 'hmr', 'signal']
+  categories: 'all', // or specific ['renderer', 'hot', 'signal']
   showTimestamp: true,
   showCategory: true,
   prefix: '🚀 MyApp',
@@ -42,7 +42,7 @@ debug.configure({
 
 - **renderer**: Renderer creation, mode selection, node operations
 - **environment**: Environment detection and platform info
-- **hmr**: Hot module replacement activity
+- **hot**: Hot reload activity
 - **signal**: Signal creation, updates, and effects
 - **component**: Component lifecycle and rendering
 - **env-vars**: Environment variable access and validation
@@ -98,7 +98,7 @@ group.end();
 ### Convenience Exports
 
 ```typescript
-import { renderer, environment, hmr } from '@inspatial/run';
+import { renderer, environment, hot } from '@inspatial/run';
 
 // Category-specific helpers
 renderer.info('DOM renderer created');
@@ -107,8 +107,8 @@ renderer.error('Failed to create renderer', error);
 environment.detected(envInfo);
 environment.warn('Unusual runtime detected');
 
-hmr.activity('Component updated', { component: 'App' });
-hmr.info('Hot reload enabled');
+hot.activity('Component updated', { component: 'App' });
+hot.info('Hot reload enabled');
 ```
 
 ### Custom Configuration
