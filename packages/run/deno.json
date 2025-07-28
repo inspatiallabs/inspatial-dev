@@ -9,7 +9,7 @@
     "fmt": "deno fmt",
     "check": "deno check **/*.ts",
     "clean": "rm -rf node_modules && rm -rf deno.lock && rm -rf dist",
-    "publish": "deno publish --allow-slow-types --no-check"
+    "publish": "deno publish --allow-slow-types --no-check --allow-dirty"
   },
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]

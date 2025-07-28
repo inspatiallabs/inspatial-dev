@@ -2,21 +2,22 @@ import { createSignal } from "../../signal.ts";
 import { isPrimitive } from "../../utils.ts";
 import { env } from "../../env/index.ts";
 
-// Extend ImportMeta interface to include hot property
-declare global {
-  interface ImportMeta {
-    hot?: {
-      accept(): void;
-      dispose(callback: (data: any) => void): void;
-      invalidate?(reason: string): void;
-      data?: any;
-    };
-    webpackHot?: any;
-  }
+// Hot module replacement interfaces for type safety
+interface HotModuleReplacement {
+  accept(): void;
+  dispose(callback: (data: any) => void): void;
+  invalidate?(reason: string): void;
+  data?: any;
+}
+
+interface ExtendedImportMeta {
+  hot?: HotModuleReplacement;
+  webpackHot?: any;
 }
 
 export const hotReloadEnabler =
-  !env.isProduction() && !!(/* @inspatial webpack */ (import.meta as any).hot);
+  !env.isProduction() &&
+  !!(/* @inspatial webpack */ (import.meta as ExtendedImportMeta).hot);
 
 export const KEY_HMRWRAP = Symbol("K_HMRWRAP");
 export const KEY_HMRWRAPPED = Symbol("K_HMRWARPPED");
@@ -104,7 +105,7 @@ export function enableHotReload({
   // Use the global debug instance for HMR logging
   const globalDebug = (globalThis as any).debug;
   if (globalDebug?.info) {
-    globalDebug.info('hmr', "InSpatial Hot Reload enabled");
+    globalDebug.info("hmr", "InSpatial Hot Reload enabled");
   } else {
     console.info("InSpatial Hot Reload enabled.");
   }
