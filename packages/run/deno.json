@@ -76,11 +76,5 @@
       "exclude": ["no-explicit-any", "ban-ts-comment"]
     }
   },
-  "imports": {
-    "@inspatial/cloud": "jsr:@inspatial/cloud@^0.5.5",
-    "@inspatial/cloud-client": "jsr:@inspatial/cloud-client@^0.1.15"
-  },
-  "exports": {
-    ".": "./src/index.ts"
-  }
+  "imports": {}
 }

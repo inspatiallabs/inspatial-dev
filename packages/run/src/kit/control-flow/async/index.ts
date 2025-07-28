@@ -9,12 +9,12 @@ import {
 import {
   type ComponentProps,
   type ComponentFunction,
-  type RenderFunction,
   getCurrentSelf,
   captureComponent,
   KEY_CTX,
 } from "../../component/index.ts";
 import { Fn } from "../fn/index.ts";
+import type { RenderFunction } from "../render/index.ts";
 
 export interface AsyncProps extends ComponentProps {
   future: Promise<any>;
@@ -103,7 +103,7 @@ export function Async(
     captureComponent(function (result: any) {
       return Fn({ name: "Then" }, () => {
         const handler = read(then);
-        return then?.({ ...restProps, result });
+        return handler?.({ ...restProps, result });
       });
     })
   );

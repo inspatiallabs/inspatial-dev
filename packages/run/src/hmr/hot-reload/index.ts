@@ -1,5 +1,5 @@
 import { createSignal } from "../../signal.ts";
-import { isPrimitive } from "../../utils.ts";
+import { isPrimitive } from "../../utils.js";
 import { env } from "../../env/index.ts";
 
 // Extend ImportMeta interface to include hot property
@@ -73,7 +73,7 @@ function createHotReloader(fn: any): any {
 }
 
 function wrapComponent(fn: Function): any {
-  const wrapped = createHotReloader(fn) as any;
+  const wrapped = createSignal(fn, createHotReloader) as any;
   Object.defineProperty(fn, KEY_HMRWRAP, {
     value: wrapped,
     enumerable: false,
@@ -104,7 +104,7 @@ export function enableHotReload({
   // Use the global debug instance for HMR logging
   const globalDebug = (globalThis as any).debug;
   if (globalDebug?.info) {
-    globalDebug.info("hmr", "InSpatial Hot Reload enabled");
+    globalDebug.info('hmr', "InSpatial Hot Reload enabled");
   } else {
     console.info("InSpatial Hot Reload enabled.");
   }

@@ -1,6 +1,6 @@
-import { SignalValueType, isSignal, Signal } from "../../../signal.ts";
-import { ComponentFunction } from "../../component/index.ts";
-import { type RenderFunction } from "../render/index.ts";
+import { type SignalValueType, isSignal, type Signal } from "../../../signal.ts";
+import type { ComponentFunction } from "../../component/index.ts";
+import type { RenderFunction } from "../render/index.ts";
 import { Fn } from "../fn/index.ts";
 
 export interface IfProps {

@@ -23,6 +23,7 @@ export type ComponentTemplate<P = any> = ComponentFunction<P>;
 export type ComponentProps = Record<string, any> & {
   $ref?: Signal<any> | ((instance: any) => void);
 };
+export type { RenderFunction } from "../control-flow/render/index.ts";
 
 export interface ComponentContext {
   run:
@@ -143,8 +144,6 @@ export function getCurrentRun(): ComponentContext["run"] | null {
 }
 
 export class Component {
-  [KEY_CTX]: ComponentContext | null = null;
-
   constructor(
     tpl: ComponentTemplate,
     props?: ComponentProps,

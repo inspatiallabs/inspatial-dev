@@ -1,12 +1,11 @@
 import "./kit.css";
 import { createRenderer } from "../../../src/renderer/index.ts";
 import { App } from "../app/window/flat.tsx";
-// import { cloud, cloudClient } from "../../../src/index.ts";
 
 // 1. Create InSpatial Renderer
 const InSpatial = await createRenderer({
-  mode: "auto",
-  debug: true,
+  mode: "browser",
+  debug: "verbose"
 });
 
 // 2. Render InSpatial App
