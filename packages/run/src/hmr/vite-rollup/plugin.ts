@@ -33,7 +33,7 @@ export function InSpatial(options: InSpatialPluginOptions = {}): ViteRollupPlugi
 	const {
 		include = DEFAULT_INCLUDE_PATTERNS,
 		exclude,
-		importSource = "../../../../src/hmr/hot-reload/index.js",
+		importSource = "../../../../src/hmr/hot-reload/index.ts",
 	} = options;
 
 	const filter = createFilter(include, exclude);
