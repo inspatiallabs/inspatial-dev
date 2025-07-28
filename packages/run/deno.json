@@ -2,6 +2,30 @@
   "name": "@inspatial/run",
   "license": "Intentional-License-1.0",
   "version": "0.4.5",
+  "exports": {
+    ".": "./src/index.ts",
+    "./signal": "./src/signal.ts",
+    "./kit": "./src/kit/index.ts",
+    "./kit/control-flow": "./src/kit/control-flow/index.ts",
+    "./renderer": "./src/renderer/index.ts",
+    "./renderer/create-renderer": "./src/renderer/create-renderer.ts",
+    "./renderer/dom": "./src/renderer/dom.ts",
+    "./renderer/html": "./src/renderer/html.ts",
+    "./renderer/universal": "./src/renderer/universal.ts",
+    "./renderer/xr": "./src/renderer/xr.ts",
+    "./renderer/android-xr": "./src/renderer/android-xr.ts",
+    "./renderer/vision-os": "./src/renderer/vision-os.ts",
+    "./renderer/horizon-os": "./src/renderer/horizon-os.ts",
+    "./renderer/generic-xr": "./src/renderer/generic-xr.ts",
+    "./renderer/nativescript": "./src/renderer/nativescript.ts",
+    "./runtime": "./src/runtime/index.ts",
+    "./jsx-runtime": "./src/runtime/jsx-runtime.ts",
+    "./jsx-dev-runtime": "./src/runtime/jsx-dev-runtime.ts",
+    "./trigger": "./src/trigger/index.ts",
+    "./env": "./src/env/index.ts",
+    "./hot": "./src/hot/index.ts",
+    "./debug": "./src/debug/index.ts"
+  },
   "tasks": {
     "test": "deno test --allow-env --allow-read --allow-write --allow-run --allow-net --allow-hrtime --allow-env --allow-all ./src/index.test.ts",
     "lint": "deno lint",
@@ -13,7 +37,6 @@
   "publish": {
     "exclude": [".github", ".vscode", "**/*.test.ts", "test_deps.ts"]
   },
-
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "lib": [
@@ -33,22 +56,6 @@
       "scripthost"
     ]
   },
-  "unstable": [
-    "cron",
-    "kv",
-    "webgpu",
-    "byonm",
-    "http",
-    "fs",
-    "net",
-    "fmt-sql",
-    "worker-options",
-    "broadcast-channel",
-    "node-globals",
-    "bare-node-builtins",
-    "detect-cjs"
-  ],
-  "nodeModulesDir": "auto",
   "fmt": {
     "semiColons": false,
     "singleQuote": false,
@@ -75,30 +82,6 @@
         "no-unsafe-finally"
       ],
       "exclude": ["no-explicit-any", "ban-ts-comment"]
-    },
-    "exports": {
-      ".": "./src/index.ts",
-      "./signal": "./src/signal.ts",
-      "./kit": "./src/kit/index.ts",
-      "./kit/control-flow": "./src/kit/control-flow/index.ts",
-      "./renderer": "./src/renderer/index.ts",
-      "./renderer/create-renderer": "./src/renderer/create-renderer.ts",
-      "./renderer/dom": "./src/renderer/dom.ts",
-      "./renderer/html": "./src/renderer/html.ts",
-      "./renderer/universal": "./src/renderer/universal.ts",
-      "./renderer/xr": "./src/renderer/xr.ts",
-      "./renderer/android-xr": "./src/renderer/android-xr.ts",
-      "./renderer/vision-os": "./src/renderer/vision-os.ts",
-      "./renderer/horizon-os": "./src/renderer/horizon-os.ts",
-      "./renderer/generic-xr": "./src/renderer/generic-xr.ts",
-      "./renderer/nativescript": "./src/renderer/nativescript.ts",
-      "./runtime": "./src/runtime/index.ts",
-      "./jsx-runtime": "./src/runtime/jsx-runtime.ts",
-      "./jsx-dev-runtime": "./src/runtime/jsx-dev-runtime.ts",
-      "./trigger": "./src/trigger/index.ts",
-      "./env": "./src/env/index.ts",
-      "./hot": "./src/hot/index.ts",
-      "./debug": "./src/debug/index.ts"
     }
   }
 }
