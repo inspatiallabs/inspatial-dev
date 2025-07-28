@@ -4,7 +4,20 @@
  */
 
 export interface EnvironmentInfo {
-  type: 'dom' | 'ssr' | 'node' | 'deno' | 'bun' | 'react-native' | 'electron' | 'webworker' | 'nativescript' | 'androidxr' | 'visionos' | 'horizonos' | 'unknown';
+  type:
+    | "dom"
+    | "ssr"
+    | "node"
+    | "deno"
+    | "bun"
+    | "react-native"
+    | "electron"
+    | "webworker"
+    | "nativescript"
+    | "androidxr"
+    | "visionos"
+    | "horizonos"
+    | "unknown";
   features: {
     hasDOM: boolean;
     hasDocument: boolean;
@@ -22,7 +35,16 @@ export interface EnvironmentInfo {
   };
   runtime: string;
   version?: string;
-  platform?: 'android' | 'ios' | 'web' | 'desktop' | 'server' | 'androidxr' | 'visionos' | 'horizonos' | 'unknown';
+  platform?:
+    | "android"
+    | "ios"
+    | "web"
+    | "desktop"
+    | "server"
+    | "androidxr"
+    | "visionos"
+    | "horizonos"
+    | "unknown";
 }
 
 /**
@@ -40,38 +62,45 @@ function safeGlobalAccess<T = any>(key: string): T | undefined {
  * Detect the current runtime environment
  */
 export function detectEnvironment(): EnvironmentInfo {
-  const hasWindow = typeof window !== 'undefined';
-  const hasDocument = typeof document !== 'undefined';
-  const hasGlobal = safeGlobalAccess('global') !== undefined;
-  const hasProcess = safeGlobalAccess('process') !== undefined;
-  const hasDeno = safeGlobalAccess('Deno') !== undefined;
-  const hasBun = safeGlobalAccess('Bun') !== undefined;
-  const hasAndroid = safeGlobalAccess('android') !== undefined;
-  const hasIOS = safeGlobalAccess('ios') !== undefined;
-  const hasNativeScript = safeGlobalAccess('__runtimeVersion') !== undefined || 
-                          safeGlobalAccess('__bootstrapModule') !== undefined ||
-                          (hasGlobal && (hasAndroid || hasIOS));
-  
+  const hasWindow = typeof window !== "undefined";
+  const hasDocument = typeof document !== "undefined";
+  const hasGlobal = safeGlobalAccess("global") !== undefined;
+  const hasProcess = safeGlobalAccess("process") !== undefined;
+  const hasDeno = safeGlobalAccess("Deno") !== undefined;
+  const hasBun = safeGlobalAccess("Bun") !== undefined;
+  const hasAndroid = safeGlobalAccess("android") !== undefined;
+  const hasIOS = safeGlobalAccess("ios") !== undefined;
+  const hasNativeScript =
+    safeGlobalAccess("__runtimeVersion") !== undefined ||
+    safeGlobalAccess("__bootstrapModule") !== undefined ||
+    (hasGlobal && (hasAndroid || hasIOS));
+
   // XR Platform Detection
-  const hasXRSession = hasWindow && safeGlobalAccess('XRSession') !== undefined;
+  const hasXRSession = hasWindow && safeGlobalAccess("XRSession") !== undefined;
   const hasWebXR = hasWindow && (navigator as any)?.xr !== undefined;
-  const hasAndroidXR = hasAndroid && (safeGlobalAccess('ARCore') !== undefined || 
-                                      safeGlobalAccess('VRCore') !== undefined ||
-                                      hasXRSession);
-  const hasVisionOS = hasWindow && (safeGlobalAccess('VisionKit') !== undefined ||
-                                   navigator.userAgent?.includes('VisionOS') ||
-                                   navigator.userAgent?.includes('realityOS'));
-  const hasHorizonOS = hasWindow && (safeGlobalAccess('HorizonOS') !== undefined ||
-                                    safeGlobalAccess('MetaXR') !== undefined ||
-                                    navigator.userAgent?.includes('HorizonOS') ||
-                                    navigator.userAgent?.includes('Quest'));
-  
+  const hasAndroidXR =
+    hasAndroid &&
+    (safeGlobalAccess("ARCore") !== undefined ||
+      safeGlobalAccess("VRCore") !== undefined ||
+      hasXRSession);
+  const hasVisionOS =
+    hasWindow &&
+    (safeGlobalAccess("VisionKit") !== undefined ||
+      navigator.userAgent?.includes("VisionOS") ||
+      navigator.userAgent?.includes("realityOS"));
+  const hasHorizonOS =
+    hasWindow &&
+    (safeGlobalAccess("HorizonOS") !== undefined ||
+      safeGlobalAccess("MetaXR") !== undefined ||
+      navigator.userAgent?.includes("HorizonOS") ||
+      navigator.userAgent?.includes("Quest"));
+
   // AndroidXR Environment (Android Extended Reality)
   if (hasAndroidXR && !hasWindow) {
     return {
-      type: 'androidxr',
-      runtime: 'AndroidXR',
-      platform: 'androidxr',
+      type: "androidxr",
+      runtime: "AndroidXR",
+      platform: "androidxr",
       features: {
         hasDOM: false,
         hasDocument: false,
@@ -86,25 +115,27 @@ export function detectEnvironment(): EnvironmentInfo {
         isXR: true,
         isAR: true,
         isVR: true,
-      }
+      },
     };
   }
-  
+
   // VisionOS Environment (Apple Vision Pro)
   if (hasVisionOS) {
     let version: string | undefined;
-    
+
     // Try to extract VisionOS version from user agent
-    const visionOSMatch = navigator.userAgent?.match(/VisionOS[\s\/](\d+[\.\d]*)/i);
+    const visionOSMatch = navigator.userAgent?.match(
+      /VisionOS[\s\/](\d+[\.\d]*)/i
+    );
     if (visionOSMatch) {
       version = visionOSMatch[1];
     }
-    
+
     return {
-      type: 'visionos',
-      runtime: 'VisionOS',
+      type: "visionos",
+      runtime: "VisionOS",
       version,
-      platform: 'visionos',
+      platform: "visionos",
       features: {
         hasDOM: true,
         hasDocument: true,
@@ -119,26 +150,27 @@ export function detectEnvironment(): EnvironmentInfo {
         isXR: true,
         isAR: true,
         isVR: true,
-      }
+      },
     };
   }
-  
+
   // HorizonOS Environment (Meta Quest/VR)
   if (hasHorizonOS) {
     let version: string | undefined;
-    
+
     // Try to extract HorizonOS version from user agent or MetaXR
-    const horizonOSMatch = navigator.userAgent?.match(/HorizonOS[\s\/](\d+[\.\d]*)/i) ||
-                          navigator.userAgent?.match(/Quest[\s\/](\d+[\.\d]*)/i);
+    const horizonOSMatch =
+      navigator.userAgent?.match(/HorizonOS[\s\/](\d+[\.\d]*)/i) ||
+      navigator.userAgent?.match(/Quest[\s\/](\d+[\.\d]*)/i);
     if (horizonOSMatch) {
       version = horizonOSMatch[1];
     }
-    
+
     return {
-      type: 'horizonos',
-      runtime: 'HorizonOS',
+      type: "horizonos",
+      runtime: "HorizonOS",
       version,
-      platform: 'horizonos',
+      platform: "horizonos",
       features: {
         hasDOM: true,
         hasDocument: true,
@@ -153,29 +185,29 @@ export function detectEnvironment(): EnvironmentInfo {
         isXR: true,
         isAR: true,
         isVR: true,
-      }
+      },
     };
   }
-  
+
   // NativeScript Environment (Native Mobile)
   if (hasNativeScript && !hasWindow) {
-    let platform: 'android' | 'ios' | 'unknown' = 'unknown';
+    let platform: "android" | "ios" | "unknown" = "unknown";
     let version: string | undefined;
-    
+
     if (hasAndroid) {
-      platform = 'android';
+      platform = "android";
     } else if (hasIOS) {
-      platform = 'ios';
+      platform = "ios";
     }
-    
+
     // Try to get NativeScript version
-    const runtimeVersion = safeGlobalAccess('__runtimeVersion');
-    const appVersion = safeGlobalAccess('Application');
+    const runtimeVersion = safeGlobalAccess("__runtimeVersion");
+    const appVersion = safeGlobalAccess("Application");
     version = runtimeVersion || appVersion?.version;
-    
+
     return {
-      type: 'nativescript',
-      runtime: 'NativeScript',
+      type: "nativescript",
+      runtime: "NativeScript",
       version,
       platform,
       features: {
@@ -192,18 +224,22 @@ export function detectEnvironment(): EnvironmentInfo {
         isXR: false,
         isAR: false,
         isVR: false,
-      }
+      },
     };
   }
-  
+
   // DOM Environment (Browser)
-  if (hasWindow && hasDocument && typeof (globalThis as any).document?.createElement === 'function') {
+  if (
+    hasWindow &&
+    hasDocument &&
+    typeof (globalThis as any).document?.createElement === "function"
+  ) {
     // Check for React Native
-    if (hasWindow && safeGlobalAccess('ReactNativeWebView')) {
+    if (hasWindow && safeGlobalAccess("ReactNativeWebView")) {
       return {
-        type: 'react-native',
-        runtime: 'React Native WebView',
-        platform: 'web',
+        type: "react-native",
+        runtime: "React Native WebView",
+        platform: "web",
         features: {
           hasDOM: true,
           hasDocument: true,
@@ -218,18 +254,18 @@ export function detectEnvironment(): EnvironmentInfo {
           isXR: false,
           isAR: false,
           isVR: false,
-        }
+        },
       };
     }
-    
+
     // Check for Electron
-    const processVersions = safeGlobalAccess('process')?.versions;
+    const processVersions = safeGlobalAccess("process")?.versions;
     if (hasProcess && processVersions?.electron) {
       return {
-        type: 'electron',
-        runtime: 'Electron',
+        type: "electron",
+        runtime: "Electron",
         version: processVersions.electron,
-        platform: 'desktop',
+        platform: "desktop",
         features: {
           hasDOM: true,
           hasDocument: true,
@@ -244,16 +280,16 @@ export function detectEnvironment(): EnvironmentInfo {
           isXR: false,
           isAR: false,
           isVR: false,
-        }
+        },
       };
     }
-    
+
     // Check for Web Worker
-    if (typeof importScripts === 'function') {
+    if (typeof (globalThis as any).importScripts === "function") {
       return {
-        type: 'webworker',
-        runtime: 'Web Worker',
-        platform: 'web',
+        type: "webworker",
+        runtime: "Web Worker",
+        platform: "web",
         features: {
           hasDOM: false,
           hasDocument: false,
@@ -268,18 +304,18 @@ export function detectEnvironment(): EnvironmentInfo {
           isXR: false,
           isAR: false,
           isVR: false,
-        }
+        },
       };
     }
-    
+
     // Regular Browser
     const isMobile = hasWindow && /Mobi|Android/i.test(navigator.userAgent);
     const isXRCapable = hasWebXR || hasXRSession;
-    
+
     return {
-      type: 'dom',
-      runtime: 'Browser',
-      platform: 'web',
+      type: "dom",
+      runtime: "Browser",
+      platform: "web",
       features: {
         hasDOM: true,
         hasDocument: true,
@@ -294,18 +330,18 @@ export function detectEnvironment(): EnvironmentInfo {
         isXR: isXRCapable,
         isAR: isXRCapable,
         isVR: isXRCapable,
-      }
+      },
     };
   }
-  
+
   // Server-side Environments
   if (hasDeno) {
-    const denoVersion = safeGlobalAccess('Deno')?.version?.deno;
+    const denoVersion = safeGlobalAccess("Deno")?.version?.deno;
     return {
-      type: 'deno',
-      runtime: 'Deno',
+      type: "deno",
+      runtime: "Deno",
       version: denoVersion,
-      platform: 'server',
+      platform: "server",
       features: {
         hasDOM: false,
         hasDocument: false,
@@ -320,17 +356,17 @@ export function detectEnvironment(): EnvironmentInfo {
         isXR: false,
         isAR: false,
         isVR: false,
-      }
+      },
     };
   }
-  
+
   if (hasBun) {
-    const bunVersion = (safeGlobalAccess('Bun') as any)?.version;
+    const bunVersion = (safeGlobalAccess("Bun") as any)?.version;
     return {
-      type: 'bun',
-      runtime: 'Bun',
+      type: "bun",
+      runtime: "Bun",
       version: bunVersion,
-      platform: 'server',
+      platform: "server",
       features: {
         hasDOM: false,
         hasDocument: false,
@@ -345,17 +381,17 @@ export function detectEnvironment(): EnvironmentInfo {
         isXR: false,
         isAR: false,
         isVR: false,
-      }
+      },
     };
   }
-  
+
   if (hasProcess && hasGlobal) {
-    const nodeVersion = safeGlobalAccess('process')?.version;
+    const nodeVersion = safeGlobalAccess("process")?.version;
     return {
-      type: 'node',
-      runtime: 'Node.js',
+      type: "node",
+      runtime: "Node.js",
       version: nodeVersion,
-      platform: 'server',
+      platform: "server",
       features: {
         hasDOM: false,
         hasDocument: false,
@@ -370,15 +406,15 @@ export function detectEnvironment(): EnvironmentInfo {
         isXR: false,
         isAR: false,
         isVR: false,
-      }
+      },
     };
   }
-  
+
   // Unknown environment
   return {
-    type: 'unknown',
-    runtime: 'Unknown',
-    platform: 'unknown',
+    type: "unknown",
+    runtime: "Unknown",
+    platform: "unknown",
     features: {
       hasDOM: false,
       hasDocument: false,
@@ -393,50 +429,55 @@ export function detectEnvironment(): EnvironmentInfo {
       isXR: false,
       isAR: false,
       isVR: false,
-    }
+    },
   };
 }
 
 /**
  * Get the appropriate renderer type for the current environment
  */
-export function getRendererType(env?: EnvironmentInfo): 'dom' | 'html' | 'text' | 'native' | 'xr' {
+export function getRendererType(
+  env?: EnvironmentInfo
+): "dom" | "html" | "text" | "native" | "xr" {
   const environment = env || detectEnvironment();
-  
+
   switch (environment.type) {
-    case 'dom':
-    case 'electron':
-    case 'react-native':
-      return 'dom';
-      
-    case 'nativescript':
-      return 'native';
-      
-    case 'androidxr':
-    case 'visionos':
-    case 'horizonos':
-      return 'xr';
-      
-    case 'ssr':
-    case 'node':
-    case 'deno':
-    case 'bun':
-      return 'html';
-      
-    case 'webworker':
+    case "dom":
+    case "electron":
+    case "react-native":
+      return "dom";
+
+    case "nativescript":
+      return "native";
+
+    case "androidxr":
+    case "visionos":
+    case "horizonos":
+      return "xr";
+
+    case "ssr":
+    case "node":
+    case "deno":
+    case "bun":
+      return "html";
+
+    case "webworker":
       // Web workers can't access DOM, use HTML for string generation
-      return 'html';
-      
+      return "html";
+
     default:
       // Safe fallback - HTML renderer works everywhere
-      return 'html';
+      return "html";
   }
 }
 
 /**
  * Check if the current environment supports a specific feature
  */
-export function supportsFeature(feature: keyof EnvironmentInfo['features'], env?: EnvironmentInfo): boolean {
+export function supportsFeature(
+  feature: keyof EnvironmentInfo["features"],
+  env?: EnvironmentInfo
+): boolean {
   const environment = env || detectEnvironment();
   return environment.features[feature];
 }
@@ -445,14 +486,14 @@ export function supportsFeature(feature: keyof EnvironmentInfo['features'], env?
  * Get environment-specific global object
  */
 export function getGlobalObject(): any {
-  if (typeof globalThis !== 'undefined') return globalThis;
-  if (typeof window !== 'undefined') return window;
-  
-  const globalRef = safeGlobalAccess('global');
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof window !== "undefined") return window;
+
+  const globalRef = safeGlobalAccess("global");
   if (globalRef) return globalRef;
-  
-  if (typeof self !== 'undefined') return self;
-  
+
+  if (typeof self !== "undefined") return self;
+
   // Fallback: create a minimal global object
   return {};
-} 
+}

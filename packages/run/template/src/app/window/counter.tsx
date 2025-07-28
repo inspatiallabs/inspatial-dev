@@ -8,7 +8,7 @@ export function Counter() {
   const message = $(() => `Count is: ${count.value}`);
 
   const entries = createSignal([
-    { id: 1, name: "Hot reload test working! 🔥" },
+    { id: 1, name: "Hot reload test working! Dev🔥" },
     { id: 2, name: "DOM renderer is running 🦵" },
     { id: 3, name: "Interactivity is a check ✅" },
   ]);

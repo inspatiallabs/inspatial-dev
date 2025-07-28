@@ -46,8 +46,8 @@ export function DOMRenderer(options: DOMRendererOptions = {}) {
       },
     };
     const testEvent = "__refui_event_option_test__";
-    doc.addEventListener(testEvent, nop, options);
-    doc.removeEventListener(testEvent, nop, options);
+    doc.addEventListener(testEvent as any, nop, options as any);
+    doc.removeEventListener(testEvent as any, nop, options as any);
   } catch (e) {
     // do nothing
   }

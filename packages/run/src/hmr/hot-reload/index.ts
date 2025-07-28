@@ -74,7 +74,7 @@ function createHotReloader(fn: any): any {
 }
 
 function wrapComponent(fn: Function): any {
-  const wrapped = createSignal(fn, createHotReloader) as any;
+  const wrapped = createSignal(fn as any, createHotReloader) as any;
   Object.defineProperty(fn, KEY_HMRWRAP, {
     value: wrapped,
     enumerable: false,

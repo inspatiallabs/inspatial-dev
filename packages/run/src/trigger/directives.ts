@@ -224,7 +224,6 @@ export const directives: DirectivesType = {
   // },
 };
 
-
 function onDirective(
   prefix: string,
   key: string
@@ -236,8 +235,17 @@ function onDirective(
 
 /*#################################(With Directives)#################################*/
 
+function getDocument(): Document {
+  if (typeof document === "undefined") {
+    throw new Error("Document is not available in this environment");
+  }
+  return document;
+}
+
 export const withDirectives: WithDirectivesType = {
-  doc: document,
+  get doc() {
+    return getDocument();
+  },
   namespaces,
   tagNamespaceMap,
   tagAliases,
