@@ -1,5 +1,5 @@
 import { createSignal } from "../../signal.ts";
-import { isPrimitive } from "../../utils.js";
+import { isPrimitive } from "../../utils.ts";
 import { env } from "../../env/index.ts";
 
 // Extend ImportMeta interface to include hot property
