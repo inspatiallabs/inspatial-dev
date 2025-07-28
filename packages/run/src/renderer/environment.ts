@@ -28,7 +28,7 @@ export interface EnvironmentInfo {
 /**
  * Safe access to global variables that might not exist
  */
-function safeGlobalAccess<T>(key: string): T | undefined {
+function safeGlobalAccess<T = any>(key: string): T | undefined {
   try {
     return (globalThis as any)[key];
   } catch {
@@ -197,7 +197,7 @@ export function detectEnvironment(): EnvironmentInfo {
   }
   
   // DOM Environment (Browser)
-  if (hasWindow && hasDocument && document.createElement) {
+  if (hasWindow && hasDocument && typeof (globalThis as any).document?.createElement === 'function') {
     // Check for React Native
     if (hasWindow && safeGlobalAccess('ReactNativeWebView')) {
       return {
@@ -325,7 +325,7 @@ export function detectEnvironment(): EnvironmentInfo {
   }
   
   if (hasBun) {
-    const bunVersion = safeGlobalAccess('Bun')?.version;
+    const bunVersion = (safeGlobalAccess('Bun') as any)?.version;
     return {
       type: 'bun',
       runtime: 'Bun',
