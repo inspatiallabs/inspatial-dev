@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/type",
   "version": "0.1.3",
-  "license": "Intentional-License-1.0",
+  "license": "Apache-2.0",
   "description": "Universal Runtime Validation",
   "imports": {
     "arktype": "npm:arktype@^2.1.16"

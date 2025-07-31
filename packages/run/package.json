@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/run",
   "version": "0.4.5",
-  "license": "Intentional-License-1.0",
+  "license": "Apache-2.0",
   "description": "InSpatial Run - Universal development framework for cross-platform and spatial applications",
   "type": "module",
   "author": "InSpatial Labs",

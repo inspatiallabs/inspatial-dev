@@ -5,7 +5,7 @@
 
 _🎨 Use InSpatial design system in tailwind as a simple preset_
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Intentional-License-1.0)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Dev](https://img.shields.io/badge/dev-inspatial.dev-brightgreen.svg)](https://www.inspatial.dev)
 [![App](https://img.shields.io/badge/app-inspatial.app-purple.svg)](https://www.inspatial.io)
 [![Cloud](https://img.shields.io/badge/cloud-inspatial.cloud-yellow.svg)](https://www.inspatial.cloud)

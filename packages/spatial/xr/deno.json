@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/xr",
   "version": "0.0.1",
-  "license": "Intentional-License-1.0",
+  "license": "Apache-2.0",
   "homepage": "https://www.inspatial.xr",
   "repository": "https://github.com/InSpatial-Labs/inspatial-core",
   "author": "InSpatial Labs",

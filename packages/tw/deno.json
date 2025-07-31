@@ -1,7 +1,7 @@
 {
   "name": "@inspatial/tw",
   "version": "0.0.1",
-  "license": "Intentional-License-1.0",
+  "license": "Apache-2.0",
   "description": "Tailwind CSS presets for Inspatial Apps",
   "imports": {
     "tailwindcss": "npm:tailwindcss@next",

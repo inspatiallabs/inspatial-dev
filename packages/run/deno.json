@@ -1,6 +1,6 @@
 {
   "name": "@inspatial/run",
-  "license": "Intentional-License-1.0",
+  "license": "Apache-2.0",
   "version": "0.4.5",
   "exports": {
     ".": "./src/index.ts",

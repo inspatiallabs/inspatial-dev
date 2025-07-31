@@ -1,6 +1,6 @@
 {
   "name": "@in/dom",
-  "license": "Intentional-License-1.0",
+  "license": "Apache-2.0",
   "version": "0.1.3",
   "description": "Universal DOM Module",
   "imports": {
