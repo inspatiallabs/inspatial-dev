@@ -1,3 +1,22 @@
+/**
+ * anime.js - ESM
+ * @version v4.1.2
+ * @author Julian Garnier
+ * @license MIT
+ * @copyright (c) 2025 Julian Garnier
+ * @see https://animejs.com
+ */
+
+/****************************************************
+ * InMotion (InSpatial Motion)
+ * @version v1.0.0
+ * @author InSpatial Labs
+ * @license Apache-2.0
+ * @copyright (c) 2026 InSpatial Labs
+ * @see https://inspatial.dev/motion
+ ****************************************************/
+
+
 import { minValue, noop, valueTypes, tickModes } from "./consts.ts";
 import { cloneArray, addChild } from "./helpers.ts";
 import { render } from "./render.ts";

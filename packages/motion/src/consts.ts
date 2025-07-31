@@ -1,4 +1,20 @@
-// Environments
+/**
+ * anime.js - ESM
+ * @version v4.1.2
+ * @author Julian Garnier
+ * @license MIT
+ * @copyright (c) 2025 Julian Garnier
+ * @see https://animejs.com
+ */
+
+/****************************************************
+ * InMotion (InSpatial Motion)
+ * @version v1.0.0
+ * @author InSpatial Labs
+ * @license Apache-2.0
+ * @copyright (c) 2026 InSpatial Labs
+ * @see https://inspatial.dev/motion
+ ****************************************************/
 
 // TODO(@benemma): Create/use a universal util that helps detect if we're running inside a worker Ideally this should be added on the user-agent features we have on InSpatial Cloud
 export const isBrowser = typeof window !== 'undefined';
