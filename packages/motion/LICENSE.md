@@ -67,17 +67,15 @@ You may add Your own copyright statement to Your modifications and may provide a
 
 END OF TERMS AND CONDITIONS
 
-======================================================
-
 # Licenses of bundled dependencies
 The published InSpatial Motion artifact additionally contains code with the following licenses:
 MIT, Apache-2.0, 
 
 # Bundled dependencies:
 ## animejs
-License: MIT
-By: Julian Garnier
-Repository: https://github.com/juliangarnier/anime
+#####  License: MIT
+##### By: Julian Garnier
+##### Repository: https://github.com/juliangarnier/anime
 
 The MIT License
 
