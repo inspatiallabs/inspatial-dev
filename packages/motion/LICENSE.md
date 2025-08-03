@@ -73,9 +73,9 @@ MIT, Apache-2.0,
 
 # Bundled dependencies:
 ## animejs
-#####  License: MIT
-##### By: Julian Garnier
-##### Repository: https://github.com/juliangarnier/anime
+####  License: MIT
+#### By: Julian Garnier
+#### Repository: https://github.com/juliangarnier/anime
 
 The MIT License
 
