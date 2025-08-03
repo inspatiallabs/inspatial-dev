@@ -6,7 +6,7 @@ Copyright (c) 2026 InSpatial Labs
 ======================================================
 
 
-
+```ascii
       _    ____   _    ____ _   _ _____   _     ___ ____ _____ _   _ ____  _____
       / \  |  _ \ / \  / ___| | | | ____| | |   |_ _/ ___| ____| \ | / ___|| ____|
      / _ \ | |_) / _ \| |   | |_| |  _|   | |    | | |   |  _| |  \| \___ \|  _|
@@ -14,6 +14,7 @@ Copyright (c) 2026 InSpatial Labs
    /_/   \_\_| /_/   \_\____|_| |_|_____| |_____|___\____|_____|_| \_|____/|_____|
                                 Version 2.0, January 2004
                             http://www.apache.org/licenses/
+```
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
