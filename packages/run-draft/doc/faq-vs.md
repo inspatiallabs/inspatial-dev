@@ -2,12 +2,12 @@
 
 ## @in UDE Modules
 
-Think of @in UDE modules as individual LEGO bricks—each one is a perfectly crafted, single-purpose piece that works independently right out of the box. No assembly required, no dependencies needed. But here's where the magic happens: when you connect these bricks together, they form a complete full-stack, universal, and cross-platform framework.
-Each @in module is like a specialized LEGO piece—whether it's a wheel, a window, or a foundation block—designed for one specific job and built to snap seamlessly with others. Every brick is useful on its own and comes with clear instructions, so you understand exactly what it does and how to use it.
+Think of @in UDE modules as individual LEGO bricks each one is a perfectly crafted, single-purpose piece that works independently right out of the box. No assembly required, no dependencies needed. But here's where the magic happens: when you connect these bricks together, they form a complete full-stack, universal, and cross-platform framework.
+Each @in module is like a specialized LEGO piece whether it's a wheel, a window, or a foundation block designed for one specific job and built to snap seamlessly with others. Every brick is useful on its own and comes with clear instructions, so you understand exactly what it does and how to use it.
 
 ## @inspatial/run
 
-This is your complete LEGO castle kit. While @in modules are the individual bricks, @inspatial/run is the finished masterpiece—a fully assembled, ready-to-use structure that combines all those building blocks into one cohesive toolkit.
+This is your complete LEGO castle kit. While @in modules are the individual bricks, @inspatial/run is the finished masterpiece a fully assembled, ready-to-use structure that combines all those building blocks into one cohesive toolkit.
 We chose this composable LEGO architecture because we know builders have different styles. Some developers love the creative process of selecting individual bricks and constructing something unique from the ground up. Others prefer to start with a pre-designed castle and get straight to adding their own creative touches.
 Whether you're a brick-by-brick builder or a complete-kit creator, we've got you covered.
 
@@ -19,14 +19,14 @@ Whether you're a brick-by-brick builder or a complete-kit creator, we've got you
 
 - Imposes structure on your code
 - Ships with its own renderer
-- Creates conflicts with other rendering environments (try using Vue & React together—you'll need significant low-level API changes to make it work)
+- Creates conflicts with other rendering environments (try using Vue & React together you'll need significant low-level API changes to make it work)
 
 **What Makes Something a Module:**
 
 - Gets out of your way
 - Integrates seamlessly with existing codebases
 - Works regardless of your rendering choice or runtime environment
-- Traditionally called "libraries"—but we call them modules because they're more than that
+- Traditionally called "libraries" but we call them modules because they're more than that
 
 **In the InSpatial Ecosystem:**
 
@@ -35,7 +35,7 @@ Whether you're a brick-by-brick builder or a complete-kit creator, we've got you
 
 Think of it this way: frameworks are like moving into a fully furnished house with rules about where everything goes. Modules are like buying individual pieces of furniture that work in any house, with any style, following your rules.
 
-**UDE (Universal Development Environment)** bridges this gap—giving you framework power when you want it, module flexibility when you need it.
+**UDE (Universal Development Environment)** bridges this gap giving you framework power when you want it, module flexibility when you need it.
 
 ---
 

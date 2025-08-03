@@ -55,7 +55,7 @@ _Reality is your canvas_
 
 ## 🔍 InSpatial Motion (🟡 Preview)
 
-InSpatial Motion or InMotion for short is a powerful, universal animation module that brings everything to life with silky-smooth performance across all platforms and environments.
+InSpatial Motion or InMotion for short is a powerful, universal animation module built on AnimeJS core principles and logic which brings everything to life with silky-smooth performance across all platforms and environments.
 
 ### 👨‍💻 What Can I Do With InSpatial Motion?
 
@@ -505,7 +505,7 @@ We welcome contributions from the community! Please read our [Contributing Guide
 
 ## 📄 License
 
-InSpatial Dev is released under the Intentional 1.0 License. See the [LICENSE](LICENSE) file for details.
+InSpatial Dev is released under the Apache-2.0 License. See the [LICENSE](LICENSE) file for details.
 
 ---
 

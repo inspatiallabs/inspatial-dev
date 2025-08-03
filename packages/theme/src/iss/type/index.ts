@@ -1566,7 +1566,7 @@ export interface StandardLonghandProperties<
    */
   content?: Property.Content | undefined;
   /**
-   * The **`content-visibility`** CSS property controls whether or not an element renders its contents at all, along with forcing a strong set of containments, allowing user agents to potentially omit large swathes of layout and rendering work until it becomes needed. It enables the user agent to skip an element's rendering work (including layout and painting) until it is needed — which makes the initial page load much faster.
+   * The **`content-visibility`** CSS property controls whether or not an element renders its contents at all, along with forcing a strong set of containments, allowing user agents to potentially omit large swathes of layout and rendering work until it becomes needed. It enables the user agent to skip an element's rendering work (including layout and painting) until it is needed   which makes the initial page load much faster.
    *
    * **Syntax**: `visible | auto | hidden`
    *
@@ -4461,7 +4461,7 @@ export interface StandardLonghandProperties<
    */
   shapeMargin?: Property.ShapeMargin<TLength> | undefined;
   /**
-   * The **`shape-outside`** CSS property defines a shape—which may be non-rectangular—around which adjacent inline content should wrap. By default, inline content wraps around its margin box; `shape-outside` provides a way to customize this wrapping, making it possible to wrap text around complex objects rather than simple boxes.
+   * The **`shape-outside`** CSS property defines a shape which may be non-rectangular around which adjacent inline content should wrap. By default, inline content wraps around its margin box; `shape-outside` provides a way to customize this wrapping, making it possible to wrap text around complex objects rather than simple boxes.
    *
    * **Syntax**: `none | [ <shape-box> || <basic-shape> ] | <image>`
    *
@@ -5113,7 +5113,7 @@ export interface StandardLonghandProperties<
    */
   viewTimelineName?: Property.ViewTimelineName | undefined;
   /**
-   * The **`view-transition-name`** CSS property provides the selected element with a distinct identifying name (a `<custom-ident>`) and causes it to participate in a separate view transition from the root view transition — or no view transition if the `none` value is specified.
+   * The **`view-transition-name`** CSS property provides the selected element with a distinct identifying name (a `<custom-ident>`) and causes it to participate in a separate view transition from the root view transition   or no view transition if the `none` value is specified.
    *
    * **Syntax**: `none | <custom-ident>`
    *
@@ -5881,7 +5881,7 @@ export interface StandardShorthandProperties<
    */
   outline?: Property.Outline<TLength> | undefined;
   /**
-   * The **`overflow`** CSS shorthand property sets the desired behavior for an element's overflow — i.e. when an element's content is too big to fit in its block formatting context — in both directions.
+   * The **`overflow`** CSS shorthand property sets the desired behavior for an element's overflow   i.e. when an element's content is too big to fit in its block formatting context   in both directions.
    *
    * **Syntax**: `[ visible | hidden | clip | scroll | auto ]{1,2}`
    *
@@ -9721,7 +9721,7 @@ export interface StandardLonghandPropertiesHyphen<
    */
   content?: Property.Content | undefined;
   /**
-   * The **`content-visibility`** CSS property controls whether or not an element renders its contents at all, along with forcing a strong set of containments, allowing user agents to potentially omit large swathes of layout and rendering work until it becomes needed. It enables the user agent to skip an element's rendering work (including layout and painting) until it is needed — which makes the initial page load much faster.
+   * The **`content-visibility`** CSS property controls whether or not an element renders its contents at all, along with forcing a strong set of containments, allowing user agents to potentially omit large swathes of layout and rendering work until it becomes needed. It enables the user agent to skip an element's rendering work (including layout and painting) until it is needed   which makes the initial page load much faster.
    *
    * **Syntax**: `visible | auto | hidden`
    *
@@ -12628,7 +12628,7 @@ export interface StandardLonghandPropertiesHyphen<
    */
   "shape-margin"?: Property.ShapeMargin<TLength> | undefined;
   /**
-   * The **`shape-outside`** CSS property defines a shape—which may be non-rectangular—around which adjacent inline content should wrap. By default, inline content wraps around its margin box; `shape-outside` provides a way to customize this wrapping, making it possible to wrap text around complex objects rather than simple boxes.
+   * The **`shape-outside`** CSS property defines a shape which may be non-rectangular around which adjacent inline content should wrap. By default, inline content wraps around its margin box; `shape-outside` provides a way to customize this wrapping, making it possible to wrap text around complex objects rather than simple boxes.
    *
    * **Syntax**: `none | [ <shape-box> || <basic-shape> ] | <image>`
    *
@@ -13280,7 +13280,7 @@ export interface StandardLonghandPropertiesHyphen<
    */
   "view-timeline-name"?: Property.ViewTimelineName | undefined;
   /**
-   * The **`view-transition-name`** CSS property provides the selected element with a distinct identifying name (a `<custom-ident>`) and causes it to participate in a separate view transition from the root view transition — or no view transition if the `none` value is specified.
+   * The **`view-transition-name`** CSS property provides the selected element with a distinct identifying name (a `<custom-ident>`) and causes it to participate in a separate view transition from the root view transition   or no view transition if the `none` value is specified.
    *
    * **Syntax**: `none | <custom-ident>`
    *
@@ -14048,7 +14048,7 @@ export interface StandardShorthandPropertiesHyphen<
    */
   outline?: Property.Outline<TLength> | undefined;
   /**
-   * The **`overflow`** CSS shorthand property sets the desired behavior for an element's overflow — i.e. when an element's content is too big to fit in its block formatting context — in both directions.
+   * The **`overflow`** CSS shorthand property sets the desired behavior for an element's overflow   i.e. when an element's content is too big to fit in its block formatting context   in both directions.
    *
    * **Syntax**: `[ visible | hidden | clip | scroll | auto ]{1,2}`
    *

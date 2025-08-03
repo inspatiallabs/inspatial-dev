@@ -58,7 +58,7 @@ _Reality is your canvas_
 
 ## 🙏 Credits & Acknowledgments
 
-_**"If I have seen further, it is by standing on the shoulders of giants."** — Isaac Newton_
+_**"If I have seen further, it is by standing on the shoulders of giants."**   Isaac Newton_
 
 ---
 
@@ -75,10 +75,10 @@ We believe in **giving credit where credit is due** and supporting the ecosystem
 
 Deno's security-first approach, built-in TypeScript support, and modern web standards compatibility form the backbone of InSpatial Dev's development environment.
 
-### **🎯 [SolidJS](https://www.solidjs.com/)** & **[RefUI](https://github.com/SudoMaker/rEFui)**
+### **🎯 [SolidJS](https://www.solidjs.com/)** & **[rEFui](https://github.com/SudoMaker/rEFui)**
 *Reactive primitives that inspired our signal architecture and rendering*
 
-SolidJS and RefUI demonstrated that reactive programming can achieve both high performance and intuitive design. Their fine-grained reactivity models profoundly shaped our approach to signal-based state management and DOM rendering philosophies.
+SolidJS and rEFui demonstrated that reactive programming can achieve both high performance and intuitive design. Their fine-grained reactivity models profoundly shaped our approach to signal-based state management and DOM rendering philosophies.
 
 
 ---
@@ -89,7 +89,7 @@ SolidJS and RefUI demonstrated that reactive programming can achieve both high p
 ### **📱 [NativeScript](https://nativescript.org/)**
 *Cross-platform development innovation*
 
-NativeScript’s groundbreaking approach to delivering truly native cross-platform experiences—while letting developers stay in the familiar world of JavaScript—feels like pure magic. Their technology is so effective, it forms the backbone of our native renderers.
+NativeScript’s groundbreaking approach to delivering truly native cross-platform experiences while letting developers stay in the familiar world of JavaScript feels like pure magic. Their technology is so effective, it forms the backbone of our native renderers.
 
 ---
 
@@ -128,7 +128,7 @@ Anthropic's approach to AI safety and helpful AI systems influences how we integ
 
 ## 💖 **Our Commitment to Open Source**
 
-We understand that we can't acknowledge every project that has influenced our work—the open source ecosystem is vast and interconnected. Here's how we're giving back:
+We understand that we can't acknowledge every project that has influenced our work the open source ecosystem is vast and interconnected. Here's how we're giving back:
 
 - **🎯 Active Sponsorship**: We sponsor open source projects that power our development
 - **🔄 Contributing Back**: We contribute improvements, bug fixes, and features upstream

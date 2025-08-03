@@ -18,7 +18,7 @@ We're sold "frameworks," but what we get are:
 
 InSpatial Run's core DNA is universal rendering. We asked a simple but revolutionary question: _What if React Native and React were one unified standard instead of two separate ecosystems?_
 
-What if you could write JSX once and deploy everywhere—web, mobile, embedded devices (Apple Watch, Google Watch), spatial platforms (Vision Pro, Meta Quest, AndroidXR)—without rewriting for react-dom here and react-native there?
+What if you could write JSX once and deploy everywhere web, mobile, embedded devices (Apple Watch, Google Watch), spatial platforms (Vision Pro, Meta Quest, AndroidXR) without rewriting for react-dom here and react-native there?
 
 ### Why We Love JSX (But Not React's Baggage)
 
@@ -32,13 +32,13 @@ JSX works. Despite opinions, it's why most developers choose React alongside its
 
 ### The Fragmentation Problem
 
-React creates a fragmented ecosystem—thousands of dependencies trying to stitch together with no unified structure. We wanted harmony, not chaos.
+React creates a fragmented ecosystem thousands of dependencies trying to stitch together with no unified structure. We wanted harmony, not chaos.
 
 ### The Continuity Problem
 
 If we built on top of React, we'd inherit the same continuity issues plaguing the other 10,000+ frameworks in React's ecosystem. We'd be limited by React's architectural decisions and performance constraints.
 
-React is the "operating system of the modern web." We're building a more universal operating system. We're inspired by our predecessors—we embrace the good (JSX, component model), fix the bad (virtual DOM, fragmentation), and complete the incomplete (true universal rendering).
+React is the "operating system of the modern web." We're building a more universal operating system. We're inspired by our predecessors we embrace the good (JSX, component model), fix the bad (virtual DOM, fragmentation), and complete the incomplete (true universal rendering).
 
 We're not replacing React to be different. We're creating what React could have been if it was designed for today's multi-platform, GPU-accelerated, AI first, universal computing reality.
 
@@ -46,7 +46,7 @@ We're not replacing React to be different. We're creating what React could have 
 
 **InSpatial JSX Runtime Looks Like React But Isn't Built On It**
 
-While there's significant discussion around JSX, it's crucial to understand that **JSX is simply a templating choice**—no different from XML, HTML, or Vue's Single File Component (SFC) templating syntax.
+While there's significant discussion around JSX, it's crucial to understand that **JSX is simply a templating choice** no different from XML, HTML, or Vue's Single File Component (SFC) templating syntax.
 
 #### Universal Templating Support
 
@@ -58,13 +58,13 @@ Just as we support JSX to make React developers feel at home **and their existin
 
 #### Runtime-First
 
-We're **obsessively runtime-focused**. Designing systems around bundlers, compilers, or type generators creates poor API design that eventually corrupts the entire ecosystem. Every InSpatial package is built with zero expectation of static analysis—everything must work at runtime and be testable without bundling.
+We're **obsessively runtime-focused**. Designing systems around bundlers, compilers, or type generators creates poor API design that eventually corrupts the entire ecosystem. Every InSpatial package is built with zero expectation of static analysis everything must work at runtime and be testable without bundling.
 
 When browsers are involved, we allow simple `--import` loaders for basic transformations like TypeScript and JSX, but the core system never depends on them.
 
 #### No File Extensions, No Compilation
 
-All templating approaches work **without specialized file extensions**. You don't need `.vue`, `.jsx`, or `.tsx` files because we've eliminated the compilation step entirely—everything runs directly at runtime.
+All templating approaches work **without specialized file extensions**. You don't need `.vue`, `.jsx`, or `.tsx` files because we've eliminated the compilation step entirely everything runs directly at runtime.
 
 #### Portability Without Rewriting
 
@@ -78,7 +78,7 @@ This means you can:
 
 #### The Philosophy
 
-Templating syntax should be about developer preference and familiarity, not technical constraints. We support multiple approaches so you can use what feels natural—and more importantly, **bring your existing codebase with you**. Everything works immediately at runtime without build steps, bundlers, or compilation complexity.
+Templating syntax should be about developer preference and familiarity, not technical constraints. We support multiple approaches so you can use what feels natural and more importantly, **bring your existing codebase with you**. Everything works immediately at runtime without build steps, bundlers, or compilation complexity.
 
 It's about **choice without complexity, portability without rewriting, runtime without roadblocks**.
 
@@ -86,7 +86,7 @@ It's about **choice without complexity, portability without rewriting, runtime w
 
 ## Composition Over Monoliths
 
-InSpatial Run isn't a traditional monolithic framework—it's a carefully orchestrated symphony of single-purpose, replaceable abstractions. Each @in module follows one core principle: **easy to add, easy to remove from any existing program**.
+InSpatial Run isn't a traditional monolithic framework it's a carefully orchestrated symphony of single-purpose, replaceable abstractions. Each @in module follows one core principle: **easy to add, easy to remove from any existing program**.
 
 ### The Composability Mandate
 
@@ -105,7 +105,7 @@ Think of it like this: instead of building a Swiss Army knife (one tool, many fe
 
 ### The Smart Exception Rule
 
-However, we're not composition purists. When modules are tightly coupled—when they almost always change together in both directions—we merge them into the same package. Why? Because artificial separation creates more complexity than composition benefits.
+However, we're not composition purists. When modules are tightly coupled when they almost always change together in both directions we merge them into the same package. Why? Because artificial separation creates more complexity than composition benefits.
 
 ### Real-World Impact
 
@@ -118,7 +118,7 @@ This architecture means:
 
 ### Why This Matters for InSpatial Run
 
-InSpatial Run demonstrates the power of this approach—it's not a framework that owns you, it's a curated collection of the best @in modules working in harmony. You get the power of a complete system with the flexibility of individual components.
+InSpatial Run demonstrates the power of this approach it's not a framework that owns you, it's a curated collection of the best @in modules working in harmony. You get the power of a complete system with the flexibility of individual components.
 
 It's the difference between buying a house (take it or leave it) and having an architect who can build exactly what you need from proven, interchangeable components. It is the difference between building a tool for app creators and building a tool for framework creators. But now you get both! This is what makes it universal serving creators at every layer of the stack.
 
@@ -154,13 +154,13 @@ With InSpatial Run, your development environment lives at a clean, memorable URL
 
 ### The Clever Part
 
-It's still _your_ development environment with all the power and flexibility of localhost—hot reloading, debugging tools, real-time updates. But it's accessible from anywhere, on any device, by anyone you choose to share it with.
+It's still _your_ development environment with all the power and flexibility of localhost hot reloading, debugging tools, real-time updates. But it's accessible from anywhere, on any device, by anyone you choose to share it with.
 
 ### Think About It
 
 Why should "local" development be limited to one machine when your apps are designed to run everywhere? Your development environment should be as universal as your final product.
 
-**my.inspatial.app** isn't just a URL—it's localhost, evolved.
+**my.inspatial.app** isn't just a URL it's localhost, evolved.
 
 ---
 
@@ -216,7 +216,7 @@ If we had truly unified hybrid databases, traditional sync engines would vanish.
 
 #### Why This Changes Everything
 
-We're not just eliminating tools—we're eliminating entire categories of problems and concepts.
+We're not just eliminating tools we're eliminating entire categories of problems and concepts.
 
 - **No SSR complexity** - Everything is real-time and reactive
 - **No hydration mismatches** - No separate server/client render cycles
@@ -228,18 +228,18 @@ We're not just eliminating tools—we're eliminating entire categories of proble
 
 ### The Rogue AI Problem
 
-Unchecked AI is like giving a toddler a flamethrower—impressive capability, catastrophic results. We've all seen it: AI hallucinating documentation, inventing APIs that don't exist, confidently writing code that compiles to nowhere. The solution isn't less AI—it's smarter orchestration.
+Unchecked AI is like giving a toddler a flamethrower impressive capability, catastrophic results. We've all seen it: AI hallucinating documentation, inventing APIs that don't exist, confidently writing code that compiles to nowhere. The solution isn't less AI it's smarter orchestration.
 
 ### Multi-Agent Reality Check
 
-InSpatial AI doesn't fly solo. Every output passes through a **consensus layer**—multiple LLMs cross-checking each other like a paranoid peer review:
+InSpatial AI doesn't fly solo. Every output passes through a **consensus layer** multiple LLMs cross-checking each other like a paranoid peer review:
 
 - **The Proposer**: Generates initial solution
 - **The Critic**: Finds flaws, edge cases, security holes
 - **The Validator**: Ensures correctness against actual APIs
 - **The Optimizer**: Refines for performance and elegance
 
-Think of it as AI democracy—no single model becomes a dictator. When one hallucinates, others call bullshit. When one misses edge cases, others catch them. The output isn't just intelligent, it's verified and strict intelligence.
+Think of it as AI democracy no single model becomes a dictator. When one hallucinates, others call bullshit. When one misses edge cases, others catch them. The output isn't just intelligent, it's verified and strict intelligence.
 
 ### Strict Output Contracts
 
@@ -295,7 +295,7 @@ Forget writing docs for humans who skim. Write for AIs that consume:
 
 #### Tooling That Thinks
 
-Our developer tools don't just execute—they understand intent:
+Our developer tools don't just execute they understand intent:
 
 - **AI-powered error messages** that suggest fixes, not just describe problems
 - **Context-aware autocomplete** that knows your project's patterns
@@ -330,7 +330,7 @@ Every InSpatial Kit component serves two masters:
 1. **Human developers** who need clarity and control
 2. **AI assistants** who need structure and patterns
 
-This isn't compromise—it's evolution. Code that's better for AI is often better for humans too: more consistent, more predictable, more maintainable.
+This isn't compromise it's evolution. Code that's better for AI is often better for humans too: more consistent, more predictable, more maintainable.
 
 #### Beyond Copilot: AI as Runtime
 
@@ -343,11 +343,11 @@ The real revolution isn't AI writing code, it's AI becoming part of the runtime:
 
 #### The AI-First Manifesto
 
-1. **Every line of code is training data**—write accordingly
-2. **Documentation is prompt engineering**—structure for extraction
-3. **APIs are conversations**—design for dialogue
-4. **Errors are teaching moments**—make them educational
-5. **Patterns are promises**—keep them consistent
+1. **Every line of code is training data** write accordingly
+2. **Documentation is prompt engineering** structure for extraction
+3. **APIs are conversations** design for dialogue
+4. **Errors are teaching moments** make them educational
+5. **Patterns are promises** keep them consistent
 
 #### Intelligence Amplification, Not Replacement
 
@@ -374,20 +374,20 @@ While the industry fragments game and XR development across dozens of specialize
 
 ### InSpatial's Unified Vision
 
-This isn't about building another game engine—it's about applying universal principles to solve what everyone else accepted as "just how development works":
+This isn't about building another game engine it's about applying universal principles to solve what everyone else accepted as "just how development works":
 
 - **Native 3D modeling** that understands your game's context within the same environment
 - **Built-in persistence** that scales from local saves to global leaderboards seamlessly
 - **Realtime multi-user** infrastructure that just works, no external services
 - **Universal deployment** across all XR platforms from a single codebase
 
-Hence the name `InSpatial`—we're **in** the spatial computing era, building **in** spatial contexts, thinking **in** spatial-first terms.
+Hence the name `InSpatial` we're **in** the spatial computing era, building **in** spatial contexts, thinking **in** spatial-first terms.
 
 ### The Universal Opportunity
 
 Where others saw chaos, we saw opportunity. What if games and XR were treated as **first principles** rather than afterthoughts? What if building a spatial experience was as simple as shipping a website or mobile app? What if it was the **same codebase** as your website and app?
 
-Each industry gap—graphics without modeling, logic without persistence, multiplayer without infrastructure, XR without spatial UI standards—represents a chance to **eliminate entire categories of developer pain** through unified environment thinking.
+Each industry gap graphics without modeling, logic without persistence, multiplayer without infrastructure, XR without spatial UI standards represents a chance to **eliminate entire categories of developer pain** through unified environment thinking.
 
 ### Why Traditional Engines Miss the Point
 
@@ -469,11 +469,11 @@ You spend two years learning DevOps to run what should be a single binary. Then 
 
 ### Open Source Should Mean Accessible Source
 
-True open source isn't just "view the code"—it's **"run the code without becoming a systems administrator."** We believe in:
+True open source isn't just "view the code" it's **"run the code without becoming a systems administrator."** We believe in:
 
 - **Ownership without expertise** - You should control your data without needing a CS degree
 - **Deployment without DevOps** - One binary, infinite scale
-- **Freedom without friction** - Fork it, modify it, ship it—without Docker PhD requirements
+- **Freedom without friction** - Fork it, modify it, ship it without Docker PhD requirements
 
 ### Open Source, Actually Open
 
@@ -497,7 +497,7 @@ React, Vue, Angular, Solid, Qwik, Astro, Lit, Preact, Svelte, Alpine, React Nati
 
 ### Flutter: The Exception That Proves the Rule
 
-Flutter deserves separate mention—it's substantially different, truly universal, and genuinely innovative. But it's locked behind Dart (a language few know) and Google's bureaucracy (with all the risks that entails). Brilliant technology, wrong ecosystem constraints.
+Flutter deserves separate mention it's substantially different, truly universal, and genuinely innovative. But it's locked behind Dart (a language few know) and Google's bureaucracy (with all the risks that entails). Brilliant technology, wrong ecosystem constraints.
 
 ### The Framework Hamster Wheel
 
@@ -512,7 +512,7 @@ Every few months, a new framework emerges claiming to revolutionize development.
 
 InSpatial was forged in fire, not flash. Born from the genuine agony of building the same app five different ways for five different platforms. Created out of desperation, not the primitive need to feel seen in the developer community.
 
-We didn't build this to win framework beauty contests or collect GitHub stars. We built it because we were bleeding from a thousand paper cuts—deployment hell, platform fragmentation, toolchain complexity, and the soul-crushing repetition of solving the same problems over and over.
+We didn't build this to win framework beauty contests or collect GitHub stars. We built it because we were bleeding from a thousand paper cuts deployment hell, platform fragmentation, toolchain complexity, and the soul-crushing repetition of solving the same problems over and over.
 
 ### We're Not Playing That Game
 
@@ -530,15 +530,15 @@ While they create new syntaxes to learn, we made existing knowledge portable.
 
 ### The Framework Graveyard
 
-Remember Backbone? JQuery, Ember? Knockout? Angular 1? CoffeeScript? The framework you learn today might be legacy tomorrow. But the problems they're trying to solve—universal rendering, seamless development, cross-platform deployment—those problems aren't going anywhere.
+Remember Backbone? JQuery, Ember? Knockout? Angular 1? CoffeeScript? The framework you learn today might be legacy tomorrow. But the problems they're trying to solve universal rendering, seamless development, cross-platform deployment those problems aren't going anywhere.
 
 ### We're Building Infrastructure, Not Fashion
 
-InSpatial Run is to frameworks what the internet is to individual websites. It's not another option in the framework dropdown—it's the universal platform that makes the framework choice completely irrelevant.
+InSpatial Run is to frameworks what the internet is to individual websites. It's not another option in the framework dropdown it's the universal platform that makes the framework choice completely irrelevant.
 
 ### So just another framework?
 
-Yes, by definition—anything that ships with a renderer and a runtime in the same bundle is technically a framework. `InSpatial Run` is a framework. But calling `InSpatial` "just another framework" is like calling the iPhone "just another phone" or the internet "just another network."
+Yes, by definition anything that ships with a renderer and a runtime in the same bundle is technically a framework. `InSpatial Run` is a framework. But calling `InSpatial` "just another framework" is like calling the iPhone "just another phone" or the internet "just another network."
 
 The web doesn't need another framework. It needs a universal development environment, a stable foundation that works everywhere, with everything, for everyone all at once. That's not a framework. That's an evolution.
 
@@ -546,11 +546,11 @@ The web doesn't need another framework. It needs a universal development environ
 
 ### There is no stack
 
-Tech stacks aren't achievements—they're admissions of failure. Needing hundreds of services to render a button isn't genius; it's the opposite of genius.
+Tech stacks aren't achievements they're admissions of failure. Needing hundreds of services to render a button isn't genius; it's the opposite of genius.
 
 ### The Platform Convergence
 
-Backend and frontend aren't separate concerns In-Spatial—they're different views of the same system:
+Backend and frontend aren't separate concerns In-Spatial they're different views of the same system:
 
 - **Universal rendering** - Same components render on server and client
 - **Shared state** - Database queries work identically everywhere
@@ -559,7 +559,7 @@ Backend and frontend aren't separate concerns In-Spatial—they're different vie
 
 ### Buzzword Graveyard
 
-Bundlers, compilers, transpilers, typegens, SSR, SSG, PPR, ISR—these don't make you smart. They reveal how misguided our collective genius has become.
+Bundlers, compilers, transpilers, typegens, SSR, SSG, PPR, ISR these don't make you smart. They reveal how misguided our collective genius has become.
 
 "But SEO!" you cry. If search engines matter more than user experience, you've already lost.
 
